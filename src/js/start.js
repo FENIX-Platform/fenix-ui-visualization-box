@@ -49,7 +49,7 @@ define([
 
         } else {
 
-            this.model = $.extend(true, {ready : true}, obj.model);
+            this.model = $.extend(true, {ready: true}, obj.model);
 
             this._setStatus("ready");
 
@@ -119,25 +119,30 @@ define([
         this.$el.attr("data-status", this.status);
     };
 
+    Box.prototype._getEventTopic = function (evt) {
+
+        return EVT[evt] + this.id;
+    };
+
     Box.prototype._bindObjEventListeners = function () {
 
         var self = this;
 
-        amplify.subscribe(EVT["remove"] + self.id, this, this._onRemoveEvent);
+        amplify.subscribe(this._getEventTopic("remove"), this, this._onRemoveEvent);
 
-        amplify.subscribe(EVT["resize"] + self.id, this, this._onResizeEvent);
+        amplify.subscribe(this._getEventTopic("resize"), this, this._onResizeEvent);
 
-        amplify.subscribe(EVT["clone"] + self.id, this, this._onCloneEvent);
+        amplify.subscribe(this._getEventTopic("clone"), this, this._onCloneEvent);
 
-        amplify.subscribe(EVT["flip"] + self.id, this, this._onFlipEvent);
+        amplify.subscribe(this._getEventTopic("flip"), this, this._onFlipEvent);
 
-        amplify.subscribe(EVT["metadata"] + self.id, this, this._onMetadataEvent);
+        amplify.subscribe(this._getEventTopic("metadata"), this, this._onMetadataEvent);
 
         this.$el.find("[data-action]").each(function () {
 
             var $this = $(this),
                 action = $this.data("action"),
-                event = EVT[action] + self.id;
+                event = self._getEventTopic(action);
 
             $this.on("click", function () {
 
@@ -147,45 +152,44 @@ define([
 
             });
         });
-
     };
 
     Box.prototype._onRemoveEvent = function (box) {
-        log.info("Listen to event: " + EVT["remove"] + this.id);
+        log.info("Listen to event: " + this._getEventTopic("remove"));
         log.trace(box)
     };
 
     Box.prototype._onResizeEvent = function (box) {
-        log.info("Listen to event: " + EVT["resize"] + this.id);
+        log.info("Listen to event: " + this._getEventTopic("resize"));
         log.trace(box)
     };
 
     Box.prototype._onCloneEvent = function (box) {
-        log.info("Listen to event: " + EVT["clone"] + this.id);
+        log.info("Listen to event: " + this._getEventTopic("clone"));
         log.trace(box)
     };
 
     Box.prototype._onFlipEvent = function (box) {
-        log.info("Listen to event: " + EVT["flip"] + this.id);
+        log.info("Listen to event: " + this._getEventTopic("flip"));
         log.trace(box)
     };
 
     Box.prototype._onMetadataEvent = function (box) {
-        log.info("Listen to event: " + EVT["metadata"] + this.id);
+        log.info("Listen to event: " + this._getEventTopic("metadata"));
         log.trace(box)
     };
 
     Box.prototype._unbindObjEventListeners = function () {
 
-        amplify.unsubscribe(EVT["remove"] + this.id, this._onRemoveEvent);
+        amplify.unsubscribe(this._getEventTopic("remove"), this._onRemoveEvent);
 
-        amplify.unsubscribe(EVT["resize"] + this.id, this._onResizeEvent);
+        amplify.unsubscribe(this._getEventTopic("resize"), this._onResizeEvent);
 
-        amplify.unsubscribe(EVT["clone"] + this.id, this._onCloneEvent);
+        amplify.unsubscribe(this._getEventTopic("clone") + this.id, this._onCloneEvent);
 
-        amplify.unsubscribe(EVT["flip"] + this.id, this._onFlipEvent);
+        amplify.unsubscribe(this._getEventTopic("flip"), this._onFlipEvent);
 
-        amplify.unsubscribe(EVT["metadata"] + this.id, this._onMetadataEvent);
+        amplify.unsubscribe(this._getEventTopic("metadata"), this._onMetadataEvent);
 
         this.$el.find("[data-action]").off();
 
@@ -194,6 +198,12 @@ define([
     Box.prototype.dispose = function () {
 
         this._unbindObjEventListeners();
+
+        this.$el.remove();
+
+        delete this;
+
+        log.info("Box [" + this.id + "] disposed");
     };
 
     return Box;

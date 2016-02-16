@@ -1,15 +1,18 @@
 define([
     'loglevel',
+    'jquery',
     'fx-v-b/start',
     'text!test/json/uneca_population.json'
-],function (log, Box, Model){
+],function (log, $, Box, Model){
 
     'use strict';
 
     var s = {
         LARGE : "#box-container-large",
         MEDIUM_1 : "#box-container-medium-1",
-        MEDIUM_2 : "#box-container-medium-2"
+        MEDIUM_2 : "#box-container-medium-2",
+        DESTROY :  "#box-container-destroy",
+        DESTROY_BTN :  "#btn-destroy",
     };
 
     function Test(){
@@ -29,6 +32,8 @@ define([
         this._renderLargeBox();
 
         this._renderMediumBoxes();
+
+        this._renderDestroyBox();
 
     };
 
@@ -54,6 +59,24 @@ define([
             box2 = new Box({
                 el : s.MEDIUM_2
             });
+
+        log.trace("Rendering medium boxes: end");
+
+    };
+
+    Test.prototype._renderDestroyBox = function () {
+
+        log.trace("Rendering destory box: start");
+
+        var box = new Box({
+                el : s.DESTROY
+            });
+
+        $(s.DESTROY_BTN).on("click", function () {
+            log.warn("Destroy click");
+
+            box.dispose();
+        });
 
         log.trace("Rendering medium boxes: end");
 
