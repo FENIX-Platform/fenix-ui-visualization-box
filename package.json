@@ -1,0 +1,24 @@
+{
+  "name": "fenix-visualization-box",
+  "version": "0.0.1",
+  "description": "FENIX resource visualization box",
+  "main": "src/js/start.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FENIX-Platform/fenix-visualization-box.git"
+  },
+  "keywords": [
+    "visualization",
+    "resource",
+    "fenix"
+  ],
+  "author": "Daniele Salvatore <daniele.salvatore@fao.org> (http://fenix.fao.org/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/FENIX-Platform/fenix-visualization-box/issues"
+  },
+  "homepage": "https://github.com/FENIX-Platform/fenix-visualization-box#readme"
+}

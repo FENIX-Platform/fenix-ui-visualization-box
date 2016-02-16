@@ -1,0 +1,35 @@
+<div class="fx-md-viewer-wrapper">
+    <div class="fx-md-viewer-header">
+        <div class="row">
+            <div class="col-xs-12">
+                <h1 class="fx-md-viewer-title ">{{{title_resource}}}
+                    {{#if hasExport}}
+                        <button type="button" class="fx-md-report-btn btn pull-right">Export Metadata</button>
+                    {{/if}}
+                </h1>
+
+            </div>
+
+        </div>
+    </div>
+    <div class="fx-md-viewer-body">
+        <table class="fx-md-viewer-container">
+            {{#each data}}
+                <tr class="{{className}}">
+                    {{#if desc}}
+                        <td class="metadata-viewer-title truncate">
+                            {{title}}
+                            <div class="pull-right fx-md-viewer-description glyphicon glyphicon-info-sign"
+                                 data-content="{{{desc}}}"></div>
+                        </td>
+                        <td class="metadata-viewer-value">{{value}}</td>
+                    {{else}}
+                        <td class="metadata-viewer-title truncate">{{title}}</td>
+                        <td class="metadata-viewer-value">{{value}}</td>
+                    {{/if}}
+                </tr>
+            {{/each}}
+        </table>
+    </div>
+    <div class="fx-md-viewer-footer"></div>
+</div>
