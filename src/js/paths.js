@@ -4,9 +4,9 @@ define(function () {
 
         paths: {
             'fx-v-b/start': './start',
-            'fx-v-b/html': '../html',
+            'fx-v-b/html': '../../html',
             'fx-v-b/js': './',
-            'fx-v-b/config' :  '../config',
+            'fx-v-b/config' :  '../../config',
 
             //3rd party libs
             'jquery': '{FENIX_CDN}/js/jquery/2.1.1/jquery.min',

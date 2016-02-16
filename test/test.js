@@ -96,12 +96,15 @@ require([
         'domReady!'
     ], function (log, Test) {
 
-        log.info("===== FENIX Visualization Box =====");
-        log.info("Test starting:... ");
+        //trace, debug, info, warn, error
+        log.setLevel('trace')
+
+        log.warn("~~~~~ FENIX Visualization Box: test");
+        log.info("===== Start testing:...");
 
         Test.start();
 
-        log.info("End testing");
+        log.info("===== End testing");
 
     });
 });

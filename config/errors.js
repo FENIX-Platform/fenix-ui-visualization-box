@@ -3,10 +3,11 @@ define(function () {
 
     'use strict';
 
+    var prefix = "";
+
     return {
 
-        default_status : "loading",
-        ready : false
+        MISSING_CONTAINER : prefix + "missing_container"
 
     };
 });
