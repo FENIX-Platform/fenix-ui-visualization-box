@@ -4,7 +4,8 @@ define([
 
     'use strict';
 
-    function Starter(){}
+    function Starter(){
+    }
 
     Starter.prototype.init = function (options) {
 
