@@ -1,0 +1,7 @@
+{
+"version": 3,
+"mappings": "AAEE,sBAAe;EACb,OAAO,EAAE,IAAI;AAUX,mDAA8B;EAC5B,OAAO,EAAE,KAAK;AADhB,mDAA8B;EAC5B,OAAO,EAAE,KAAK;AADhB,uDAA8B;EAC5B,OAAO,EAAE,KAAK;AADhB,mDAA8B;EAC5B,OAAO,EAAE,KAAK",
+"sources": ["../../src/css/_visualization-box.scss"],
+"names": [],
+"file": "test.css"
+}

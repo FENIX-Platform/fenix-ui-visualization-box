@@ -15,9 +15,13 @@ define(function () {
             underscore: "{FENIX_CDN}/js/underscore/1.7.0/underscore.min",
             i18n: "{FENIX_CDN}/js/requirejs/plugins/i18n/2.0.4/i18n",
             text: '{FENIX_CDN}/js/requirejs/plugins/text/2.0.12/text',
+            bootstrap : "{FENIX_CDN}/js/bootstrap/3.3.4/js/bootstrap.min"
             //'q': '{FENIX_CDN}/js/q/1.1.2/q'
         },
         shim: {
+            bootstrap : {
+                deps : ['jquery']
+            },
             underscore: {
                 exports: '_'
             },

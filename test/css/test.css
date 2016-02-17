@@ -1,0 +1,12 @@
+.fx-box [data-content] {
+  display: none; }
+.fx-box[data-status="ready"] [data-content="ready"] {
+  display: block; }
+.fx-box[data-status="error"] [data-content="error"] {
+  display: block; }
+.fx-box[data-status="loading"] [data-content="loading"] {
+  display: block; }
+.fx-box[data-status="empty"] [data-content="empty"] {
+  display: block; }
+
+/*# sourceMappingURL=test.css.map */

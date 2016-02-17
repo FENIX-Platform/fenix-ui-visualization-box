@@ -10,10 +10,15 @@ define([
     "fx-v-b/config/errors",
     "fx-v-b/config/events",
     "text!fx-v-b/html/structure.hbs",
-    "amplify"
+    "amplify",
+    "bootstrap"
 ], function (log, $, _, Handlebars, C, CD, ERR, EVT, Structure) {
 
     'use strict';
+
+    var s = {
+        BOX: ".fx-box"
+    };
 
     /* API */
 
@@ -26,11 +31,13 @@ define([
 
         var valid = this._validateInput();
 
-        if (valid !== true) {
+        if (valid === true) {
 
             this._initObj();
 
             this._bindObjEventListeners();
+
+            this._checkModelStatus();
 
             return this;
 
@@ -45,18 +52,10 @@ define([
         log.info("Render model for box [" + this.id + "]:");
         log.info(obj);
 
-        if (!obj.model || !obj.model.data) {
+        $.extend(true, this, obj);
 
-            this._setStatus("empty");
+        this._checkModelStatus();
 
-        } else {
-
-            this.model = $.extend(true, {ready: true}, obj.model);
-
-            this._setStatus("ready");
-
-            this._renderObj();
-        }
     };
 
     Box.prototype.dispose = function () {
@@ -70,7 +69,52 @@ define([
         log.info("Box [" + this.id + "] disposed");
     };
 
+    Box.prototype.setStatus = function (status) {
+
+        this._setStatus(status);
+    };
+
     /* END - API */
+
+    Box.prototype._getModelStatus = function () {
+
+        if (!this.hasOwnProperty('model')) {
+            return 'no_model';
+        }
+
+        if (typeof this.model !== 'object' ) {
+            return 'error';
+        }
+
+        if (Array.isArray(this.model.data) && this.model.data.length === 0 ) {
+            return 'empty';
+        }
+
+        if (Array.isArray(this.model.data) && this.model.data.length > 0 ) {
+            return 'ready';
+        }
+
+        return 'error';
+    };
+
+    Box.prototype._checkModelStatus = function () {
+
+        switch (this._getModelStatus()) {
+            case 'ready' :
+                this.setStatus("ready");
+                this._renderObj();
+                break;
+            case 'empty' :
+                this.setStatus("empty");
+                break;
+            case 'no_model' :
+                this.setStatus("loading");
+                break;
+            default :
+                this.setStatus("error");
+                break;
+        }
+    };
 
     Box.prototype._renderObj = function () {
 
@@ -122,16 +166,16 @@ define([
 
         }
 
-        return errors.length > 0 ? valid : errors;
+        return errors.length > 0 ? errors : valid;
     };
 
     Box.prototype._setStatus = function (status) {
 
-        log.info("Set '" + status + "' for result id: " + this.id);
+        log.info("Set '" + status + "' status for result id: " + this.id);
 
         this.status = status;
 
-        this.$el.attr("data-status", this.status);
+        this.$el.find(s.BOX).attr("data-status", this.status);
     };
 
     /* Event binding and callbacks */
@@ -160,35 +204,39 @@ define([
 
                 log.info("Raise event: " + event);
 
-                amplify.publish(event, self);
+                amplify.publish(event, {target: this, box: self});
 
             });
         });
     };
 
-    Box.prototype._onRemoveEvent = function (box) {
+    Box.prototype._onRemoveEvent = function (payload) {
         log.info("Listen to event: " + this._getEventTopic("remove"));
-        log.trace(box)
+        log.trace(payload)
     };
 
-    Box.prototype._onResizeEvent = function (box) {
+    Box.prototype._onResizeEvent = function (payload) {
         log.info("Listen to event: " + this._getEventTopic("resize"));
-        log.trace(box)
+        log.trace(payload);
+
+        if (payload.target && $(payload.target).data("size")) {
+            log.trace("Size: " + $(payload.target).data("size"))
+        }
     };
 
-    Box.prototype._onCloneEvent = function (box) {
+    Box.prototype._onCloneEvent = function (payload) {
         log.info("Listen to event: " + this._getEventTopic("clone"));
-        log.trace(box)
+        log.trace(payload)
     };
 
-    Box.prototype._onFlipEvent = function (box) {
+    Box.prototype._onFlipEvent = function (payload) {
         log.info("Listen to event: " + this._getEventTopic("flip"));
-        log.trace(box)
+        log.trace(payload)
     };
 
-    Box.prototype._onMetadataEvent = function (box) {
+    Box.prototype._onMetadataEvent = function (payload) {
         log.info("Listen to event: " + this._getEventTopic("metadata"));
-        log.trace(box)
+        log.trace(payload)
     };
 
     Box.prototype._unbindObjEventListeners = function () {
