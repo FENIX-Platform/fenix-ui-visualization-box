@@ -24,6 +24,11 @@ require.config({
         olapPaths: pathProjectRoot + 'submodules/fenix-ui-olap/js/paths',
         reportPaths: pathProjectRoot + 'submodules/fenix-ui-reports/src/js/paths',
         visualizationPaths : pathProjectRoot + 'submodules/fenix-ui-visualization-box/src/js/paths',
+        dataEditorPaths : pathProjectRoot + 'submodules/fenix-ui-DataEditor/js/paths',
+        dsdEditorPaths : pathProjectRoot + 'submodules/fenix-ui-DSDEditor/js/paths',
+        metadataEditorPaths : pathProjectRoot + 'submodules/fenix-ui-metadata-editor/js/paths',
+        catalogPaths : pathProjectRoot + 'submodules/fenix-ui-catalog/js/paths',
+        dataManagementPaths : pathProjectRoot + 'submodules/fenix-ui-data-management/src/js/paths',
     }
 });
 

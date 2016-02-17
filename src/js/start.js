@@ -15,6 +15,8 @@ define([
 
     'use strict';
 
+    /* API */
+
     function Box(obj) {
         log.info("Create box");
         log.trace(obj);
@@ -56,6 +58,19 @@ define([
             this._renderObj();
         }
     };
+
+    Box.prototype.dispose = function () {
+
+        this._unbindObjEventListeners();
+
+        this.$el.remove();
+
+        delete this;
+
+        log.info("Box [" + this.id + "] disposed");
+    };
+
+    /* END - API */
 
     Box.prototype._renderObj = function () {
 
@@ -119,10 +134,7 @@ define([
         this.$el.attr("data-status", this.status);
     };
 
-    Box.prototype._getEventTopic = function (evt) {
-
-        return EVT[evt] + this.id;
-    };
+    /* Event binding and callbacks */
 
     Box.prototype._bindObjEventListeners = function () {
 
@@ -195,16 +207,12 @@ define([
 
     };
 
-    Box.prototype.dispose = function () {
+    Box.prototype._getEventTopic = function (evt) {
 
-        this._unbindObjEventListeners();
-
-        this.$el.remove();
-
-        delete this;
-
-        log.info("Box [" + this.id + "] disposed");
+        return EVT[evt] + this.id;
     };
+
+    /* END - Event binding and callbacks */
 
     return Box;
 });
