@@ -17,6 +17,8 @@ define([
         STATE_BTNS :  "#status-btns [data-status]",
         ASYNC: "#box-container-async",
         ASYNC_BTN: "#btn-async",
+        TAB: "#box-container-tabs",
+        TAB_BTNS: "#tabs-btns [data-tab]"
     },
         empty_model = { data : []},
         error_model = {},
@@ -45,6 +47,8 @@ define([
         this._renderStatusBox();
 
         this._renderAsyncBox();
+
+        this._renderTabBox();
 
     };
 
@@ -139,6 +143,29 @@ define([
         });
 
         log.trace("Rendering async boxes: end");
+
+    };
+
+    Test.prototype._renderTabBox = function () {
+
+        log.trace("Rendering tab box: start");
+
+        var box = new Box({
+            el : s.TAB,
+            model : valid_model
+        });
+
+        $(s.TAB_BTNS).on("click", function () {
+
+            var tab = $(this).data('tab');
+
+            log.info("Change tab click: " + tab);
+
+            box.showTab(tab);
+
+        });
+
+        log.trace("Rendering tab boxes: end");
 
     };
 

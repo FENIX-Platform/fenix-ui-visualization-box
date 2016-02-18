@@ -1,32 +1,40 @@
 <div class="fx-box" data-status="{{ default_status }}">
 
-    <div data-content="ready">
+    <div data-content="ready" data-tab="{{ default_tab }}">
 
-        <h6>Right btns</h6>
+        <div class="pull-left">
+            <div class="dropdown">
+                <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+                    Menu <span class="caret"></span>
+                </button>
 
-        <div class="dropdown">
-            <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
-                Menu <span class="caret"></span>
-            </button>
-
-            <ul class="dropdown-menu">
-                <li><a href="#">HTML</a></li>
-                <li><a href="#">CSS</a></li>
-                <li><a href="#">JavaScript</a></li>
-            </ul>
+                <ul class="dropdown-menu">
+                    <li><a href="#">HTML</a></li>
+                    <li><a href="#">CSS</a></li>
+                    <li><a href="#">JavaScript</a></li>
+                </ul>
+            </div>
         </div>
 
-        <h6>Left btns</h6>
-
-        <button data-action="metadata" class="btn btn-default" type="button">metadata</button>
-        <button data-action="remove" class="btn btn-default" type="button">remove</button>
-        <button data-action="resize" data-size="2" class="btn btn-default" type="button">resize</button>
-        <button data-action="clone" class="btn btn-default" type="button">clone</button>
-        <button data-action="flip" class="btn btn-default" type="button">flip</button>
-
-        <h6>Content</h6>
+        <div class="pull-right">
+            <button data-action="metadata" class="btn btn-default" type="button">metadata</button>
+            <button data-action="remove" class="btn btn-default" type="button">remove</button>
+            <button data-action="resize" data-size="2" class="btn btn-default" type="button">resize</button>
+            <button data-action="clone" class="btn btn-default" type="button">clone</button>
+            <button data-action="flip" class="btn btn-default" type="button">flip</button>
+        </div>
 
         <strong>Hi! {{ id }}</strong>
+
+        <div data-section="chart">
+            <h4>Chart</h4>
+        </div>
+        <div data-section="map">
+            <h4>Map</h4>
+        </div>
+        <div data-section="table">
+            <h4>Table</h4>
+        </div>
 
     </div>
 

@@ -8,5 +8,13 @@
   display: block; }
 .fx-box[data-status="empty"] [data-content="empty"] {
   display: block; }
+.fx-box [data-content="ready"] [data-section] {
+  display: none; }
+.fx-box [data-content="ready"][data-tab="chart"] [data-section="chart"] {
+  display: block; }
+.fx-box [data-content="ready"][data-tab="table"] [data-section="table"] {
+  display: block; }
+.fx-box [data-content="ready"][data-tab="map"] [data-section="map"] {
+  display: block; }
 
 /*# sourceMappingURL=test.css.map */

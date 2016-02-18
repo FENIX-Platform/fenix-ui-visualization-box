@@ -11,7 +11,11 @@ define(function () {
         resize: prefix + "resize.",
         clone: prefix + "clone.",
         flip: prefix + "flip.",
-        metadata: prefix + "metadata."
+        metadata: prefix + "metadata.",
+
+        model_done : "model.done",
+        model_error : "model.error"
+
 
     };
 });

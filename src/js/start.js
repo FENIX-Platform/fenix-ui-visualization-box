@@ -10,14 +10,16 @@ define([
     "fx-v-b/config/errors",
     "fx-v-b/config/events",
     "text!fx-v-b/html/structure.hbs",
+    "fx-v-b/js/model",
     "amplify",
     "bootstrap"
-], function (log, $, _, Handlebars, C, CD, ERR, EVT, Structure) {
+], function (log, $, _, Handlebars, C, CD, ERR, EVT, Structure, ModelMng) {
 
     'use strict';
 
     var s = {
-        BOX: ".fx-box"
+        BOX: ".fx-box",
+        CONTENT_READY : "[data-content='ready']"
     };
 
     /* API */
@@ -74,6 +76,11 @@ define([
         this._setStatus(status);
     };
 
+    Box.prototype.showTab = function (tab) {
+
+        this._showTab(tab);
+    };
+
     /* END - API */
 
     Box.prototype._getModelStatus = function () {
@@ -118,17 +125,9 @@ define([
 
     Box.prototype._renderObj = function () {
 
-        //show default tab
-        /* var $tabs = obj.$el.find(s.TABS_CONTROLLERS),
-         $candidate = $tabs.filter("[data-visualization='" + AC.resultDefaultTab + "']");
+        this.modelManager.process();
 
-         if ($candidate.length < 1) {
-         $candidate = $tabs.first();
 
-         log.warn("Impossible to find default tab '" + AC.resultDefaultTab + "'. Showing first tab instead")
-         }
-
-         $candidate.tab('show');*/
 
     };
 
@@ -141,6 +140,8 @@ define([
             $html = $(template($.extend(true, {}, this)));
 
         this.$el.html($html);
+
+        this.modelManager = new ModelMng();
 
     };
 
@@ -178,6 +179,15 @@ define([
         this.$el.find(s.BOX).attr("data-status", this.status);
     };
 
+    Box.prototype._showTab = function (tab) {
+
+        log.info("Show '" + tab + "' tab for result id: " + this.id);
+
+        this.tab = tab;
+
+        this.$el.find(s.CONTENT_READY).attr("data-tab", this.tab);
+    };
+
     /* Event binding and callbacks */
 
     Box.prototype._bindObjEventListeners = function () {
@@ -208,6 +218,8 @@ define([
 
             });
         });
+
+        this.modelManager.subscribe(EVT.model_done, _.bind(this._onModelProcessDone))
     };
 
     Box.prototype._onRemoveEvent = function (payload) {
@@ -258,6 +270,11 @@ define([
     Box.prototype._getEventTopic = function (evt) {
 
         return EVT[evt] + this.id;
+    };
+
+    Box.prototype._onModelProcessDone = function (model) {
+        log.info("Handling processed model");
+        log.trace(model);
     };
 
     /* END - Event binding and callbacks */

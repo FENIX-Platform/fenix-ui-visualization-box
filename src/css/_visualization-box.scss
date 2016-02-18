@@ -20,4 +20,23 @@
 
   }
 
+  [data-content="ready"] {
+
+    [data-section] {
+      display: none;
+    }
+    //show only the status only correspondent tab content
+    $sections: "chart" "table" "map";
+
+    @each $sec in $sections {
+
+      &[data-tab="#{$sec}"] {
+
+        [data-section="#{$sec}"] {
+          display: block;
+
+        }
+      }
+    }
+  }
 }

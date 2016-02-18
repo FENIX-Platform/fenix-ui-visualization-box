@@ -102,14 +102,14 @@ require([
     ], function (log, Test) {
 
         //trace, debug, info, warn, error
-        log.setLevel('trace')
+        log.setLevel('trace');
 
         log.warn("~~~~~ FENIX Visualization Box: test");
         log.info("===== Start testing:...");
 
         Test.start();
 
-        log.info("===== End testing");
+        //log.info("===== End testing");
 
     });
 });

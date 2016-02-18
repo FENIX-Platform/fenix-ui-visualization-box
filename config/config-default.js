@@ -6,6 +6,7 @@ define(function () {
     return {
 
         default_status : "loading",
+        default_tab : "table",
         ready : false
 
     };
