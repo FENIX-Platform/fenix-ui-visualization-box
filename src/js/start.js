@@ -73,10 +73,14 @@ define([
 
     Box.prototype.setStatus = function (status) {
 
+        //TODO check if status != current status
+
         this._setStatus(status);
     };
 
     Box.prototype.showTab = function (tab) {
+
+        //TODO check if tab != current tab
 
         this._showTab(tab);
     };
@@ -106,7 +110,7 @@ define([
 
     Box.prototype._checkModelStatus = function () {
 
-        switch (this._getModelStatus()) {
+        switch (this._getModelStatus().toLowerCase()) {
             case 'ready' :
                 this.setStatus("ready");
                 this._renderObj();
@@ -125,9 +129,10 @@ define([
 
     Box.prototype._renderObj = function () {
 
-        this.modelManager.process();
-
-
+        this.modelManager.process({
+            model: this.model,
+            //config : toolbar.getValues()
+        });
 
     };
 
@@ -150,6 +155,7 @@ define([
         var valid = true,
             errors = [];
 
+        //Check if box has an id
         if (!this.id) {
 
             window.fx_vis_box_id >= 0 ? window.fx_vis_box_id++ : window.fx_vis_box_id = 0;
@@ -159,6 +165,7 @@ define([
             log.warn("Impossible to find id. Set auto id to: " + this.id);
         }
 
+        //Check if $el exist
         if (this.$el.length === 0) {
 
             errors.push({code: ERR.MISSING_CONTAINER});
@@ -219,7 +226,9 @@ define([
             });
         });
 
-        this.modelManager.subscribe(EVT.model_done, _.bind(this._onModelProcessDone))
+        this.modelManager.subscribe(EVT.model_done, _.bind(this._onModelProcessDone, this));
+
+        this.modelManager.subscribe(EVT.model_error, _.bind(this._onModelError, this));
     };
 
     Box.prototype._onRemoveEvent = function (payload) {
@@ -275,6 +284,16 @@ define([
     Box.prototype._onModelProcessDone = function (model) {
         log.info("Handling processed model");
         log.trace(model);
+
+        //Create tabs
+        //Pass processed model to tab
+        //Tab creates the specific creator conf
+        //creator.render(conf)
+    };
+
+    Box.prototype._onModelError = function (err) {
+        log.info("Handling model error " + err);
+        this.setStatus("error");
     };
 
     /* END - Event binding and callbacks */

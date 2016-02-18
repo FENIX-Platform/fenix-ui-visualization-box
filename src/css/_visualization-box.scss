@@ -15,9 +15,7 @@
         display: block;
 
       }
-
     }
-
   }
 
   [data-content="ready"] {
@@ -25,7 +23,7 @@
     [data-section] {
       display: none;
     }
-    //show only the status only correspondent tab content
+    //show only the selected tab
     $sections: "chart" "table" "map";
 
     @each $sec in $sections {

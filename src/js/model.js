@@ -23,9 +23,15 @@ define([
         return this;
     }
 
-    Model.prototype.process = function () {
+    Model.prototype.process = function (params) {
 
+        //sync or async code
+
+        //when the process is successfully finished
         this.publish(EVT.model_done, {test: "test"});
+
+        //In case of error
+        //this.publish(EVT.model_error, {err: "err"});
 
         return this;
     };
