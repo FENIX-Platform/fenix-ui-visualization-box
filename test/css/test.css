@@ -16,5 +16,7 @@
   display: block; }
 .fx-box [data-content="ready"][data-tab="map"] [data-section="map"] {
   display: block; }
+.fx-box [data-content="ready"][data-tab="blank"] [data-section="blank"] {
+  display: block; }
 
 /*# sourceMappingURL=test.css.map */

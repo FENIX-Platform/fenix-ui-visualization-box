@@ -24,7 +24,7 @@
       display: none;
     }
     //show only the selected tab
-    $sections: "chart" "table" "map";
+    $sections: "chart" "table" "map" "blank";
 
     @each $sec in $sections {
 

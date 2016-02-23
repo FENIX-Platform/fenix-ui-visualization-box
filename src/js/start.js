@@ -2,6 +2,7 @@
 
 define([
     "loglevel",
+    "require",
     "jquery",
     "underscore",
     "handlebars",
@@ -13,13 +14,13 @@ define([
     "fx-v-b/js/model",
     "amplify",
     "bootstrap"
-], function (log, $, _, Handlebars, C, CD, ERR, EVT, Structure, ModelMng) {
+], function (log, require, $, _, Handlebars, C, CD, ERR, EVT, Structure, ModelMng) {
 
     'use strict';
 
     var s = {
         BOX: ".fx-box",
-        CONTENT_READY : "[data-content='ready']"
+        CONTENT_READY: "[data-content='ready']"
     };
 
     /* API */
@@ -62,12 +63,6 @@ define([
 
     Box.prototype.dispose = function () {
 
-        this._unbindObjEventListeners();
-
-        this.$el.remove();
-
-        delete this;
-
         log.info("Box [" + this.id + "] disposed");
     };
 
@@ -80,9 +75,12 @@ define([
 
     Box.prototype.showTab = function (tab) {
 
-        //TODO check if tab != current tab
-
         this._showTab(tab);
+    };
+
+    Box.prototype.setSize = function (size) {
+
+        this._setSize(size);
     };
 
     /* END - API */
@@ -93,15 +91,15 @@ define([
             return 'no_model';
         }
 
-        if (typeof this.model !== 'object' ) {
+        if (typeof this.model !== 'object') {
             return 'error';
         }
 
-        if (Array.isArray(this.model.data) && this.model.data.length === 0 ) {
+        if (Array.isArray(this.model.data) && this.model.data.length === 0) {
             return 'empty';
         }
 
-        if (Array.isArray(this.model.data) && this.model.data.length > 0 ) {
+        if (Array.isArray(this.model.data) && this.model.data.length > 0) {
             return 'ready';
         }
 
@@ -138,15 +136,19 @@ define([
 
     Box.prototype._initObj = function () {
 
-        this.tabs = {};
-
-        //Inject structure
+        //Inject box blank template
         var template = Handlebars.compile(Structure),
             $html = $(template($.extend(true, {}, this)));
 
         this.$el.html($html);
 
         this.modelManager = new ModelMng();
+
+        this.tab_instances = {};
+
+        this.size = C.default_size || CD.default_size;
+
+        this.status = C.default_status || CD.default_status;
 
     };
 
@@ -188,11 +190,103 @@ define([
 
     Box.prototype._showTab = function (tab) {
 
+        //TODO check if it is a valid tab
+
+        if (this.tab === tab) {
+            log.info("Aborting show tab current tab is equal to selected one");
+            return;
+        }
+
+        if (this.tabs[tab].suitable !== true) {
+            log.warn("Aborting show tab because selected tab is not suitable with current model");
+            return;
+        }
+
         log.info("Show '" + tab + "' tab for result id: " + this.id);
 
         this.tab = tab;
 
         this.$el.find(s.CONTENT_READY).attr("data-tab", this.tab);
+
+        this._showTabContent();
+    };
+
+    Box.prototype._showTabContent = function () {
+
+        if (!this.tabs[this.tab] || this.tabs[this.tab].initialized === true) {
+            log.error("Error on show tab content: " + this.tab);
+
+            this._setStatus("error");
+
+            return;
+        }
+
+        if (this.tabs[this.tab].callback === 'once') {
+            this.tabs[this.tab].initialized = true;
+        }
+
+        var instance = this._getTabInstance(this.tab),
+            candidateFn = instance.show;
+
+        if (_.isFunction(candidateFn)) {
+            candidateFn.call(instance);
+        } else {
+            log.error(this.tab + " tab does not implement the mandatory show() method");
+        }
+    };
+
+    Box.prototype._createTabInstance = function (tab) {
+
+        var registry = this.tab_registry,
+        //Note that for sync call the argument of require() is not an array but a string
+            Tab = require(registry[tab].path),
+            instance = new Tab({
+                $el: this._getTabContainer(tab),
+                box: this,
+                model: $.extend(true, {}, this.model),
+                id: tab + "_" + this.id
+            });
+
+        //cache the plugin instance
+        this.tabs[tab].instance = instance;
+
+        if (_.isFunction(instance.isSuitable)) {
+            this.tabs[tab].suitable = instance.isSuitable();
+        } else {
+            log.error(tab + " tab does not implement the mandatory isSuitable() method");
+        }
+
+        return instance;
+
+    };
+
+    Box.prototype._getTabInstance = function (tab) {
+
+        return this.tabs[tab].instance;
+
+    };
+
+    Box.prototype._getTabContainer = function (tab) {
+
+        return this.$el.find(s.BOX).find("[data-section='" + tab + "']");
+
+    };
+
+    Box.prototype._setSize = function (size) {
+
+        //TODO check if it is a valid size
+
+        if (this.size === size) {
+            log.info("Aborting resize because current size is equal to selected one");
+            return;
+        }
+
+        this.size = size;
+
+        this.$el.find(s.BOX).attr("data-size", this.size);
+
+        amplify.publish(EVT["resize"], this)
+
     };
 
     /* Event binding and callbacks */
@@ -233,7 +327,11 @@ define([
 
     Box.prototype._onRemoveEvent = function (payload) {
         log.info("Listen to event: " + this._getEventTopic("remove"));
-        log.trace(payload)
+        log.trace(payload);
+
+        amplify.publish(EVT['remove'], this);
+
+        this._dispose();
     };
 
     Box.prototype._onResizeEvent = function (payload) {
@@ -241,7 +339,11 @@ define([
         log.trace(payload);
 
         if (payload.target && $(payload.target).data("size")) {
-            log.trace("Size: " + $(payload.target).data("size"))
+
+            var size = $(payload.target).data("size");
+            log.trace("Size: " + size);
+
+            this._setSize(size);
         }
     };
 
@@ -285,10 +387,79 @@ define([
         log.info("Handling processed model");
         log.trace(model);
 
+        this._preloadTabSources();
+
         //Create tabs
         //Pass processed model to tab
         //Tab creates the specific creator conf
         //creator.render(conf)
+
+        //this._showDefaultTab();
+    };
+
+    Box.prototype._preloadTabSources = function () {
+
+        var registeredTabs = $.extend(true, {}, this.tab_registry),
+            tabsKeys = Object.keys(this.tabs),
+            paths = [];
+
+        _.each(tabsKeys, function (tab) {
+
+            var conf = registeredTabs[tab];
+
+            if (!conf) {
+                log.error('Registration not found for "' + tab + ' tab".');
+            }
+
+            if (conf.path) {
+                paths.push(conf.path);
+            } else {
+                log.error('Impossible to find path configuration for "' + tab + ' tab".');
+            }
+
+        });
+
+        //Async load of plugin js source
+        require(paths, _.bind(this._preloadTabSourcesSuccess, this));
+
+    };
+
+    Box.prototype._preloadTabSourcesSuccess = function () {
+
+        this._checkSuitableTabs();
+    };
+
+    Box.prototype._checkSuitableTabs = function () {
+
+        var registeredTabs = this.tab_registry,
+            tabsKeys = Object.keys(this.tabs),
+            self = this;
+
+        _.each(tabsKeys, function (tab) {
+
+            var conf = registeredTabs[tab];
+
+            if (!conf) {
+                log.error('Registration not found for "' + tab + ' tab".');
+            }
+
+            if (conf.path) {
+                self._createTabInstance(tab);
+            } else {
+                log.error('Impossible to find path configuration for "' + tab + ' tab".');
+            }
+
+        });
+
+        this._showDefaultTab();
+
+    };
+
+    Box.prototype._showDefaultTab = function () {
+
+        var tab = C.default_tab || CD.default_tab;
+
+        this._showTab(tab);
     };
 
     Box.prototype._onModelError = function (err) {
@@ -297,6 +468,36 @@ define([
     };
 
     /* END - Event binding and callbacks */
+    Box.prototype._disposeTabs = function () {
+
+        var tabs = this.tabs,
+            keys = Object.keys(tabs);
+
+        _.each(keys, _.bind(function (tab) {
+
+            var instance = this._getTabInstance(tab);
+
+            if (!instance || !_.isFunction(instance.dispose)) {
+                log.error("Impossible to dispose tab: " + tab);
+            } else {
+                instance.dispose.call(instance);
+            }
+
+        }, this));
+
+    };
+
+    Box.prototype._dispose = function () {
+
+        this._unbindObjEventListeners();
+
+        this.$el.remove();
+
+        this._disposeTabs();
+
+        delete this;
+
+    };
 
     return Box;
 });

@@ -20,7 +20,7 @@ define([
         TAB: "#box-container-tabs",
         TAB_BTNS: "#tabs-btns [data-tab]"
     },
-        empty_model = { data : []},
+        empty_model = { data : [] },
         error_model = {},
         valid_model = JSON.parse(Model);
 
@@ -39,6 +39,8 @@ define([
     Test.prototype._render = function () {
 
         this._renderLargeBox();
+
+        return;
 
         this._renderMediumBoxes();
 
