@@ -23,45 +23,27 @@ define([
         return this;
     }
 
+    /**
+     * Process a model
+     * @param {Object} params
+     * @return {promise} deferredObject
+     */
     Model.prototype.process = function (params) {
+
+        var deferredObject = $.Deferred();
 
         //sync or async code
 
-        //when the process is successfully finished
-        this.publish(EVT.model_done, {test: "test"});
+        setTimeout(function() {
+            var randomValue = Math.random();
+            if(randomValue < 0.5) {
+                deferredObject.resolve({test: "test"});
+            } else {
+                deferredObject.reject();
+            }
+        }, 1000);
 
-        //In case of error
-        //this.publish(EVT.model_error, {err: "err"});
-
-        return this;
-    };
-
-    /* pub/sub */
-
-    Model.prototype.subscribe = function (channel, fn) {
-        if (!this.channels[channel]) {
-            this.channels[channel] = [];
-        }
-
-        log.info("Subscribe for: " + channel);
-
-        this.channels[channel].push({context: this, callback: fn});
-        return this;
-    };
-
-    Model.prototype.publish = function (channel) {
-        if (!this.channels[channel]) {
-            return false;
-        }
-        var args = Array.prototype.slice.call(arguments, 1);
-
-        log.info("Publish: " + JSON.stringify(channel));
-
-        for (var i = 0, l = this.channels[channel].length; i < l; i++) {
-            var subscription = this.channels[channel][i];
-            subscription.callback.apply(subscription.context, args);
-        }
-        return this;
+        return deferredObject.promise();
     };
 
     /* END API */

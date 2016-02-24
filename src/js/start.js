@@ -130,7 +130,10 @@ define([
         this.modelManager.process({
             model: this.model,
             //config : toolbar.getValues()
-        });
+        }).then(
+            _.bind(this._onModelProcessDone, this),
+            _.bind(this._onModelProcessDone, this)
+        );
 
     };
 
@@ -320,9 +323,6 @@ define([
             });
         });
 
-        this.modelManager.subscribe(EVT.model_done, _.bind(this._onModelProcessDone, this));
-
-        this.modelManager.subscribe(EVT.model_error, _.bind(this._onModelError, this));
     };
 
     Box.prototype._onRemoveEvent = function (payload) {
@@ -403,7 +403,7 @@ define([
             tabsKeys = Object.keys(this.tabs),
             paths = [];
 
-        _.each(tabsKeys, function (tab) {
+        _.each(tabsKeys, _.bind(function (tab) {
 
             var conf = registeredTabs[tab];
 
@@ -411,13 +411,19 @@ define([
                 log.error('Registration not found for "' + tab + ' tab".');
             }
 
+            if (!$.isPlainObject(this.tabs[tab])) {
+                this.tabs[tab] = {};
+            }
+
+            this.tabs[tab].suitable = false;
+
             if (conf.path) {
                 paths.push(conf.path);
             } else {
                 log.error('Impossible to find path configuration for "' + tab + ' tab".');
             }
 
-        });
+        }, this));
 
         //Async load of plugin js source
         require(paths, _.bind(this._preloadTabSourcesSuccess, this));

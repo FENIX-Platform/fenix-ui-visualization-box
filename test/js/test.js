@@ -22,7 +22,8 @@ define([
     },
         empty_model = { data : [] },
         error_model = {},
-        valid_model = JSON.parse(Model);
+        valid_model = JSON.parse(Model),
+        boxes= [];
 
     function Test(){
 
@@ -40,8 +41,6 @@ define([
 
         this._renderLargeBox();
 
-        return;
-
         this._renderMediumBoxes();
 
         this._renderDestroyBox();
@@ -58,7 +57,7 @@ define([
 
         log.trace("Rendering large box: start");
 
-        var box = new Box({
+        var box = this.createBox({
             el : s.LARGE,
             model : valid_model
         });
@@ -71,11 +70,11 @@ define([
 
         log.trace("Rendering medium boxes: start");
 
-        var box1 = new Box({
+        var box1 = this.createBox({
                 el : s.MEDIUM_1,
                 model : empty_model
             }),
-            box2 = new Box({
+            box2 = this.createBox({
                 el : s.MEDIUM_2,
                 model : valid_model
             });
@@ -88,7 +87,7 @@ define([
 
         log.trace("Rendering destroy box: start");
 
-        var box = new Box({
+        var box = this.createBox({
                 el : s.DESTROY,
                 model : valid_model
             });
@@ -107,7 +106,7 @@ define([
 
         log.trace("Rendering status box: start");
 
-        var box = new Box({
+        var box = this.createBox({
             el : s.STATE,
             model : valid_model
         });
@@ -130,7 +129,7 @@ define([
 
         log.trace("Rendering async box: start");
 
-        var box = new Box({
+        var box = this.createBox({
             el : s.ASYNC
         });
 
@@ -152,7 +151,7 @@ define([
 
         log.trace("Rendering tab box: start");
 
-        var box = new Box({
+        var box = this.createBox({
             el : s.TAB,
             model : valid_model
         });
@@ -169,6 +168,15 @@ define([
 
         log.trace("Rendering tab boxes: end");
 
+    };
+
+    Test.prototype.createBox = function (params) {
+
+        var instance = new Box(params);
+
+        boxes.push(instance);
+
+        return instance;
     };
 
     return new Test();
