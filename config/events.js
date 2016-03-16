@@ -12,10 +12,10 @@ define(function () {
         clone: prefix + "clone.",
         flip: prefix + "flip.",
         metadata: prefix + "metadata.",
+        tab: prefix + "tab.",
 
         model_done : "model.done",
         model_error : "model.error"
-
 
     };
 });

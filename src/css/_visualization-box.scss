@@ -1,7 +1,16 @@
+/* Colors*/
+$frontface: white;
+$backface: #d2d0d0;
+
+
+
 .fx-box {
+
+  height: 300px;
 
   [data-content] {
     display: none;
+    height: 100%;
   }
 
   //show only the status only correspondent tab content
@@ -37,4 +46,51 @@
       }
     }
   }
+}
+
+/*Flip effect */
+/* entire container, keeps perspective */
+.flip-container {
+  perspective: 1000;
+}
+/* flip the pane when hovered*/
+.flip-container.flipped .flipper {
+  transform: rotateY(180deg);
+}
+
+
+.flip-container, .front, .back {
+ width: 100%;
+height: 100%;
+}
+
+/* flip speed goes here */
+.flipper {
+  transition: 0.6s;
+  transform-style: preserve-3d;
+  height: 100%;
+  position: relative;
+}
+
+/* hide back of pane during swap */
+.front, .back {
+  backface-visibility: hidden;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* front pane, placed above back */
+.front {
+  z-index: 2;
+  /* for firefox 31 */
+  transform: rotateY(0deg);
+  background-color: $frontface;
+}
+
+/* back, initially hidden pane */
+.back {
+  transform: rotateY(180deg);
+  background-color: $backface;
 }

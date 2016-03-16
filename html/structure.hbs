@@ -2,41 +2,53 @@
 
     <div data-content="ready" data-tab="{{ default_tab }}">
 
-        <div class="pull-left">
-            <div class="dropdown">
-                <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
-                    Menu <span class="caret"></span>
-                </button>
 
-                <ul class="dropdown-menu">
-                    <li><a href="#">HTML</a></li>
-                    <li><a href="#">CSS</a></li>
-                    <li><a href="#">JavaScript</a></li>
-                </ul>
+        <div class="flip-container">
+            <div class="flipper">
+                <div class="front">
+                    <!-- front content -->
+                    <div class="front-toolbar">
+
+                        <div class="pull-left">
+                            <div data-role="right-menu" class="dropdown">
+                                <a href="" class="btn dropdown-toggle" data-toggle="dropdown">
+                                    <span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>
+                                </a>
+
+                            </div>
+                        </div>
+
+                        <div class="pull-right">
+                            <button data-action="metadata" class="btn btn-default" type="button">metadata</button>
+                            <button data-action="remove" class="btn btn-default" type="button">remove</button>
+                            <button data-action="resize" data-size="2" class="btn btn-default" type="button">resize</button>
+                            <button data-action="clone" class="btn btn-default" type="button">clone</button>
+                            <button data-action="flip" class="btn btn-default" type="button">flip</button>
+                        </div>
+                    </div>
+
+                    <strong>Hi! {{ id }}</strong>
+
+                    <div data-section="chart">
+                        <h4>Chart</h4>
+                    </div>
+                    <div data-section="map">
+                        <h4>Map</h4>
+                    </div>
+                    <div data-section="table">
+                        <h4>Table</h4>
+                    </div>
+                    <div data-section="blank">
+                        <h4>Blank</h4>
+                    </div>
+
+                </div>
+                <div class="back">
+                    <!-- back content -->
+                    <button data-action="flip" class="btn btn-default pull-right" type="button">flip</button>
+                    this is the back
+                </div>
             </div>
-        </div>
-
-        <div class="pull-right">
-            <button data-action="metadata" class="btn btn-default" type="button">metadata</button>
-            <button data-action="remove" class="btn btn-default" type="button">remove</button>
-            <button data-action="resize" data-size="2" class="btn btn-default" type="button">resize</button>
-            <button data-action="clone" class="btn btn-default" type="button">clone</button>
-            <button data-action="flip" class="btn btn-default" type="button">flip</button>
-        </div>
-
-        <strong>Hi! {{ id }}</strong>
-
-        <div data-section="chart">
-            <h4>Chart</h4>
-        </div>
-        <div data-section="map">
-            <h4>Map</h4>
-        </div>
-        <div data-section="table">
-            <h4>Table</h4>
-        </div>
-        <div data-section="blank">
-            <h4>Blank</h4>
         </div>
 
     </div>
@@ -46,7 +58,6 @@
     </div>
 
     <div data-content="loading">
-        Loading
         <span class="loading loading-48"></span>
     </div>
 

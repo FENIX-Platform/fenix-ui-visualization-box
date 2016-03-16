@@ -11,16 +11,19 @@ define([
     "fx-v-b/config/errors",
     "fx-v-b/config/events",
     "text!fx-v-b/html/structure.hbs",
-    "fx-v-b/js/model",
+    "fx-common/json-menu",
+    "fx-v-b/config/right-menu-model",
     "amplify",
     "bootstrap"
-], function (log, require, $, _, Handlebars, C, CD, ERR, EVT, Structure, ModelMng) {
+], function (log, require, $, _, Handlebars, C, CD, ERR, EVT, Structure, JsonMenu, RightMenuModel) {
 
     'use strict';
 
     var s = {
         BOX: ".fx-box",
-        CONTENT_READY: "[data-content='ready']"
+        CONTENT_READY: "[data-content='ready']",
+        RIGHT_MENU: "[data-role='right-menu']",
+        FLIP_CONTAINER : ".flip-container"
     };
 
     /* API */
@@ -37,6 +40,8 @@ define([
         if (valid === true) {
 
             this._initObj();
+
+            this._renderMenu();
 
             this._bindObjEventListeners();
 
@@ -62,6 +67,8 @@ define([
     };
 
     Box.prototype.dispose = function () {
+
+        this._dispose();
 
         log.info("Box [" + this.id + "] disposed");
     };
@@ -127,13 +134,7 @@ define([
 
     Box.prototype._renderObj = function () {
 
-        this.modelManager.process({
-            model: this.model,
-            //config : toolbar.getValues()
-        }).then(
-            _.bind(this._onModelProcessDone, this),
-            _.bind(this._onModelProcessDone, this)
-        );
+        this._onModelProcessDone();
 
     };
 
@@ -144,8 +145,6 @@ define([
             $html = $(template($.extend(true, {}, this)));
 
         this.$el.html($html);
-
-        this.modelManager = new ModelMng();
 
         this.tab_instances = {};
 
@@ -266,13 +265,11 @@ define([
     Box.prototype._getTabInstance = function (tab) {
 
         return this.tabs[tab].instance;
-
     };
 
     Box.prototype._getTabContainer = function (tab) {
 
         return this.$el.find(s.BOX).find("[data-section='" + tab + "']");
-
     };
 
     Box.prototype._setSize = function (size) {
@@ -308,17 +305,20 @@ define([
 
         amplify.subscribe(this._getEventTopic("metadata"), this, this._onMetadataEvent);
 
+        amplify.subscribe(this._getEventTopic("tab"), this, this._onTabEvent);
+
         this.$el.find("[data-action]").each(function () {
 
             var $this = $(this),
                 action = $this.data("action"),
                 event = self._getEventTopic(action);
 
-            $this.on("click", function () {
+            $this.on("click", {event: event, box : self}, function (e) {
+                e.preventDefault();
 
-                log.info("Raise event: " + event);
+                log.info("Raise event: " + e.data.event);
 
-                amplify.publish(event, {target: this, box: self});
+                amplify.publish(event, {target: this, box: e.data.box});
 
             });
         });
@@ -354,11 +354,27 @@ define([
 
     Box.prototype._onFlipEvent = function (payload) {
         log.info("Listen to event: " + this._getEventTopic("flip"));
-        log.trace(payload)
+        log.trace(payload);
+
+        if (this.face !== "front") {
+            this.face = "front";
+            this.$el.find(s.FLIP_CONTAINER).addClass(C.FLIPPED_CLASSNAME || CD.FLIPPED_CLASSNAME);
+        } else {
+            this.face = "back";
+            this.$el.find(s.FLIP_CONTAINER).removeClass(C.FLIPPED_CLASSNAME || CD.FLIPPED_CLASSNAME);
+        }
+
+        log.trace("Set box face to: " + this.face);
+
     };
 
     Box.prototype._onMetadataEvent = function (payload) {
         log.info("Listen to event: " + this._getEventTopic("metadata"));
+        log.trace(payload)
+    };
+
+    Box.prototype._onTabEvent = function (payload) {
+        log.info("Listen to event: " + this._getEventTopic("tab"));
         log.trace(payload)
     };
 
@@ -368,11 +384,13 @@ define([
 
         amplify.unsubscribe(this._getEventTopic("resize"), this._onResizeEvent);
 
-        amplify.unsubscribe(this._getEventTopic("clone") + this.id, this._onCloneEvent);
+        amplify.unsubscribe(this._getEventTopic("clone"), this._onCloneEvent);
 
         amplify.unsubscribe(this._getEventTopic("flip"), this._onFlipEvent);
 
         amplify.unsubscribe(this._getEventTopic("metadata"), this._onMetadataEvent);
+
+        amplify.unsubscribe(this._getEventTopic("tab"), this._onTabEvent);
 
         this.$el.find("[data-action]").off();
 
@@ -380,7 +398,7 @@ define([
 
     Box.prototype._getEventTopic = function (evt) {
 
-        return EVT[evt] + this.id;
+        return EVT[evt] ?  EVT[evt] + this.id : evt + this.id;
     };
 
     Box.prototype._onModelProcessDone = function (model) {
@@ -471,6 +489,15 @@ define([
     Box.prototype._onModelError = function (err) {
         log.info("Handling model error " + err);
         this.setStatus("error");
+    };
+
+    Box.prototype._renderMenu = function () {
+
+        this.rightMenu = new JsonMenu({
+            el : this.$el.find(s.RIGHT_MENU),
+            model : RightMenuModel
+        });
+
     };
 
     /* END - Event binding and callbacks */

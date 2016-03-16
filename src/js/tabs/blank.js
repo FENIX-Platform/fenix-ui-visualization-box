@@ -120,6 +120,8 @@ define([
 
         this._bindEventListeners();
 
+        this._renderComponents();
+
     };
 
     BlankTab.prototype._attach = function () {
@@ -136,6 +138,12 @@ define([
 
     BlankTab.prototype._bindEventListeners = function () {
 
+    };
+
+    BlankTab.prototype._renderComponents = function () {
+
+        //Render toolbar
+        //render creator
     };
 
     BlankTab.prototype._unbindEventListeners = function () {

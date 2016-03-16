@@ -28,7 +28,9 @@ define(function () {
             //'table': {type: 'simple', callback: 'always'},
             //'map': {type: 'simple', callback: 'always'},
             //'chart': {type: 'simple', callback: 'always'}
-        }
+        },
+
+        FLIPPED_CLASSNAME : "flipped"
 
     };
 });
