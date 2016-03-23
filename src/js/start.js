@@ -23,7 +23,7 @@ define([
         BOX: ".fx-box",
         CONTENT_READY: "[data-content='ready']",
         RIGHT_MENU: "[data-role='right-menu']",
-        FLIP_CONTAINER : ".flip-container"
+        FLIP_CONTAINER: ".flip-container"
     };
 
     /* API */
@@ -80,14 +80,18 @@ define([
         this._setStatus(status);
     };
 
-    Box.prototype.showTab = function (tab) {
+    Box.prototype.showTab = function (tab, opts) {
 
-        this._showTab(tab);
+        this._showTab(tab, opts);
     };
 
     Box.prototype.setSize = function (size) {
 
         this._setSize(size);
+    };
+
+    Box.prototype.flip = function (side) {
+        return this._flip(side);
     };
 
     /* END - API */
@@ -190,7 +194,9 @@ define([
         this.$el.find(s.BOX).attr("data-status", this.status);
     };
 
-    Box.prototype._showTab = function (tab) {
+    Box.prototype._showTab = function (tab, opts) {
+        log.info('Show tab ' + tab);
+        log.info(opts);
 
         //TODO check if it is a valid tab
 
@@ -210,7 +216,7 @@ define([
 
         this.$el.find(s.CONTENT_READY).attr("data-tab", this.tab);
 
-        this._showTabContent();
+        this._showTabContent(opts);
     };
 
     Box.prototype._showTabContent = function () {
@@ -227,14 +233,8 @@ define([
             this.tabs[this.tab].initialized = true;
         }
 
-        var instance = this._getTabInstance(this.tab),
-            candidateFn = instance.show;
+        this._callTabInstanceMethod(this.tab, "show");
 
-        if (_.isFunction(candidateFn)) {
-            candidateFn.call(instance);
-        } else {
-            log.error(this.tab + " tab does not implement the mandatory show() method");
-        }
     };
 
     Box.prototype._createTabInstance = function (tab) {
@@ -252,10 +252,10 @@ define([
         //cache the plugin instance
         this.tabs[tab].instance = instance;
 
-        if (_.isFunction(instance.isSuitable)) {
-            this.tabs[tab].suitable = instance.isSuitable();
-        } else {
-            log.error(tab + " tab does not implement the mandatory isSuitable() method");
+        this.tabs[tab].suitable = this._callTabInstanceMethod(tab, 'isSuitable');
+
+        if (this.tabs[tab].suitable === true ) {
+            this._showMenuItem(tab);
         }
 
         return instance;
@@ -289,6 +289,11 @@ define([
 
     };
 
+    Box.prototype._showMenuItem = function ( item ) {
+
+        this.rightMenu.showItem(item);
+    };
+
     /* Event binding and callbacks */
 
     Box.prototype._bindObjEventListeners = function () {
@@ -313,7 +318,7 @@ define([
                 action = $this.data("action"),
                 event = self._getEventTopic(action);
 
-            $this.on("click", {event: event, box : self}, function (e) {
+            $this.on("click", {event: event, box: self}, function (e) {
                 e.preventDefault();
 
                 log.info("Raise event: " + e.data.event);
@@ -321,6 +326,10 @@ define([
                 amplify.publish(event, {target: this, box: e.data.box});
 
             });
+        });
+
+        this.$el.find(s.RIGHT_MENU).on('click', "a", function (e){
+            e.preventDefault();
         });
 
     };
@@ -356,16 +365,25 @@ define([
         log.info("Listen to event: " + this._getEventTopic("flip"));
         log.trace(payload);
 
-        if (this.face !== "front") {
-            this.face = "front";
-            this.$el.find(s.FLIP_CONTAINER).addClass(C.FLIPPED_CLASSNAME || CD.FLIPPED_CLASSNAME);
+        if (this.face !== "back") {
+            this._flip("back");
         } else {
-            this.face = "back";
-            this.$el.find(s.FLIP_CONTAINER).removeClass(C.FLIPPED_CLASSNAME || CD.FLIPPED_CLASSNAME);
+            this._flip("front");
         }
 
         log.trace("Set box face to: " + this.face);
 
+    };
+
+    Box.prototype._flip = function (side) {
+
+        if (side !== "front") {
+            this.$el.find(s.FLIP_CONTAINER).addClass(C.FLIPPED_CLASSNAME || CD.FLIPPED_CLASSNAME);
+        } else {
+            this.$el.find(s.FLIP_CONTAINER).removeClass(C.FLIPPED_CLASSNAME || CD.FLIPPED_CLASSNAME);
+        }
+
+        this.face = side;
     };
 
     Box.prototype._onMetadataEvent = function (payload) {
@@ -375,7 +393,13 @@ define([
 
     Box.prototype._onTabEvent = function (payload) {
         log.info("Listen to event: " + this._getEventTopic("tab"));
-        log.trace(payload)
+        log.trace(payload);
+
+        var opts = {};
+        opts.type = $(payload.target).data("type");
+
+        this._showTab($(payload.target).data("tab"), opts);
+
     };
 
     Box.prototype._unbindObjEventListeners = function () {
@@ -394,11 +418,13 @@ define([
 
         this.$el.find("[data-action]").off();
 
+        this.$el.find(s.RIGHT_MENU).off();
+
     };
 
     Box.prototype._getEventTopic = function (evt) {
 
-        return EVT[evt] ?  EVT[evt] + this.id : evt + this.id;
+        return EVT[evt] ? EVT[evt] + this.id : evt + this.id;
     };
 
     Box.prototype._onModelProcessDone = function (model) {
@@ -494,8 +520,8 @@ define([
     Box.prototype._renderMenu = function () {
 
         this.rightMenu = new JsonMenu({
-            el : this.$el.find(s.RIGHT_MENU),
-            model : RightMenuModel
+            el: this.$el.find(s.RIGHT_MENU),
+            model: RightMenuModel
         });
 
     };
@@ -508,13 +534,7 @@ define([
 
         _.each(keys, _.bind(function (tab) {
 
-            var instance = this._getTabInstance(tab);
-
-            if (!instance || !_.isFunction(instance.dispose)) {
-                log.error("Impossible to dispose tab: " + tab);
-            } else {
-                instance.dispose.call(instance);
-            }
+            this._callTabInstanceMethod(tab, "dispose");
 
         }, this));
 
@@ -529,6 +549,22 @@ define([
         this._disposeTabs();
 
         delete this;
+
+    };
+
+    // Utils
+
+    Box.prototype._callTabInstanceMethod = function (name, method, opts) {
+
+        var Instance = this._getTabInstance(name);
+
+        if ($.isFunction(Instance[method])) {
+
+            return Instance[method](opts);
+
+        } else {
+            log.error(name + " tab does not implement the mandatory " + method + "() fn");
+        }
 
     };
 

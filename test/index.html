@@ -12,6 +12,19 @@
     <meta name="description" content="FENIX Visualization box: test">
     <meta name="author" content="Daniele Salvatore <daniele.salvatore [at] fao.org>">
 
+    <!-- FENIX filter -->
+    <!-- dropdown selector -->
+    <link rel="stylesheet" href="http://fenixrepo.fao.org/cdn/js/selectize/0.12.1/css/selectize.bootstrap3.css" />
+    <!-- tree selector -->
+    <link rel="stylesheet" href='http://fenixrepo.fao.org/cdn/js/jstree/3.0.8/dist/themes/default/style.min.css'>
+    <!-- range selector -->
+    <link rel="stylesheet" href='http://fenixrepo.fao.org/cdn/js/ion.rangeSlider/2.1.2/css/ion.rangeSlider.css'>
+    <link rel="stylesheet" href='http://fenixrepo.fao.org/cdn/js/ion.rangeSlider/2.1.2/css/ion.rangeSlider.skinHTML5.css'>
+    <!-- time selector -->
+    <link rel="stylesheet" href='http://fenixrepo.fao.org/cdn/js/bootstrap-datetimepicker/4.17.37/build/css/bootstrap-datetimepicker.min.css'>
+    <link rel="stylesheet" href='http://fenixrepo.fao.org/cdn/js/bootstrap-daterangepicker/2.1.19/daterangepicker.css'>
+    <!-- end FENIX filter -->
+
     <link rel="stylesheet" href="css/test.css">
 
     <link rel="stylesheet" href="http://fenixrepo.fao.org/cdn/js/bootstrap/3.3.4/css/bootstrap.min.css">
@@ -139,6 +152,28 @@
             <button type="button" data-tab="table" class="btn btn-default btn-lg btn-block">Table <span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></button>
             <button type="button" data-tab="chart" class="btn btn-default btn-lg btn-block">Chart <span class="glyphicon glyphicon-flash" aria-hidden="true"></span></button>
             <button type="button" data-tab="map" class="btn btn-default btn-lg btn-block">Map <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span></button>
+        </div>
+
+    </div>
+</div>
+
+<hr>
+
+<div class="container">
+
+    <h2>Flip tab</h2>
+
+    <div class="col-xs-6">
+
+        <div id="flip-container">box tabs</div>
+
+    </div>
+
+    <div class="col-xs-6">
+
+        <div id="flip-btns" role="group">
+            <button type="button" data-flip="front" class="btn btn-default btn-lg btn-block">Front <span class="glyphicon glyphicon-text-color" aria-hidden="true"></span></button>
+            <button type="button" data-flip="back" class="btn btn-default btn-lg btn-block">Back <span class="glyphicon glyphicon-text-background" aria-hidden="true"></span></button>
         </div>
 
     </div>

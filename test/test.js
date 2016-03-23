@@ -35,8 +35,9 @@ require.config({
 require([
     "compilerPaths",
     "commonPaths",
-    "visualizationPaths"
-], function (Compiler, Common, Box ) {
+    "visualizationPaths",
+    "filterPaths"
+], function (Compiler, Common, Box, Filter ) {
 
     'use strict';
 
@@ -48,7 +49,10 @@ require([
     var boxConfig = Box;
     boxConfig.baseUrl = submodules_path + 'fenix-ui-visualization-box/src/js';
 
-    Compiler.resolve([commonConfig, boxConfig],
+    var filterConfig = Filter;
+    filterConfig.baseUrl = submodules_path + 'fenix-ui-filter/src/js';
+
+    Compiler.resolve([commonConfig, boxConfig, filterConfig],
         {
             placeholders: {"FENIX_CDN": "http://fenixrepo.fao.org/cdn"},
 

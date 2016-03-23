@@ -24,7 +24,7 @@ define(function () {
             "id": "3",
             "a_attrs": {
                 "data-action": "resize",
-                "data-size" : "1"
+                "data-size": "1"
             }
         },
         {
@@ -34,7 +34,7 @@ define(function () {
             "id": "4",
             "a_attrs": {
                 "data-action": "resize",
-                "data-size" : "3"
+                "data-size": "3"
             }
         },
         {
@@ -44,7 +44,7 @@ define(function () {
             "id": "5",
             "a_attrs": {
                 "data-action": "resize",
-                "data-size" : "4"
+                "data-size": "4"
             }
         },
         {
@@ -54,7 +54,7 @@ define(function () {
             "id": "6",
             "a_attrs": {
                 "data-action": "resize",
-                "data-size" : "7"
+                "data-size": "7"
             }
         },
         {
@@ -64,7 +64,7 @@ define(function () {
             "id": "7",
             "a_attrs": {
                 "data-action": "resize",
-                "data-size" : "full"
+                "data-size": "full"
             }
         },
         {
@@ -77,7 +77,10 @@ define(function () {
             "name": "Chart",
             "url": "#",
             "parent_id": "8",
-            "id": "9"
+            "id": "9",
+            "a_attrs": {
+                "class" : "hidden"
+            }
         },
         {
             "name": "Pie chart",
@@ -86,8 +89,8 @@ define(function () {
             "id": "9-1",
             "a_attrs": {
                 "data-action": "tab",
-                "data-tab" : "chart",
-                "data-type" : "pie"
+                "data-tab": "chart",
+                "data-type": "pie"
             }
         },
         {
@@ -97,8 +100,18 @@ define(function () {
             "id": "9-2",
             "a_attrs": {
                 "data-action": "tab",
-                "data-tab" : "chart",
-                "data-type" : "timeseries"
+                "data-tab": "chart",
+                "data-type": "timeseries"
+            }
+        },{
+            "name": "Blank",
+            "url": "#",
+            "parent_id": "8",
+            "id": "blank",
+            "a_attrs": {
+                "data-action": "tab",
+                "data-tab": "blank",
+                "class" : "hidden"
             }
         },
         {
@@ -108,14 +121,18 @@ define(function () {
             "id": "10",
             "a_attrs": {
                 "data-action": "tab",
-                "data-tab" : "map"
+                "data-tab": "map",
+                "class" : "hidden"
             }
         },
         {
             "name": "Table",
             "url": "#",
             "parent_id": "8",
-            "id": "11"
+            "id": "11",
+            "a_attrs": {
+                //"class" : "hidden"
+            }
         }, {
             "name": "Standard",
             "url": "#",
@@ -123,8 +140,8 @@ define(function () {
             "id": "11-1",
             "a_attrs": {
                 "data-action": "tab",
-                    "data-tab" : "table",
-                    "data-type" : "standard"
+                "data-tab": "table",
+                "data-type": "standard",
             }
         },
         {
@@ -134,8 +151,8 @@ define(function () {
             "id": "11-2",
             "a_attrs": {
                 "data-action": "tab",
-                "data-tab" : "table",
-                "data-type" : "standard"
+                "data-tab": "table",
+                "data-type": "standard"
             }
         }
     ];

@@ -3,29 +3,31 @@ define([
     'jquery',
     'fx-v-b/start',
     'text!test/json/uneca_population.json'
-],function (log, $, Box, Model){
+], function (log, $, Box, Model) {
 
     'use strict';
 
     var s = {
-        LARGE : "#box-container-large",
-        MEDIUM_1 : "#box-container-medium-1",
-        MEDIUM_2 : "#box-container-medium-2",
-        DESTROY :  "#box-container-destroy",
-        DESTROY_BTN :  "#btn-destroy",
-        STATE: "#box-container-status",
-        STATE_BTNS :  "#status-btns [data-status]",
-        ASYNC: "#box-container-async",
-        ASYNC_BTN: "#btn-async",
-        TAB: "#box-container-tabs",
-        TAB_BTNS: "#tabs-btns [data-tab]"
-    },
-        empty_model = { data : [] },
+            LARGE: "#box-container-large",
+            MEDIUM_1: "#box-container-medium-1",
+            MEDIUM_2: "#box-container-medium-2",
+            DESTROY: "#box-container-destroy",
+            DESTROY_BTN: "#btn-destroy",
+            STATE: "#box-container-status",
+            STATE_BTNS: "#status-btns [data-status]",
+            ASYNC: "#box-container-async",
+            ASYNC_BTN: "#btn-async",
+            TAB: "#box-container-tabs",
+            TAB_BTNS: "#tabs-btns [data-tab]",
+            FLIP: "#flip-container",
+            FLIP_BTNS: "#flip-btns [data-flip]"
+        },
+        empty_model = {data: []},
         error_model = {},
         valid_model = JSON.parse(Model),
-        boxes= [];
+        boxes = [];
 
-    function Test(){
+    function Test() {
 
     }
 
@@ -41,6 +43,8 @@ define([
 
         this._renderLargeBox();
 
+        return;
+
         this._renderMediumBoxes();
 
         this._renderDestroyBox();
@@ -51,6 +55,8 @@ define([
 
         this._renderTabBox();
 
+        this._renderFlipBox();
+
     };
 
     Test.prototype._renderLargeBox = function () {
@@ -58,8 +64,8 @@ define([
         log.trace("Rendering large box: start");
 
         var box = this.createBox({
-            el : s.LARGE,
-            model : valid_model
+            el: s.LARGE,
+            model: valid_model
         });
 
         log.trace("Rendering large box: end");
@@ -71,12 +77,12 @@ define([
         log.trace("Rendering medium boxes: start");
 
         var box1 = this.createBox({
-                el : s.MEDIUM_1,
-                model : empty_model
+                el: s.MEDIUM_1,
+                model: empty_model
             }),
             box2 = this.createBox({
-                el : s.MEDIUM_2,
-                model : valid_model
+                el: s.MEDIUM_2,
+                model: valid_model
             });
 
         log.trace("Rendering medium boxes: end");
@@ -88,9 +94,9 @@ define([
         log.trace("Rendering destroy box: start");
 
         var box = this.createBox({
-                el : s.DESTROY,
-                model : valid_model
-            });
+            el: s.DESTROY,
+            model: valid_model
+        });
 
         $(s.DESTROY_BTN).on("click", function () {
             log.warn("Destroy click");
@@ -107,8 +113,8 @@ define([
         log.trace("Rendering status box: start");
 
         var box = this.createBox({
-            el : s.STATE,
-            model : valid_model
+            el: s.STATE,
+            model: valid_model
         });
 
         $(s.STATE_BTNS).on("click", function () {
@@ -130,7 +136,7 @@ define([
         log.trace("Rendering async box: start");
 
         var box = this.createBox({
-            el : s.ASYNC
+            el: s.ASYNC
         });
 
         $(s.ASYNC_BTN).on("click", function () {
@@ -152,8 +158,8 @@ define([
         log.trace("Rendering tab box: start");
 
         var box = this.createBox({
-            el : s.TAB,
-            model : valid_model
+            el: s.TAB,
+            model: valid_model
         });
 
         $(s.TAB_BTNS).on("click", function () {
@@ -169,6 +175,30 @@ define([
         log.trace("Rendering tab boxes: end");
 
     };
+
+    Test.prototype._renderFlipBox = function () {
+
+        log.trace("Rendering flip box: start");
+
+        var box = this.createBox({
+            el: s.FLIP,
+            model: valid_model
+        });
+
+        $(s.FLIP_BTNS).on("click", function () {
+
+            var flip = $(this).data('flip');
+
+            log.info("Change flip: " + flip);
+
+            box.flip(flip);
+
+        });
+
+        log.trace("Rendering flip boxes: end");
+
+    };
+
 
     Test.prototype.createBox = function (params) {
 

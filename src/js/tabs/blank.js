@@ -8,13 +8,18 @@ define([
     "fx-v-b/config/errors",
     "fx-v-b/config/events",
     "text!fx-v-b/html/tabs/blank.hbs",
+    'fx-filter/start',
+    "fx-v-b/config/tabs/blank-toolbar-model",
     "handlebars",
     "amplify"
-], function ($, log, C, CD, ERR, EVT, tabTemplate, Handlebars) {
+], function ($, log, C, CD, ERR, EVT, tabTemplate, Filter, ToolbarModel, Handlebars) {
 
     'use strict';
 
-    var defaultOptions = {}, s = {};
+    var defaultOptions = {}, s = {
+        TOOLBAR : "[data-role='toolbar']",
+        TOOLBAR_BTN : "[data-role='toolbar'] [data-role='toolbar-btn']"
+    };
 
     function BlankTab(o) {
 
@@ -53,7 +58,6 @@ define([
             log.error("Impossible to create show blank tab");
             log.error(valid)
         }
-
     };
 
     /**
@@ -134,20 +138,81 @@ define([
 
     BlankTab.prototype._initVariables = function () {
 
+        this.$toolbar = this.$el.find(s.TOOLBAR);
+
+        this.$toolbarBtn = this.$el.find(s.TOOLBAR_BTN);
+
     };
 
     BlankTab.prototype._bindEventListeners = function () {
+
+        var self = this;
+
+        amplify.subscribe(this._getEventTopic("toolbar"), this, this._onToolbarEvent);
+
+        this.$el.find("[data-action]").each(function () {
+
+            var $this = $(this),
+                action = $this.data("action"),
+                event = self._getEventTopic(action);
+
+            $this.on("click", {event: event, tab: self}, function (e) {
+                e.preventDefault();
+
+                log.info("Raise event: " + e.data.event);
+
+                amplify.publish(event, {target: this, tab: e.data.tab});
+
+            });
+        });
+
+        this.$toolbarBtn.on("click", _.bind(this._onToolbarBtnClick, this))
+    };
+
+    BlankTab.prototype._onToolbarEvent = function (payload) {
+        log.info("Listen to event: " + this._getEventTopic("toolbar"));
+        log.trace(payload);
+
+        if (this.toolbarIsHidden !== true) {
+            this.$toolbar.slideUp();
+            this.toolbarIsHidden = true;
+        }else {
+            this.$toolbar.slideDown();
+            this.toolbarIsHidden = false;
+        }
+
+    };
+
+    BlankTab.prototype._onToolbarBtnClick = function () {
+
+        console.log( this.toolbar.getValues())
 
     };
 
     BlankTab.prototype._renderComponents = function () {
 
-        //Render toolbar
+        this._renderToolbar();
+
         //render creator
+    };
+
+    BlankTab.prototype._renderToolbar = function () {
+        log.info("Blank tab render toolbar");
+
+        this.toolbar = new Filter({
+            items: ToolbarModel,
+            $el: s.TOOLBAR
+        });
+
     };
 
     BlankTab.prototype._unbindEventListeners = function () {
 
+        amplify.unsubscribe(this._getEventTopic("toolbar"), this._onToolbarEvent);
+
+        this.$el.find("[data-action]").off();
+
+        this.$toolbarBtn.off();
     };
 
     BlankTab.prototype._isSuitable = function () {
@@ -159,6 +224,11 @@ define([
 
         this._unbindEventListeners();
 
+    };
+
+    BlankTab.prototype._getEventTopic = function (evt) {
+
+        return EVT[evt] ? EVT[evt] + this.id : evt + this.id;
     };
 
     return BlankTab;

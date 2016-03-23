@@ -125,6 +125,14 @@
 @keyframes loading {
   100% {
     transform: rotate(360deg); } }
+/* Filter */
+.selector-header h4 {
+  display: inline; }
+
+.tree-holder {
+  height: 150px;
+  overflow: auto; }
+
 /* Colors*/
 .fx-box {
   height: 300px; }
