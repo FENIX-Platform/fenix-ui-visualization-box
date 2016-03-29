@@ -28,6 +28,11 @@ define([
 
     /* API */
 
+    /**
+     * Constructor
+     * @param {Object} obj
+     * @return {Object} box instance
+     */
     function Box(obj) {
         log.info("Create box");
         log.trace(obj);
@@ -38,6 +43,12 @@ define([
         var valid = this._validateInput();
 
         if (valid === true) {
+
+            this._setObjState("valid", true);
+
+            this._initVariables();
+
+            this._initObjState();
 
             this._initObj();
 
@@ -51,13 +62,21 @@ define([
 
         } else {
 
+            this._setObjState("valid", false);
+            this._setObjState("error", valid);
+
             log.error("Impossible to create visualization box");
             log.error(valid)
         }
     }
 
+    /**
+     * Set box status
+     * @param {Object} obj
+     * @return {Object} box instance
+     */
     Box.prototype.render = function (obj) {
-        log.info("Render model for box [" + this.id + "]:");
+        log.info("Render model for box [" + this._getObjState("id") + "]:");
         log.info(obj);
 
         $.extend(true, this, obj);
@@ -66,6 +85,10 @@ define([
 
     };
 
+    /**
+     * Dispose box
+     * @return {null}
+     */
     Box.prototype.dispose = function () {
 
         this._dispose();
@@ -73,6 +96,11 @@ define([
         log.info("Box [" + this.id + "] disposed");
     };
 
+    /**
+     * Set box status
+     * @param {String} status
+     * @return {null}
+     */
     Box.prototype.setStatus = function (status) {
 
         //TODO check if status != current status
@@ -80,21 +108,137 @@ define([
         this._setStatus(status);
     };
 
+    /**
+     * Show a box's tab
+     * @param {String} tab. tab'sid
+     * @param {Object} opts. Options passed to tab instance
+     * @return {null}
+     */
     Box.prototype.showTab = function (tab, opts) {
 
         this._showTab(tab, opts);
     };
 
+    /**
+     * Set box width
+     * @param {String} size
+     * @return {null}
+     */
     Box.prototype.setSize = function (size) {
 
         this._setSize(size);
     };
 
+    /**
+     * Flip the visualization box
+     * @param {String} side
+     * @return {null}
+     */
     Box.prototype.flip = function (side) {
         return this._flip(side);
     };
 
+    /**
+     * pub/sub
+     * @return {Object} filter instance
+     */
+    Box.prototype.on = function (channel, fn) {
+        if (!this.channels[channel]) {
+            this.channels[channel] = [];
+        }
+        this.channels[channel].push({context: this, callback: fn});
+        return this;
+    };
+
+    /**
+     * get box state
+     * @return {Object} box state
+     */
+    Box.prototype.getState = function () {
+
+        /*
+         * TODO remove
+         * tabs[tab].instance
+         * */
+
+        return this.state;
+    };
+
+
     /* END - API */
+
+    Box.prototype._trigger = function (channel) {
+        if (!this.channels[channel]) {
+            return false;
+        }
+        var args = Array.prototype.slice.call(arguments, 1);
+        for (var i = 0, l = this.channels[channel].length; i < l; i++) {
+            var subscription = this.channels[channel][i];
+            subscription.callback.apply(subscription.context, args);
+        }
+        return this;
+    };
+
+    Box.prototype._initVariables = function () {
+
+        this._setObjState("valid", true);
+
+    };
+
+    Box.prototype._initObjState = function () {
+
+        //template options
+        this._setObjState("hideToolbar", !!this.hideToolbar);
+        this._setObjState("hideMenu", !!this.hideMenu);
+        this._setObjState("hideMetadataButton", !!this.hideMetadataButton);
+        this._setObjState("hideRemoveButton", !!this.hideRemoveButton);
+        this._setObjState("hideResizeButton", !!this.hideResizeButton);
+        this._setObjState("hideCloneButton", !!this.hideCloneButton);
+        this._setObjState("hideFlipButton", !!this.hideFlipButton);
+
+        //tabs
+        this._setObjState("tabRegistry", this.tabRegistry);
+        this._setObjState("tabs", this.tabs);
+
+        //flip side
+        this._setObjState("face", this.face);
+
+
+    };
+
+    Box.prototype._setObjState = function (key, val) {
+
+        var property = this._getObjState(key);
+
+        assign(this.state, key, typeof val === 'object' ? $.extend(true, property, val) : val);
+
+        function assign(obj, prop, value) {
+            if (typeof prop === "string")
+                prop = prop.split(".");
+
+            if (prop.length > 1) {
+                var e = prop.shift();
+                assign(obj[e] =
+                        Object.prototype.toString.call(obj[e]) === "[object Object]"
+                            ? obj[e]
+                            : {},
+                    prop,
+                    value);
+            } else
+                obj[prop[0]] = value;
+        }
+    };
+
+    Box.prototype._getObjState = function (path) {
+
+        var obj = $.extend(true, {}, this.state),
+            arr = path.split(".");
+
+        while (arr.length && (obj = obj[arr.shift()]));
+
+        return obj;
+
+    };
 
     Box.prototype._getModelStatus = function () {
 
@@ -144,17 +288,27 @@ define([
 
     Box.prototype._initObj = function () {
 
+        this.tab_instances = {};
+
+        var size = this.size || C.defaultSize || CD.defaultSize,
+            status = this.status || C.defaultStatus || CD.defaultStatus;
+
+        this._setObjState("size", size);
+        this._setObjState("status", status);
+
         //Inject box blank template
         var template = Handlebars.compile(Structure),
-            $html = $(template($.extend(true, {}, this)));
+            $html = $(template($.extend(true, {}, this.state)));
 
         this.$el.html($html);
 
-        this.tab_instances = {};
+        //pub/sub
+        this.channels = {};
 
-        this.size = C.default_size || CD.default_size;
+        this._setObjState("hasMenu", this.$el.find(s.RIGHT_MENU).length > 0);
 
-        this.status = C.default_status || CD.default_status;
+        //set flip side
+        this.flip(this._getObjState("face"));
 
     };
 
@@ -168,9 +322,10 @@ define([
 
             window.fx_vis_box_id >= 0 ? window.fx_vis_box_id++ : window.fx_vis_box_id = 0;
 
-            this.id = window.fx_vis_box_id;
+            this._setObjState("id", window.fx_vis_box_id);
+            this.id = this._getObjState("id");
 
-            log.warn("Impossible to find id. Set auto id to: " + this.id);
+            log.warn("Impossible to find id. Set auto id to: " + this._getObjState("id"));
         }
 
         //Check if $el exist
@@ -187,11 +342,11 @@ define([
 
     Box.prototype._setStatus = function (status) {
 
-        log.info("Set '" + status + "' status for result id: " + this.id);
+        log.info("Set '" + status + "' status for result id: " + this._getObjState("id"));
 
-        this.status = status;
+        this._setObjState("status", status);
 
-        this.$el.find(s.BOX).attr("data-status", this.status);
+        this.$el.find(s.BOX).attr("data-status", this._getObjState("status"));
     };
 
     Box.prototype._showTab = function (tab, opts) {
@@ -200,61 +355,71 @@ define([
 
         //TODO check if it is a valid tab
 
-        if (this.tab === tab) {
+        var currentTab = this._getObjState("tab");
+
+        //TODO check if currentTab is undefined
+
+        if (currentTab === tab) {
             log.info("Aborting show tab current tab is equal to selected one");
             return;
         }
 
-        if (this.tabs[tab].suitable !== true) {
+        if (this._getObjState("tabs." + tab + ".suitable") !== true) {
             log.warn("Aborting show tab because selected tab is not suitable with current model");
+            //TODO find first suitable tab and then raise error
             return;
         }
 
-        log.info("Show '" + tab + "' tab for result id: " + this.id);
+        log.info("Show '" + tab + "' tab for result id: " + this._getObjState("id"));
 
-        this.tab = tab;
+        this._setObjState("tab", tab);
 
-        this.$el.find(s.CONTENT_READY).attr("data-tab", this.tab);
+        this.$el.find(s.CONTENT_READY).attr("data-tab", this._getObjState("tab"));
 
         this._showTabContent(opts);
     };
 
     Box.prototype._showTabContent = function () {
 
-        if (!this.tabs[this.tab] || this.tabs[this.tab].initialized === true) {
-            log.error("Error on show tab content: " + this.tab);
+        var tabs = this._getObjState("tabs"),
+            tab = this._getObjState("tab");
+
+        if (!tabs[tab] || tabs[tab].initialized === true) {
+            log.error("Error on show tab content: " + tab);
 
             this._setStatus("error");
 
             return;
         }
 
-        if (this.tabs[this.tab].callback === 'once') {
-            this.tabs[this.tab].initialized = true;
+        if (tabs[tab].callback === 'once') {
+            this._setObjState("tabs." + tab + ".initialized", true);
         }
 
-        this._callTabInstanceMethod(this.tab, "show");
+        this._callTabInstanceMethod(tab, "show");
 
     };
 
     Box.prototype._createTabInstance = function (tab) {
 
-        var registry = this.tab_registry,
+        var registry = this._getObjState("tabRegistry"),
         //Note that for sync call the argument of require() is not an array but a string
             Tab = require(registry[tab].path),
             instance = new Tab({
                 $el: this._getTabContainer(tab),
                 box: this,
                 model: $.extend(true, {}, this.model),
-                id: tab + "_" + this.id
+                id: tab + "_" + this._getObjState("id")
             });
 
+        //Subscribe to tab events
+        instance.on('toolbar.change', _.bind(this._onTabToolbarChangeEvent, this));
+
         //cache the plugin instance
-        this.tabs[tab].instance = instance;
+        this._setObjState("tabs." + tab + ".instance", instance);
+        this._setObjState("tabs." + tab + ".suitable", this._callTabInstanceMethod(tab, 'isSuitable'));
 
-        this.tabs[tab].suitable = this._callTabInstanceMethod(tab, 'isSuitable');
-
-        if (this.tabs[tab].suitable === true ) {
+        if (this._getObjState("tabs." + tab + ".suitable") === true) {
             this._showMenuItem(tab);
         }
 
@@ -264,7 +429,7 @@ define([
 
     Box.prototype._getTabInstance = function (tab) {
 
-        return this.tabs[tab].instance;
+        return this._getObjState("tabs." + tab + ".instance")
     };
 
     Box.prototype._getTabContainer = function (tab) {
@@ -276,22 +441,25 @@ define([
 
         //TODO check if it is a valid size
 
-        if (this.size === size) {
+        if (this._getObjState("size") === size) {
             log.info("Aborting resize because current size is equal to selected one");
             return;
         }
 
-        this.size = size;
+        this._setObjState("size", size);
 
-        this.$el.find(s.BOX).attr("data-size", this.size);
+        this.$el.find(s.BOX).attr("data-size", this._getObjState("size"));
 
         amplify.publish(EVT["resize"], this)
 
     };
 
-    Box.prototype._showMenuItem = function ( item ) {
+    Box.prototype._showMenuItem = function (item) {
 
-        this.rightMenu.showItem(item);
+        if (this._getObjState("hasMenu")) {
+            this.rightMenu.showItem(item);
+        }
+
     };
 
     /* Event binding and callbacks */
@@ -328,7 +496,7 @@ define([
             });
         });
 
-        this.$el.find(s.RIGHT_MENU).on('click', "a", function (e){
+        this.$el.find(s.RIGHT_MENU).on('click', "a", function (e) {
             e.preventDefault();
         });
 
@@ -365,25 +533,28 @@ define([
         log.info("Listen to event: " + this._getEventTopic("flip"));
         log.trace(payload);
 
-        if (this.face !== "back") {
+        if (this._getObjState('face') !== "back") {
             this._flip("back");
         } else {
             this._flip("front");
         }
 
-        log.trace("Set box face to: " + this.face);
+        log.trace("Set box face to: " + this._getObjState('face'));
 
     };
 
     Box.prototype._flip = function (side) {
 
-        if (side !== "front") {
+        var face = side || "front";
+
+        if (face !== "front") {
             this.$el.find(s.FLIP_CONTAINER).addClass(C.FLIPPED_CLASSNAME || CD.FLIPPED_CLASSNAME);
         } else {
             this.$el.find(s.FLIP_CONTAINER).removeClass(C.FLIPPED_CLASSNAME || CD.FLIPPED_CLASSNAME);
         }
 
-        this.face = side;
+        this._setObjState('face', face);
+
     };
 
     Box.prototype._onMetadataEvent = function (payload) {
@@ -400,6 +571,11 @@ define([
 
         this._showTab($(payload.target).data("tab"), opts);
 
+    };
+
+    Box.prototype._onTabToolbarChangeEvent = function (values) {
+        //pass values to each tab to sync toolbars
+        console.log(values)
     };
 
     Box.prototype._unbindObjEventListeners = function () {
@@ -443,8 +619,9 @@ define([
 
     Box.prototype._preloadTabSources = function () {
 
-        var registeredTabs = $.extend(true, {}, this.tab_registry),
-            tabsKeys = Object.keys(this.tabs),
+        var registeredTabs = $.extend(true, {}, this._getObjState("tabRegistry")),
+            tabs = this._getObjState("tabs"),
+            tabsKeys = Object.keys(tabs),
             paths = [];
 
         _.each(tabsKeys, _.bind(function (tab) {
@@ -455,11 +632,11 @@ define([
                 log.error('Registration not found for "' + tab + ' tab".');
             }
 
-            if (!$.isPlainObject(this.tabs[tab])) {
-                this.tabs[tab] = {};
+            if (!$.isPlainObject(tabs[tab])) {
+                this._setObjState("tabs." + tab, {});
             }
 
-            this.tabs[tab].suitable = false;
+            this._setObjState("tabs." + tab + ".suitable", false);
 
             if (conf.path) {
                 paths.push(conf.path);
@@ -481,8 +658,8 @@ define([
 
     Box.prototype._checkSuitableTabs = function () {
 
-        var registeredTabs = this.tab_registry,
-            tabsKeys = Object.keys(this.tabs),
+        var registeredTabs = this._getObjState("tabRegistry"),
+            tabsKeys = Object.keys(this._getObjState("tabs")),
             self = this;
 
         _.each(tabsKeys, function (tab) {
@@ -507,9 +684,11 @@ define([
 
     Box.prototype._showDefaultTab = function () {
 
-        var tab = C.default_tab || CD.default_tab;
+        var tab = this.defaultTab || C.defaultTab || CD.defaultTab;
 
-        this._showTab(tab);
+        this._setObjState("defaultTab", tab);
+
+        this._showTab(this._getObjState("defaultTab"));
     };
 
     Box.prototype._onModelError = function (err) {
@@ -519,17 +698,23 @@ define([
 
     Box.prototype._renderMenu = function () {
 
-        this.rightMenu = new JsonMenu({
-            el: this.$el.find(s.RIGHT_MENU),
-            model: RightMenuModel
-        });
+        if (this._getObjState("hasMenu") === true) {
+
+            this.rightMenu = new JsonMenu({
+                el: this.$el.find(s.RIGHT_MENU),
+                model: RightMenuModel
+            });
+
+        } else {
+            log.warn("Menu will not be rendered. Impossible to find container.")
+        }
 
     };
 
     /* END - Event binding and callbacks */
     Box.prototype._disposeTabs = function () {
 
-        var tabs = this.tabs,
+        var tabs = this._getObjState("tabs"),
             keys = Object.keys(tabs);
 
         _.each(keys, _.bind(function (tab) {

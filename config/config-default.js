@@ -5,11 +5,11 @@ define(function () {
 
     return {
 
-        default_status : "loading",
-        default_tab : "blank",
-        default_size : "large",
+        defaultStatus : "loading",
+        defaultTab : "blank",
+        defaultSize : "large",
         ready : false,
-        tab_registry: {
+        tabRegistry: {
             'blank': {
                 path: 'fx-v-b/js/tabs/blank'
             },
@@ -30,7 +30,9 @@ define(function () {
             //'chart': {type: 'simple', callback: 'always'}
         },
 
-        FLIPPED_CLASSNAME : "flipped"
+        FLIPPED_CLASSNAME : "flipped",
+
+        state : {}
 
     };
 });

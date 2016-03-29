@@ -1,37 +1,60 @@
-<div class="fx-box" data-status="{{ default_status }}" data-size="{{ default_size }}">
+<div class="fx-box" data-status="{{ status }}" data-size="{{ size }}">
 
     <div data-content="ready" data-tab="{{ default_tab }}">
 
-
         <div class="flip-container">
+
             <div class="flipper">
+
+                <!-- Front -->
                 <div class="front">
                     <!-- front content -->
-                    <div class="front-toolbar">
 
-                        <div class="pull-left">
-                            <div data-role="right-menu" class="dropdown">
-                                <a href="" class="btn dropdown-toggle" data-toggle="dropdown">
-                                    <span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>
-                                </a>
+                    {{#unless hideToolbar}}
 
+                        <div class="front-toolbar">
+
+                            {{#unless hideMenu}}
+
+                                <div class="pull-left">
+                                    <div data-role="right-menu" class="dropdown">
+                                        <a href="" class="btn dropdown-toggle" data-toggle="dropdown">
+                                            <span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>
+                                        </a>
+
+                                    </div>
+                                </div>
+
+                            {{/unless}}
+
+                            <div class="pull-right">
+                                {{#unless hideMetadataButton}}
+                                    <button data-action="metadata" class="btn btn-default" type="button">metadata
+                                    </button>
+                                {{/unless}}
+                                {{#unless hideRemoveButton}}
+                                    <button data-action="remove" class="btn btn-default" type="button">remove</button>
+                                {{/unless}}
+                                {{#unless hideResizeButton}}
+                                    <button data-action="resize" data-size="2" class="btn btn-default" type="button">
+                                        resize
+                                    </button>
+                                {{/unless}}
+                                {{#unless hideCloneButton}}
+                                    <button data-action="clone" class="btn btn-default" type="button">clone</button>
+                                {{/unless}}
+                                {{#unless hideFlipButton}}
+                                    <button data-action="flip" class="btn btn-default" type="button">flip</button>
+                                {{/unless}}
                             </div>
                         </div>
 
-                        <div class="pull-right">
-                            <button data-action="metadata" class="btn btn-default" type="button">metadata</button>
-                            <button data-action="remove" class="btn btn-default" type="button">remove</button>
-                            <button data-action="resize" data-size="2" class="btn btn-default" type="button">resize</button>
-                            <button data-action="clone" class="btn btn-default" type="button">clone</button>
-                            <button data-action="flip" class="btn btn-default" type="button">flip</button>
-                        </div>
-                    </div>
-
+                    {{/unless}}
                     <br>
                     <br>
 
 
-                  <!-- <strong>Hi! {{ id }} </strong> -->
+                    <!-- <strong>Hi! {{ id }} </strong> -->
 
                     <div data-section="chart">
                         <h4>Chart</h4>
@@ -47,11 +70,16 @@
                     </div>
 
                 </div>
-                <div class="back">
+
+                <!-- Front -->
+            <div class="back">
+
+                {{#unless hideToolbar}}
                     <!-- back content -->
                     <button data-action="flip" class="btn btn-default pull-right" type="button">flip</button>
                     this is the back
                 </div>
+                {{/unless}}
             </div>
         </div>
 

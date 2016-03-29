@@ -3,6 +3,7 @@
 define([
     "jquery",
     "loglevel",
+    "underscore",
     "fx-v-b/config/config",
     "fx-v-b/config/config-default",
     "fx-v-b/config/errors",
@@ -12,18 +13,20 @@ define([
     "fx-v-b/config/tabs/blank-toolbar-model",
     "handlebars",
     "amplify"
-], function ($, log, C, CD, ERR, EVT, tabTemplate, Filter, ToolbarModel, Handlebars) {
+], function ($, log, _, C, CD, ERR, EVT, tabTemplate, Filter, ToolbarModel, Handlebars) {
 
     'use strict';
 
     var defaultOptions = {}, s = {
-        TOOLBAR : "[data-role='toolbar']",
-        TOOLBAR_BTN : "[data-role='toolbar'] [data-role='toolbar-btn']"
+        TOOLBAR: "[data-role='toolbar']",
+        TOOLBAR_BTN: "[data-role='toolbar'] [data-role='toolbar-btn']"
     };
 
     function BlankTab(o) {
 
         $.extend(true, this, defaultOptions, o);
+
+        this.channels = {};
 
         return this;
     }
@@ -86,7 +89,34 @@ define([
 
     };
 
-    /* END API*/
+    /**
+     * pub/sub
+     * @return {Object} filter instance
+     */
+    BlankTab.prototype.on = function (channel, fn) {
+
+        if (!this.channels[channel]) {
+            this.channels[channel] = [];
+        }
+        this.channels[channel].push({context: this, callback: fn});
+
+        return this;
+    };
+
+    /* END - API */
+
+    BlankTab.prototype._trigger = function (channel) {
+        if (!this.channels[channel]) {
+            return false;
+        }
+
+        var args = Array.prototype.slice.call(arguments, 1);
+        for (var i = 0, l = this.channels[channel].length; i < l; i++) {
+            var subscription = this.channels[channel][i];
+            subscription.callback.apply(subscription.context, args);
+        }
+        return this;
+    };
 
     BlankTab.prototype._validateInput = function () {
 
@@ -122,10 +152,9 @@ define([
 
         this._initVariables();
 
-        this._bindEventListeners();
-
         this._renderComponents();
 
+        this._bindEventListeners();
     };
 
     BlankTab.prototype._attach = function () {
@@ -166,7 +195,10 @@ define([
             });
         });
 
-        this.$toolbarBtn.on("click", _.bind(this._onToolbarBtnClick, this))
+        this.$toolbarBtn.on("click", _.bind(this._onToolbarBtnClick, this));
+
+        //Toolbar events
+        this.toolbar.on('change', _.bind(this._onToolbarChangeEvent, this));
     };
 
     BlankTab.prototype._onToolbarEvent = function (payload) {
@@ -176,7 +208,7 @@ define([
         if (this.toolbarIsHidden !== true) {
             this.$toolbar.slideUp();
             this.toolbarIsHidden = true;
-        }else {
+        } else {
             this.$toolbar.slideDown();
             this.toolbarIsHidden = false;
         }
@@ -185,7 +217,13 @@ define([
 
     BlankTab.prototype._onToolbarBtnClick = function () {
 
-        console.log( this.toolbar.getValues())
+        console.log(this.toolbar.getValues())
+
+    };
+
+    BlankTab.prototype._onToolbarChangeEvent = function () {
+
+        this._trigger("toolbar.change", this.toolbar.getValues());
 
     };
 

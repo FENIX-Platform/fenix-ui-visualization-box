@@ -13,14 +13,16 @@ define([
             MEDIUM_2: "#box-container-medium-2",
             DESTROY: "#box-container-destroy",
             DESTROY_BTN: "#btn-destroy",
-            STATE: "#box-container-status",
-            STATE_BTNS: "#status-btns [data-status]",
+            STATUS: "#box-container-status",
+            STATuS_BTNS: "#status-btns [data-status]",
             ASYNC: "#box-container-async",
             ASYNC_BTN: "#btn-async",
             TAB: "#box-container-tabs",
             TAB_BTNS: "#tabs-btns [data-tab]",
             FLIP: "#flip-container",
-            FLIP_BTNS: "#flip-btns [data-flip]"
+            FLIP_BTNS: "#flip-btns [data-flip]",
+            STATE: "#state-container",
+            STATE_BTN: "#state-btn"
         },
         empty_model = {data: []},
         error_model = {},
@@ -57,6 +59,8 @@ define([
 
         this._renderFlipBox();
 
+        this._renderStateBox();
+
     };
 
     Test.prototype._renderLargeBox = function () {
@@ -65,7 +69,15 @@ define([
 
         var box = this.createBox({
             el: s.LARGE,
-            model: valid_model
+            model: valid_model,
+            //hideToolbar: true,
+            //hideMenu: true,
+            //hideMetadataButton: true,
+            //hideRemoveButton: true,
+            //hideResizeButton: true,
+            //hideCloneButton: true,
+            //hideFlipButton: true,
+            //face: "back"
         });
 
         log.trace("Rendering large box: end");
@@ -113,11 +125,11 @@ define([
         log.trace("Rendering status box: start");
 
         var box = this.createBox({
-            el: s.STATE,
+            el: s.STATUS,
             model: valid_model
         });
 
-        $(s.STATE_BTNS).on("click", function () {
+        $(s.STATUS_BTNS).on("click", function () {
 
             var status = $(this).data('status');
 
@@ -127,7 +139,7 @@ define([
 
         });
 
-        log.trace("Rendering state boxes: end");
+        log.trace("Rendering status boxes: end");
 
     };
 
@@ -199,6 +211,26 @@ define([
 
     };
 
+    Test.prototype._renderStateBox = function () {
+
+        log.trace("Rendering state box: start");
+
+        var box = this.createBox({
+            el: s.STATE,
+            model: valid_model
+        });
+
+        $(s.STATE_BTN).on("click", function () {
+
+            var state = box.getState();
+
+            log.warn("State:");
+            log.warn(state);
+        });
+
+        log.trace("Rendering state boxes: end");
+
+    };
 
     Test.prototype.createBox = function (params) {
 
