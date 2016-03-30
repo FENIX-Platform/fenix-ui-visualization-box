@@ -13,9 +13,10 @@ define([
     "text!fx-v-b/html/structure.hbs",
     "fx-common/json-menu",
     "fx-v-b/config/right-menu-model",
+    "i18n!fx-v-b/nls/box",
     "amplify",
     "bootstrap"
-], function (log, require, $, _, Handlebars, C, CD, ERR, EVT, Structure, JsonMenu, RightMenuModel) {
+], function (log, require, $, _, Handlebars, C, CD, ERR, EVT, Structure, JsonMenu, RightMenuModel, i18nLabels) {
 
     'use strict';
 
@@ -38,7 +39,7 @@ define([
         log.trace(obj);
 
         //Extend instance with obj and $el
-        $.extend(true, this, C, CD, obj, {$el: $(obj.el)});
+        $.extend(true, this, C, CD, {initial: obj || {}, $el: $(obj.el)});
 
         var valid = this._validateInput();
 
@@ -183,34 +184,35 @@ define([
 
         this._setObjState("valid", true);
 
+        this.model = this.initial.model;
+
     };
 
     Box.prototype._initObjState = function () {
 
         //template options
-        this._setObjState("hideToolbar", !!this.hideToolbar);
-        this._setObjState("hideMenu", !!this.hideMenu);
-        this._setObjState("hideMetadataButton", !!this.hideMetadataButton);
-        this._setObjState("hideRemoveButton", !!this.hideRemoveButton);
-        this._setObjState("hideResizeButton", !!this.hideResizeButton);
-        this._setObjState("hideCloneButton", !!this.hideCloneButton);
-        this._setObjState("hideFlipButton", !!this.hideFlipButton);
+        this._setObjState("hideToolbar", !!this.initial.hideToolbar);
+        this._setObjState("hideMenu", !!this.initial.hideMenu);
+        this._setObjState("hideMetadataButton", !!this.initial.hideMetadataButton);
+        this._setObjState("hideRemoveButton", !!this.initial.hideRemoveButton);
+        this._setObjState("hideResizeButton", !!this.initial.hideResizeButton);
+        this._setObjState("hideCloneButton", !!this.initial.hideCloneButton);
+        this._setObjState("hideFlipButton", !!this.initial.hideFlipButton);
 
         //tabs
         this._setObjState("tabRegistry", this.tabRegistry);
         this._setObjState("tabs", this.tabs);
 
         //flip side
-        this._setObjState("face", this.face);
-
+        this._setObjState("face", this.initial.face);
 
     };
 
     Box.prototype._setObjState = function (key, val) {
 
-        var property = this._getObjState(key);
-
-        assign(this.state, key, typeof val === 'object' ? $.extend(true, property, val) : val);
+        //var property = this._getObjState(key);
+        //assign(this.state, key, typeof val === 'object' ? $.extend(true, property, val) : val);
+        assign(this.state, key, val);
 
         function assign(obj, prop, value) {
             if (typeof prop === "string")
@@ -288,10 +290,8 @@ define([
 
     Box.prototype._initObj = function () {
 
-        this.tab_instances = {};
-
-        var size = this.size || C.defaultSize || CD.defaultSize,
-            status = this.status || C.defaultStatus || CD.defaultStatus;
+        var size = this.initial.size || C.defaultSize || CD.defaultSize,
+            status = this.initial.status || C.defaultStatus || CD.defaultStatus;
 
         this._setObjState("size", size);
         this._setObjState("status", status);
@@ -506,9 +506,15 @@ define([
         log.info("Listen to event: " + this._getEventTopic("remove"));
         log.trace(payload);
 
-        amplify.publish(EVT['remove'], this);
+        var r = confirm(i18nLabels.confirm_remove);
 
-        this._dispose();
+        if (r == true) {
+            amplify.publish(EVT['remove'], this);
+            this._dispose();
+        } else {
+            log.info("Abort remove");
+        }
+
     };
 
     Box.prototype._onResizeEvent = function (payload) {
@@ -729,9 +735,9 @@ define([
 
         this._unbindObjEventListeners();
 
-        this.$el.remove();
-
         this._disposeTabs();
+
+        this.$el.remove();
 
         delete this;
 

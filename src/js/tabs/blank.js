@@ -246,11 +246,12 @@ define([
 
     BlankTab.prototype._unbindEventListeners = function () {
 
-        amplify.unsubscribe(this._getEventTopic("toolbar"), this._onToolbarEvent);
+        this.$toolbarBtn.off();
 
         this.$el.find("[data-action]").off();
 
-        this.$toolbarBtn.off();
+        amplify.unsubscribe(this._getEventTopic("toolbar"), this._onToolbarEvent);
+
     };
 
     BlankTab.prototype._isSuitable = function () {
@@ -261,7 +262,6 @@ define([
     BlankTab.prototype._dispose = function () {
 
         this._unbindEventListeners();
-
     };
 
     BlankTab.prototype._getEventTopic = function (evt) {
