@@ -36,8 +36,9 @@ require([
     "compilerPaths",
     "commonPaths",
     "visualizationPaths",
-    "filterPaths"
-], function (Compiler, Common, Box, Filter ) {
+    "filterPaths",
+    "olapPaths"
+], function (Compiler, Common, Box, Filter, Olap ) {
 
     'use strict';
 
@@ -52,7 +53,10 @@ require([
     var filterConfig = Filter;
     filterConfig.baseUrl = submodules_path + 'fenix-ui-filter/src/js';
 
-    Compiler.resolve([commonConfig, boxConfig, filterConfig],
+    var olapConfig = Olap;
+    olapConfig.baseUrl = submodules_path + 'fenix-ui-olap/js';
+
+    Compiler.resolve([commonConfig, boxConfig, filterConfig, olapConfig],
         {
             placeholders: {"FENIX_CDN": "http://fenixrepo.fao.org/cdn"},
 
