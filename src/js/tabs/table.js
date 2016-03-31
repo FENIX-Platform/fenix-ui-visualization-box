@@ -236,7 +236,7 @@ var myrenderer=new myRenderer();
 		};
 		for( var i in tempConf.values.sort){
 			optGr[tempConf.values.sort[i].parent].push(tempConf.values.sort[i].value)
-			
+			console.log("CREATE CONF",tempConf.values.sort[i].parent,tempConf.values.sort[i].value)
 		}
 		myrenderer.rendererGridFX(this.model,"table_" + this.id,optGr);
 		//id olap "table-" + this.id
@@ -271,14 +271,13 @@ var myrenderer=new myRenderer();
 //file fenix-ui-visualization-box\config\tabs\table-toolbar-model.js
 
 //FX = this.model
-console.log("MYFUNC",myFunc);
 var myfunc=new myFunc();
 var liste=myfunc.getListAggregator();
 for (var i in liste){ToolbarModel.aggregation.selector.source.push({"value": liste[i], "label": liste[i] })}
 var FX=this.model.metadata.dsd;
 for(var i in FX.columns)
 		{
-			if(FX.columns[i].id=="value"){ToolbarModel.sort.selector.source.push({"value": FX.columns[i].id, "label": FX.columns[i].id, parent: 'HIDDEN'})}
+			if(FX.columns[i].subject=="value"){ToolbarModel.sort.selector.source.push({"value": FX.columns[i].id, "label": FX.columns[i].id, parent: 'HIDDEN'})}
 		else if (FX.columns[i].subject!="time" ){ToolbarModel.sort.selector.source.push({"value": FX.columns[i].id, "label": FX.columns[i].id, parent: 'ROWS'})}
 			else if(FX.columns[i].subject=="time"){ToolbarModel.sort.selector.source.push({"value": FX.columns[i].id, "label": FX.columns[i].id, parent: 'COLS'})}
 		}
