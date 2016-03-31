@@ -446,7 +446,7 @@ define([
         var tabs = this._getObjState("tabs"),
             tab = this._getObjState("tab");
 
-        if (!tabs[tab] || tabs[tab].initialized === true) {
+        if (!tabs[tab]) {
             log.error("Error on show tab content: " + tab);
 
             this._setStatus("error");
@@ -454,11 +454,13 @@ define([
             return;
         }
 
+        if (this._getObjState("tabs." + tab + ".initialized") !== true) {
+            this._callTabInstanceMethod(tab, "show");
+        }
+
         if (tabs[tab].callback === 'once') {
             this._setObjState("tabs." + tab + ".initialized", true);
         }
-
-        this._callTabInstanceMethod(tab, "show");
 
     };
 

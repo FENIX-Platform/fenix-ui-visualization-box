@@ -106,27 +106,6 @@ define(function () {
 
             "className": "col-xs-6"
 
-        },
-
-        "decimal_digit": {
-
-            "selector": {
-                "id": "input",
-                "type": "number",
-                "source": [
-                    {"value": "2"}
-                ]
-            },
-
-            "template": {
-                //"hideHeader": true,
-                "hideSwitch": true,
-                "hideRemoveButton" : true,
-                "title" : "Decimal digit"
-            },
-
-            "className": "col-xs-6"
-
         }
     }
 

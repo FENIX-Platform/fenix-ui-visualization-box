@@ -240,7 +240,7 @@ define([
 
         this.toolbar = new Filter({
             items: ToolbarModel,
-            $el: s.TOOLBAR
+            $el: this.$el.find(s.TOOLBAR)
         });
 
     };

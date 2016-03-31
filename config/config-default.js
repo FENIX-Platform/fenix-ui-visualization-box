@@ -24,8 +24,8 @@ define(function () {
             }
         },
         tabs: {
-            //'blank': {type: 'simple', callback: 'always'},
-            'table': {type: 'simple', callback: 'always'},
+            'blank': {type: 'simple', callback: 'once'},
+            'table': {type: 'simple', callback: 'once'},
             //'map': {type: 'simple', callback: 'always'},
             //'chart': {type: 'simple', callback: 'always'}
         },
