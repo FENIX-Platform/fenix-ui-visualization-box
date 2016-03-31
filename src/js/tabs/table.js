@@ -12,9 +12,11 @@ define([
     'fx-filter/start',
     "fx-v-b/config/tabs/table-toolbar-model",
     "handlebars",
-    'fx-pivot/start',
+   // 'fx-pivot/start',
+	'renderer',"functions",
+	"commonutilities",
     "amplify"
-], function ($, log, _, C, CD, ERR, EVT, tabTemplate, Filter, ToolbarModel, Handlebars, Olap) {
+], function ($, log, _, C, CD, ERR, EVT, tabTemplate, Filter, ToolbarModel, Handlebars, myRenderer,myFunc) {
 
     'use strict';
 
@@ -28,7 +30,8 @@ define([
         $.extend(true, this, defaultOptions, o);
 
         this.channels = {};
-
+		
+	
         return this;
     }
 
@@ -217,8 +220,27 @@ define([
     };
 
     TableTab.prototype._onToolbarBtnClick = function () {
+//FIG renderer
+console.log("RENDERER",this.model,this.toolbar.getValues())
+var myrenderer=new myRenderer();
+        var tempConf=this.toolbar.getValues();
+		var optGr={
+			Aggregator:tempConf.values.aggregation[0],
+			Formater:"localstring",
+			GetValue:"classic",
+			nbDecimal:5,
+			AGG:[],
+			COLS:[],
+			ROWS:[],
+			HIDDEN:[]
+		};
+		for( var i in tempConf.values.sort){
+			optGr[tempConf.values.sort[i].parent].push(tempConf.values.sort[i].value)
+			
+		}
+		myrenderer.rendererGridFX(this.model,"table_" + this.id,optGr);
+		//id olap "table-" + this.id
 
-        console.log(this.toolbar.getValues())
 
     };
 
@@ -237,7 +259,7 @@ define([
 
     TableTab.prototype._renderToolbar = function () {
         log.info("Table tab render toolbar");
-
+//FIG equivalent toolbar.init()
         this.toolbar = new Filter({
             items: ToolbarModel,
             $el: this.$el.find(s.TOOLBAR)
@@ -246,7 +268,23 @@ define([
     };
 
     TableTab.prototype._createFilterConfiguration = function () {
+//file fenix-ui-visualization-box\config\tabs\table-toolbar-model.js
 
+//FX = this.model
+console.log("MYFUNC",myFunc);
+var myfunc=new myFunc();
+var liste=myfunc.getListAggregator();
+for (var i in liste){ToolbarModel.aggregation.selector.source.push({"value": liste[i], "label": liste[i] })}
+var FX=this.model.metadata.dsd;
+for(var i in FX.columns)
+		{
+			if(FX.columns[i].id=="value"){ToolbarModel.sort.selector.source.push({"value": FX.columns[i].id, "label": FX.columns[i].id, parent: 'HIDDEN'})}
+		else if (FX.columns[i].subject!="time" ){ToolbarModel.sort.selector.source.push({"value": FX.columns[i].id, "label": FX.columns[i].id, parent: 'ROWS'})}
+			else if(FX.columns[i].subject=="time"){ToolbarModel.sort.selector.source.push({"value": FX.columns[i].id, "label": FX.columns[i].id, parent: 'COLS'})}
+		}
+	
+
+console.log("INPUT FOR toolbar",this.model,ToolbarModel);
         var configuration = ToolbarModel;
 
         //TODO process here
