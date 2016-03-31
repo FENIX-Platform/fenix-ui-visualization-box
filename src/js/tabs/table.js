@@ -12,8 +12,9 @@ define([
     'fx-filter/start',
     "fx-v-b/config/tabs/table-toolbar-model",
     "handlebars",
+    'fx-pivot/start',
     "amplify"
-], function ($, log, _, C, CD, ERR, EVT, tabTemplate, Filter, ToolbarModel, Handlebars) {
+], function ($, log, _, C, CD, ERR, EVT, tabTemplate, Filter, ToolbarModel, Handlebars, Olap) {
 
     'use strict';
 

@@ -16,8 +16,7 @@ define([
     "i18n!fx-v-b/nls/box",
     "q",
     "amplify",
-    "bootstrap",
-    'fx-pivot/start'
+    "bootstrap"
 ], function (log, require, $, _, Handlebars, C, CD, ERR, EVT, Structure, JsonMenu, RightMenuModel, i18nLabels, Q) {
 
     'use strict';
