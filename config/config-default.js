@@ -6,7 +6,7 @@ define(function () {
     return {
 
         defaultStatus : "loading",
-        defaultTab : "blank",
+        defaultTab : "table",
         defaultSize : "large",
         ready : false,
         tabRegistry: {
@@ -24,8 +24,8 @@ define(function () {
             }
         },
         tabs: {
-            'blank': {type: 'simple', callback: 'always'},
-            //'table': {type: 'simple', callback: 'always'},
+            //'blank': {type: 'simple', callback: 'always'},
+            'table': {type: 'simple', callback: 'always'},
             //'map': {type: 'simple', callback: 'always'},
             //'chart': {type: 'simple', callback: 'always'}
         },
