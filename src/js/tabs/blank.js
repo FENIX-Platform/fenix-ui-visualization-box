@@ -8,12 +8,13 @@ define([
     "fx-v-b/config/config-default",
     "fx-v-b/config/errors",
     "fx-v-b/config/events",
+    "fx-v-b/js/utils",
     "text!fx-v-b/html/tabs/blank.hbs",
     'fx-filter/start',
     "fx-v-b/config/tabs/blank-toolbar-model",
     "handlebars",
     "amplify"
-], function ($, log, _, C, CD, ERR, EVT, tabTemplate, Filter, ToolbarModel, Handlebars) {
+], function ($, log, _, C, CD, ERR, EVT, Utils, tabTemplate, Filter, ToolbarModel, Handlebars) {
 
     'use strict';
 
@@ -44,13 +45,13 @@ define([
      * Method invoked when the tab is shown in the FENIX visualization box
      * Mandatory method
      */
-    BlankTab.prototype.show = function () {
+    BlankTab.prototype.show = function (state) {
 
         var valid = this._validateInput();
 
         if (valid === true) {
 
-            this._show();
+            this._show(state);
 
             log.info("Tab shown successfully");
 
@@ -103,6 +104,21 @@ define([
         return this;
     };
 
+    /**
+     * Sync tab to passed state
+     * @param {Object} state
+     * @return {Object} filter instance
+     */
+    BlankTab.prototype.sync = function ( state ) {
+        log.info("Sync tab. State:" + JSON.stringify(state));
+
+        if (state.hasOwnProperty("toolbar") && this.toolbar) {
+            this.toolbar.setValues(state.toolbar, true);
+        } else {
+            log.warn("Abort toolbar sync")
+        }
+    };
+
     /* END - API */
 
     BlankTab.prototype._trigger = function (channel) {
@@ -146,15 +162,28 @@ define([
 
     };
 
-    BlankTab.prototype._show = function () {
+    BlankTab.prototype._show = function (syncModel) {
 
-        this._attach();
+        if (this.initialized === true ) {
+            log.info("Tab Blank shown again");
 
-        this._initVariables();
+        } else {
 
-        this._renderComponents();
+            log.info("Tab Blank shown for the first time");
 
-        this._bindEventListeners();
+            this.syncModel = syncModel;
+
+            this._attach();
+
+            this._initVariables();
+
+            this._renderComponents();
+
+            this._bindEventListeners();
+
+            this.initialized = true;
+        }
+
     };
 
     BlankTab.prototype._attach = function () {
@@ -238,9 +267,18 @@ define([
         log.info("Blank tab render toolbar");
 
         this.toolbar = new Filter({
-            items: ToolbarModel,
+            items: this._createFilterConfiguration(ToolbarModel),
             $el: this.$el.find(s.TOOLBAR)
         });
+
+    };
+
+
+    BlankTab.prototype._createFilterConfiguration = function () {
+
+        var configuration = $.extend(true, {}, Utils.mergeConfigurations(ToolbarModel, this.syncModel || {}));
+
+        return configuration;
 
     };
 

@@ -8,15 +8,16 @@ define([
     "fx-v-b/config/config-default",
     "fx-v-b/config/errors",
     "fx-v-b/config/events",
+    "fx-v-b/js/utils",
     "text!fx-v-b/html/tabs/table.hbs",
     'fx-filter/start',
     "fx-v-b/config/tabs/table-toolbar-model",
     "handlebars",
-   // 'fx-pivot/start',
-	'renderer',"functions",
-	"commonutilities",
+    // 'fx-pivot/start',
+    'renderer', "functions",
+    "commonutilities",
     "amplify"
-], function ($, log, _, C, CD, ERR, EVT, tabTemplate, Filter, ToolbarModel, Handlebars, myRenderer,myFunc) {
+], function ($, log, _, C, CD, ERR, EVT, Utils, tabTemplate, Filter, ToolbarModel, Handlebars, myRenderer, myFunc) {
 
     'use strict';
 
@@ -30,8 +31,8 @@ define([
         $.extend(true, this, defaultOptions, o);
 
         this.channels = {};
-		
-	
+
+
         return this;
     }
 
@@ -48,13 +49,13 @@ define([
      * Method invoked when the tab is shown in the FENIX visualization box
      * Mandatory method
      */
-    TableTab.prototype.show = function () {
+    TableTab.prototype.show = function (state) {
 
         var valid = this._validateInput();
 
         if (valid === true) {
 
-            this._show();
+            this._show(state);
 
             log.info("Tab shown successfully");
 
@@ -107,6 +108,23 @@ define([
         return this;
     };
 
+    /**
+     * Sync tab to passed state
+     * @param {Object} state
+     * @return {Object} filter instance
+     */
+    TableTab.prototype.sync = function (state) {
+        log.info("Sync tab. State:" + JSON.stringify(state));
+
+        if (state.hasOwnProperty("toolbar") && this.toolbar) {
+            this.toolbar.setValues(state.toolbar, true);
+        } else {
+            log.warn("Abort toolbar sync");
+        }
+
+        return this;
+    };
+
     /* END - API */
 
     TableTab.prototype._trigger = function (channel) {
@@ -150,15 +168,29 @@ define([
 
     };
 
-    TableTab.prototype._show = function () {
+    TableTab.prototype._show = function (syncModel) {
 
-        this._attach();
+        if (this.initialized === true) {
 
-        this._initVariables();
+            log.info("Tab table shown again");
 
-        this._renderComponents();
+        } else {
 
-        this._bindEventListeners();
+            log.info("Tab table shown for the first time");
+
+            this.syncModel = syncModel;
+
+            this._attach();
+
+            this._initVariables();
+
+            this._renderComponents();
+
+            this._bindEventListeners();
+
+            this.initialized = true;
+        }
+
     };
 
     TableTab.prototype._attach = function () {
@@ -223,7 +255,6 @@ define([
 //FIG rendererGridFX	
 addCSS("../../fenix-ui-olap/lib/grid/gt_grid_height.css")
 
-console.log("RENDERER",this.model,this.toolbar.getValues())
 var myrenderer=new myRenderer();
         var tempConf=this.toolbar.getValues();
 		var optGr={
@@ -247,44 +278,71 @@ var myrenderer=new myRenderer();
 
 
     };
- TableTab.prototype._renderToolbar = function () {
+    TableTab.prototype._renderToolbar = function () {
         log.info("Table tab render toolbar");
-//FIG equivalent toolbar.init()
+        //FIG equivalent toolbar.init()
+
         this.toolbar = new Filter({
             items: this._createFilterConfiguration(ToolbarModel),
             $el: this.$el.find(s.TOOLBAR)
         });
 
     };
-	
-	
-	    TableTab.prototype._createFilterConfiguration = function () {
-//file fenix-ui-visualization-box\config\tabs\table-toolbar-model.js
 
-//FX = this.model
-var myfunc=new myFunc();
-var liste=myfunc.getListAggregator();
-for (var i in liste){ToolbarModel.aggregation.selector.source.push({"value": liste[i], "label": liste[i] })}
-var FX=this.model.metadata.dsd;
-for(var i in FX.columns)
-		{
-			if(FX.columns[i].subject=="value"){ToolbarModel.sort.selector.source.push({"value": FX.columns[i].id, "label": FX.columns[i].id, parent: 'HIDDEN'})}
-		else if (FX.columns[i].subject!="time" ){ToolbarModel.sort.selector.source.push({"value": FX.columns[i].id, "label": FX.columns[i].id, parent: 'ROWS'})}
-			else if(FX.columns[i].subject=="time"){ToolbarModel.sort.selector.source.push({"value": FX.columns[i].id, "label": FX.columns[i].id, parent: 'COLS'})}
-		}
-	
+    TableTab.prototype._createFilterConfiguration = function () {
 
-console.log("INPUT FOR toolbar",this.model,ToolbarModel);
-        var configuration = ToolbarModel;
+        var configuration = $.extend(true, {}, Utils.mergeConfigurations(ToolbarModel, this.syncModel || {}));
 
-        //TODO process here
+        try {
+
+            var aggregatorLists = new myFunc().getListAggregator(),
+                FX = this.model.metadata.dsd;
+
+            for (var i in aggregatorLists) {
+                if (aggregatorLists.hasOwnProperty(i)) {
+                    configuration.aggregation.selector.source
+                        .push({"value": aggregatorLists[i], "label": aggregatorLists[i]})
+                }
+            }
+
+            for (i in FX.columns) {
+                if (FX.columns.hasOwnProperty(i)) {
+                    if (FX.columns[i].subject == "value") {
+                        configuration.sort.selector.source.push({
+                            "value": FX.columns[i].id,
+                            "label": FX.columns[i].id,
+                            parent: 'HIDDEN'
+                        })
+                    }
+                    else if (FX.columns[i].subject != "time") {
+                        configuration.sort.selector.source.push({
+                            "value": FX.columns[i].id,
+                            "label": FX.columns[i].id,
+                            parent: 'ROWS'
+                        })
+                    }
+                    else if (FX.columns[i].subject == "time") {
+
+                        configuration.sort.selector.source.push({
+                            "value": FX.columns[i].id,
+                            "label": FX.columns[i].id,
+                            parent: 'COLS'
+                        })
+                    }
+                }
+
+            }
+        } catch (e) {
+            log.error("Table tab: Error on _createFilterConfiguration() ");
+            log.error(e);
+            return configuration;
+        }
 
         return configuration;
 
     };
-	
-	
-	
+
+
     TableTab.prototype._onToolbarChangeEvent = function () {
 
         this._trigger("toolbar.change", this.toolbar.getValues());
@@ -297,9 +355,6 @@ console.log("INPUT FOR toolbar",this.model,ToolbarModel);
 
         //render creator
     };
-
-   
-
 
 
     TableTab.prototype._unbindEventListeners = function () {

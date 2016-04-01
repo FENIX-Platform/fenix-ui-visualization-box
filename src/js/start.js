@@ -251,8 +251,6 @@ define([
 
     Box.prototype._setObjState = function (key, val) {
 
-        //var property = this._getObjState(key);
-        //assign(this.state, key, typeof val === 'object' ? $.extend(true, property, val) : val);
         assign(this.state, key, val);
 
         function assign(obj, prop, value) {
@@ -454,13 +452,13 @@ define([
             return;
         }
 
-        if (this._getObjState("tabs." + tab + ".initialized") !== true) {
-            this._callTabInstanceMethod(tab, "show");
+        if (tabs[tab].callback === 'once') {
+            log.info("TODO")
         }
 
-        if (tabs[tab].callback === 'once') {
-            this._setObjState("tabs." + tab + ".initialized", true);
-        }
+        this._setObjState("tabs." + tab + ".initialized", true);
+
+        this._callTabInstanceMethod(tab, "show", this._getObjState("sync"));
 
     };
 
@@ -658,19 +656,25 @@ define([
     };
 
     Box.prototype._onTabToolbarChangeEvent = function (values) {
-        //pass values to each tab to sync toolbars
-        console.log(values)
 
-        //TODO
+        if (!_.isEmpty(values.values)) {
+            this._setObjState("sync.toolbar", values);
+            this._syncTabs();
+        } else {
+            log.warn("Abort sync");
+        }
 
-        var registeredTabs = this._getObjState("tabRegistry"),
-            tabsKeys = Object.keys(this._getObjState("tabs")),
-            self = this;
+    };
+
+    Box.prototype._syncTabs = function () {
+        log.info("Send 'sync' signal");
+
+        var tabsKeys = Object.keys(this._getObjState("tabs"));
 
         _.each(tabsKeys, _.bind(function (tab) {
 
-            if (this._getObjState("tabs." + tab + ".suitable") === true) {
-                //update toolbar
+            if (this._getObjState("tabs." + tab + ".suitable") === true && this._getObjState("tabs." + tab + ".initialized") === true) {
+                this._callTabInstanceMethod(tab, 'sync', this._getObjState("sync"));
             }
 
         }, this));
@@ -719,13 +723,13 @@ define([
 
     // Utils
 
-    Box.prototype._callTabInstanceMethod = function (name, method, opts) {
+    Box.prototype._callTabInstanceMethod = function (name, method, opts1, opts2) {
 
         var Instance = this._getTabInstance(name);
 
         if ($.isFunction(Instance[method])) {
 
-            return Instance[method](opts);
+            return Instance[method](opts1, opts2);
 
         } else {
             log.error(name + " tab does not implement the mandatory " + method + "() fn");
