@@ -660,6 +660,20 @@ define([
     Box.prototype._onTabToolbarChangeEvent = function (values) {
         //pass values to each tab to sync toolbars
         console.log(values)
+
+        //TODO
+
+        var registeredTabs = this._getObjState("tabRegistry"),
+            tabsKeys = Object.keys(this._getObjState("tabs")),
+            self = this;
+
+        _.each(tabsKeys, _.bind(function (tab) {
+
+            if (this._getObjState("tabs." + tab + ".suitable") === true) {
+                //update toolbar
+            }
+
+        }, this));
     };
 
     Box.prototype._setSize = function (size) {
