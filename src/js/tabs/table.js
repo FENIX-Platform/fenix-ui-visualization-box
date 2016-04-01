@@ -240,8 +240,8 @@ var myrenderer=new myRenderer();
 			optGr[tempConf.values.sort[i].parent].push(tempConf.values.sort[i].value)
 			console.log("CREATE CONF",tempConf.values.sort[i].parent,tempConf.values.sort[i].value)
 		}
-	//	myrenderer.rendererGridFX(this.model,"table_" + this.id,optGr);
-		myrenderer.rendererGridFX(this.model,"result",optGr);
+		myrenderer.rendererGridFX(this.model,"table_" + this.id,optGr);
+	//	myrenderer.rendererGridFX(this.model,"result",optGr);
 		
 		//id olap "table-" + this.id
 
@@ -251,7 +251,7 @@ var myrenderer=new myRenderer();
         log.info("Table tab render toolbar");
 //FIG equivalent toolbar.init()
         this.toolbar = new Filter({
-            items: ToolbarModel,
+            items: this._createFilterConfiguration(ToolbarModel),
             $el: this.$el.find(s.TOOLBAR)
         });
 
