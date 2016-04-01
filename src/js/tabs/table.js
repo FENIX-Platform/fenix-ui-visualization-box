@@ -220,14 +220,16 @@ define([
     };
 
     TableTab.prototype._onToolbarBtnClick = function () {
-//FIG renderer
+//FIG rendererGridFX	
+addCSS("../../fenix-ui-olap/lib/grid/gt_grid_height.css")
+
 console.log("RENDERER",this.model,this.toolbar.getValues())
 var myrenderer=new myRenderer();
         var tempConf=this.toolbar.getValues();
 		var optGr={
 			Aggregator:tempConf.values.aggregation[0],
 			Formater:"localstring",
-			GetValue:"classic",
+			GetValue:"Classic",
 			nbDecimal:5,
 			AGG:[],
 			COLS:[],
@@ -238,26 +240,14 @@ var myrenderer=new myRenderer();
 			optGr[tempConf.values.sort[i].parent].push(tempConf.values.sort[i].value)
 			console.log("CREATE CONF",tempConf.values.sort[i].parent,tempConf.values.sort[i].value)
 		}
-		myrenderer.rendererGridFX(this.model,"table_" + this.id,optGr);
+	//	myrenderer.rendererGridFX(this.model,"table_" + this.id,optGr);
+		myrenderer.rendererGridFX(this.model,"result",optGr);
+		
 		//id olap "table-" + this.id
 
 
     };
-
-    TableTab.prototype._onToolbarChangeEvent = function () {
-
-        this._trigger("toolbar.change", this.toolbar.getValues());
-
-    };
-
-    TableTab.prototype._renderComponents = function () {
-
-        this._renderToolbar();
-
-        //render creator
-    };
-
-    TableTab.prototype._renderToolbar = function () {
+ TableTab.prototype._renderToolbar = function () {
         log.info("Table tab render toolbar");
 //FIG equivalent toolbar.init()
         this.toolbar = new Filter({
@@ -266,8 +256,9 @@ var myrenderer=new myRenderer();
         });
 
     };
-
-    TableTab.prototype._createFilterConfiguration = function () {
+	
+	
+	    TableTab.prototype._createFilterConfiguration = function () {
 //file fenix-ui-visualization-box\config\tabs\table-toolbar-model.js
 
 //FX = this.model
@@ -291,6 +282,25 @@ console.log("INPUT FOR toolbar",this.model,ToolbarModel);
         return configuration;
 
     };
+	
+	
+	
+    TableTab.prototype._onToolbarChangeEvent = function () {
+
+        this._trigger("toolbar.change", this.toolbar.getValues());
+
+    };
+
+    TableTab.prototype._renderComponents = function () {
+
+        this._renderToolbar();
+
+        //render creator
+    };
+
+   
+
+
 
     TableTab.prototype._unbindEventListeners = function () {
 
