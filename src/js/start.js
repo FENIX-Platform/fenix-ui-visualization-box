@@ -174,7 +174,7 @@ define([
         var valid = true,
             errors = [];
 
-        //Check if box has an id
+        //Check if box has a valid id
         if (!this.id) {
 
             window.fx_vis_box_id >= 0 ? window.fx_vis_box_id++ : window.fx_vis_box_id = 0;
@@ -556,6 +556,8 @@ define([
 
         amplify.subscribe(this._getEventTopic("tab"), this, this._onTabEvent);
 
+        amplify.subscribe(this._getEventTopic("minimize"), this, this._onMinimizeEvent);
+
         this.$el.find("[data-action]").each(function () {
 
             var $this = $(this),
@@ -641,6 +643,11 @@ define([
 
     Box.prototype._onMetadataEvent = function (payload) {
         log.info("Listen to event: " + this._getEventTopic("metadata"));
+        log.trace(payload)
+    };
+
+    Box.prototype._onMinimizeEvent = function (payload) {
+        log.info("Listen to event: " + this._getEventTopic("minimize"));
         log.trace(payload)
     };
 
@@ -802,6 +809,8 @@ define([
         amplify.unsubscribe(this._getEventTopic("metadata"), this._onMetadataEvent);
 
         amplify.unsubscribe(this._getEventTopic("tab"), this._onTabEvent);
+
+        amplify.unsubscribe(this._getEventTopic("minimize"), this._onMinimizeEvent);
 
         this.$el.find("[data-action]").off();
 

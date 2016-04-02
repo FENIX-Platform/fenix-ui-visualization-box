@@ -31,7 +31,7 @@ $backface: #d2d0d0;
       display: none;
     }
     //show only the selected tab
-    $sections: "chart" "table" "map" "blank";
+    $sections: "chart" "table" "map" "blank" "metadata" "filter";
 
     @each $sec in $sections {
 

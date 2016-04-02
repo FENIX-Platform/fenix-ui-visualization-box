@@ -157,6 +157,10 @@
     display: block; }
   .fx-box [data-content="ready"][data-tab="blank"] [data-section="blank"] {
     display: block; }
+  .fx-box [data-content="ready"][data-tab="metadata"] [data-section="metadata"] {
+    display: block; }
+  .fx-box [data-content="ready"][data-tab="filter"] [data-section="filter"] {
+    display: block; }
 
 /*Flip effect */
 /* entire container, keeps perspective */
@@ -197,5 +201,3 @@
 .back {
   transform: rotateY(180deg);
   background-color: #d2d0d0; }
-
-/*# sourceMappingURL=test.css.map */

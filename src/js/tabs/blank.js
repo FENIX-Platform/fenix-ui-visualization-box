@@ -8,13 +8,13 @@ define([
     "fx-v-b/config/config-default",
     "fx-v-b/config/errors",
     "fx-v-b/config/events",
-    "fx-v-b/js/utils",
+    'fx-filter/js/utils',
     "text!fx-v-b/html/tabs/blank.hbs",
-    'fx-filter/start',
+    'fx-v-b/js/tabs/filter',
     "fx-v-b/config/tabs/blank-toolbar-model",
     "handlebars",
     "amplify"
-], function ($, log, _, C, CD, ERR, EVT, Utils, tabTemplate, Filter, ToolbarModel, Handlebars) {
+], function ($, log, _, C, CD, ERR, EVT, Utils, tabTemplate, FilterTab, ToolbarModel, Handlebars) {
 
     'use strict';
 
@@ -227,8 +227,9 @@ define([
         this.$toolbarBtn.on("click", _.bind(this._onToolbarBtnClick, this));
 
         //Toolbar events
-        this.toolbar.on('change', _.bind(this._onToolbarChangeEvent, this));
-    };
+        this.toolbar.on('ready', _.bind(function () {
+            this.toolbar.on('change', _.bind(this._onToolbarChangeEvent, this));
+        }, this));    };
 
     BlankTab.prototype._onToolbarEvent = function (payload) {
         log.info("Listen to event: " + this._getEventTopic("toolbar"));
@@ -266,13 +267,15 @@ define([
     BlankTab.prototype._renderToolbar = function () {
         log.info("Blank tab render toolbar");
 
-        this.toolbar = new Filter({
-            items: this._createFilterConfiguration(ToolbarModel),
-            $el: this.$el.find(s.TOOLBAR)
-        });
+        this.toolbar = new FilterTab({
+            config: this._createFilterConfiguration(ToolbarModel),
+            $el: this.$el.find(s.TOOLBAR),
+            box: this.box,
+            model: $.extend(true, {}, this.model),
+            id: "blank_toolbar_" + this.id
+        }).show();
 
     };
-
 
     BlankTab.prototype._createFilterConfiguration = function () {
 

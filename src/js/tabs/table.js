@@ -8,16 +8,16 @@ define([
     "fx-v-b/config/config-default",
     "fx-v-b/config/errors",
     "fx-v-b/config/events",
-    "fx-v-b/js/utils",
+    'fx-filter/js/utils',
     "text!fx-v-b/html/tabs/table.hbs",
-    'fx-filter/start',
+    'fx-v-b/js/tabs/filter',
     "fx-v-b/config/tabs/table-toolbar-model",
     "handlebars",
     // 'fx-pivot/start',
     'renderer', "functions",
     "commonutilities",
     "amplify"
-], function ($, log, _, C, CD, ERR, EVT, Utils, tabTemplate, Filter, ToolbarModel, Handlebars, myRenderer, myFunc) {
+], function ($, log, _, C, CD, ERR, EVT, Utils, tabTemplate, FilterTab, ToolbarModel, Handlebars, myRenderer, myFunc) {
 
     'use strict';
 
@@ -31,7 +31,6 @@ define([
         $.extend(true, this, defaultOptions, o);
 
         this.channels = {};
-
 
         return this;
     }
@@ -234,7 +233,9 @@ define([
         this.$toolbarBtn.on("click", _.bind(this._onToolbarBtnClick, this));
 
         //Toolbar events
-        this.toolbar.on('change', _.bind(this._onToolbarChangeEvent, this));
+        this.toolbar.on('ready', _.bind(function () {
+            this.toolbar.on('change', _.bind(this._onToolbarChangeEvent, this));
+        }, this));
     };
 
     TableTab.prototype._onToolbarEvent = function (payload) {
@@ -269,7 +270,7 @@ var myrenderer=new myRenderer();
 		};
 		for( var i in tempConf.values.sort){
 			optGr[tempConf.values.sort[i].parent].push(tempConf.values.sort[i].value)
-			console.log("CREATE CONF",tempConf.values.sort[i].parent,tempConf.values.sort[i].value)
+			//console.log("CREATE CONF",tempConf.values.sort[i].parent,tempConf.values.sort[i].value)
 		}
 		myrenderer.rendererGridFX(this.model,"table_" + this.id,optGr);
 	//	myrenderer.rendererGridFX(this.model,"result",optGr);
@@ -280,12 +281,14 @@ var myrenderer=new myRenderer();
     };
     TableTab.prototype._renderToolbar = function () {
         log.info("Table tab render toolbar");
-        //FIG equivalent toolbar.init()
 
-        this.toolbar = new Filter({
-            items: this._createFilterConfiguration(ToolbarModel),
-            $el: this.$el.find(s.TOOLBAR)
-        });
+        this.toolbar = new FilterTab({
+            $el: this.$el.find(s.TOOLBAR),
+            box: this.box,
+            model: $.extend(true, {}, this.model),
+            config: this._createFilterConfiguration(ToolbarModel), //higher priority
+            id: "filter_toolbar_" + this.id
+        }).show();
 
     };
 

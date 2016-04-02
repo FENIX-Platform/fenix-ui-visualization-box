@@ -5,6 +5,17 @@ define(function () {
 
     return [
         {
+            "name": "Metadata",
+            "url": "#",
+            "parent_id": "-1",
+            "id": "0",
+            "a_attrs": {
+                "data-action": "tab",
+                "data-tab": "metadata",
+                "class" : "hidden"
+            }
+        },
+        {
             "name": "Download",
             "url": "#",
             "parent_id": "-1",
@@ -153,6 +164,17 @@ define(function () {
                 "data-action": "tab",
                 "data-tab": "table",
                 "data-type": "standard"
+            }
+        },
+        {
+            "name": "Filter",
+            "url": "#",
+            "parent_id": "-1",
+            "id": "12",
+            "a_attrs": {
+                "data-action": "tab",
+                "data-tab": "filter",
+                "class" : "hidden"
             }
         }
     ];

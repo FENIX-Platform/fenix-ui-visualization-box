@@ -6,6 +6,8 @@ define(function () {
     return {
 
         "confirm_remove" : "Are you sure?",
+        "submit_button" : "Submit",
+        "reset_button" : "Reset",
 
 
     }

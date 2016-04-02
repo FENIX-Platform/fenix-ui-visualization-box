@@ -43,6 +43,9 @@
                                 {{#unless hideCloneButton}}
                                     <button data-action="clone" class="btn btn-default" type="button">clone</button>
                                 {{/unless}}
+                                {{#unless hideMinimizeButton}}
+                                    <button data-action="minimize" class="btn btn-default" type="button">minimize</button>
+                                {{/unless}}
                                 {{#unless hideFlipButton}}
                                     <button data-action="flip" class="btn btn-default" type="button">flip</button>
                                 {{/unless}}
@@ -64,6 +67,12 @@
                     </div>
                     <div data-section="blank">
                         <h4>Blank</h4>
+                    </div>
+                    <div data-section="metadata">
+                        <h4>Metadata</h4>
+                    </div>
+                    <div data-section="filter">
+                        <h4>Filter</h4>
                     </div>
 
                 </div>

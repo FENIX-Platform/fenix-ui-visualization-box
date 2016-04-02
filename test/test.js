@@ -27,6 +27,7 @@ require.config({
         dataEditorPaths : pathProjectRoot + 'submodules/fenix-ui-DataEditor/js/paths',
         dsdEditorPaths : pathProjectRoot + 'submodules/fenix-ui-DSDEditor/js/paths',
         metadataEditorPaths : pathProjectRoot + 'submodules/fenix-ui-metadata-editor/js/paths',
+        metadataViewerPaths : pathProjectRoot + 'submodules/fenix-ui-metadata-viewer/src/js/paths',
         catalogPaths : pathProjectRoot + 'submodules/fenix-ui-catalog/js/paths',
         dataManagementPaths : pathProjectRoot + 'submodules/fenix-ui-data-management/src/js/paths',
 		//TODO move to ui-commons
@@ -41,8 +42,9 @@ require([
     "visualizationPaths",
     "filterPaths",
     "olapPaths",
-	"pivotatorPaths"
-], function (Compiler, Common, Box, Filter, Olap, Pivotator ) {
+	"pivotatorPaths",
+    "metadataViewerPaths"
+], function (Compiler, Common, Box, Filter, Olap, Pivotator, MetadataViewer ) {
 
     'use strict';
 
@@ -60,10 +62,13 @@ require([
     var olapConfig = Olap;
     olapConfig.baseUrl = submodules_path + 'fenix-ui-olap/js';
 	
-	 var pivotatorConfig = Pivotator;
+    var pivotatorConfig = Pivotator;
     pivotatorConfig.baseUrl = submodules_path + 'fenix-ui-olap/js/pivotator2';
 
-    Compiler.resolve([commonConfig, boxConfig, filterConfig, olapConfig, pivotatorConfig],
+    var metadataViewerConfig = MetadataViewer;
+    metadataViewerConfig.baseUrl = submodules_path + 'fenix-ui-metadata-viewer/src/js';
+
+    Compiler.resolve([commonConfig, boxConfig, filterConfig, olapConfig, pivotatorConfig, metadataViewerConfig],
         {
             placeholders: {"FENIX_CDN": "http://fenixrepo.fao.org/cdn"},
 
