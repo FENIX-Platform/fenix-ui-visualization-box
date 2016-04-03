@@ -29,6 +29,7 @@ define([
         $.extend(true, this, defaultOptions, o);
 
         this.channels = {};
+        this.status = {};
 
         return this;
     }
@@ -53,6 +54,8 @@ define([
         if (valid === true) {
 
             this._show(state);
+
+            this.status.ready = true;
 
             log.info("Tab shown successfully");
 
@@ -299,7 +302,6 @@ define([
         this.$submitBtn.off();
 
         this.$resetBtn.off();
-
     };
 
     FilterTab.prototype._isSuitable = function () {
@@ -309,7 +311,10 @@ define([
 
     FilterTab.prototype._dispose = function () {
 
-        this._unbindEventListeners();
+        if (this.status.ready === true) {
+            this._unbindEventListeners();
+        }
+
     };
 
     FilterTab.prototype._getEventTopic = function (evt) {

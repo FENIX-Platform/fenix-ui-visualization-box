@@ -10,11 +10,11 @@ define([
     "fx-v-b/config/events",
     'fx-filter/js/utils',
     "text!fx-v-b/html/tabs/blank.hbs",
-    'fx-v-b/js/tabs/filter',
+    'fx-filter/start',
     "fx-v-b/config/tabs/blank-toolbar-model",
     "handlebars",
     "amplify"
-], function ($, log, _, C, CD, ERR, EVT, Utils, tabTemplate, FilterTab, ToolbarModel, Handlebars) {
+], function ($, log, _, C, CD, ERR, EVT, Utils, tabTemplate, Filter, ToolbarModel, Handlebars) {
 
     'use strict';
 
@@ -28,6 +28,7 @@ define([
         $.extend(true, this, defaultOptions, o);
 
         this.channels = {};
+        this.status = {};
 
         return this;
     }
@@ -52,6 +53,8 @@ define([
         if (valid === true) {
 
             this._show(state);
+
+            this.status.ready = true;
 
             log.info("Tab shown successfully");
 
@@ -109,7 +112,7 @@ define([
      * @param {Object} state
      * @return {Object} filter instance
      */
-    BlankTab.prototype.sync = function ( state ) {
+    BlankTab.prototype.sync = function (state) {
         log.info("Sync tab. State:" + JSON.stringify(state));
 
         if (state.hasOwnProperty("toolbar") && this.toolbar) {
@@ -164,7 +167,7 @@ define([
 
     BlankTab.prototype._show = function (syncModel) {
 
-        if (this.initialized === true ) {
+        if (this.initialized === true) {
             log.info("Tab Blank shown again");
 
         } else {
@@ -229,7 +232,8 @@ define([
         //Toolbar events
         this.toolbar.on('ready', _.bind(function () {
             this.toolbar.on('change', _.bind(this._onToolbarChangeEvent, this));
-        }, this));    };
+        }, this));
+    };
 
     BlankTab.prototype._onToolbarEvent = function (payload) {
         log.info("Listen to event: " + this._getEventTopic("toolbar"));
@@ -267,13 +271,10 @@ define([
     BlankTab.prototype._renderToolbar = function () {
         log.info("Blank tab render toolbar");
 
-        this.toolbar = new FilterTab({
-            config: this._createFilterConfiguration(ToolbarModel),
-            $el: this.$el.find(s.TOOLBAR),
-            box: this.box,
-            model: $.extend(true, {}, this.model),
-            id: "blank_toolbar_" + this.id
-        }).show();
+        this.toolbar = new Filter({
+            items: this._createFilterConfiguration(ToolbarModel),
+            $el: this.$el.find(s.TOOLBAR)
+        });
 
     };
 
@@ -302,7 +303,9 @@ define([
 
     BlankTab.prototype._dispose = function () {
 
-        this._unbindEventListeners();
+        if (this.status.ready === true) {
+            this._unbindEventListeners();
+        }
     };
 
     BlankTab.prototype._getEventTopic = function (evt) {

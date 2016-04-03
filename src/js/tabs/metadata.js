@@ -17,7 +17,7 @@ define([
     'use strict';
 
     var defaultOptions = {}, s = {
-        CONTAINER : '[data-role="metadata"]'
+        CONTAINER: '[data-role="metadata"]'
     };
 
     function MetadataTab(o) {
@@ -25,6 +25,7 @@ define([
         $.extend(true, this, defaultOptions, o);
 
         this.channels = {};
+        this.status = {};
 
         return this;
     }
@@ -49,6 +50,8 @@ define([
         if (valid === true) {
 
             this._show(state);
+
+            this.status.ready = true;
 
             log.info("Tab shown successfully");
 
@@ -106,7 +109,7 @@ define([
      * @param {Object} state
      * @return {Object} filter instance
      */
-    MetadataTab.prototype.sync = function ( state ) {
+    MetadataTab.prototype.sync = function (state) {
         log.info("Sync tab. State:" + JSON.stringify(state));
 
         if (state.hasOwnProperty("toolbar") && this.toolbar) {
@@ -161,7 +164,7 @@ define([
 
     MetadataTab.prototype._show = function (syncModel) {
 
-        if (this.initialized === true ) {
+        if (this.initialized === true) {
             log.info("Tab Metadata shown again");
 
         } else {
@@ -211,7 +214,7 @@ define([
         this.metadataViewer.init({
             data: this.model.metadata,
             lang: 'en',
-            placeholder : this.$el.find(s.CONTAINER)
+            placeholder: this.$el.find(s.CONTAINER)
         });
 
 
@@ -228,7 +231,10 @@ define([
 
     MetadataTab.prototype._dispose = function () {
 
-        this._unbindEventListeners();
+        if (this.status.ready === true) {
+            this._unbindEventListeners();
+        }
+
     };
 
     MetadataTab.prototype._getEventTopic = function (evt) {

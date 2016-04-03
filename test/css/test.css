@@ -149,18 +149,6 @@
     display: block; }
   .fx-box [data-content="ready"] [data-section] {
     display: none; }
-  .fx-box [data-content="ready"][data-tab="chart"] [data-section="chart"] {
-    display: block; }
-  .fx-box [data-content="ready"][data-tab="table"] [data-section="table"] {
-    display: block; }
-  .fx-box [data-content="ready"][data-tab="map"] [data-section="map"] {
-    display: block; }
-  .fx-box [data-content="ready"][data-tab="blank"] [data-section="blank"] {
-    display: block; }
-  .fx-box [data-content="ready"][data-tab="metadata"] [data-section="metadata"] {
-    display: block; }
-  .fx-box [data-content="ready"][data-tab="filter"] [data-section="filter"] {
-    display: block; }
 
 /*Flip effect */
 /* entire container, keeps perspective */

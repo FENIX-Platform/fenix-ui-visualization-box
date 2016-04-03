@@ -33,7 +33,7 @@ define(function () {
             'blank': {type: 'simple', callback: 'once'},
             'table': {type: 'simple', callback: 'once'},
             'metadata': {type: 'simple', callback: 'once'},
-            'filter': {type: 'simple', callback: 'once'},
+            //'filter': {type: 'simple', callback: 'once'},
             //'map': {type: 'simple', callback: 'always'},
             //'chart': {type: 'simple', callback: 'always'}
         },

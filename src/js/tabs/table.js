@@ -10,14 +10,14 @@ define([
     "fx-v-b/config/events",
     'fx-filter/js/utils',
     "text!fx-v-b/html/tabs/table.hbs",
-    'fx-v-b/js/tabs/filter',
+    'fx-filter/start',
     "fx-v-b/config/tabs/table-toolbar-model",
     "handlebars",
     // 'fx-pivot/start',
     'renderer', "functions",
     "commonutilities",
     "amplify"
-], function ($, log, _, C, CD, ERR, EVT, Utils, tabTemplate, FilterTab, ToolbarModel, Handlebars, myRenderer, myFunc) {
+], function ($, log, _, C, CD, ERR, EVT, Utils, tabTemplate, Filter, ToolbarModel, Handlebars, myRenderer, myFunc) {
 
     'use strict';
 
@@ -31,6 +31,7 @@ define([
         $.extend(true, this, defaultOptions, o);
 
         this.channels = {};
+        this.status = {};
 
         return this;
     }
@@ -254,41 +255,38 @@ define([
 
     TableTab.prototype._onToolbarBtnClick = function () {
 //FIG rendererGridFX	
-addCSS("../../fenix-ui-olap/lib/grid/gt_grid_height.css")
+        addCSS("../../fenix-ui-olap/lib/grid/gt_grid_height.css")
 
-var myrenderer=new myRenderer();
-        var tempConf=this.toolbar.getValues();
-		var optGr={
-			Aggregator:tempConf.values.aggregation[0],
-			Formater:"localstring",
-			GetValue:"Classic",
-			nbDecimal:5,
-			AGG:[],
-			COLS:[],
-			ROWS:[],
-			HIDDEN:[]
-		};
-		for( var i in tempConf.values.sort){
-			optGr[tempConf.values.sort[i].parent].push(tempConf.values.sort[i].value)
-			//console.log("CREATE CONF",tempConf.values.sort[i].parent,tempConf.values.sort[i].value)
-		}
-		myrenderer.rendererGridFX(this.model,"table_" + this.id,optGr);
-	//	myrenderer.rendererGridFX(this.model,"result",optGr);
-		
-		//id olap "table-" + this.id
+        var myrenderer = new myRenderer();
+        var tempConf = this.toolbar.getValues();
+        var optGr = {
+            Aggregator: tempConf.values.aggregation[0],
+            Formater: "localstring",
+            GetValue: "Classic",
+            nbDecimal: 5,
+            AGG: [],
+            COLS: [],
+            ROWS: [],
+            HIDDEN: []
+        };
+        for (var i in tempConf.values.sort) {
+            optGr[tempConf.values.sort[i].parent].push(tempConf.values.sort[i].value)
+            //console.log("CREATE CONF",tempConf.values.sort[i].parent,tempConf.values.sort[i].value)
+        }
+        myrenderer.rendererGridFX(this.model, "table_" + this.id, optGr);
+        //	myrenderer.rendererGridFX(this.model,"result",optGr);
+
+        //id olap "table-" + this.id
 
 
     };
     TableTab.prototype._renderToolbar = function () {
         log.info("Table tab render toolbar");
 
-        this.toolbar = new FilterTab({
-            $el: this.$el.find(s.TOOLBAR),
-            box: this.box,
-            model: $.extend(true, {}, this.model),
-            config: this._createFilterConfiguration(ToolbarModel), //higher priority
-            id: "filter_toolbar_" + this.id
-        }).show();
+        this.toolbar = new Filter({
+            items: this._createFilterConfiguration(ToolbarModel),
+            $el: this.$el.find(s.TOOLBAR)
+        });
 
     };
 
@@ -363,7 +361,6 @@ var myrenderer=new myRenderer();
     TableTab.prototype._unbindEventListeners = function () {
 
         this.$toolbarBtn.off();
-
         this.$el.find("[data-action]").off();
 
         amplify.unsubscribe(this._getEventTopic("toolbar"), this._onToolbarEvent);
@@ -377,7 +374,9 @@ var myrenderer=new myRenderer();
 
     TableTab.prototype._dispose = function () {
 
-        this._unbindEventListeners();
+        if (this.status.ready === true) {
+            this._unbindEventListeners();
+        }
     };
 
     TableTab.prototype._getEventTopic = function (evt) {

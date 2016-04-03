@@ -25,7 +25,8 @@ define([
         BOX: ".fx-box",
         CONTENT_READY: "[data-content='ready']",
         RIGHT_MENU: "[data-role='right-menu']",
-        FLIP_CONTAINER: ".flip-container"
+        FLIP_CONTAINER: ".flip-container",
+        FONT_CONTENT : '.front-content'
     };
 
     /* API */
@@ -202,6 +203,8 @@ define([
         this._setObjState("valid", true);
 
         this.model = this.initial.model;
+
+        this.front_tab_instances = {};
 
     };
 
@@ -413,7 +416,16 @@ define([
         log.info('Show tab ' + tab);
         log.info(opts);
 
-        //TODO check if it is a valid tab
+        var tabs = this._getObjState("tabs");
+
+        //check if it is a valid tab
+        if (!tabs[tab]) {
+            log.error("Error on show tab content: " + tab);
+
+            this._setStatus("error");
+
+            return;
+        }
 
         var currentTab = this._getObjState("tab");
 
@@ -434,7 +446,9 @@ define([
 
         this._setObjState("tab", tab);
 
-        this.$el.find(s.CONTENT_READY).attr("data-tab", this._getObjState("tab"));
+        //hide all tabs and show the selected one
+        this.$el.find(s.CONTENT_READY).find("[data-section]").hide();
+        this.$el.find(s.CONTENT_READY).find("[data-section='" + tab + "']").show();
 
         this._showTabContent(opts);
     };
@@ -478,7 +492,8 @@ define([
         instance.on('toolbar.change', _.bind(this._onTabToolbarChangeEvent, this));
 
         //cache the plugin instance
-        this._setObjState("tabs." + tab + ".instance", instance);
+        this.front_tab_instances[tab] = instance;
+        //this._setObjState("tabs." + tab + ".instance", instance);
         this._setObjState("tabs." + tab + ".suitable", this._callTabInstanceMethod(tab, 'isSuitable'));
 
         if (this._getObjState("tabs." + tab + ".suitable") === true) {
@@ -491,12 +506,21 @@ define([
 
     Box.prototype._getTabInstance = function (tab) {
 
-        return this._getObjState("tabs." + tab + ".instance")
+        return this.front_tab_instances[tab];
+        //return this._getObjState("tabs." + tab + ".instance")
     };
 
     Box.prototype._getTabContainer = function (tab) {
 
-        return this.$el.find(s.BOX).find("[data-section='" + tab + "']");
+        var $container = this.$el.find(s.FONT_CONTENT).find("[data-section='" + tab + "']");
+
+        if ($container.length === 0) {
+
+            $container = $('<div data-section="' + tab + '"></div>');
+            this.$el.find(s.FONT_CONTENT).append($container)
+        }
+
+        return $container;
     };
 
     Box.prototype._checkSuitableTabs = function () {
@@ -735,6 +759,8 @@ define([
         var Instance = this._getTabInstance(name);
 
         if ($.isFunction(Instance[method])) {
+
+            this.front_tab_instances[name] = Instance;
 
             return Instance[method](opts1, opts2);
 
