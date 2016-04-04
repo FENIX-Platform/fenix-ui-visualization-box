@@ -142,7 +142,10 @@ define(function () {
             "parent_id": "8",
             "id": "11",
             "a_attrs": {
-                //"class" : "hidden"
+                "data-action": "tab",
+                "data-tab": "table",
+                "data-type": "standard",  
+                "class" : "hidden"
             }
         }, {
             "name": "Standard",

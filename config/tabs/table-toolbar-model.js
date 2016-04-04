@@ -132,7 +132,10 @@ define(function () {
                 "type": "number",
                 "source": [
                     {"value": "2"}
-                ]
+                ],
+                "config" : {
+                    "min" : 0
+                }
             },
 
             "template": {

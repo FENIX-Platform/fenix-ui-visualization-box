@@ -1,0 +1,146 @@
+<div>
+    <div data-role="box" class="fx-box" data-status="{{ status }}" data-size="{{ size }}">
+
+        <div data-content="ready" data-tab="{{ default_tab }}">
+
+            <div data-role="flip-container" class="flip-container">
+
+                <div class="flipper">
+
+                    <!-- Front -->
+                    <div class="front">
+                        <!-- front content -->
+
+                        {{#unless hideToolbar}}
+
+                            <div data-role="front-toolbar" class="front-toolbar">
+
+                                {{#unless hideMenu}}
+
+                                    <div class="pull-left">
+                                        <div data-role="right-menu" class="dropdown">
+                                            <a href="" class="btn dropdown-toggle" data-toggle="dropdown">
+                                                <span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>
+                                            </a>
+
+                                        </div>
+                                    </div>
+
+                                {{/unless}}
+
+                                <div class="pull-right">
+                                    {{#unless hideMetadataButton}}
+                                        <button data-action="metadata" class="btn btn-default" type="button">metadata
+                                        </button>
+                                    {{/unless}}
+                                    {{#unless hideRemoveButton}}
+                                        <button data-action="remove" class="btn btn-default" type="button">remove</button>
+                                    {{/unless}}
+                                    {{#unless hideResizeButton}}
+                                        <button data-action="resize" data-size="2" class="btn btn-default" type="button">
+                                            resize
+                                        </button>
+                                    {{/unless}}
+                                    {{#unless hideCloneButton}}
+                                        <button data-action="clone" class="btn btn-default" type="button">clone</button>
+                                    {{/unless}}
+                                    {{#unless hideMinimizeButton}}
+                                        <button data-action="minimize" class="btn btn-default" type="button">minimize
+                                        </button>
+                                    {{/unless}}
+                                    {{#unless hideFlipButton}}
+                                        <button data-action="flip" class="btn btn-default" type="button">flip</button>
+                                    {{/unless}}
+                                </div>
+                            </div>
+
+                        {{/unless}}
+                        <br>
+                        <br>
+
+                        <div data-role="front-content" class="front-content">
+
+                            <div data-section="chart">
+                                <h4>Chart</h4>
+                            </div>
+                            <div data-section="map">
+                                <h4>Map</h4>
+                            </div>
+                            <div data-section="table">
+                                <h4>Table</h4>
+                            </div>
+                            <div data-section="blank">
+                                <h4>Blank</h4>
+                            </div>
+                            <div data-section="metadata">
+                                <h4>Metadata</h4>
+                            </div>
+                            <div data-section="filter">
+                                <h4>Filter</h4>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- back -->
+                    <div class="back">
+
+                        {{#unless hideToolbar}}
+                            <!-- back content -->
+                            <div data-role="back-toolbar">
+                                <button data-action="flip" class="btn btn-default pull-right" type="button">flip</button>
+                            </div>
+                        {{/unless}}
+
+                        <div data-role="back-content">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <h4>{{ back_current_resource }}</h4>
+                                    <ul data-role='process-steps' class="list-unstyled list-group well"></ul>
+                                    <div>
+                                        <button data-action="add" class="btn btn-default" type="button">{{ add_button }}</button>
+                                    </div>
+                                </div>
+                                <div class="col-xs-9">
+                                    <ul data-role="process-details" class="list-unstyled list-group">
+                                        <li>
+                                            <h3>Click the list on the left</h3>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div data-content="error">
+            Error
+        </div>
+
+        <div data-content="loading">
+            <span class="loading loading-48"></span>
+        </div>
+
+        <div data-content="empty">
+            Empty
+        </div>
+
+    </div>
+
+    <li data-role="step-metadata">
+        <h3>Metadata</h3>
+        <button data-action="remove-step" class="btn btn-default" type="button">{{ remove_button }}</button>
+
+        {{ uid }}
+        {{ version }}
+    </li>
+    <li data-role="step-filter">
+        <h3>Filter</h3>
+        <button data-action="remove-step" class="btn btn-default" type="button">{{ remove_button }}</button>
+
+    </li>
+</div>

@@ -77,6 +77,7 @@ define([
             //hideResizeButton: true,
             //hideCloneButton: true,
             //hideFlipButton: true,
+            //hideMinimizeButton: true,
             //face: "back"
         });
 

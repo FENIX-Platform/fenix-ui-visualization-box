@@ -10,23 +10,26 @@ define([
     "fx-v-b/config/config-default",
     "fx-v-b/config/errors",
     "fx-v-b/config/events",
-    "text!fx-v-b/html/structure.hbs",
+    "text!fx-v-b/html/template.hbs",
     "fx-common/json-menu",
     "fx-v-b/config/right-menu-model",
     "i18n!fx-v-b/nls/box",
     "q",
     "amplify",
     "bootstrap"
-], function (log, require, $, _, Handlebars, C, CD, ERR, EVT, Structure, JsonMenu, RightMenuModel, i18nLabels, Q) {
+], function (log, require, $, _, Handlebars, C, CD, ERR, EVT, Template, JsonMenu, RightMenuModel, i18nLabels, Q) {
 
     'use strict';
 
     var s = {
-        BOX: ".fx-box",
+        BOX: "[data-role='box']",
         CONTENT_READY: "[data-content='ready']",
         RIGHT_MENU: "[data-role='right-menu']",
-        FLIP_CONTAINER: ".flip-container",
-        FONT_CONTENT : '.front-content'
+        FLIP_CONTAINER: "[data-role='flip-container']",
+        FONT_CONTENT: "[data-role='front-content']",
+        PROCESS_STEPS: "[data-role='process-steps']",
+        PROCESS_DETAILS : "[data-role='process-details']",
+        BACK_CONTENT: "[data-role='back-content']"
     };
 
     /* API */
@@ -161,7 +164,6 @@ define([
 
         /*
          * TODO remove
-         * tabs[tab].instance
          * tabs[tab].initialized
          * */
 
@@ -206,6 +208,9 @@ define([
 
         this.front_tab_instances = {};
 
+        //resource process steps
+        this.processSteps = [];
+
     };
 
     Box.prototype._initObj = function () {
@@ -217,8 +222,8 @@ define([
         this._setObjState("status", status);
 
         //Inject box blank template
-        var template = Handlebars.compile(Structure),
-            $html = $(template($.extend(true, {}, this.state)));
+        var template = Handlebars.compile($(Template).find(s.BOX)[0].outerHTML),
+            $html = $(template($.extend(true, {}, this.state, i18nLabels)));
 
         this.$el.html($html);
 
@@ -230,9 +235,15 @@ define([
         //set flip side
         this.flip(this._getObjState("face"));
 
+        //step process list
+        this.$processSteps = this.$el.find(s.PROCESS_STEPS);
+        this.$processStepDetails = this.$el.find(s.PROCESS_DETAILS);
+
     };
 
     Box.prototype._initObjState = function () {
+
+        //TODO extend initialization with default values
 
         //template options
         this._setObjState("hideToolbar", !!this.initial.hideToolbar);
@@ -242,6 +253,7 @@ define([
         this._setObjState("hideResizeButton", !!this.initial.hideResizeButton);
         this._setObjState("hideCloneButton", !!this.initial.hideCloneButton);
         this._setObjState("hideFlipButton", !!this.initial.hideFlipButton);
+        this._setObjState("hideMinimizeButton", !!this.initial.hideMinimizeButton);
 
         //tabs
         this._setObjState("tabRegistry", this.tabRegistry);
@@ -249,6 +261,9 @@ define([
 
         //flip side
         this._setObjState("face", this.initial.face);
+
+        //resource process steps
+        this._setObjState("process.steps", this.processSteps);
 
     };
 
@@ -403,7 +418,7 @@ define([
         this._renderBoxBackFace();
     };
 
-    // Tab system
+    // Front face
 
     Box.prototype._renderBoxFrontFace = function () {
 
@@ -558,8 +573,97 @@ define([
         this._showTab(this._getObjState("defaultTab"));
     };
 
+    //Back face
+
     Box.prototype._renderBoxBackFace = function () {
         log.info("Start rendering box front face");
+
+        this._createProcessSteps();
+
+        this._renderProcessSteps();
+
+    };
+
+    Box.prototype._createProcessSteps = function () {
+
+        var list = [];
+
+        list.push(this._createProcessStep({
+            tab: "metadata",
+            params: {
+                model: $.extend(true, {}, this.model)
+            }
+        }));
+
+        list.push(this._createProcessStep({
+            tab: "filter",
+            params: {
+                model: $.extend(true, {}, this.model)
+            }
+        }));
+
+        this._setObjState("process.steps", list);
+
+    };
+
+    Box.prototype._renderProcessSteps = function () {
+
+        var list = this._getObjState("process.steps");
+
+        _.each(list, _.bind(function (step, index) {
+
+            var template = Handlebars.compile($(Template).find("[data-role='step-" + step.tab + "']")[0].outerHTML),
+                $html = $(template($.extend(true, {}, step, i18nLabels, this.model.metadata)));
+
+            this._bindStepEventListeners($html, step);
+
+            this.$processSteps.append($html);
+
+            //render tab
+            var registry = this._getObjState("tabRegistry");
+
+            require([registry[step.tab].path], _.bind(function (Tab) {
+
+                //Add details container
+                var $el = this.$processStepDetails.find("[data-role='" + step.id + "']");
+                if ($el.length === 0) {
+                    $el = $("<li data-role='" + step.id + "'>daniele</li>");
+
+                    if (index !== 0) {
+                        $el.hide();
+                    }
+                    this.$processStepDetails.append($el);
+                }
+
+                new Tab({
+                    $el: $el,
+                    box: this,
+                    model: $.extend(true, {}, this.model),
+                    id: "step-" + step.id
+                }).show();
+
+            }, this));
+
+        }, this));
+
+    };
+
+    Box.prototype._bindStepEventListeners = function ($html, step) {
+
+        $html.on("click", { step: step }, _.bind(function (e) {
+            this.$processStepDetails.find("li").hide();
+            this.$processStepDetails.find("li[data-role='"+e.data.step.id+"']").show();
+
+        }, this));
+
+    };
+
+    Box.prototype._createProcessStep = function (obj) {
+
+        window.fx_vis_box_step_id >= 0 ? window.fx_vis_box_step_id++ : window.fx_vis_box_step_id = 0;
+
+        return $.extend(true, obj, {id: "process-step-" + window.fx_vis_box_step_id});
+
     };
 
     // Event binding and callbacks

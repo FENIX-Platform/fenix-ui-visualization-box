@@ -254,8 +254,12 @@ define([
     };
 
     TableTab.prototype._onToolbarBtnClick = function () {
-//FIG rendererGridFX	
-        addCSS("../../fenix-ui-olap/lib/grid/gt_grid_height.css")
+
+        this._renderTable();
+
+    };
+
+    TableTab.prototype._renderTable = function () {
 
         var myrenderer = new myRenderer();
         var tempConf = this.toolbar.getValues();
@@ -278,8 +282,8 @@ define([
 
         //id olap "table-" + this.id
 
-
     };
+
     TableTab.prototype._renderToolbar = function () {
         log.info("Table tab render toolbar");
 
@@ -287,6 +291,8 @@ define([
             items: this._createFilterConfiguration(ToolbarModel),
             $el: this.$el.find(s.TOOLBAR)
         });
+
+        this.toolbar.on("ready", _.bind(this._renderTable, this))
 
     };
 
@@ -352,9 +358,12 @@ define([
 
     TableTab.prototype._renderComponents = function () {
 
+        //TODO remove me
+        addCSS("../../fenix-ui-olap/lib/grid/gt_grid_height.css")
+
         this._renderToolbar();
 
-        //render creator
+        //Table will be create when filter is 'ready'
     };
 
 
