@@ -30,8 +30,6 @@ require.config({
         metadataViewerPaths : pathProjectRoot + 'submodules/fenix-ui-metadata-viewer/src/js/paths',
         catalogPaths : pathProjectRoot + 'submodules/fenix-ui-catalog/js/paths',
         dataManagementPaths : pathProjectRoot + 'submodules/fenix-ui-data-management/src/js/paths',
-		//TODO move to ui-commons
-		pivotatorPaths : pathProjectRoot + 'submodules/fenix-ui-olap/js/pivotator2/paths',
 
     }
 });
@@ -42,9 +40,9 @@ require([
     "visualizationPaths",
     "filterPaths",
     "olapPaths",
-	"pivotatorPaths",
-    "metadataViewerPaths"
-], function (Compiler, Common, Box, Filter, Olap, Pivotator, MetadataViewer ) {
+    "metadataViewerPaths",
+    "chartPaths"
+], function (Compiler, Common, Box, Filter, Olap, MetadataViewer, ChartCreator ) {
 
     'use strict';
 
@@ -62,13 +60,13 @@ require([
     var olapConfig = Olap;
     olapConfig.baseUrl = submodules_path + 'fenix-ui-olap/js';
 	
-    var pivotatorConfig = Pivotator;
-    pivotatorConfig.baseUrl = submodules_path + 'fenix-ui-olap/js/pivotator2';
-
     var metadataViewerConfig = MetadataViewer;
     metadataViewerConfig.baseUrl = submodules_path + 'fenix-ui-metadata-viewer/src/js';
 
-    Compiler.resolve([commonConfig, boxConfig, filterConfig, olapConfig, pivotatorConfig, metadataViewerConfig],
+    var chartConfig = ChartCreator;
+    chartConfig.baseUrl = submodules_path + 'fenix-ui-chart-creator/src/js';
+
+    Compiler.resolve([commonConfig, boxConfig, filterConfig, olapConfig, metadataViewerConfig, chartConfig],
         {
             placeholders: {"FENIX_CDN": "http://fenixrepo.fao.org/cdn"},
 
@@ -121,7 +119,7 @@ require([
         'domReady!'
     ], function (log, Test) {
 
-        //trace, debug, info, warn, error
+        //trace, debug, info, warn, error, silent
         log.setLevel('trace');
 
         log.warn("~~~~~ FENIX Visualization Box: test");

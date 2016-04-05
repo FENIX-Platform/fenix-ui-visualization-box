@@ -97,15 +97,9 @@
                                 <div class="col-xs-3">
                                     <h4>{{ back_current_resource }}</h4>
                                     <ul data-role='process-steps' class="list-unstyled list-group well"></ul>
-                                    <div>
-                                        <button data-action="add" class="btn btn-default" type="button">{{ add_button }}</button>
-                                    </div>
                                 </div>
                                 <div class="col-xs-9">
                                     <ul data-role="process-details" class="list-unstyled list-group">
-                                        <li>
-                                            <h3>Click the list on the left</h3>
-                                        </li>
                                     </ul>
                                 </div>
                             </div>
@@ -134,13 +128,11 @@
     <li data-role="step-metadata">
         <h3>Metadata</h3>
         <button data-action="remove-step" class="btn btn-default" type="button">{{ remove_button }}</button>
-
         {{ uid }}
         {{ version }}
     </li>
     <li data-role="step-filter">
-        <h3>Filter</h3>
+        <h3>{{ template.title }}</h3>
         <button data-action="remove-step" class="btn btn-default" type="button">{{ remove_button }}</button>
-
     </li>
 </div>

@@ -216,7 +216,8 @@ define([
     FilterTab.prototype._attach = function () {
 
         var template = Handlebars.compile(tabTemplate),
-            html = template($.extend(true, {}, this, i18nLabels));
+            m = $.extend(true, {}, this.template, i18nLabels),
+            html = template(m);
 
         this.$el.html(html);
     };

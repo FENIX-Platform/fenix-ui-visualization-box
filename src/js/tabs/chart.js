@@ -9,14 +9,14 @@ define([
     "fx-v-b/config/errors",
     "fx-v-b/config/events",
     'fx-filter/js/utils',
-    "text!fx-v-b/html/tabs/table.hbs",
+    "text!fx-v-b/html/tabs/chart.hbs",
     'fx-filter/start',
-    "fx-v-b/config/tabs/table-toolbar-model",
+    "fx-v-b/config/tabs/chart-toolbar-model",
     "handlebars",
-    'fx-olap/start',
+    'fx-c-c/start',
     "fx-common/pivotator/functions",
     "amplify"
-], function ($, log, _, C, CD, ERR, EVT, Utils, tabTemplate, Filter, ToolbarModel, Handlebars, myRenderer, myFunc) {
+], function ($, log, _, C, CD, ERR, EVT, Utils, tabTemplate, Filter, ToolbarModel, Handlebars, ChartCreator, myFunc) {
 
     'use strict';
 
@@ -25,7 +25,7 @@ define([
         TOOLBAR_BTN: "[data-role='toolbar'] [data-role='toolbar-btn']"
     };
 
-    function TableTab(o) {
+    function ChartTab(o) {
 
         $.extend(true, this, defaultOptions, o);
 
@@ -40,7 +40,7 @@ define([
      * Tab initialization method
      * Optional method
      */
-    TableTab.prototype.init = function () {
+    ChartTab.prototype.init = function () {
         log.info("Tab initialized successfully");
     };
 
@@ -48,7 +48,7 @@ define([
      * Method invoked when the tab is shown in the FENIX visualization box
      * Mandatory method
      */
-    TableTab.prototype.show = function (state) {
+    ChartTab.prototype.show = function (state) {
 
         var valid = this._validateInput();
 
@@ -71,7 +71,7 @@ define([
      * Check if the current model is suitable to be displayed within the tab
      * Mandatory method
      */
-    TableTab.prototype.isSuitable = function () {
+    ChartTab.prototype.isSuitable = function () {
 
         var isSuitable = this._isSuitable();
 
@@ -85,7 +85,7 @@ define([
      * Disposition method
      * Mandatory method
      */
-    TableTab.prototype.dispose = function () {
+    ChartTab.prototype.dispose = function () {
 
         this._dispose();
 
@@ -97,7 +97,7 @@ define([
      * pub/sub
      * @return {Object} filter instance
      */
-    TableTab.prototype.on = function (channel, fn) {
+    ChartTab.prototype.on = function (channel, fn) {
 
         if (!this.channels[channel]) {
             this.channels[channel] = [];
@@ -112,7 +112,7 @@ define([
      * @param {Object} state
      * @return {Object} filter instance
      */
-    TableTab.prototype.sync = function (state) {
+    ChartTab.prototype.sync = function (state) {
         log.info("Sync tab. State:" + JSON.stringify(state));
 
         if (state.hasOwnProperty("toolbar") && this.toolbar) {
@@ -126,7 +126,7 @@ define([
 
     /* END - API */
 
-    TableTab.prototype._trigger = function (channel) {
+    ChartTab.prototype._trigger = function (channel) {
         if (!this.channels[channel]) {
             return false;
         }
@@ -139,7 +139,7 @@ define([
         return this;
     };
 
-    TableTab.prototype._validateInput = function () {
+    ChartTab.prototype._validateInput = function () {
 
         var valid = true,
             errors = [];
@@ -167,7 +167,7 @@ define([
 
     };
 
-    TableTab.prototype._show = function (syncModel) {
+    ChartTab.prototype._show = function (syncModel) {
 
         if (this.initialized === true) {
 
@@ -192,7 +192,7 @@ define([
 
     };
 
-    TableTab.prototype._attach = function () {
+    ChartTab.prototype._attach = function () {
 
         var template = Handlebars.compile(tabTemplate),
             html = template(this);
@@ -200,7 +200,7 @@ define([
         this.$el.html(html);
     };
 
-    TableTab.prototype._initVariables = function () {
+    ChartTab.prototype._initVariables = function () {
 
         this.$toolbar = this.$el.find(s.TOOLBAR);
 
@@ -208,7 +208,7 @@ define([
 
     };
 
-    TableTab.prototype._bindEventListeners = function () {
+    ChartTab.prototype._bindEventListeners = function () {
 
         var self = this;
 
@@ -238,7 +238,7 @@ define([
         }, this));
     };
 
-    TableTab.prototype._onToolbarEvent = function (payload) {
+    ChartTab.prototype._onToolbarEvent = function (payload) {
         log.info("Listen to event: " + this._getEventTopic("toolbar"));
         log.trace(payload);
 
@@ -252,16 +252,49 @@ define([
 
     };
 
-    TableTab.prototype._onToolbarBtnClick = function () {
+    ChartTab.prototype._onToolbarBtnClick = function () {
 
         this._renderTable();
 
     };
 
-    TableTab.prototype._renderTable = function () {
+    ChartTab.prototype._renderTable = function () {
 
-        var myrenderer = new myRenderer();
-        
+
+        var c2 = new ChartCreator();
+
+        c2.render({
+            //$el : "id",
+
+            adapter: {
+                type: "line",
+
+                model: this.model,
+                xDimensions: ['time'],
+                yDimensions: 'Element',
+                valueDimensions: 'value',
+                seriesDimensions: []
+            },
+            template: {},
+            creator: {
+
+            },
+            onReady : function(creator) {
+                var o = {
+                    template: {
+                        title: "Chart with scattered data"
+                    }
+                };
+
+                log.warn("Render here")
+                //creator.render(ChartUtils.lineChartOptions(o));
+                //creator.render(ChartUtils.columnChartOptions(o));
+                //creator.render(ChartUtils.barChartOptions(o));
+            }
+
+        });
+
+/*        var myrenderer = new myRenderer();
         var tempConf = this.toolbar.getValues();
         var optGr = {
             Aggregator: tempConf.values.aggregation[0],
@@ -277,14 +310,14 @@ define([
             optGr[tempConf.values.sort[i].parent].push(tempConf.values.sort[i].value)
             //console.log("CREATE CONF",tempConf.values.sort[i].parent,tempConf.values.sort[i].value)
         }
-        myrenderer.rendererGridFX(this.model, "table_" + this.id, optGr);
+        myrenderer.rendererGridFX(this.model, "chart_" + this.id, optGr);
         //	myrenderer.rendererGridFX(this.model,"result",optGr);
 
-        //id olap "table-" + this.id
+        //id olap "table-" + this.id*/
 
     };
 
-    TableTab.prototype._renderToolbar = function () {
+    ChartTab.prototype._renderToolbar = function () {
         log.info("Table tab render toolbar");
 
         this.toolbar = new Filter({
@@ -296,7 +329,7 @@ define([
 
     };
 
-    TableTab.prototype._createFilterConfiguration = function () {
+    ChartTab.prototype._createFilterConfiguration = function () {
 
         var configuration = $.extend(true, {}, Utils.mergeConfigurations(ToolbarModel, this.syncModel || {}));
 
@@ -350,13 +383,13 @@ define([
     };
 
 
-    TableTab.prototype._onToolbarChangeEvent = function () {
+    ChartTab.prototype._onToolbarChangeEvent = function () {
 
         this._trigger("toolbar.change", this.toolbar.getValues());
 
     };
 
-    TableTab.prototype._renderComponents = function () {
+    ChartTab.prototype._renderComponents = function () {
 
         this._renderToolbar();
 
@@ -364,7 +397,7 @@ define([
     };
 
 
-    TableTab.prototype._unbindEventListeners = function () {
+    ChartTab.prototype._unbindEventListeners = function () {
 
         this.$toolbarBtn.off();
         this.$el.find("[data-action]").off();
@@ -373,23 +406,23 @@ define([
 
     };
 
-    TableTab.prototype._isSuitable = function () {
+    ChartTab.prototype._isSuitable = function () {
 
         return true;
     };
 
-    TableTab.prototype._dispose = function () {
+    ChartTab.prototype._dispose = function () {
 
         if (this.status.ready === true) {
             this._unbindEventListeners();
         }
     };
 
-    TableTab.prototype._getEventTopic = function (evt) {
+    ChartTab.prototype._getEventTopic = function (evt) {
 
         return EVT[evt] ? EVT[evt] + this.id : evt + this.id;
     };
 
-    return TableTab;
+    return ChartTab;
 
 });

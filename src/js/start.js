@@ -462,8 +462,9 @@ define([
         this._setObjState("tab", tab);
 
         //hide all tabs and show the selected one
-        this.$el.find(s.CONTENT_READY).find("[data-section]").hide();
-        this.$el.find(s.CONTENT_READY).find("[data-section='" + tab + "']").show();
+        //this.$el.find(s.CONTENT_READY).find("[data-section]").hide();
+        //this.$el.find(s.CONTENT_READY).find("[data-section='" + tab + "']").show();
+        this.$el.find(s.CONTENT_READY).attr("data-tab", this._getObjState("tab"));
 
         this._showTabContent(opts);
     };
@@ -599,6 +600,29 @@ define([
             tab: "filter",
             params: {
                 model: $.extend(true, {}, this.model)
+            },
+            template: {
+                title : "Rows"
+            }
+        }));
+
+        list.push(this._createProcessStep({
+            tab: "filter",
+            params: {
+                model: $.extend(true, {}, this.model)
+            },
+            template: {
+                title : "Aggregations"
+            }
+        }));
+
+        list.push(this._createProcessStep({
+            tab: "filter",
+            params: {
+                model: $.extend(true, {}, this.model)
+            },
+            template: {
+                title : "Columns"
             }
         }));
 
@@ -613,7 +637,7 @@ define([
         _.each(list, _.bind(function (step, index) {
 
             var template = Handlebars.compile($(Template).find("[data-role='step-" + step.tab + "']")[0].outerHTML),
-                $html = $(template($.extend(true, {}, step, i18nLabels, this.model.metadata)));
+                $html = $(template($.extend(true, {}, step, i18nLabels, this.model)));
 
             this._bindStepEventListeners($html, step);
 
@@ -639,7 +663,8 @@ define([
                     $el: $el,
                     box: this,
                     model: $.extend(true, {}, this.model),
-                    id: "step-" + step.id
+                    id: "step-" + step.id,
+                    template: step.template
                 }).show();
 
             }, this));
@@ -803,6 +828,8 @@ define([
 
     Box.prototype._syncTabs = function () {
         log.info("Send 'sync' signal");
+
+        return;
 
         var tabsKeys = Object.keys(this._getObjState("tabs"));
 

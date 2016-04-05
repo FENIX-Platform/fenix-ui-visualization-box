@@ -208,15 +208,11 @@ define([
 
         this.metadataViewer = new MetadataViewer();
 
-        console.log(this.model)
-        console.log(this.$el.find(s.CONTAINER))
-
         this.metadataViewer.init({
             data: this.model.metadata,
             lang: 'en',
             placeholder: this.$el.find(s.CONTAINER)
         });
-
 
     };
 

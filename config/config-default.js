@@ -6,8 +6,9 @@ define(function () {
     return {
 
         defaultStatus : "loading",
-        defaultTab : "table",
+        defaultTab : "chart",
         defaultSize : "large",
+        defaultFace : "front", // back || front
         ready : false,
         tabRegistry: {
             'blank': {
@@ -35,7 +36,7 @@ define(function () {
             'metadata': {type: 'simple', callback: 'once'},
             //'filter': {type: 'simple', callback: 'once'},
             //'map': {type: 'simple', callback: 'always'},
-            //'chart': {type: 'simple', callback: 'always'}
+            'chart': {type: 'simple', callback: 'always'}
         },
 
         FLIPPED_CLASSNAME : "flipped",

@@ -170,13 +170,13 @@ define(function () {
             }
         },
         {
-            "name": "Filter",
+            "name": "Chart",
             "url": "#",
             "parent_id": "-1",
             "id": "12",
             "a_attrs": {
                 "data-action": "tab",
-                "data-tab": "filter",
+                "data-tab": "chart",
                 "class" : "hidden"
             }
         }
