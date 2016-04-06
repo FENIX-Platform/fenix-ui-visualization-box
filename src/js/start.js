@@ -43,6 +43,8 @@ define([
         log.info("Create box");
         log.trace(obj);
 
+        this._registerHandlebarsHelpers();
+
         //Extend instance with obj and $el
         $.extend(true, this, C, CD, {initial: obj || {}, $el: $(obj.el)});
 
@@ -260,7 +262,7 @@ define([
         this._setObjState("tabs", this.tabs);
 
         //flip side
-        this._setObjState("face", this.initial.face);
+        this._setObjState("face", this.initial.face || C.defaultFace || CD.defaultFace);
 
         //resource process steps
         this._setObjState("process.steps", this.processSteps);
@@ -304,10 +306,7 @@ define([
         switch (this._getModelStatus().toLowerCase()) {
             case 'ready' :
                 this.setStatus("ready");
-                this._loadResource()
-                    .then(
-                        _.bind(this._renderBox, this),
-                        _.bind(this._onLoadResourceError, this));
+                this._renderBox();
                 break;
             case 'empty' :
                 this.setStatus("empty");
@@ -972,6 +971,24 @@ define([
         this.$el.find("[data-action]").off();
 
         this.$el.find(s.RIGHT_MENU).off();
+
+    };
+
+    //Utils
+    Box.prototype._registerHandlebarsHelpers = function () {
+
+        Handlebars.registerHelper('i18n', function (keyword) {
+
+            var lang;
+
+            try {
+                lang = require.s.contexts._.config.i18n.locale;
+            } catch(e) {
+                lang = "EN";
+            }
+
+            return keyword[lang.toUpperCase()];
+        });
 
     };
 

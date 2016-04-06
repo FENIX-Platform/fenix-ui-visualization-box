@@ -127,12 +127,11 @@
 
     <li data-role="step-metadata">
         <h3>Metadata</h3>
-        <button data-action="remove-step" class="btn btn-default" type="button">{{ remove_button }}</button>
-        {{ uid }}
-        {{ version }}
+        {{ i18n metadata.title}} <br>
+        {{ metadata.uid }} <br>
+        {{ metadata.version }}
     </li>
     <li data-role="step-filter">
         <h3>{{ template.title }}</h3>
-        <button data-action="remove-step" class="btn btn-default" type="button">{{ remove_button }}</button>
     </li>
 </div>

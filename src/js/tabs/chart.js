@@ -11,7 +11,7 @@ define([
     'fx-filter/js/utils',
     "text!fx-v-b/html/tabs/chart.hbs",
     'fx-filter/start',
-    "fx-v-b/config/tabs/chart-toolbar-model",
+    "fx-v-b/config/tabs/table-toolbar-model",
     "handlebars",
     'fx-c-c/start',
     "fx-common/pivotator/functions",
@@ -31,6 +31,8 @@ define([
 
         this.channels = {};
         this.status = {};
+
+        this.chartCreator= new ChartCreator();
 
         return this;
     }
@@ -254,42 +256,45 @@ define([
 
     ChartTab.prototype._onToolbarBtnClick = function () {
 
-        this._renderTable();
+        this._renderChart();
 
     };
 
-    ChartTab.prototype._renderTable = function () {
+    ChartTab.prototype._renderChart = function () {
+
+        console.log("-------------------------------------------")
+        console.log(this.model)
+        console.log(this.toolbar.getValues())
+
+        var tempConf = this.toolbar.getValues();
+        var optGr = {
+            Aggregator: tempConf.values.aggregation[0],
+            Formater: "localstring",
+            GetValue: "Classic",
+            nbDecimal: 5,
+            AGG: [],
+            COLS: [],
+            ROWS: [],
+            HIDDEN: []
+        };
+        for (var i in tempConf.values.sort) {
+            optGr[tempConf.values.sort[i].parent].push(tempConf.values.sort[i].value)
+            //console.log("CREATE CONF",tempConf.values.sort[i].parent,tempConf.values.sort[i].value)
+        }
 
 
-        var c2 = new ChartCreator();
-
-        c2.render({
+        this.chartCreator.render({
             //$el : "id",
-
             adapter: {
                 type: "line",
-
                 model: this.model,
-                xDimensions: ['time'],
-                yDimensions: 'Element',
-                valueDimensions: 'value',
-                seriesDimensions: []
+                config : optGr
             },
             template: {},
             creator: {
+                container: "#chart_" + this.id,
+                config : optGr
 
-            },
-            onReady : function(creator) {
-                var o = {
-                    template: {
-                        title: "Chart with scattered data"
-                    }
-                };
-
-                log.warn("Render here")
-                //creator.render(ChartUtils.lineChartOptions(o));
-                //creator.render(ChartUtils.columnChartOptions(o));
-                //creator.render(ChartUtils.barChartOptions(o));
             }
 
         });
@@ -325,7 +330,7 @@ define([
             $el: this.$el.find(s.TOOLBAR)
         });
 
-        this.toolbar.on("ready", _.bind(this._renderTable, this))
+        this.toolbar.on("ready", _.bind(this._renderChart, this))
 
     };
 
@@ -386,6 +391,8 @@ define([
     ChartTab.prototype._onToolbarChangeEvent = function () {
 
         this._trigger("toolbar.change", this.toolbar.getValues());
+
+        //this._renderChart();
 
     };
 

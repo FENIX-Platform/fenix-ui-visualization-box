@@ -90,6 +90,8 @@ define(function () {
             "parent_id": "8",
             "id": "9",
             "a_attrs": {
+                "data-action": "tab",
+                "data-tab": "blank",
                 "class" : "hidden"
             }
         },
@@ -167,17 +169,6 @@ define(function () {
                 "data-action": "tab",
                 "data-tab": "table",
                 "data-type": "standard"
-            }
-        },
-        {
-            "name": "Chart",
-            "url": "#",
-            "parent_id": "-1",
-            "id": "12",
-            "a_attrs": {
-                "data-action": "tab",
-                "data-tab": "chart",
-                "class" : "hidden"
             }
         }
     ];
