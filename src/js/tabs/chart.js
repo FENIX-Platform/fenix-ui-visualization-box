@@ -269,8 +269,8 @@ define([
         var tempConf = this.toolbar.getValues();
         var optGr = {
             Aggregator: tempConf.values.aggregation[0],
-            Formater: "localstring",
-            GetValue: "Classic",
+            Formater: "value",
+            GetValue: "ClassicToNumber",
             nbDecimal: 5,
             AGG: [],
             COLS: [],

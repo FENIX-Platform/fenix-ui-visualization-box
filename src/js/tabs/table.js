@@ -271,7 +271,7 @@ define([
             AGG: [],
             COLS: [],
             ROWS: [],
-            HIDDEN: []
+            HIDDEN: [],fulldataformat:true
         };
         for (var i in tempConf.values.sort) {
             optGr[tempConf.values.sort[i].parent].push(tempConf.values.sort[i].value)
