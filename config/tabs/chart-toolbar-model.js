@@ -10,149 +10,149 @@ define([
 
         return $.extend(true, {}, {
 
-        "sort": {
+            "sort": {
 
-            "selector": {
-                "id": "sortable",
-                "source": [
-                    {"value": "", "label": "", parent: 'AGG'}
-                ], // Static data
-                "config": { //SortableJS configuration
-                    //disabled: true
-                }
+                "selector": {
+                    "id": "sortable",
+                    "source": [
+                        {"value": "", "label": "", parent: 'AGG'}
+                    ], // Static data
+                    "config": { //SortableJS configuration
+                        //disabled: true
+                    }
+                },
+
+                "template": {
+                    //"hideHeader": true,
+                    "hideSwitch": true,
+                    "hideRemoveButton": true,
+                    "title": "Sort dimension"
+                },
+
+                "className": "col-xs-6"
+
             },
 
-            "template": {
-                //"hideHeader": true,
-                "hideSwitch": true,
-                "hideRemoveButton": true,
-                "title": "Sort dimension"
+            "aggregation": {
+
+                "selector": {
+                    "id": "dropdown",
+                    "source": [], // Static data
+                    "config": { //Selectize configuration
+                        "maxItems": 1
+                    }
+                },
+
+                "template": {
+                    //"hideHeader": true,
+                    "hideSwitch": true,
+                    "hideRemoveButton": true,
+                    "title": "Aggregation function"
+                },
+
+                "className": "col-xs-6"
+
             },
 
-            "className": "col-xs-6"
+            "renderer": {
 
-        },
+                "selector": {
+                    "id": "dropdown",
+                    "source": [
 
-        "aggregation": {
+                        {"value": "table", "label": "Grid"},
+                        {"value": "chart", "label": "Chart"},
 
-            "selector": {
-                "id": "dropdown",
-                "source": [], // Static data
-                "config": { //Selectize configuration
-                    "maxItems": 1
-                }
+
+                    ], // Static data
+                    "config": { //Selectize configuration
+                        "maxItems": 1
+                    }
+                },
+
+                "template": {
+                    //"hideHeader": true,
+                    "hideSwitch": true,
+                    "hideRemoveButton": true,
+                    "title": "Renderer function"
+                },
+
+                "className": "col-xs-6"
+
             },
 
-            "template": {
-                //"hideHeader": true,
-                "hideSwitch": true,
-                "hideRemoveButton": true,
-                "title": "Aggregation function"
+            "decimal_separator": {
+
+                "selector": {
+                    "id": "input",
+                    "type": "radio",
+                    "default": ["dot"],
+                    "source": [
+                        {"value": "dot", "label": "Dot"},
+                        {"value": "comma", "label": "Comma"}
+
+                    ]
+                },
+
+                "template": {
+                    //"hideHeader": true,
+                    "hideSwitch": true,
+                    "hideRemoveButton": true,
+                    "title": "Decimal separator"
+                },
+
+
+                "className": "col-xs-6"
+
             },
 
-            "className": "col-xs-6"
+            "thousand": {
 
-        },
+                "selector": {
+                    "id": "input",
+                    "type": "radio",
+                    "default": ["enable"],
+                    "source": [
+                        {"value": "enable", "label": "Enable"},
+                        {"value": "disable", "label": "Disable"}
+                    ]
+                },
 
-        "renderer": {
+                "template": {
+                    //"hideHeader": true,
+                    "hideSwitch": true,
+                    "hideRemoveButton": true,
+                    "title": "Thousand"
+                },
 
-            "selector": {
-                "id": "dropdown",
-                "source": [
+                "className": "col-xs-6"
 
-                    {"value": "table", "label": "Grid"},
-                    {"value": "chart", "label": "Chart"},
-
-
-                ], // Static data
-                "config": { //Selectize configuration
-                    "maxItems": 1
-                }
             },
 
-            "template": {
-                //"hideHeader": true,
-                "hideSwitch": true,
-                "hideRemoveButton": true,
-                "title": "Renderer function"
-            },
+            "decimal_digit": {
 
-            "className": "col-xs-6"
+                "selector": {
+                    "id": "input",
+                    "type": "number",
+                    "source": [
+                        {"value": "2"}
+                    ],
+                    "config" : {
+                        "min" : 0
+                    }
+                },
 
-        },
+                "template": {
+                    //"hideHeader": true,
+                    "hideSwitch": true,
+                    "hideRemoveButton": true,
+                    "title": "Decimal digit"
+                },
 
-        "decimal_separator": {
+                "className": "col-xs-6"
 
-            "selector": {
-                "id": "input",
-                "type": "radio",
-                "default": ["dot"],
-                "source": [
-                    {"value": "dot", "label": "Dot"},
-                    {"value": "comma", "label": "Comma"}
+            }
 
-                ]
-            },
+        }, Shared)
 
-            "template": {
-                //"hideHeader": true,
-                "hideSwitch": true,
-                "hideRemoveButton": true,
-                "title": "Decimal separator"
-            },
-
-
-            "className": "col-xs-6"
-
-        },
-
-        "thousand": {
-
-            "selector": {
-                "id": "input",
-                "type": "radio",
-                "default": ["enable"],
-                "source": [
-                    {"value": "enable", "label": "Enable"},
-                    {"value": "disable", "label": "Disable"}
-                ]
-            },
-
-            "template": {
-                //"hideHeader": true,
-                "hideSwitch": true,
-                "hideRemoveButton": true,
-                "title": "Thousand"
-            },
-
-            "className": "col-xs-6"
-
-        },
-
-        "decimal_digit": {
-
-            "selector": {
-                "id": "input",
-                "type": "number",
-                "source": [
-                    {"value": "2"}
-                ],
-                "config" : {
-                    "min" : 0
-                }
-            },
-
-            "template": {
-                //"hideHeader": true,
-                "hideSwitch": true,
-                "hideRemoveButton": true,
-                "title": "Decimal digit"
-            },
-
-            "className": "col-xs-6"
-
-        }
-
-    }, Shared)
-
-});
+    });

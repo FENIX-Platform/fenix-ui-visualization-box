@@ -13,6 +13,7 @@ define(function () {
         flip: prefix + "flip.",
         metadata: prefix + "metadata.",
         tab: prefix + "tab.",
+        query: prefix + "query.",
 
         model_done : "model.done",
         model_error : "model.error"

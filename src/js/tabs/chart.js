@@ -11,7 +11,7 @@ define([
     'fx-filter/js/utils',
     "text!fx-v-b/html/tabs/chart.hbs",
     'fx-filter/start',
-    "fx-v-b/config/tabs/table-toolbar-model",
+    "fx-v-b/config/tabs/chart-toolbar-model",
     "handlebars",
     'fx-c-c/start',
     "fx-common/pivotator/functions",
@@ -262,10 +262,6 @@ define([
 
     ChartTab.prototype._renderChart = function () {
 
-        console.log("-------------------------------------------")
-        console.log(this.model)
-        console.log(this.toolbar.getValues())
-
         var tempConf = this.toolbar.getValues();
         var optGr = {
             Aggregator: tempConf.values.aggregation[0],
@@ -390,7 +386,7 @@ define([
 
     ChartTab.prototype._onToolbarChangeEvent = function () {
 
-        this._trigger("toolbar.change", this.toolbar.getValues());
+        this._trigger("filter", this.toolbar.getValues());
 
         //this._renderChart();
 

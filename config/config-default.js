@@ -3,6 +3,8 @@ define(function () {
 
     'use strict';
 
+    var HOST =  "http://fenix.fao.org/";
+
     return {
 
         defaultStatus : "loading",
@@ -38,9 +40,16 @@ define(function () {
             'chart': {type: 'simple', callback: 'always'},
         },
 
-        FLIPPED_CLASSNAME : "flipped",
+        flippedClassName : "flipped",
 
-        state : {}
+        state : {},
+        lang : "EN",
+
+        //Load resource
+        d3pUrl: HOST + "d3s_dev/processes/",
+        d3pQueryParameters : {
+            language : "EN"
+        }
 
     };
 });

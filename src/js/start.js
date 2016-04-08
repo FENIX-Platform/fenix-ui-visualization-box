@@ -28,7 +28,7 @@ define([
         FLIP_CONTAINER: "[data-role='flip-container']",
         FONT_CONTENT: "[data-role='front-content']",
         PROCESS_STEPS: "[data-role='process-steps']",
-        PROCESS_DETAILS : "[data-role='process-details']",
+        PROCESS_DETAILS: "[data-role='process-details']",
         BACK_CONTENT: "[data-role='back-content']"
     };
 
@@ -207,8 +207,10 @@ define([
         this._setObjState("valid", true);
 
         this.model = this.initial.model;
+        this.process = this.initial.process;
 
         this.front_tab_instances = {};
+        this.back_tab_instances = {};
 
         //resource process steps
         this.processSteps = [];
@@ -245,8 +247,6 @@ define([
 
     Box.prototype._initObjState = function () {
 
-        //TODO extend initialization with default values
-
         //template options
         this._setObjState("hideToolbar", !!this.initial.hideToolbar);
         this._setObjState("hideMenu", !!this.initial.hideMenu);
@@ -265,7 +265,10 @@ define([
         this._setObjState("face", this.initial.face || C.defaultFace || CD.defaultFace);
 
         //resource process steps
-        this._setObjState("process.steps", this.processSteps);
+        this._setObjState("resource.steps", this.processSteps);
+        this._setObjState("resource.uid", this.initial.uid);
+        this._setObjState("resource.version", this.initial.version);
+        this._setObjState("resource.values", this.initial.values);
 
     };
 
@@ -292,12 +295,7 @@ define([
 
     Box.prototype._getObjState = function (path) {
 
-        var obj = $.extend(true, {}, this.state),
-            arr = path.split(".");
-
-        while (arr.length && (obj = obj[arr.shift()]));
-
-        return obj;
+        return this._getNestedProperty(path, this.state);
 
     };
 
@@ -318,7 +316,7 @@ define([
                 this.setStatus("loading");
                 this._loadResource()
                     .then(
-                        _.bind(this._renderBox, this),
+                        _.bind(this._onLoadResourceSuccess, this),
                         _.bind(this._onLoadResourceError, this));
                 break;
             default :
@@ -329,45 +327,76 @@ define([
 
     Box.prototype._getModelStatus = function () {
 
-        if (!this.hasOwnProperty('model')) {
-            return 'no_model';
-        }
+        if (!this.model) {
 
-        if (typeof this.model !== 'object') {
+            if (this._getObjState("resource.uid")) {
+                return 'to_load';
+            }
+
+            return 'no_model';
+
+        } else {
+
+            if (typeof this.model !== 'object') {
+                return 'error';
+            }
+
+            if (Array.isArray(this.model.data) && this.model.data.length === 0) {
+                return 'empty';
+            }
+
+            if (Array.isArray(this.model.data) && this.model.data.length > 0) {
+                return 'ready';
+            }
+
             return 'error';
         }
 
-        if (Array.isArray(this.model.data) && this.model.data.length === 0) {
-            return 'empty';
-        }
-
-        if (Array.isArray(this.model.data) && this.model.data.length > 0) {
-            return 'ready';
-        }
-
-        if (typeof this.resource !== 'object' && this.resource.hasOwnProperty("uid")) {
-            return 'to_load';
-        }
-
-        return 'error';
     };
 
-    Box.prototype._loadResource = function () {
+    Box.prototype._loadResource = function (p) {
         log.info("Loading FENIX resource");
 
-        return Q.Promise(function (resolve, reject, notify) {
-            resolve();
-            //reject(new Error("Status code was " + request.status));
+        var d3pUrl = C.d3pUrl || CD.d3pUrl,
+            url = d3pUrl + this._getObjState("resource.uid"),
+            queryParams = C.d3pQueryParameters || CD.d3pQueryParameters,
+            process = _.union(Array.isArray(p) ? p : [], this.process);
 
-        });
+        if (this._getObjState("resource.version")) {
+            url = url.concat("/").concat(this._getObjState("resource.version"));
+        }
+
+        if (queryParams && typeof queryParams === 'object') {
+
+            url = url.concat("?");
+
+            _.each(queryParams, function (value, key) {
+                url = url.concat(key).concat("=").concat(value).concat("&");
+            });
+
+            url = url.substring(0, url.length - 1);
+        }
+
+        return Q($.ajax({
+            url: url,
+            type: 'post',
+            contentType: 'application/json',
+            dataType: 'json',
+            data: JSON.stringify(process)
+        }));
+    };
+
+    Box.prototype._onLoadResourceSuccess = function (data) {
+        log.info("Load resource success");
+        this.model = data || {data: []};
+
+        this._checkModelStatus();
 
     };
 
     Box.prototype._onLoadResourceError = function () {
-
-        log.info("Impossible to load resouce");
+        log.info("Impossible to load resource");
         this._setStatus("error");
-
     };
 
     Box.prototype._renderBox = function () {
@@ -412,7 +441,7 @@ define([
 
     Box.prototype._preloadTabSourcesSuccess = function () {
 
-        this._renderBoxFrontFace();
+        //this._renderBoxFrontFace();
 
         this._renderBoxBackFace();
     };
@@ -504,7 +533,7 @@ define([
             });
 
         //Subscribe to tab events
-        instance.on('toolbar.change', _.bind(this._onTabToolbarChangeEvent, this));
+        instance.on('filter', _.bind(this._onTabToolbarChangeEvent, this));
 
         //cache the plugin instance
         this.front_tab_instances[tab] = instance;
@@ -519,9 +548,9 @@ define([
 
     };
 
-    Box.prototype._getTabInstance = function (tab) {
+    Box.prototype._getTabInstance = function (tab, face) {
 
-        return this.front_tab_instances[tab];
+        return face === 'back' ? this.back_tab_instances[tab] : this.front_tab_instances[tab];
         //return this._getObjState("tabs." + tab + ".instance")
     };
 
@@ -586,10 +615,14 @@ define([
 
     Box.prototype._createProcessSteps = function () {
 
-        var list = [];
+        var list = [],
+            values = this._getObjState("resource.values") || {},
+            columnsConfiguration = this._createBackTabConfiguration("columns"),
+            aggregationConfiguration = this._createBackTabConfiguration("aggregations");
 
         list.push(this._createProcessStep({
             tab: "metadata",
+            subject : "metadata",
             params: {
                 model: $.extend(true, {}, this.model)
             }
@@ -597,41 +630,181 @@ define([
 
         list.push(this._createProcessStep({
             tab: "filter",
+            subject : "rows",
             params: {
-                model: $.extend(true, {}, this.model)
+                model: $.extend(true, {}, this.model),
+                values: values
             },
-            template: {
-                title : "Rows"
+            labels: {
+                title: "Rows"
             }
         }));
 
         list.push(this._createProcessStep({
             tab: "filter",
+            subject : "aggregations",
             params: {
-                model: $.extend(true, {}, this.model)
+                config: aggregationConfiguration.filter
             },
-            template: {
-                title : "Aggregations"
+            labels: {
+                title: "Aggregations"
             }
         }));
 
         list.push(this._createProcessStep({
             tab: "filter",
+            subject : "columns",
             params: {
-                model: $.extend(true, {}, this.model)
+                config: columnsConfiguration.filter,
+                template: columnsConfiguration.template
             },
-            template: {
-                title : "Columns"
+            labels: {
+                title: "Columns"
             }
         }));
 
-        this._setObjState("process.steps", list);
+        this._setObjState("resource.steps", list);
 
+    };
+
+    Box.prototype._createBackTabConfiguration = function (tab) {
+
+        var configuration;
+
+        switch (tab.toLowerCase()) {
+            case 'aggregations':
+                configuration = this._createBackAggregationTabConfiguration();
+                break;
+            case 'columns':
+                configuration = this._createBackColumnsTabConfiguration();
+                break;
+            default :
+                configuration = {};
+        }
+
+        return configuration;
+    };
+
+    Box.prototype._createBackAggregationTabConfiguration = function () {
+
+        var self = this,
+            source = [],
+            lang = this.lang || 'EN',
+            columns = this._getNestedProperty("metadata.dsd.columns", this.model);
+
+        _.each(columns, function (c) {
+
+            var title = self._getNestedProperty("title", self.model.metadata),
+                label;
+
+            if (typeof title === 'object' && title[lang]) {
+                label = title[lang];
+            } else {
+                window.fx_vis_box_missing_title >= 0 ? window.fx_vis_box_missing_title++ : window.fx_vis_box_missing_title = 0;
+                label = "Missing dimension title " + window.fx_vis_box_missing_title
+            }
+
+            if (!c.id.endsWith("_" + lang.toUpperCase())) {
+
+                source.push({
+                    value: c.id,
+                    parent: "dimensions",
+                    label: label
+                });
+
+            }
+        });
+
+        return {
+
+            filter: {
+                "aggregation": {
+                    "selector": {
+                        "id": "sortable",
+                        "source": source, // Static data
+                        "config": {
+                            "groups": {
+                                dimensions: "Dimensions",
+                                group: "Group by",
+                                sum: "Sum",
+                                avg: "Average",
+                                first: "First",
+                                last: "Last"
+                            }
+                        }
+                    }
+                }
+            }
+        };
+    };
+
+    Box.prototype._createBackColumnsTabConfiguration = function () {
+
+        var self = this,
+            filter = {},
+            lang = this.lang || 'EN',
+            columns = this._getNestedProperty("metadata.dsd.columns", this.model);
+
+        _.each(columns, function (c) {
+
+            var title = self._getNestedProperty("title", self.model.metadata),
+                label;
+
+            if (typeof title === 'object' && title[lang]) {
+                label = title[lang];
+            } else {
+                window.fx_vis_box_missing_title >= 0 ? window.fx_vis_box_missing_title++ : window.fx_vis_box_missing_title = 0;
+                label = "Missing dimension title " + window.fx_vis_box_missing_title
+            }
+
+            if (!c.id.endsWith("_" + lang.toUpperCase())) {
+
+                filter[c.id + "_include"] = {
+                    selector: {
+                        id: "input",
+                        type: "checkbox",
+                        source: [
+                            {value: "true", label: "Include"}
+                        ],
+                        default: ["true"]
+                    }
+                };
+
+                var order = {
+                    selector: {
+                        id: "dropdown",
+                        source: [
+                            //{value: "include", label: "Include"},
+                            {value: "none", label: "No ordering"},
+                            {value: "ASC", label: "Ascending"},
+                            {value: "DESC", label: "Descending"},
+                            //{value: "exclude", label: "Exclude"}
+                        ],
+                        default: ["none"],
+                        config: {
+                            "maxItems": 1
+                        }
+                    },
+                    template: {
+                        title: label
+                    },
+                    dependencies : {}
+                };
+
+                order.dependencies[c.id + "_include"] =  {id: "disable", event: "select"}
+
+                filter[c.id + "_order"] = order
+            }
+        });
+
+        return {
+            filter: filter
+        };
     };
 
     Box.prototype._renderProcessSteps = function () {
 
-        var list = this._getObjState("process.steps");
+        var list = this._getObjState("resource.steps");
 
         _.each(list, _.bind(function (step, index) {
 
@@ -642,15 +815,13 @@ define([
 
             this.$processSteps.append($html);
 
-            //render tab
             var registry = this._getObjState("tabRegistry");
-
             require([registry[step.tab].path], _.bind(function (Tab) {
 
                 //Add details container
                 var $el = this.$processStepDetails.find("[data-role='" + step.id + "']");
                 if ($el.length === 0) {
-                    $el = $("<li data-role='" + step.id + "'>daniele</li>");
+                    $el = $("<li data-role='" + step.id + "'></li>");
 
                     if (index !== 0) {
                         $el.hide();
@@ -658,13 +829,20 @@ define([
                     this.$processStepDetails.append($el);
                 }
 
-                new Tab({
+                //render tab
+                var Instance = new Tab({
                     $el: $el,
                     box: this,
                     model: $.extend(true, {}, this.model),
+                    config: step.params.config,
                     id: "step-" + step.id,
-                    template: step.template
-                }).show();
+                    labels: step.labels,
+                    template: step.params.template
+                });
+
+                this.back_tab_instances[step.subject] = Instance;
+
+                Instance.show();
 
             }, this));
 
@@ -674,9 +852,10 @@ define([
 
     Box.prototype._bindStepEventListeners = function ($html, step) {
 
-        $html.on("click", { step: step }, _.bind(function (e) {
-            this.$processStepDetails.find("li").hide();
-            this.$processStepDetails.find("li[data-role='"+e.data.step.id+"']").show();
+        $html.on("click", {step: step}, _.bind(function (e) {
+
+            this.$processStepDetails.find(">li").hide();
+            this.$processStepDetails.find(">li[data-role='" + e.data.step.id + "']").show();
 
         }, this));
 
@@ -709,6 +888,8 @@ define([
         amplify.subscribe(this._getEventTopic("tab"), this, this._onTabEvent);
 
         amplify.subscribe(this._getEventTopic("minimize"), this, this._onMinimizeEvent);
+
+        amplify.subscribe(this._getEventTopic("query"), this, this._onQueryEvent);
 
         this.$el.find("[data-action]").each(function () {
 
@@ -784,9 +965,9 @@ define([
         var face = side || "front";
 
         if (face !== "front") {
-            this.$el.find(s.FLIP_CONTAINER).addClass(C.FLIPPED_CLASSNAME || CD.FLIPPED_CLASSNAME);
+            this.$el.find(s.FLIP_CONTAINER).addClass(C.flippedClassName || CD.flippedClassName);
         } else {
-            this.$el.find(s.FLIP_CONTAINER).removeClass(C.FLIPPED_CLASSNAME || CD.FLIPPED_CLASSNAME);
+            this.$el.find(s.FLIP_CONTAINER).removeClass(C.flippedClassName || CD.flippedClassName);
         }
 
         this._setObjState('face', face);
@@ -821,6 +1002,141 @@ define([
             this._syncTabs();
         } else {
             log.warn("Abort sync");
+        }
+
+    };
+
+    Box.prototype._onQueryEvent = function (payload) {
+        log.info("Listen to event: " + this._getEventTopic("query"));
+        log.trace(payload);
+
+        this._createQuery();
+
+    };
+
+    Box.prototype._createQuery = function () {
+
+        var filter = [],
+            payload = {};
+
+        _.each(this.back_tab_instances, _.bind(function (Instance, key) {
+
+            if ($.isFunction(Instance.getValues)) {
+                payload[key] = Instance.getValues(key === 'rows' ? "fenix" : null);
+            }
+
+        }, this));
+
+
+        filter.push(createFilterStep(payload));
+        filter.push(createGroupStep(payload));
+        filter.push(createOrderStep(payload));
+
+        console.log(payload)
+        console.log(filter)
+
+        return filter;
+
+        function createFilterStep(payload){
+
+            var columnsValues = payload.columns.values,
+                columns = [];
+
+            _.each(columnsValues, function (obj, key ) {
+
+                if (key.endsWith("_include") && Boolean(obj[0]) === true){
+                    columns.push(key.replace("_include", ""));
+                }
+
+            });
+
+            var step = {
+                name : "filter",
+                parameters : {
+                    rows : payload.rows,
+                    columns : columns
+                }
+            };
+
+            return step;
+
+        }
+
+        function createGroupStep(payload){
+
+            var values = payload.aggregations.values.aggregation,
+                by = [],
+                sum = [],
+                avg = [],
+                first = [],
+                last = [],
+                aggregation = [];
+
+            _.each(values, function (obj) {
+
+                switch(obj.parent.toLowerCase()){
+                    case "group": by.push(obj.value); break ;
+                    case "sum": sum.push(obj.value); break ;
+                    case "avg": avg.push(obj.value); break ;
+                    case "first": first.push(obj.value); break ;
+                    case "last": last.push(obj.value); break ;
+                }
+
+            });
+
+            sum = sum.map(function ( i ) {
+                return  {"columns": [i], "rule": "SUM"};
+            });
+
+            avg = avg.map(function ( i ) {
+                return  {"columns": [i], "rule": "AVG"};
+            });
+
+            first = first.map(function ( i ) {
+                return  {"columns": [i], "rule": "FIRST"};
+            });
+
+            last = last.map(function ( i ) {
+                return  {"columns": [i], "rule": "LAST"};
+            });
+
+            aggregation = _.union(sum, avg, first, last);
+
+            var step = {
+                name : "group",
+                parameters : {
+                    by : by,
+                    aggregations: aggregation
+
+                }
+            };
+
+            return step;
+
+        }
+
+        function createOrderStep(payload){
+
+            var columnsValues = payload.columns.values,
+                order = {};
+
+            _.each(columnsValues, function (obj, key ) {
+
+                var ordering = (Array.isArray(obj) && obj.length > 0) ? obj[0].toUpperCase() : "none";
+
+                if (key.endsWith("_order") && (ordering=== 'ASC' || ordering === 'DESC')){
+                    order[key.replace("_order", "")] = ordering;
+                }
+
+            });
+
+            var step = {
+                name : "order",
+                parameters : order
+            };
+
+            return step;
+
         }
 
     };
@@ -913,7 +1229,6 @@ define([
     };
 
     Box.prototype._setStatus = function (status) {
-
         log.info("Set '" + status + "' status for result id: " + this._getObjState("id"));
 
         this._setObjState("status", status);
@@ -968,6 +1283,8 @@ define([
 
         amplify.unsubscribe(this._getEventTopic("minimize"), this._onMinimizeEvent);
 
+        amplify.unsubscribe(this._getEventTopic("query"), this._onQueryEvent);
+
         this.$el.find("[data-action]").off();
 
         this.$el.find(s.RIGHT_MENU).off();
@@ -983,12 +1300,23 @@ define([
 
             try {
                 lang = require.s.contexts._.config.i18n.locale;
-            } catch(e) {
+            } catch (e) {
                 lang = "EN";
             }
 
-            return keyword[lang.toUpperCase()];
+            return typeof keyword === 'object' ? keyword[lang.toUpperCase()] : "";
         });
+
+    };
+
+    Box.prototype._getNestedProperty = function (path, obj) {
+
+        var obj = $.extend(true, {}, obj),
+            arr = path.split(".");
+
+        while (arr.length && (obj = obj[arr.shift()]));
+
+        return obj;
 
     };
 

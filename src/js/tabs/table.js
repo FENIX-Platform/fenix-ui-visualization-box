@@ -354,7 +354,7 @@ define([
 
     TableTab.prototype._onToolbarChangeEvent = function () {
 
-        this._trigger("toolbar.change", this.toolbar.getValues());
+        this._trigger("filter", this.toolbar.getValues());
 
     };
 

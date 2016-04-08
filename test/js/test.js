@@ -69,7 +69,40 @@ define([
 
         var box = this.createBox({
             el: s.LARGE,
-            model: valid_model,
+            //model: valid_model,
+            uid: "FLUDE_TOPIC_1",
+            //version: "",
+            values: {
+                rows: {
+                    indicator: ["Forest"]
+                },
+                aggregation: {
+                    value: "AVG"
+                },
+                group: ["incomes", "indicator"],
+                order: {
+                    indicator: "ASC"
+                }
+            },
+            process: [
+                {
+                    "name": "filter",
+                    "parameters": {
+                        "rows": {
+                            "year": {"time": [{"from": 2015, "to": 2015}]},
+                            "indicator": {"codes": [{"uid": "FLUDE_INDICATORS", "codes": ["Forest"]}]}
+                        }
+                    }
+                },
+                {
+                    "name": "group",
+                    "parameters": {
+                        "by": ["incomes", "indicator"],
+                        "aggregations": [{"columns": ["value"], "rule": "AVG"}]
+                    }
+                },
+                {"name": "order", "parameters": {"incomes": "ASC"}}
+            ],
             //hideToolbar: true,
             //hideMenu: true,
             //hideMetadataButton: true,
@@ -78,7 +111,7 @@ define([
             //hideCloneButton: true,
             //hideFlipButton: true,
             //hideMinimizeButton: true,
-            //face: "back"
+            face: "back"
         });
 
         log.trace("Rendering large box: end");

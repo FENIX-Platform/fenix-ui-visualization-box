@@ -18,7 +18,11 @@ define([
 
     'use strict';
 
-    var defaultOptions = {}, s = {
+    var defaultOptions = {
+        template : {
+            hideFooterButtons : true
+        }
+    }, s = {
         CONTAINER: "[data-role='filter']",
         SUBMIT_BTN: "[data-role='submit']",
         RESET_BTN: "[data-role='reset']"
@@ -29,6 +33,7 @@ define([
         $.extend(true, this, defaultOptions, o);
 
         this.channels = {};
+
         this.status = {};
 
         return this;
@@ -216,7 +221,7 @@ define([
     FilterTab.prototype._attach = function () {
 
         var template = Handlebars.compile(tabTemplate),
-            m = $.extend(true, {}, this.template, i18nLabels),
+            m = $.extend(true, {}, this.template, i18nLabels, this.labels),
             html = template(m);
 
         this.$el.html(html);
@@ -284,7 +289,8 @@ define([
 
         this.filter = new Filter({
             items: this._createFilterConfiguration(),
-            $el: this.$el.find(s.CONTAINER)
+            $el: this.$el.find(s.CONTAINER),
+            template : this.template
         });
     };
 
@@ -292,10 +298,9 @@ define([
 
         var configuration = this.config ? $.extend(true, {}, this.config) : Utils.createConfiguration({
             model: this.model
-        });
+        }), defaultConfiguration = $.extend(true, {}, Utils.mergeConfigurations(configuration, this.syncModel || {}));
 
-        return $.extend(true, {}, Utils.mergeConfigurations(configuration, this.syncModel || {}));
-
+        return defaultConfiguration;
     };
 
     FilterTab.prototype._unbindEventListeners = function () {
