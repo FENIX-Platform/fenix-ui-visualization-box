@@ -1,5 +1,4 @@
 /*global define, amplify*/
-
 define([
     "loglevel",
     "require",
@@ -26,7 +25,7 @@ define([
         CONTENT_READY: "[data-content='ready']",
         RIGHT_MENU: "[data-role='right-menu']",
         FLIP_CONTAINER: "[data-role='flip-container']",
-        FONT_CONTENT: "[data-role='front-content']",
+        FRONT_CONTENT: "[data-role='front-content']",
         PROCESS_STEPS: "[data-role='process-steps']",
         PROCESS_DETAILS: "[data-role='process-details']",
         BACK_CONTENT: "[data-role='back-content']"
@@ -64,7 +63,7 @@ define([
 
             this._bindObjEventListeners();
 
-            this._checkModelStatus();
+            this._preloadTabSources();
 
             return this;
 
@@ -90,7 +89,6 @@ define([
         $.extend(true, this, obj);
 
         this._checkModelStatus();
-
     };
 
     /**
@@ -296,7 +294,6 @@ define([
     Box.prototype._getObjState = function (path) {
 
         return this._getNestedProperty(path, this.state);
-
     };
 
     Box.prototype._checkModelStatus = function () {
@@ -402,7 +399,8 @@ define([
     Box.prototype._renderBox = function () {
         log.info("Render box start:");
 
-        this._preloadTabSources();
+        this._renderBoxFaces();
+
     };
 
     Box.prototype._preloadTabSources = function () {
@@ -440,6 +438,11 @@ define([
     };
 
     Box.prototype._preloadTabSourcesSuccess = function () {
+
+        this._checkModelStatus();
+    };
+
+    Box.prototype._renderBoxFaces = function () {
 
         //this._renderBoxFrontFace();
 
@@ -556,12 +559,14 @@ define([
 
     Box.prototype._getTabContainer = function (tab) {
 
-        var $container = this.$el.find(s.FONT_CONTENT).find("[data-section='" + tab + "']");
+        var $container = this.$el.find(s.FRONT_CONTENT).find("[data-section='" + tab + "']");
+
+        alert(this.$el.find(s.FRONT_CONTENT).find("[data-section='" + tab + "']").length)
 
         if ($container.length === 0) {
 
             $container = $('<div data-section="' + tab + '"></div>');
-            this.$el.find(s.FONT_CONTENT).append($container)
+            this.$el.find(s.FRONT_CONTENT).append($container)
         }
 
         return $container;
@@ -605,7 +610,7 @@ define([
     //Back face
 
     Box.prototype._renderBoxBackFace = function () {
-        log.info("Start rendering box front face");
+        log.info("Start rendering box back face");
 
         this._createProcessSteps();
 
@@ -815,36 +820,34 @@ define([
 
             this.$processSteps.append($html);
 
-            var registry = this._getObjState("tabRegistry");
-            require([registry[step.tab].path], _.bind(function (Tab) {
+            var registry = this._getObjState("tabRegistry"),
+                Tab = require(registry[step.tab].path);
 
-                //Add details container
-                var $el = this.$processStepDetails.find("[data-role='" + step.id + "']");
-                if ($el.length === 0) {
-                    $el = $("<li data-role='" + step.id + "'></li>");
+            //Add details container
+            var $el = this.$processStepDetails.find("[data-role='" + step.id + "']");
+            if ($el.length === 0) {
+                $el = $("<li data-role='" + step.id + "'></li>");
 
-                    if (index !== 0) {
-                        $el.hide();
-                    }
-                    this.$processStepDetails.append($el);
+                if (index !== 0) {
+                    $el.hide();
                 }
+                this.$processStepDetails.append($el);
+            }
 
-                //render tab
-                var Instance = new Tab({
-                    $el: $el,
-                    box: this,
-                    model: $.extend(true, {}, this.model),
-                    config: step.params.config,
-                    id: "step-" + step.id,
-                    labels: step.labels,
-                    template: step.params.template
-                });
+            //render tab
+            var Instance = new Tab({
+                $el: $el,
+                box: this,
+                model: $.extend(true, {}, this.model),
+                config: step.params.config,
+                id: "step-" + step.id,
+                labels: step.labels,
+                template: step.params.template
+            });
 
-                this.back_tab_instances[step.subject] = Instance;
+            this.back_tab_instances[step.subject] = Instance;
 
-                Instance.show();
-
-            }, this));
+            Instance.show();
 
         }, this));
 

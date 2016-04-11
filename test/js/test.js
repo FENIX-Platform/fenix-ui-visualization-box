@@ -69,22 +69,10 @@ define([
 
         var box = this.createBox({
             el: s.LARGE,
-            //model: valid_model,
-            uid: "FLUDE_TOPIC_1",
+            model: valid_model,
+            //uid: "FLUDE_TOPIC_1",
             //version: "",
-            values: {
-                rows: {
-                    indicator: ["Forest"]
-                },
-                aggregation: {
-                    value: "AVG"
-                },
-                group: ["incomes", "indicator"],
-                order: {
-                    indicator: "ASC"
-                }
-            },
-            process: [
+/*            process: [
                 {
                     "name": "filter",
                     "parameters": {
@@ -102,7 +90,19 @@ define([
                     }
                 },
                 {"name": "order", "parameters": {"incomes": "ASC"}}
-            ],
+            ],*/
+            values: {
+                rows: {
+                    indicator: ["Forest"]
+                },
+                aggregation: {
+                    value: "AVG"
+                },
+                group: ["incomes", "indicator"],
+                order: {
+                    indicator: "ASC"
+                }
+            },
             //hideToolbar: true,
             //hideMenu: true,
             //hideMetadataButton: true,

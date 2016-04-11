@@ -27,6 +27,8 @@ define([
         this.channels = {};
         this.status = {};
 
+        console.log(o)
+
         return this;
     }
 
