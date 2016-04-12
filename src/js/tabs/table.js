@@ -279,7 +279,7 @@ define([
         }
 
         console.log("optGr",optGr)
-        myrenderer.rendererGridFX(this.model, "table_" + this.id, optGr);
+        myrenderer.render(this.model, "table_" + this.id, optGr);
         //	myrenderer.rendererGridFX(this.model,"result",optGr);
 
         //id olap "table-" + this.id

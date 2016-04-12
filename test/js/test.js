@@ -111,7 +111,7 @@ define([
             //hideCloneButton: true,
             //hideFlipButton: true,
             //hideMinimizeButton: true,
-            face: "back"
+            //face: "back"
         });
 
         log.trace("Rendering large box: end");

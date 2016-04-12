@@ -52,10 +52,6 @@ define([
      */
     ChartTab.prototype.show = function (state) {
 
-
-        alert("Chart")
-
-
         var valid = this._validateInput();
 
         if (valid === true) {

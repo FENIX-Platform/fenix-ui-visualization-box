@@ -444,7 +444,7 @@ define([
 
     Box.prototype._renderBoxFaces = function () {
 
-        //this._renderBoxFrontFace();
+        this._renderBoxFrontFace();
 
         this._renderBoxBackFace();
     };
@@ -560,8 +560,6 @@ define([
     Box.prototype._getTabContainer = function (tab) {
 
         var $container = this.$el.find(s.FRONT_CONTENT).find("[data-section='" + tab + "']");
-
-        alert(this.$el.find(s.FRONT_CONTENT).find("[data-section='" + tab + "']").length)
 
         if ($container.length === 0) {
 
