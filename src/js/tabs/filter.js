@@ -19,8 +19,8 @@ define([
     'use strict';
 
     var defaultOptions = {
-        template : {
-            hideFooterButtons : true
+        template: {
+            hideFooterButtons: true
         }
     }, s = {
         CONTAINER: "[data-role='filter']",
@@ -309,15 +309,15 @@ define([
         this.filter = new Filter({
             items: this._createFilterConfiguration(),
             $el: this.$el.find(s.CONTAINER),
-            template : this.template
+            template: this.template
         });
     };
 
     FilterTab.prototype._createFilterConfiguration = function () {
 
         var configuration = this.config ? $.extend(true, {}, this.config) : Utils.createConfiguration({
-            model: this.model
-        }),
+                model: this.model
+            }),
             defaultConfiguration = $.extend(true, {}, Utils.mergeConfigurations(configuration, this.syncModel || {})),
             finalConfiguration = $.extend(true, {}, Utils.mergeConfigurations(defaultConfiguration, this.values || {}));
 
@@ -329,6 +329,7 @@ define([
         this.$submitBtn.off();
 
         this.$resetBtn.off();
+
     };
 
     FilterTab.prototype._isSuitable = function () {
@@ -340,9 +341,8 @@ define([
 
         if (this.status.ready === true) {
             this._unbindEventListeners();
+            this.filter.dispose();
         }
-
-        this.filter.dispose();
 
         this.$el.empty();
 

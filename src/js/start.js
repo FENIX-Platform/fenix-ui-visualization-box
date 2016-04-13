@@ -541,7 +541,7 @@ define([
 
         this._setObjState("tabs." + tab + ".initialized", true);
 
-        this._callTabInstanceMethod(tab, "show", this._getObjState("sync"));
+        this._callTabInstanceMethod({tab: tab, method: "show", opt1: this._getObjState("sync")});
 
     };
 
@@ -591,10 +591,8 @@ define([
 
         var registeredTabs = this._getObjState("tabRegistry"),
             tabsKeys = Object.keys(this._getObjState("tabs"));
-        ;
 
         _.each(tabsKeys, _.bind(function (tab) {
-
             var conf = registeredTabs[tab];
 
             if (!conf) {
@@ -605,7 +603,8 @@ define([
 
                 this._createTabInstance(tab);
 
-                this._setObjState("tabs." + tab + ".suitable", this._callTabInstanceMethod(tab, 'isSuitable'));
+                this._setObjState("tabs." + tab + ".suitable",
+                    this._callTabInstanceMethod({tab: tab, method: 'isSuitable'}));
 
                 if (this._getObjState("tabs." + tab + ".suitable") === true) {
                     this._showMenuItem(tab);
@@ -700,16 +699,16 @@ define([
 
     };
 
-    Box.prototype._createBackTabConfiguration = function (tab, include) {
+    Box.prototype._createBackTabConfiguration = function (tab) {
 
         var configuration;
 
         switch (tab.toLowerCase()) {
             case 'aggregations':
-                configuration = this._createBackAggregationTabConfiguration(include);
+                configuration = this._createBackAggregationTabConfiguration();
                 break;
             case 'columns':
-                configuration = this._createBackColumnsTabConfiguration(include);
+                configuration = this._createBackColumnsTabConfiguration();
                 break;
             default :
                 configuration = {};
@@ -727,14 +726,15 @@ define([
 
         _.each(columns, function (c) {
 
-            var title = self._getNestedProperty("title", self.model.metadata),
+            var title = self._getNestedProperty("title", c),
                 label;
 
             if (typeof title === 'object' && title[lang]) {
                 label = title[lang];
             } else {
                 window.fx_vis_box_missing_title >= 0 ? window.fx_vis_box_missing_title++ : window.fx_vis_box_missing_title = 0;
-                label = "Missing dimension title " + window.fx_vis_box_missing_title
+                //label = "Missing dimension title " + window.fx_vis_box_missing_title;
+                label = "Missing dimension title [" + c.id + "]";
             }
 
             if (!c.id.endsWith("_" + lang.toUpperCase())) {
@@ -771,16 +771,24 @@ define([
         };
     };
 
-    Box.prototype._createBackColumnsTabConfiguration = function (include) {
+    Box.prototype._createBackColumnsTabConfiguration = function () {
 
-        var self = this,
+        var values = this._getNestedProperty("aggregations.values.aggregations", this._getObjState("resource.values")) || [],
+            include = values
+                .filter(function (c) {
+                    return c.parent !== 'dimensions';
+                })
+                .map(function (c) {
+                    return c.value;
+                }),
+            self = this,
             filter = {},
             lang = this.lang || 'EN',
             columns = this._getNestedProperty("metadata.dsd.columns", this.model);
 
         _.each(columns, function (c) {
 
-            var title = self._getNestedProperty("title", self.model.metadata),
+            var title = self._getNestedProperty("title", c),
                 label,
                 toBeIncluded = include ? _.contains(include, c.id) : true;
 
@@ -788,7 +796,8 @@ define([
                 label = title[lang];
             } else {
                 window.fx_vis_box_missing_title >= 0 ? window.fx_vis_box_missing_title++ : window.fx_vis_box_missing_title = 0;
-                label = "Missing dimension title " + window.fx_vis_box_missing_title
+                //label = "Missing dimension title " + window.fx_vis_box_missing_title
+                label = "Missing dimension title [" + c.id + "]";
             }
 
             if (toBeIncluded && !c.id.endsWith("_" + lang.toUpperCase())) {
@@ -801,7 +810,7 @@ define([
                             {value: "none", label: "No ordering"},
                             {value: "ASC", label: "Ascending"},
                             {value: "DESC", label: "Descending"},
-                            //{value: "exclude", label: "Exclude"}
+                            {value: "exclude", label: "Exclude"}
                         ],
                         default: ["none"],
                         config: {
@@ -815,21 +824,24 @@ define([
                     className: "col-xs-9"
                 };
 
-                order.dependencies[c.id + "_include"] = {id: "disable", event: "select"}
+                filter[c.id] = order;
 
-                filter[c.id + "_order"] = order;
+                /*
+                 TODO double selector
+                 filter[c.id + "_order"] = order;
+                 order.dependencies[c.id + "_include"] = {id: "disable", event: "select"}
 
-                filter[c.id + "_include"] = {
-                    selector: {
-                        id: "input",
-                        type: "checkbox",
-                        source: [
-                            {value: "true", label: "Include"}
-                        ],
-                        default: ["true"]
-                    },
-                    className: "col-xs-3"
-                };
+                 filter[c.id + "_include"] = {
+                 selector: {
+                 id: "input",
+                 type: "checkbox",
+                 source: [
+                 {value: "true", label: "Include"}
+                 ],
+                 default: ["true"]
+                 },
+                 className: "col-xs-3"
+                 };*/
             }
         });
 
@@ -892,6 +904,7 @@ define([
             readyEventCounter++;
 
             if (list.length === readyEventCounter) {
+
                 //Remove disable from query btn
                 this.$el.find(s.BACK_CONTENT).find('[data-action="query"]').attr("disabled", false);
                 self._bindStepEventListeners();
@@ -925,25 +938,20 @@ define([
 
                     lastValues = payload;
 
-                    var activeColumns = payload.values.aggregations
-                        .filter(function (c) {
-                            return c.parent !== 'dimensions';
-                        })
-                        .map(function (c) {
-                            return c.value;
-                        }),
-                        config = self._createBackTabConfiguration("columns", activeColumns);
+                    self._setObjState("resource.values", {aggregations: payload});
+
+                    var config = self._createBackTabConfiguration("columns");
 
                     columnsInstance.rebuild({
                         config: config.filter
                     });
 
                 }
-                else { log.warn("Abort rebuild"); }
-
+                else {
+                    log.warn("Abort rebuild");
+                }
             })
         }
-
     };
 
     Box.prototype._createProcessStep = function (obj) {
@@ -1151,7 +1159,7 @@ define([
 
         function createFilterStep(payload) {
 
-            if (!payload.columns || !payload.rows) {
+            if (!payload.columns && !payload.rows) {
                 return;
             }
 
@@ -1179,9 +1187,11 @@ define([
             }
 
             _.each(columnsValues, function (obj, key) {
+                // double selector
+                // if (key.endsWith("_include") && Boolean(obj[0]) === true) {   columns.push(key.replace("_include", ""));}
 
-                if (key.endsWith("_include") && Boolean(obj[0]) === true) {
-                    columns.push(key.replace("_include", ""));
+                if (obj[0] !== "exclude") {
+                    columns.push(key);
                 }
 
             });
@@ -1301,9 +1311,16 @@ define([
 
                 var ordering = (Array.isArray(obj) && obj.length > 0) ? obj[0].toUpperCase() : "none";
 
-                if (key.endsWith("_order") && (ordering === 'ASC' || ordering === 'DESC')) {
-                    order[key.replace("_order", "")] = ordering;
+                /* double selector
+                 if (key.endsWith("_order") && (ordering === 'ASC' || ordering === 'DESC')) {
+                 order[key.replace("_order", "")] = ordering;
+                 }
+                 */
+
+                if (ordering === 'ASC' || ordering === 'DESC') {
+                    order[key] = ordering;
                 }
+
 
             });
 
@@ -1320,7 +1337,7 @@ define([
         }
 
         function cleanArray(actual) {
-            var newArray = new Array();
+            var newArray = [];
             for (var i = 0; i < actual.length; i++) {
                 if (actual[i]) {
                     newArray.push(actual[i]);
@@ -1341,7 +1358,12 @@ define([
         _.each(tabsKeys, _.bind(function (tab) {
 
             if (this._getObjState("tabs." + tab + ".suitable") === true && this._getObjState("tabs." + tab + ".initialized") === true) {
-                this._callTabInstanceMethod(tab, 'sync', this._getObjState("sync"));
+
+                this._callTabInstanceMethod({
+                    tab: tab,
+                    method: 'sync',
+                    opt1: this._getObjState("sync")
+                });
             }
 
         }, this));
@@ -1397,15 +1419,13 @@ define([
 
     // Utils
 
-    Box.prototype._callTabInstanceMethod = function (name, method, opts1, opts2) {
+    Box.prototype._callTabInstanceMethod = function (obj) {
 
-        var Instance = this._getTabInstance(name);
+        var Instance = this._getTabInstance(obj.tab, obj.face);
 
-        if ($.isFunction(Instance[method])) {
+        if (Instance && $.isFunction(Instance[obj.method])) {
 
-            this.front_tab_instances[name] = Instance;
-
-            return Instance[method](opts1, opts2);
+            return Instance[obj.method](obj.opt1, obj.opt2);
 
         } else {
             log.error(name + " tab does not implement the mandatory " + method + "() fn");
@@ -1460,7 +1480,7 @@ define([
 
         _.each(keys, _.bind(function (tab) {
 
-            this._callTabInstanceMethod(tab, "dispose");
+            this._callTabInstanceMethod({tab: tab, method: "dispose"});
 
         }, this));
 
@@ -1475,7 +1495,7 @@ define([
 
         _.each(keys, _.bind(function (tab) {
 
-            this._callTabInstanceMethod(tab, "dispose");
+            this._callTabInstanceMethod({tab: tab, method: "dispose", face: "back"});
 
         }, this));
 

@@ -43,6 +43,7 @@ define(function () {
         flippedClassName : "flipped",
 
         state : {},
+
         lang : "EN",
 
         //Load resource
