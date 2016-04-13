@@ -97,7 +97,7 @@ define([
              },
              {"name": "order", "parameters": {"incomes": "ASC"}}
              ],*/
-            values: {
+/*            values: {
                 "rows": {
                     "valid": true,
                     "labels": {
@@ -248,7 +248,7 @@ define([
                         "link_include": ["true"]
                     }
                 }
-            },
+            },*/
             //hideToolbar: true,
             //hideMenu: true,
             //hideMetadataButton: true,

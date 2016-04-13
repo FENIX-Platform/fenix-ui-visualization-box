@@ -151,6 +151,25 @@ define([
         return this.filter.getValues(format);
     };
 
+    /**
+     * Rebuild filter selectors
+     * @param {Object} payload
+     * @return {Object} filter instance
+     */
+    FilterTab.prototype.rebuild = function (payload) {
+
+        this.config = payload.config;
+
+        $.extend(true, this, payload);
+
+        this.values = this.getValues();
+
+        this.dispose();
+
+        this.show();
+
+    };
+
     /* END - API */
 
     FilterTab.prototype._trigger = function (channel) {
@@ -323,6 +342,11 @@ define([
             this._unbindEventListeners();
         }
 
+        this.filter.dispose();
+
+        this.$el.empty();
+
+        this.initialized = false;
     };
 
     FilterTab.prototype._getEventTopic = function (evt) {

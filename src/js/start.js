@@ -338,6 +338,10 @@ define([
                 return 'error';
             }
 
+            if (this.model.size === 0) {
+                return 'empty';
+            }
+
             if (Array.isArray(this.model.data) && this.model.data.length === 0) {
                 return 'empty';
             }
@@ -451,9 +455,20 @@ define([
 
     Box.prototype._renderBoxFaces = function () {
 
-        //this._renderBoxFrontFace();
+        if (this.frontFaceIsRendered !== true) {
 
-        this._renderBoxBackFace();
+            this._renderBoxFrontFace();
+
+            this.frontFaceIsRendered = true;
+        }
+
+        if (this.backFaceIsRendered !== true) {
+
+            this._renderBoxBackFace();
+
+            this.backFaceIsRendered = true;
+        }
+
     };
 
     // Front face
@@ -548,11 +563,6 @@ define([
         //cache the plugin instance
         this.front_tab_instances[tab] = instance;
         //this._setObjState("tabs." + tab + ".instance", instance);
-        this._setObjState("tabs." + tab + ".suitable", this._callTabInstanceMethod(tab, 'isSuitable'));
-
-        if (this._getObjState("tabs." + tab + ".suitable") === true) {
-            this._showMenuItem(tab);
-        }
 
         return instance;
 
@@ -580,10 +590,10 @@ define([
     Box.prototype._checkSuitableTabs = function () {
 
         var registeredTabs = this._getObjState("tabRegistry"),
-            tabsKeys = Object.keys(this._getObjState("tabs")),
-            self = this;
+            tabsKeys = Object.keys(this._getObjState("tabs"));
+        ;
 
-        _.each(tabsKeys, function (tab) {
+        _.each(tabsKeys, _.bind(function (tab) {
 
             var conf = registeredTabs[tab];
 
@@ -592,12 +602,22 @@ define([
             }
 
             if (conf.path) {
-                self._createTabInstance(tab);
+
+                this._createTabInstance(tab);
+
+                this._setObjState("tabs." + tab + ".suitable", this._callTabInstanceMethod(tab, 'isSuitable'));
+
+                if (this._getObjState("tabs." + tab + ".suitable") === true) {
+                    this._showMenuItem(tab);
+                } else {
+                    this._hideMenuItem(tab);
+                }
+
             } else {
                 log.error('Impossible to find path configuration for "' + tab + ' tab".');
             }
 
-        });
+        }, this));
 
         this._showDefaultTab();
 
@@ -680,16 +700,16 @@ define([
 
     };
 
-    Box.prototype._createBackTabConfiguration = function (tab) {
+    Box.prototype._createBackTabConfiguration = function (tab, include) {
 
         var configuration;
 
         switch (tab.toLowerCase()) {
             case 'aggregations':
-                configuration = this._createBackAggregationTabConfiguration();
+                configuration = this._createBackAggregationTabConfiguration(include);
                 break;
             case 'columns':
-                configuration = this._createBackColumnsTabConfiguration();
+                configuration = this._createBackColumnsTabConfiguration(include);
                 break;
             default :
                 configuration = {};
@@ -751,7 +771,7 @@ define([
         };
     };
 
-    Box.prototype._createBackColumnsTabConfiguration = function () {
+    Box.prototype._createBackColumnsTabConfiguration = function (include) {
 
         var self = this,
             filter = {},
@@ -761,7 +781,8 @@ define([
         _.each(columns, function (c) {
 
             var title = self._getNestedProperty("title", self.model.metadata),
-                label;
+                label,
+                toBeIncluded = include ? _.contains(include, c.id) : true;
 
             if (typeof title === 'object' && title[lang]) {
                 label = title[lang];
@@ -770,7 +791,7 @@ define([
                 label = "Missing dimension title " + window.fx_vis_box_missing_title
             }
 
-            if (!c.id.endsWith("_" + lang.toUpperCase())) {
+            if (toBeIncluded && !c.id.endsWith("_" + lang.toUpperCase())) {
 
                 var order = {
                     selector: {
@@ -819,7 +840,8 @@ define([
 
     Box.prototype._renderProcessSteps = function () {
 
-        var readyEventCounter = 0,
+        var self = this,
+            readyEventCounter = 0,
             list = this._getObjState("resource.steps");
 
         _.each(list, _.bind(function (step, index) {
@@ -827,7 +849,7 @@ define([
             var template = Handlebars.compile($(Template).find("[data-role='step-" + step.tab + "']")[0].outerHTML),
                 $html = $(template($.extend(true, {}, step, i18nLabels, this.model)));
 
-            this._bindStepEventListeners($html, step);
+            this._bindStepLabelEventListeners($html, step);
 
             this.$processSteps.append($html);
 
@@ -872,12 +894,12 @@ define([
             if (list.length === readyEventCounter) {
                 //Remove disable from query btn
                 this.$el.find(s.BACK_CONTENT).find('[data-action="query"]').attr("disabled", false);
+                self._bindStepEventListeners();
             }
         }
-
     };
 
-    Box.prototype._bindStepEventListeners = function ($html, step) {
+    Box.prototype._bindStepLabelEventListeners = function ($html, step) {
 
         $html.on("click", {step: step}, _.bind(function (e) {
 
@@ -885,6 +907,42 @@ define([
             this.$processStepDetails.find(">li[data-role='" + e.data.step.id + "']").show();
 
         }, this));
+
+    };
+
+    Box.prototype._bindStepEventListeners = function () {
+
+        var lastValues,
+            self = this,
+            aggregationInstance = this.back_tab_instances["aggregations"],
+            columnsInstance = this.back_tab_instances["columns"];
+
+        if (aggregationInstance && columnsInstance) {
+
+            aggregationInstance.on("change", function (payload) {
+
+                if (!_.isEqual(payload, lastValues)) {
+
+                    lastValues = payload;
+
+                    var activeColumns = payload.values.aggregations
+                        .filter(function (c) {
+                            return c.parent !== 'dimensions';
+                        })
+                        .map(function (c) {
+                            return c.value;
+                        }),
+                        config = self._createBackTabConfiguration("columns", activeColumns);
+
+                    columnsInstance.rebuild({
+                        config: config.filter
+                    });
+
+                }
+                else { log.warn("Abort rebuild"); }
+
+            })
+        }
 
     };
 
@@ -1037,8 +1095,7 @@ define([
         log.info("Listen to event: " + this._getEventTopic("query"));
         log.trace(payload);
 
-        //Disable query btn
-        this.$el.find(s.BACK_CONTENT).find('[data-action="query"]').attr("disabled", true);
+        this._disposeFrontFace();
 
         var process = this._createQuery();
 
@@ -1331,6 +1388,13 @@ define([
         }
     };
 
+    Box.prototype._hideMenuItem = function (item) {
+
+        if (this._getObjState("hasMenu")) {
+            this.rightMenu.hideItem(item);
+        }
+    };
+
     // Utils
 
     Box.prototype._callTabInstanceMethod = function (name, method, opts1, opts2) {
@@ -1379,7 +1443,9 @@ define([
 
         this._unbindObjEventListeners();
 
-        this._disposeTabs();
+        this._disposeFrontFace();
+
+        this._disposeBackFace();
 
         this.$el.remove();
 
@@ -1387,9 +1453,9 @@ define([
 
     };
 
-    Box.prototype._disposeTabs = function () {
+    Box.prototype._disposeFrontFace = function () {
 
-        var tabs = this._getObjState("tabs"),
+        var tabs = this.front_tab_instances,
             keys = Object.keys(tabs);
 
         _.each(keys, _.bind(function (tab) {
@@ -1397,6 +1463,23 @@ define([
             this._callTabInstanceMethod(tab, "dispose");
 
         }, this));
+
+        this.frontFaceIsRendered = false;
+
+    };
+
+    Box.prototype._disposeBackFace = function () {
+
+        var tabs = this.back_tab_instances,
+            keys = Object.keys(tabs);
+
+        _.each(keys, _.bind(function (tab) {
+
+            this._callTabInstanceMethod(tab, "dispose");
+
+        }, this));
+
+        this.backFaceIsRendered = false;
 
     };
 
