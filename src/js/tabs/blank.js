@@ -48,8 +48,6 @@ define([
      */
     BlankTab.prototype.show = function (state) {
 
-        alert("Blank")
-
         var valid = this._validateInput();
 
         if (valid === true) {

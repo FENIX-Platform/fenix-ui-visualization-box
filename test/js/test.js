@@ -67,40 +67,186 @@ define([
 
         log.trace("Rendering large box: start");
 
+        /*
+         * FLUDE_TOPIC_1
+         * adam_country_indicators
+         * adam_usd_disbursement
+         * */
+
         var box = this.createBox({
             el: s.LARGE,
-            model: valid_model,
-            //uid: "FLUDE_TOPIC_1",
+            //model: valid_model,
+            uid: "adam_country_indicators",
             //version: "",
-/*            process: [
-                {
-                    "name": "filter",
-                    "parameters": {
-                        "rows": {
-                            "year": {"time": [{"from": 2015, "to": 2015}]},
-                            "indicator": {"codes": [{"uid": "FLUDE_INDICATORS", "codes": ["Forest"]}]}
-                        }
-                    }
-                },
-                {
-                    "name": "group",
-                    "parameters": {
-                        "by": ["incomes", "indicator"],
-                        "aggregations": [{"columns": ["value"], "rule": "AVG"}]
-                    }
-                },
-                {"name": "order", "parameters": {"incomes": "ASC"}}
-            ],*/
+            /*            process: [
+             {
+             "name": "filter",
+             "parameters": {
+             "rows": {
+             "year": {"time": [{"from": 2015, "to": 2015}]},
+             "indicator": {"codes": [{"uid": "FLUDE_INDICATORS", "codes": ["Forest"]}]}
+             }
+             }
+             },
+             {
+             "name": "group",
+             "parameters": {
+             "by": ["incomes", "indicator"],
+             "aggregations": [{"columns": ["value"], "rule": "AVG"}]
+             }
+             },
+             {"name": "order", "parameters": {"incomes": "ASC"}}
+             ],*/
             values: {
-                rows: {
-                    indicator: ["Forest"]
+                "rows": {
+                    "valid": true,
+                    "labels": {
+                        "countryname": {"Daniele": ""},
+                        "countrycode": {"625": "Afghanistan"},
+                        "indicatorname": {"Fabrizio": ""},
+                        "indicatorcode": {
+                            "SI.POV.GINI": "GINI Index",
+                            "NY.GNP.PCAP.CD": "GNI per capita, Atlas method (current US$)",
+                            "NY.GNP.ATLS.CD": "GNI, Atlas method (current US$ Million)",
+                            "INCOME.LEVEL.H": "High-income"
+                        },
+                        "itemname": {"Ilaria": ""},
+                        "itemcode": {},
+                        "period": {"": ""},
+                        "unitcode": {},
+                        "unitname": {"": ""},
+                        "source": {"": ""},
+                        "note": {"": ""},
+                        "link": {"": ""}
+                    },
+                    "values": {
+                        "countryname": ["Daniele"],
+                        "countrycode": ["625"],
+                        "indicatorname": ["Fabrizio"],
+                        "indicatorcode": ["SI.POV.GINI", "NY.GNP.PCAP.CD", "NY.GNP.ATLS.CD", "INCOME.LEVEL.H"],
+                        "itemname": ["Ilaria"],
+                        "itemcode": [],
+                        "period": [""],
+                        "unitcode": [],
+                        "unitname": [""],
+                        "source": [""],
+                        "note": [""],
+                        "link": [""]
+                    }
                 },
-                aggregation: {
-                    value: "AVG"
+                "aggregations": {
+                    "valid": true,
+                    "labels": {
+                        "aggregations": {
+                            "indicatorcode": "Missing label 11",
+                            "indicatorname": "Missing label",
+                            "itemname": "Missing label",
+                            "countryname": "Missing label",
+                            "countrycode": "Missing label",
+                            "itemcode": "Missing label",
+                            "period": "Missing label",
+                            "value": "Missing label",
+                            "unitname": "Missing label",
+                            "source": "Missing label",
+                            "link": "Missing label",
+                            "note": "Missing label",
+                            "unitcode": "Missing label"
+                        }
+                    },
+                    "values": {
+                        "aggregations": [{
+                            "value": "indicatorcode",
+                            "parent": "dimensions",
+                            "label": "Missing label"
+                        }, {
+                            "value": "indicatorname",
+                            "parent": "dimensions",
+                            "label": "Missing label"
+                        }, {
+                            "value": "itemname",
+                            "parent": "dimensions",
+                            "label": "Missing label"
+                        }, {
+                            "value": "countryname",
+                            "parent": "group",
+                            "label": "Missing label"
+                        }, {"value": "countrycode", "parent": "group", "label": "Missing label"}, {
+                            "value": "itemcode",
+                            "parent": "group",
+                            "label": "Missing label"
+                        }, {"value": "period", "parent": "group", "label": "Missing label"}, {
+                            "value": "value",
+                            "parent": "group",
+                            "label": "Missing label"
+                        }, {"value": "unitname", "parent": "group", "label": "Missing label"}, {
+                            "value": "source",
+                            "parent": "group",
+                            "label": "Missing label"
+                        }, {"value": "link", "parent": "group", "label": "Missing label"}, {
+                            "value": "note",
+                            "parent": "group",
+                            "label": "Missing label"
+                        }, {"value": "unitcode", "parent": "sum", "label": "Missing label"}]
+                    }
                 },
-                group: ["incomes", "indicator"],
-                order: {
-                    indicator: "ASC"
+                "columns": {
+                    "valid": true,
+                    "labels": {
+                        "countryname_order": {"ASC": "Ascending"},
+                        "countryname_include": {"true": "Include"},
+                        "countrycode_order": {"DESC": "Descending"},
+                        "countrycode_include": {},
+                        "indicatorname_order": {"DESC": "Descending"},
+                        "indicatorname_include": {"true": "Include"},
+                        "indicatorcode_order": {"none": "No ordering"},
+                        "indicatorcode_include": {"true": "Include"},
+                        "itemname_order": {"none": "No ordering"},
+                        "itemname_include": {"true": "Include"},
+                        "itemcode_order": {"none": "No ordering"},
+                        "itemcode_include": {"true": "Include"},
+                        "period_order": {"none": "No ordering"},
+                        "period_include": {"true": "Include"},
+                        "value_order": {"none": "No ordering"},
+                        "value_include": {"true": "Include"},
+                        "unitcode_order": {"none": "No ordering"},
+                        "unitcode_include": {"true": "Include"},
+                        "unitname_order": {"none": "No ordering"},
+                        "unitname_include": {},
+                        "source_order": {"none": "No ordering"},
+                        "source_include": {"true": "Include"},
+                        "note_order": {"none": "No ordering"},
+                        "note_include": {"true": "Include"},
+                        "link_order": {"none": "No ordering"},
+                        "link_include": {"true": "Include"}
+                    },
+                    "values": {
+                        "countryname_order": ["ASC"],
+                        "countryname_include": ["true"],
+                        "countrycode_order": ["DESC"],
+                        "countrycode_include": [],
+                        "indicatorname_order": ["DESC"],
+                        "indicatorname_include": ["true"],
+                        "indicatorcode_order": ["none"],
+                        "indicatorcode_include": ["true"],
+                        "itemname_order": ["none"],
+                        "itemname_include": ["true"],
+                        "itemcode_order": ["none"],
+                        "itemcode_include": ["true"],
+                        "period_order": ["none"],
+                        "period_include": ["true"],
+                        "value_order": ["none"],
+                        "value_include": ["true"],
+                        "unitcode_order": ["none"],
+                        "unitcode_include": ["true"],
+                        "unitname_order": ["none"],
+                        "unitname_include": [],
+                        "source_order": ["none"],
+                        "source_include": ["true"],
+                        "note_order": ["none"],
+                        "note_include": ["true"],
+                        "link_order": ["none"],
+                        "link_include": ["true"]
+                    }
                 }
             },
             //hideToolbar: true,
@@ -111,7 +257,7 @@ define([
             //hideCloneButton: true,
             //hideFlipButton: true,
             //hideMinimizeButton: true,
-            //face: "back"
+            face: "back"
         });
 
         log.trace("Rendering large box: end");

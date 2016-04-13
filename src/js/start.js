@@ -264,7 +264,7 @@ define([
 
         //resource process steps
         this._setObjState("resource.steps", this.processSteps);
-        this._setObjState("resource.uid", this.initial.uid);
+        this._setObjState("resource.uid", this.initial.uid || this._getNestedProperty("metadata.uid", this.model));
         this._setObjState("resource.version", this.initial.version);
         this._setObjState("resource.values", this.initial.values);
 
@@ -354,6 +354,8 @@ define([
     Box.prototype._loadResource = function (p) {
         log.info("Loading FENIX resource");
 
+        this.setStatus("loading");
+
         var d3pUrl = C.d3pUrl || CD.d3pUrl,
             url = d3pUrl + this._getObjState("resource.uid"),
             queryParams = C.d3pQueryParameters || CD.d3pQueryParameters,
@@ -386,6 +388,11 @@ define([
     Box.prototype._onLoadResourceSuccess = function (data) {
         log.info("Load resource success");
         this.model = data || {data: []};
+
+        this.setStatus("ready");
+
+        //TODO uncomment during distribution
+        //this._flip("front");
 
         this._checkModelStatus();
 
@@ -444,7 +451,7 @@ define([
 
     Box.prototype._renderBoxFaces = function () {
 
-        this._renderBoxFrontFace();
+        //this._renderBoxFrontFace();
 
         this._renderBoxBackFace();
     };
@@ -625,7 +632,7 @@ define([
 
         list.push(this._createProcessStep({
             tab: "metadata",
-            subject : "metadata",
+            subject: "metadata",
             params: {
                 model: $.extend(true, {}, this.model)
             }
@@ -633,10 +640,10 @@ define([
 
         list.push(this._createProcessStep({
             tab: "filter",
-            subject : "rows",
+            subject: "rows",
             params: {
                 model: $.extend(true, {}, this.model),
-                values: values
+                values: values.rows
             },
             labels: {
                 title: "Rows"
@@ -645,9 +652,10 @@ define([
 
         list.push(this._createProcessStep({
             tab: "filter",
-            subject : "aggregations",
+            subject: "aggregations",
             params: {
-                config: aggregationConfiguration.filter
+                config: aggregationConfiguration.filter,
+                values: values.aggregations
             },
             labels: {
                 title: "Aggregations"
@@ -656,10 +664,12 @@ define([
 
         list.push(this._createProcessStep({
             tab: "filter",
-            subject : "columns",
+            subject: "columns",
             params: {
                 config: columnsConfiguration.filter,
-                template: columnsConfiguration.template
+                template: columnsConfiguration.template,
+                values: values.columns
+
             },
             labels: {
                 title: "Columns"
@@ -721,7 +731,7 @@ define([
         return {
 
             filter: {
-                "aggregation": {
+                "aggregations": {
                     "selector": {
                         "id": "sortable",
                         "source": source, // Static data
@@ -762,17 +772,6 @@ define([
 
             if (!c.id.endsWith("_" + lang.toUpperCase())) {
 
-                filter[c.id + "_include"] = {
-                    selector: {
-                        id: "input",
-                        type: "checkbox",
-                        source: [
-                            {value: "true", label: "Include"}
-                        ],
-                        default: ["true"]
-                    }
-                };
-
                 var order = {
                     selector: {
                         id: "dropdown",
@@ -791,12 +790,25 @@ define([
                     template: {
                         title: label
                     },
-                    dependencies : {}
+                    dependencies: {},
+                    className: "col-xs-9"
                 };
 
-                order.dependencies[c.id + "_include"] =  {id: "disable", event: "select"}
+                order.dependencies[c.id + "_include"] = {id: "disable", event: "select"}
 
-                filter[c.id + "_order"] = order
+                filter[c.id + "_order"] = order;
+
+                filter[c.id + "_include"] = {
+                    selector: {
+                        id: "input",
+                        type: "checkbox",
+                        source: [
+                            {value: "true", label: "Include"}
+                        ],
+                        default: ["true"]
+                    },
+                    className: "col-xs-3"
+                };
             }
         });
 
@@ -807,7 +819,8 @@ define([
 
     Box.prototype._renderProcessSteps = function () {
 
-        var list = this._getObjState("resource.steps");
+        var readyEventCounter = 0,
+            list = this._getObjState("resource.steps");
 
         _.each(list, _.bind(function (step, index) {
 
@@ -838,16 +851,29 @@ define([
                 box: this,
                 model: $.extend(true, {}, this.model),
                 config: step.params.config,
+                values: step.params.values || {},
                 id: "step-" + step.id,
                 labels: step.labels,
                 template: step.params.template
             });
+
+            Instance.on("ready", _.bind(onTabReady, this));
 
             this.back_tab_instances[step.subject] = Instance;
 
             Instance.show();
 
         }, this));
+
+        function onTabReady() {
+
+            readyEventCounter++;
+
+            if (list.length === readyEventCounter) {
+                //Remove disable from query btn
+                this.$el.find(s.BACK_CONTENT).find('[data-action="query"]').attr("disabled", false);
+            }
+        }
 
     };
 
@@ -1011,133 +1037,239 @@ define([
         log.info("Listen to event: " + this._getEventTopic("query"));
         log.trace(payload);
 
-        this._createQuery();
+        //Disable query btn
+        this.$el.find(s.BACK_CONTENT).find('[data-action="query"]').attr("disabled", true);
+
+        var process = this._createQuery();
+
+        log.info("D3P process", process);
+
+        this._loadResource(process)
+            .then(
+                _.bind(this._onLoadResourceSuccess, this),
+                _.bind(this._onLoadResourceError, this));
 
     };
 
     Box.prototype._createQuery = function () {
 
-        var filter = [],
-            payload = {};
+        var self = this,
+            filter = [],
+            payload = {},
+            filterStep,
+            groupStep,
+            orderStep;
 
         _.each(this.back_tab_instances, _.bind(function (Instance, key) {
 
             if ($.isFunction(Instance.getValues)) {
-                payload[key] = Instance.getValues(key === 'rows' ? "fenix" : null);
+                payload[key] = Instance.getValues();
             }
 
         }, this));
 
+        this._setObjState("resource.values", $.extend(true, {}, payload));
 
-        filter.push(createFilterStep(payload));
-        filter.push(createGroupStep(payload));
-        filter.push(createOrderStep(payload));
+        if (this.back_tab_instances.hasOwnProperty("rows") && $.isFunction(this.back_tab_instances['rows'].getValues)) {
+            payload["rows"] = this.back_tab_instances['rows'].getValues("fenix");
+        }
 
-        console.log(payload)
-        console.log(filter)
+        filterStep = createFilterStep(payload);
+        groupStep = createGroupStep(payload);
+        orderStep = createOrderStep(payload);
+
+        if (filterStep) {
+            filter.push(filterStep);
+        }
+
+        if (groupStep) {
+            filter.push(groupStep);
+        }
+
+        if (orderStep) {
+            filter.push(orderStep);
+        }
 
         return filter;
 
-        function createFilterStep(payload){
+        function createFilterStep(payload) {
 
-            var columnsValues = payload.columns.values,
-                columns = [];
+            if (!payload.columns || !payload.rows) {
+                return;
+            }
 
-            _.each(columnsValues, function (obj, key ) {
+            var step = {
+                    name: "filter",
+                    parameters: {}
+                },
+                hasValues = false,
+                columns = [],
+                rowValues = payload.rows,
+                columnsValues = payload.columns.values,
+                columnsSet = self._getNestedProperty("metadata.dsd.columns", self.model)
+                    .filter(function (c) {
+                        return !c.id.endsWith("_" + self.lang.toUpperCase());
+                    })
+                    .map(function (c) {
+                        return c.id;
+                    }).sort();
 
-                if (key.endsWith("_include") && Boolean(obj[0]) === true){
+            if (Object.getOwnPropertyNames(rowValues).length > 0) {
+                step.parameters.rows = rowValues;
+                hasValues = true;
+            } else {
+                log.warn("Filter.rows not included");
+            }
+
+            _.each(columnsValues, function (obj, key) {
+
+                if (key.endsWith("_include") && Boolean(obj[0]) === true) {
                     columns.push(key.replace("_include", ""));
                 }
 
             });
 
-            var step = {
-                name : "filter",
-                parameters : {
-                    rows : payload.rows,
-                    columns : columns
-                }
-            };
+            //If they are equals it means i want to include all columns so no filter is needed
+            columns = columns.sort();
 
-            return step;
+            if (!_.isEqual(columnsSet, columns)) {
+                step.parameters.columns = columns;
+
+                hasValues = true;
+            } else {
+                log.warn("Filter.columns not included");
+
+            }
+
+            return hasValues ? step : null;
 
         }
 
-        function createGroupStep(payload){
+        function createGroupStep(payload) {
 
-            var values = payload.aggregations.values.aggregation,
+            if (!payload.aggregations) {
+                return;
+            }
+
+            var step = {
+                    name: "group",
+                    parameters: {}
+                },
+                hasValues = false,
+                values = payload.aggregations.values.aggregations || {},
                 by = [],
                 sum = [],
                 avg = [],
                 first = [],
                 last = [],
-                aggregation = [];
+                aggregations = [];
 
             _.each(values, function (obj) {
 
-                switch(obj.parent.toLowerCase()){
-                    case "group": by.push(obj.value); break ;
-                    case "sum": sum.push(obj.value); break ;
-                    case "avg": avg.push(obj.value); break ;
-                    case "first": first.push(obj.value); break ;
-                    case "last": last.push(obj.value); break ;
+                switch (obj.parent.toLowerCase()) {
+                    case "group":
+                        by.push(obj.value);
+                        break;
+                    case "sum":
+                        sum.push(obj.value);
+                        break;
+                    case "avg":
+                        avg.push(obj.value);
+                        break;
+                    case "first":
+                        first.push(obj.value);
+                        break;
+                    case "last":
+                        last.push(obj.value);
+                        break;
                 }
 
             });
 
-            sum = sum.map(function ( i ) {
-                return  {"columns": [i], "rule": "SUM"};
+            sum = cleanArray(sum).map(function (i) {
+                return {"columns": [i], "rule": "SUM"};
             });
 
-            avg = avg.map(function ( i ) {
-                return  {"columns": [i], "rule": "AVG"};
+            avg = cleanArray(avg).map(function (i) {
+                return {"columns": [i], "rule": "AVG"};
             });
 
-            first = first.map(function ( i ) {
-                return  {"columns": [i], "rule": "FIRST"};
+            first = cleanArray(first).map(function (i) {
+                return {"columns": [i], "rule": "FIRST"};
             });
 
-            last = last.map(function ( i ) {
-                return  {"columns": [i], "rule": "LAST"};
+            last = cleanArray(last).map(function (i) {
+                return {"columns": [i], "rule": "LAST"};
             });
 
-            aggregation = _.union(sum, avg, first, last);
+            //Add group by
+            if (by.length > 0) {
+                step.parameters.by = cleanArray(by);
+                hasValues = true
+            }
 
-            var step = {
-                name : "group",
-                parameters : {
-                    by : by,
-                    aggregations: aggregation
+            //Add aggregations
+            _.each([sum, avg, first, last], function (a) {
 
+                if (a.length > 0) {
+                    aggregations = _.uniq(_.union(aggregations, a), false);
                 }
-            };
 
-            return step;
+            });
+
+            if (aggregations.length > 0) {
+                step.parameters.aggregations = aggregations;
+                hasValues = true
+            }
+
+            return hasValues ? step : null;
 
         }
 
-        function createOrderStep(payload){
+        function createOrderStep(payload) {
 
-            var columnsValues = payload.columns.values,
+            if (!payload.columns) {
+                return;
+            }
+
+            var step = {
+                    name: "order",
+                    parameters: null
+                },
+                hasValues = false,
+                columnsValues = payload.columns.values,
                 order = {};
 
-            _.each(columnsValues, function (obj, key ) {
+            _.each(columnsValues, function (obj, key) {
 
                 var ordering = (Array.isArray(obj) && obj.length > 0) ? obj[0].toUpperCase() : "none";
 
-                if (key.endsWith("_order") && (ordering=== 'ASC' || ordering === 'DESC')){
+                if (key.endsWith("_order") && (ordering === 'ASC' || ordering === 'DESC')) {
                     order[key.replace("_order", "")] = ordering;
                 }
 
             });
 
-            var step = {
-                name : "order",
-                parameters : order
-            };
+            if (Object.getOwnPropertyNames(order).length > 0) {
+                step.parameters = order;
 
-            return step;
+                hasValues = true;
+            } else {
+                log.warn("Filter.order not included");
+            }
 
+            return hasValues ? step : null;
+
+        }
+
+        function cleanArray(actual) {
+            var newArray = new Array();
+            for (var i = 0; i < actual.length; i++) {
+                if (actual[i]) {
+                    newArray.push(actual[i]);
+                }
+            }
+            return newArray;
         }
 
     };

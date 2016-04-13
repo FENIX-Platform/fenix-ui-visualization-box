@@ -27,8 +27,6 @@ define([
         this.channels = {};
         this.status = {};
 
-        console.log(o)
-
         return this;
     }
 
@@ -54,6 +52,10 @@ define([
             this._show(state);
 
             this.status.ready = true;
+
+            log.info("trigger 'ready' event");
+
+            this._trigger('ready');
 
             log.info("Tab shown successfully");
 
@@ -210,10 +212,10 @@ define([
 
         this.metadataViewer = new MetadataViewer();
 
-        this.metadataViewer.init({
-            data: this.model.metadata,
+        this.metadataViewer.render({
+            model: this.model.metadata ,
             lang: 'en',
-            placeholder: this.$el.find(s.CONTAINER)
+            el: this.$el.find(s.CONTAINER)
         });
 
     };

@@ -298,9 +298,11 @@ define([
 
         var configuration = this.config ? $.extend(true, {}, this.config) : Utils.createConfiguration({
             model: this.model
-        }), defaultConfiguration = $.extend(true, {}, Utils.mergeConfigurations(configuration, this.syncModel || {}));
+        }),
+            defaultConfiguration = $.extend(true, {}, Utils.mergeConfigurations(configuration, this.syncModel || {})),
+            finalConfiguration = $.extend(true, {}, Utils.mergeConfigurations(defaultConfiguration, this.values || {}));
 
-        return defaultConfiguration;
+        return finalConfiguration;
     };
 
     FilterTab.prototype._unbindEventListeners = function () {

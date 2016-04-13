@@ -279,7 +279,43 @@ define([
         }
 
         console.log("optGr",optGr)
-        myrenderer.render(this.model, "table_" + this.id, optGr);
+        //myrenderer.render(this.model, "table_" + this.id, optGr);
+        
+        myrenderer.render({
+            model : this.model,
+            el : "#table_" + this.id,
+            options: optGr
+        });
+
+        /*
+
+        myrenderer.render({
+            model : this.model,
+            el : "#table_" + this.id,
+            options : optGr
+            });
+
+------
+var $olapContainer = $("#olap");
+
+         myrenderer.render({
+             model : this.model,
+             el : $olapContainer,
+             options : optGr
+             });
+
+------
+         var olapContainer = document.getElementById("olap");
+
+         myrenderer.render({
+             model : this.model,
+             el : olapContainer,
+             options : optGr
+         });
+
+         * */
+
+
         //	myrenderer.rendererGridFX(this.model,"result",optGr);
 
         //id olap "table-" + this.id
