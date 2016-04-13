@@ -790,7 +790,7 @@ define([
 
             var title = self._getNestedProperty("title", c),
                 label,
-                toBeIncluded = include ? _.contains(include, c.id) : true;
+                toBeIncluded = include.length > 0 ? _.contains(include, c.id) : true;
 
             if (typeof title === 'object' && title[lang]) {
                 label = title[lang];

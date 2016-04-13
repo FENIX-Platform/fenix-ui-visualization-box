@@ -233,6 +233,7 @@ define([
 
         if (this.status.ready === true) {
             this._unbindEventListeners();
+            this.metadataViewer.dispose();
         }
 
     };
