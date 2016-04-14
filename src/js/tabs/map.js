@@ -47,7 +47,7 @@ define([
      * Optional method
      */
     MapTab.prototype.init = function () {
-        log.info("Tab initialized successfully");
+        log.info("Map initialized successfully");
     };
 
     /**
@@ -81,7 +81,7 @@ define([
 
         var isSuitable = this._isSuitable();
 
-        log.info("Is tab suitable? " + isSuitable);
+        log.info("Is map suitable? " + isSuitable);
 
         return isSuitable;
 
