@@ -8,7 +8,7 @@ define(function () {
     return {
 
         defaultStatus : "loading",
-        defaultTab : "blank",
+        defaultTab : "download",
         defaultSize : "large",
         defaultFace : "front", // back || front
         tabRegistry: {
@@ -29,6 +29,9 @@ define(function () {
             },
             'filter': {
                 path:'fx-v-b/js/tabs/filter'
+            },
+            'download': {
+                path:'fx-v-b/js/tabs/download'
             }
         },
         tabs: {
@@ -38,6 +41,7 @@ define(function () {
             'filter': {type: 'simple', callback: 'once'},
             //'map': {type: 'simple', callback: 'always'},
             'chart': {type: 'simple', callback: 'always'},
+            'download': {type: 'simple', callback: 'always'}
         },
 
         flippedClassName : "flipped",

@@ -21,7 +21,9 @@ define(function () {
             "parent_id": "-1",
             "id": "1",
             "a_attrs": {
-                "data-action": "download"
+                "data-action": "tab",
+                "data-tab": "download",
+                "class" : "hidden"
             }
         }, {
             "name": "Widget layout",

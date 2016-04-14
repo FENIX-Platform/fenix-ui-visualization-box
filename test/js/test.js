@@ -83,13 +83,13 @@ define([
 
             $(s.CLONE_LIST).prepend($el);
 
-            var box = this.createBox($.extend(true, state, { el: $el }));
+            var clone = this.createBox($.extend(true, state, { el: $el }));
 
         }, this));
 
         var box = this.createBox({
                 el: s.CLONE,
-                model: valid_model
+                uid: "adam_country_indicators"
             });
 
 
