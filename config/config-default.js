@@ -39,7 +39,7 @@ define(function () {
             //'table': {type: 'simple', callback: 'once'},
             'metadata': {type: 'simple', callback: 'once'},
             'filter': {type: 'simple', callback: 'once'},
-            //'map': {type: 'simple', callback: 'always'},
+            'map': {type: 'simple', callback: 'always'},
             'chart': {type: 'simple', callback: 'always'},
             'download': {type: 'simple', callback: 'always'}
         },

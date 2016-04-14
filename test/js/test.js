@@ -47,9 +47,11 @@ define([
 
     Test.prototype._render = function () {
 
-        this._renderClone();
+        this._renderLargeBox();
 
         return;
+
+        this._renderClone();
 
         this._renderLargeBox();
 
@@ -89,7 +91,8 @@ define([
 
         var box = this.createBox({
                 el: s.CLONE,
-                uid: "adam_country_indicators"
+                //uid: "adam_country_indicators"
+                model : valid_model
             });
 
 

@@ -613,6 +613,8 @@ define([
                 this._setObjState("tabs." + tab + ".suitable",
                     this._callTabInstanceMethod({tab: tab, method: 'isSuitable'}));
 
+                console.log(tab, this._getObjState("tabs." + tab + ".suitable"))
+
                 if (this._getObjState("tabs." + tab + ".suitable") === true) {
                     this._showMenuItem(tab);
                 } else {

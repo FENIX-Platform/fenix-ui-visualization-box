@@ -17,7 +17,8 @@ define([
     'use strict';
 
     var s = {
-        CONTAINER: '[data-role="download"]'
+        CONTAINER: '[data-role="download"]',
+        DOWNLOAD_BTN :  '[data-action="download"]'
     };
 
     function DownloadTab(obj) {
@@ -204,6 +205,14 @@ define([
 
     DownloadTab.prototype._bindEventListeners = function () {
 
+        this.$el.find(s.DOWNLOAD_BTN).on("click", _.bind(function (e) {
+
+            var $this = $(e.target);
+
+            log.info("Download as " + $this.data('format'));
+
+        }, this));
+
     };
 
     DownloadTab.prototype._renderComponents = function () {
@@ -211,6 +220,8 @@ define([
     };
 
     DownloadTab.prototype._unbindEventListeners = function () {
+
+        this.$el.find(s.DOWNLOAD_BTN).off();
 
     };
 
