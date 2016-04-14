@@ -1,9 +1,11 @@
 define([
     'loglevel',
     'jquery',
+    'underscore',
     'fx-v-b/start',
+    'fx-v-b/config/events',
     'text!test/json/uneca_population.json'
-], function (log, $, Box, Model) {
+], function (log, $, _, Box, EVT, Model) {
 
     'use strict';
 
@@ -22,7 +24,9 @@ define([
             FLIP: "#flip-container",
             FLIP_BTNS: "#flip-btns [data-flip]",
             STATE: "#state-container",
-            STATE_BTN: "#state-btn"
+            STATE_BTN: "#state-btn",
+            CLONE : "#box-clone",
+            CLONE_LIST : "#clone-list"
         },
         empty_model = {data: []},
         error_model = {},
@@ -43,9 +47,11 @@ define([
 
     Test.prototype._render = function () {
 
-        this._renderLargeBox();
+        this._renderClone();
 
         return;
+
+        this._renderLargeBox();
 
         this._renderMediumBoxes();
 
@@ -60,6 +66,34 @@ define([
         this._renderFlipBox();
 
         this._renderStateBox();
+
+    };
+
+    Test.prototype._renderClone = function () {
+
+        log.trace("Rendering clone box: start");
+
+        //add 'Clone' event listeners
+        amplify.subscribe(EVT.clone, _.bind(function ( state ) {
+
+            log.info("Start cloning");
+            log.info(state);
+
+            var $el = $('<li>Clone item</li>');
+
+            $(s.CLONE_LIST).prepend($el);
+
+            var box = this.createBox($.extend(true, state, { el: $el }));
+
+        }, this));
+
+        var box = this.createBox({
+                el: s.CLONE,
+                model: valid_model
+            });
+
+
+        log.trace("Rendering clone box: end");
 
     };
 

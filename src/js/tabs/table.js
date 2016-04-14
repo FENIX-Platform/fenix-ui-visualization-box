@@ -8,6 +8,7 @@ define([
     "fx-v-b/config/config-default",
     "fx-v-b/config/errors",
     "fx-v-b/config/events",
+    'fx-v-b/js/utils',
     'fx-filter/js/utils',
     "text!fx-v-b/html/tabs/table.hbs",
     'fx-filter/start',
@@ -16,21 +17,21 @@ define([
     'fx-olap/start',
     "fx-common/pivotator/functions",
     "amplify"
-], function ($, log, _, C, CD, ERR, EVT, Utils, tabTemplate, Filter, ToolbarModel, Handlebars, myRenderer, myFunc) {
+], function ($, log, _, C, CD, ERR, EVT, Utils, FilterUtils, tabTemplate, Filter, ToolbarModel, Handlebars, myRenderer, myFunc) {
 
     'use strict';
 
-    var defaultOptions = {}, s = {
+    var s = {
         TOOLBAR: "[data-role='toolbar']",
         TOOLBAR_BTN: "[data-role='toolbar'] [data-role='toolbar-btn']"
     };
 
-    function TableTab(o) {
+    function TableTab(obj) {
 
-        $.extend(true, this, defaultOptions, o);
+        $.extend(true, this, {initial: obj, $el: $(obj.$el), box: obj.box, model: obj.model, id: obj.id});
 
         this.channels = {};
-        this.status = {};
+        this.state = {};
 
         return this;
     }
@@ -242,13 +243,23 @@ define([
         log.info("Listen to event: " + this._getEventTopic("toolbar"));
         log.trace(payload);
 
-        if (this.toolbarIsHidden !== true) {
-            this.$toolbar.slideUp();
-            this.toolbarIsHidden = true;
-        } else {
+        var direction = this.toolbarPosition !== "up" ? "up" : "down";
+
+        this._slideToolbar(direction)
+
+    };
+
+    TableTab.prototype._slideToolbar = function (direction) {
+
+        if (direction !== "up") {
             this.$toolbar.slideDown();
-            this.toolbarIsHidden = false;
+            this.toolbarPosition = "down";
+        } else {
+            this.$toolbar.slideUp();
+            this.toolbarPosition = "up";
         }
+
+        this._setState("toolbarPosition", this.toolbarPosition);
 
     };
 
@@ -336,7 +347,7 @@ var $olapContainer = $("#olap");
 
     TableTab.prototype._createFilterConfiguration = function () {
 
-        var configuration = $.extend(true, {}, Utils.mergeConfigurations(ToolbarModel, this.syncModel || {}));
+        var configuration = $.extend(true, {}, FilterUtils.mergeConfigurations(ToolbarModel, this.syncModel || {}));
 
         try {
 
@@ -399,6 +410,9 @@ var $olapContainer = $("#olap");
         this._renderToolbar();
 
         //Table will be create when filter is 'ready'
+
+        //init toolbar position
+        this._slideToolbar(this.initial.toolbarPosition || C.toolbarPosition || CD.toolbarPosition);
     };
 
 
@@ -427,6 +441,14 @@ var $olapContainer = $("#olap");
 
         return EVT[evt] ? EVT[evt] + this.id : evt + this.id;
     };
+
+    TableTab.prototype._setState = function (key, val) {
+
+        Utils.assign(this.state, key, val);
+
+        this._trigger("state", $.extend(true, {}, this.state));
+    };
+
 
     return TableTab;
 

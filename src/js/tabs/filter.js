@@ -8,13 +8,14 @@ define([
     "fx-v-b/config/config-default",
     "fx-v-b/config/errors",
     "fx-v-b/config/events",
+    'fx-v-b/js/utils',
     'fx-filter/js/utils',
     "text!fx-v-b/html/tabs/filter.hbs",
     'fx-filter/start',
     "i18n!fx-v-b/nls/box",
     "handlebars",
     "amplify"
-], function ($, log, _, C, CD, ERR, EVT, Utils, tabTemplate, Filter, i18nLabels, Handlebars) {
+], function ($, log, _, C, CD, ERR, EVT, Utils, FilterUtils, tabTemplate, Filter, i18nLabels, Handlebars) {
 
     'use strict';
 
@@ -28,13 +29,18 @@ define([
         RESET_BTN: "[data-role='reset']"
     };
 
-    function FilterTab(o) {
+    function FilterTab(obj) {
 
-        $.extend(true, this, defaultOptions, o);
+        $.extend(true, this, defaultOptions, {
+            initial: obj,
+            $el: $(obj.$el),
+            box: obj.box,
+            model: obj.model,
+            id: obj.id
+        });
 
         this.channels = {};
-
-        this.status = {};
+        this.state = {};
 
         return this;
     }
@@ -60,7 +66,7 @@ define([
 
             this._show(state);
 
-            this.status.ready = true;
+            this.ready = true;
 
             log.info("Tab shown successfully");
 
@@ -252,6 +258,10 @@ define([
 
         this.$resetBtn = this.$el.find(s.RESET_BTN);
 
+        this.config = this.initial.config;
+        this.values = this.initial.values || {};
+        this.labels = this.initial.labels || {};
+        this.template = this.initial.labels;
     };
 
     FilterTab.prototype._bindEventListeners = function () {
@@ -315,11 +325,11 @@ define([
 
     FilterTab.prototype._createFilterConfiguration = function () {
 
-        var configuration = this.config ? $.extend(true, {}, this.config) : Utils.createConfiguration({
+        var configuration = this.config ? $.extend(true, {}, this.config) : FilterUtils.createConfiguration({
                 model: this.model
             }),
-            defaultConfiguration = $.extend(true, {}, Utils.mergeConfigurations(configuration, this.syncModel || {})),
-            finalConfiguration = $.extend(true, {}, Utils.mergeConfigurations(defaultConfiguration, this.values || {}));
+            defaultConfiguration = $.extend(true, {}, FilterUtils.mergeConfigurations(configuration, this.syncModel || {})),
+            finalConfiguration = $.extend(true, {}, FilterUtils.mergeConfigurations(defaultConfiguration, this.values || {}));
 
         return finalConfiguration;
     };
@@ -353,6 +363,14 @@ define([
 
         return EVT[evt] ? EVT[evt] + this.id : evt + this.id;
     };
+
+    FilterTab.prototype._setState = function (key, val) {
+
+        Utils.assign(this.state, key, val);
+
+        this._trigger("state", $.extend(true, {}, this.state));
+    };
+
 
     return FilterTab;
 

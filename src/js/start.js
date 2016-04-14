@@ -51,13 +51,13 @@ define([
 
         if (valid === true) {
 
-            this._setObjState("valid", true);
+            this._initObjState();
 
             this._initVariables();
 
-            this._initObjState();
-
             this._initObj();
+
+            this._setStatus("loading");
 
             this._renderMenu();
 
@@ -65,11 +65,14 @@ define([
 
             this._preloadTabSources();
 
+            this.valid = true;
+
             return this;
 
         } else {
 
-            this._setObjState("valid", false);
+            this.valid = false;
+
             this._setObjState("error", valid);
 
             log.error("Impossible to create visualization box");
@@ -83,7 +86,7 @@ define([
      * @return {Object} box instance
      */
     Box.prototype.render = function (obj) {
-        log.info("Render model for box [" + this._getObjState("id") + "]:");
+        log.info("Render model for box [" + this.id + "]:");
         log.info(obj);
 
         $.extend(true, this, obj);
@@ -182,10 +185,9 @@ define([
 
             window.fx_vis_box_id >= 0 ? window.fx_vis_box_id++ : window.fx_vis_box_id = 0;
 
-            this._setObjState("id", window.fx_vis_box_id);
-            this.id = this._getObjState("id");
+            this.id = "fx-v-b-" + window.fx_vis_box_id;
 
-            log.warn("Impossible to find id. Set auto id to: " + this._getObjState("id"));
+            log.warn("Impossible to find id. Set auto id to: " + this.id);
         }
 
         //Check if $el exist
@@ -202,16 +204,14 @@ define([
 
     Box.prototype._initVariables = function () {
 
-        this._setObjState("valid", true);
+        this.model = this._getObjState("model");
+        this.process = this._getObjState("process");
 
-        this.model = this.initial.model;
-        this.process = this.initial.process;
+        //resource process steps
+        //this.processSteps = this._getObjState("resource.steps");
 
         this.front_tab_instances = {};
         this.back_tab_instances = {};
-
-        //resource process steps
-        this.processSteps = [];
 
     };
 
@@ -221,7 +221,7 @@ define([
             status = this.initial.status || C.defaultStatus || CD.defaultStatus;
 
         this._setObjState("size", size);
-        this._setObjState("status", status);
+        this.status = status;
 
         //Inject box blank template
         var template = Handlebars.compile($(Template).find(s.BOX)[0].outerHTML),
@@ -232,7 +232,8 @@ define([
         //pub/sub
         this.channels = {};
 
-        this._setObjState("hasMenu", this.$el.find(s.RIGHT_MENU).length > 0);
+        //this._setObjState("hasMenu", this.$el.find(s.RIGHT_MENU).length > 0);
+        this.hasMenu = this.$el.find(s.RIGHT_MENU).length > 0;
 
         //set flip side
         this.flip(this._getObjState("face"));
@@ -256,17 +257,17 @@ define([
         this._setObjState("hideMinimizeButton", !!this.initial.hideMinimizeButton);
 
         //tabs
-        this._setObjState("tabRegistry", this.tabRegistry);
-        this._setObjState("tabs", this.tabs);
+        this._setObjState("tabStates", this.initial.tabStates || {});
 
         //flip side
         this._setObjState("face", this.initial.face || C.defaultFace || CD.defaultFace);
 
         //resource process steps
-        this._setObjState("resource.steps", this.processSteps);
-        this._setObjState("resource.uid", this.initial.uid || this._getNestedProperty("metadata.uid", this.model));
-        this._setObjState("resource.version", this.initial.version);
-        this._setObjState("resource.values", this.initial.values);
+        this._setObjState("model", this.initial.model);
+        this._setObjState("version", this.initial.version);
+        this._setObjState("values", this.initial.values);
+        this._setObjState("process", this.initial.process);
+        this._setObjState("uid", this.initial.uid || this._getNestedProperty("metadata.uid", this._getObjState("model")));
 
     };
 
@@ -326,7 +327,7 @@ define([
 
         if (!this.model) {
 
-            if (this._getObjState("resource.uid")) {
+            if (this._getObjState("uid")) {
                 return 'to_load';
             }
 
@@ -361,12 +362,12 @@ define([
         this.setStatus("loading");
 
         var d3pUrl = C.d3pUrl || CD.d3pUrl,
-            url = d3pUrl + this._getObjState("resource.uid"),
+            url = d3pUrl + this._getObjState("uid"),
             queryParams = C.d3pQueryParameters || CD.d3pQueryParameters,
             process = _.union(Array.isArray(p) ? p : [], this.process);
 
-        if (this._getObjState("resource.version")) {
-            url = url.concat("/").concat(this._getObjState("resource.version"));
+        if (this._getObjState("version")) {
+            url = url.concat("/").concat(this._getObjState("version"));
         }
 
         if (queryParams && typeof queryParams === 'object') {
@@ -416,8 +417,8 @@ define([
 
     Box.prototype._preloadTabSources = function () {
 
-        var registeredTabs = $.extend(true, {}, this._getObjState("tabRegistry")),
-            tabs = this._getObjState("tabs"),
+        var registeredTabs = $.extend(true, {}, this.tabRegistry),
+            tabs = this.tabs,
             tabsKeys = Object.keys(tabs),
             paths = [];
 
@@ -484,7 +485,7 @@ define([
         log.info('Show tab ' + tab);
         log.info(opts);
 
-        var tabs = this._getObjState("tabs");
+        var tabs = this.tabs;
 
         //check if it is a valid tab
         if (!tabs[tab]) {
@@ -510,7 +511,7 @@ define([
             return;
         }
 
-        log.info("Show '" + tab + "' tab for result id: " + this._getObjState("id"));
+        log.info("Show '" + tab + "' tab for result id: " + this.id);
 
         this._setObjState("tab", tab);
 
@@ -524,7 +525,7 @@ define([
 
     Box.prototype._showTabContent = function () {
 
-        var tabs = this._getObjState("tabs"),
+        var tabs = this.tabs,
             tab = this._getObjState("tab");
 
         if (!tabs[tab]) {
@@ -547,18 +548,22 @@ define([
 
     Box.prototype._createTabInstance = function (tab) {
 
-        var registry = this._getObjState("tabRegistry"),
+        var state = this._getObjState("tabStates." + tab) || {},
+            registry = this.tabRegistry,
         //Note that for sync call the argument of require() is not an array but a string
             Tab = require(registry[tab].path),
-            instance = new Tab({
+            config = $.extend(true, {}, state, {
                 $el: this._getTabContainer(tab),
                 box: this,
                 model: $.extend(true, {}, this.model),
-                id: tab + "_" + this._getObjState("id")
-            });
+                id: tab + "_" + this.id
+            }),
+            instance = new Tab(config);
 
         //Subscribe to tab events
         instance.on('filter', _.bind(this._onTabToolbarChangeEvent, this));
+
+        instance.on('state', _.bind(this._onTabStateChangeEvent, this, tab));
 
         //cache the plugin instance
         this.front_tab_instances[tab] = instance;
@@ -589,8 +594,8 @@ define([
 
     Box.prototype._checkSuitableTabs = function () {
 
-        var registeredTabs = this._getObjState("tabRegistry"),
-            tabsKeys = Object.keys(this._getObjState("tabs"));
+        var registeredTabs = this.tabRegistry,
+            tabsKeys = Object.keys(this.tabs);
 
         _.each(tabsKeys, _.bind(function (tab) {
             var conf = registeredTabs[tab];
@@ -624,11 +629,9 @@ define([
 
     Box.prototype._showDefaultTab = function () {
 
-        var tab = this.defaultTab || C.defaultTab || CD.defaultTab;
+        var tab = this.initial.tab || this.defaultTab || C.defaultTab || CD.defaultTab;
 
-        this._setObjState("defaultTab", tab);
-
-        this._showTab(this._getObjState("defaultTab"));
+        this._showTab(tab);
     };
 
     //Back face
@@ -645,7 +648,7 @@ define([
     Box.prototype._createProcessSteps = function () {
 
         var list = [],
-            values = this._getObjState("resource.values") || {},
+            values = this._getObjState("values") || {},
             columnsConfiguration = this._createBackTabConfiguration("columns"),
             aggregationConfiguration = this._createBackTabConfiguration("aggregations");
 
@@ -695,7 +698,7 @@ define([
             }
         }));
 
-        this._setObjState("resource.steps", list);
+        this.processSteps = list;
 
     };
 
@@ -773,7 +776,7 @@ define([
 
     Box.prototype._createBackColumnsTabConfiguration = function () {
 
-        var values = this._getNestedProperty("aggregations.values.aggregations", this._getObjState("resource.values")) || [],
+        var values = this._getNestedProperty("aggregations.values.aggregations", this._getObjState("values")) || [],
             include = values
                 .filter(function (c) {
                     return c.parent !== 'dimensions';
@@ -854,7 +857,7 @@ define([
 
         var self = this,
             readyEventCounter = 0,
-            list = this._getObjState("resource.steps");
+            list = this.processSteps;
 
         _.each(list, _.bind(function (step, index) {
 
@@ -865,7 +868,7 @@ define([
 
             this.$processSteps.append($html);
 
-            var registry = this._getObjState("tabRegistry"),
+            var registry = this.tabRegistry,
                 Tab = require(registry[step.tab].path);
 
             //Add details container
@@ -938,7 +941,7 @@ define([
 
                     lastValues = payload;
 
-                    self._setObjState("resource.values", {aggregations: payload});
+                    self._setObjState("values", {aggregations: payload});
 
                     var config = self._createBackTabConfiguration("columns");
 
@@ -995,7 +998,7 @@ define([
 
                 log.info("Raise event: " + e.data.event);
 
-                amplify.publish(event, {target: this, box: e.data.box});
+                amplify.publish(event, {target: this, box: e.data.box, state: self.getState()});
 
             });
         });
@@ -1036,7 +1039,10 @@ define([
 
     Box.prototype._onCloneEvent = function (payload) {
         log.info("Listen to event: " + this._getEventTopic("clone"));
-        log.trace(payload)
+        log.trace(payload);
+
+        //Exclude id for publish events
+        amplify.publish(this._getEventTopic("clone", true), $.extend(true, {}, this.getState()))
     };
 
     Box.prototype._onFlipEvent = function (payload) {
@@ -1099,6 +1105,12 @@ define([
 
     };
 
+    Box.prototype._onTabStateChangeEvent = function (tab, state) {
+
+        this._setObjState("tabStates." + tab, state);
+
+    };
+
     Box.prototype._onQueryEvent = function (payload) {
         log.info("Listen to event: " + this._getEventTopic("query"));
         log.trace(payload);
@@ -1133,7 +1145,7 @@ define([
 
         }, this));
 
-        this._setObjState("resource.values", $.extend(true, {}, payload));
+        this._setObjState("values", $.extend(true, {}, payload));
 
         if (this.back_tab_instances.hasOwnProperty("rows") && $.isFunction(this.back_tab_instances['rows'].getValues)) {
             payload["rows"] = this.back_tab_instances['rows'].getValues("fenix");
@@ -1353,7 +1365,7 @@ define([
 
         return;
 
-        var tabsKeys = Object.keys(this._getObjState("tabs"));
+        var tabsKeys = Object.keys(this.tabs);
 
         _.each(tabsKeys, _.bind(function (tab) {
 
@@ -1390,7 +1402,7 @@ define([
 
     Box.prototype._renderMenu = function () {
 
-        if (this._getObjState("hasMenu") === true) {
+        if (this.hasMenu === true) {
 
             this.rightMenu = new JsonMenu({
                 el: this.$el.find(s.RIGHT_MENU),
@@ -1405,14 +1417,14 @@ define([
 
     Box.prototype._showMenuItem = function (item) {
 
-        if (this._getObjState("hasMenu")) {
+        if (this.hasMenu) {
             this.rightMenu.showItem(item);
         }
     };
 
     Box.prototype._hideMenuItem = function (item) {
 
-        if (this._getObjState("hasMenu")) {
+        if (this.hasMenu) {
             this.rightMenu.hideItem(item);
         }
     };
@@ -1446,16 +1458,18 @@ define([
     };
 
     Box.prototype._setStatus = function (status) {
-        log.info("Set '" + status + "' status for result id: " + this._getObjState("id"));
+        log.info("Set '" + status + "' status for result id: " + this.id);
 
-        this._setObjState("status", status);
+        this.status = status;
 
-        this.$el.find(s.BOX).attr("data-status", this._getObjState("status"));
+        this.$el.find(s.BOX).attr("data-status", this.status);
     };
 
-    Box.prototype._getEventTopic = function (evt) {
+    Box.prototype._getEventTopic = function (evt, excludeId) {
 
-        return EVT[evt] ? EVT[evt] + this.id : evt + this.id;
+        var baseEvent = EVT[evt] ? EVT[evt] : evt;
+
+        return excludeId === true ? baseEvent : baseEvent + "." + this.id;
     };
 
     // Disposition

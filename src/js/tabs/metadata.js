@@ -8,24 +8,25 @@ define([
     "fx-v-b/config/config-default",
     "fx-v-b/config/errors",
     "fx-v-b/config/events",
+    'fx-v-b/js/utils',
     "text!fx-v-b/html/tabs/metadata.hbs",
     'fx-md-v/start',
     "handlebars",
     "amplify"
-], function ($, log, _, C, CD, ERR, EVT, tabTemplate, MetadataViewer, Handlebars) {
+], function ($, log, _, C, CD, ERR, EVT, Utils, tabTemplate, MetadataViewer, Handlebars) {
 
     'use strict';
 
-    var defaultOptions = {}, s = {
+    var s = {
         CONTAINER: '[data-role="metadata"]'
     };
 
-    function MetadataTab(o) {
+    function MetadataTab(obj) {
 
-        $.extend(true, this, defaultOptions, o);
+        $.extend(true, this, {initial: obj, $el: $(obj.$el), box: obj.box, model: obj.model, id: obj.id});
 
         this.channels = {};
-        this.status = {};
+        this.state = {};
 
         return this;
     }
@@ -51,7 +52,7 @@ define([
 
             this._show(state);
 
-            this.status.ready = true;
+            this.ready = true;
 
             log.info("trigger 'ready' event");
 
@@ -231,7 +232,7 @@ define([
 
     MetadataTab.prototype._dispose = function () {
 
-        if (this.status.ready === true) {
+        if (this.ready === true) {
             this._unbindEventListeners();
             this.metadataViewer.dispose();
         }
@@ -241,6 +242,15 @@ define([
     MetadataTab.prototype._getEventTopic = function (evt) {
 
         return EVT[evt] ? EVT[evt] + this.id : evt + this.id;
+    };
+
+    MetadataTab.prototype._setState = function (key, val) {
+
+        Utils.assign(this.state, key, val);
+
+        this._trigger("state", $.extend(true, {}, this.state));
+
+        
     };
 
     return MetadataTab;

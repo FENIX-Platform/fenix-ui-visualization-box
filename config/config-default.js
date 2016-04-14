@@ -8,7 +8,7 @@ define(function () {
     return {
 
         defaultStatus : "loading",
-        defaultTab : "chart",
+        defaultTab : "blank",
         defaultSize : "large",
         defaultFace : "front", // back || front
         tabRegistry: {
@@ -45,6 +45,9 @@ define(function () {
         state : {},
 
         lang : "EN",
+
+        //Tabs
+        toolbarPosition : "up", // up | down
 
         //Load resource
         d3pUrl: HOST + "d3s_dev/processes/",

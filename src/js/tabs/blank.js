@@ -8,27 +8,28 @@ define([
     "fx-v-b/config/config-default",
     "fx-v-b/config/errors",
     "fx-v-b/config/events",
+    "fx-v-b/js/utils",
     'fx-filter/js/utils',
     "text!fx-v-b/html/tabs/blank.hbs",
     'fx-filter/start',
     "fx-v-b/config/tabs/blank-toolbar-model",
     "handlebars",
     "amplify"
-], function ($, log, _, C, CD, ERR, EVT, Utils, tabTemplate, Filter, ToolbarModel, Handlebars) {
+], function ($, log, _, C, CD, ERR, EVT, Utils, FilterUtils, tabTemplate, Filter, ToolbarModel, Handlebars) {
 
     'use strict';
 
-    var defaultOptions = {}, s = {
+    var s = {
         TOOLBAR: "[data-role='toolbar']",
         TOOLBAR_BTN: "[data-role='toolbar'] [data-role='toolbar-btn']"
     };
 
-    function BlankTab(o) {
+    function BlankTab(obj) {
 
-        $.extend(true, this, defaultOptions, o);
+        $.extend(true, this, {initial: obj, $el: $(obj.$el), box: obj.box, model: obj.model, id: obj.id});
 
         this.channels = {};
-        this.status = {};
+        this.state = {};
 
         return this;
     }
@@ -54,7 +55,7 @@ define([
 
             this._show(state);
 
-            this.status.ready = true;
+            this.ready = true;
 
             log.info("Tab shown successfully");
 
@@ -75,7 +76,7 @@ define([
 
         var isSuitable = this._isSuitable();
 
-        log.info("Is tab suitable? " + isSuitable);
+        log.info("Bank tab: is tab suitable? " + isSuitable);
 
         return isSuitable;
 
@@ -239,13 +240,23 @@ define([
         log.info("Listen to event: " + this._getEventTopic("toolbar"));
         log.trace(payload);
 
-        if (this.toolbarIsHidden !== true) {
-            this.$toolbar.slideUp();
-            this.toolbarIsHidden = true;
-        } else {
+        var direction = this.toolbarPosition !== "up" ? "up" : "down";
+
+        this._slideToolbar(direction)
+
+    };
+
+    BlankTab.prototype._slideToolbar = function (direction) {
+
+        if (direction !== "up") {
             this.$toolbar.slideDown();
-            this.toolbarIsHidden = false;
+            this.toolbarPosition = "down";
+        } else {
+            this.$toolbar.slideUp();
+            this.toolbarPosition = "up";
         }
+
+        this._setState("toolbarPosition", this.toolbarPosition);
 
     };
 
@@ -265,6 +276,9 @@ define([
 
         this._renderToolbar();
 
+        //init toolbar position
+        this._slideToolbar(this.initial.toolbarPosition || C.toolbarPosition || CD.toolbarPosition);
+
         //render creator
     };
 
@@ -280,7 +294,7 @@ define([
 
     BlankTab.prototype._createFilterConfiguration = function () {
 
-        var configuration = $.extend(true, {}, Utils.mergeConfigurations(ToolbarModel, this.syncModel || {}));
+        var configuration = $.extend(true, {}, FilterUtils.mergeConfigurations(ToolbarModel, this.syncModel || {}));
 
         return configuration;
 
@@ -303,7 +317,7 @@ define([
 
     BlankTab.prototype._dispose = function () {
 
-        if (this.status.ready === true) {
+        if (this.ready === true) {
             this._unbindEventListeners();
         }
     };
@@ -311,6 +325,13 @@ define([
     BlankTab.prototype._getEventTopic = function (evt) {
 
         return EVT[evt] ? EVT[evt] + this.id : evt + this.id;
+    };
+
+    BlankTab.prototype._setState = function (key, val) {
+
+        Utils.assign(this.state, key, val);
+
+        this._trigger("state", $.extend(true, {}, this.state));
     };
 
     return BlankTab;

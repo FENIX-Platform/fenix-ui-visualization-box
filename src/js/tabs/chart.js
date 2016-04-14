@@ -8,6 +8,7 @@ define([
     "fx-v-b/config/config-default",
     "fx-v-b/config/errors",
     "fx-v-b/config/events",
+    'fx-v-b/js/utils',
     'fx-filter/js/utils',
     "text!fx-v-b/html/tabs/chart.hbs",
     'fx-filter/start',
@@ -16,21 +17,21 @@ define([
     'fx-c-c/start',
     "fx-common/pivotator/functions",
     "amplify"
-], function ($, log, _, C, CD, ERR, EVT, Utils, tabTemplate, Filter, ToolbarModel, Handlebars, ChartCreator, myFunc) {
+], function ($, log, _, C, CD, ERR, EVT, Utils, FilterUtils, tabTemplate, Filter, ToolbarModel, Handlebars, ChartCreator, myFunc) {
 
     'use strict';
 
-    var defaultOptions = {}, s = {
+    var s = {
         TOOLBAR: "[data-role='toolbar']",
         TOOLBAR_BTN: "[data-role='toolbar'] [data-role='toolbar-btn']"
     };
 
-    function ChartTab(o) {
+    function ChartTab(obj) {
 
-        $.extend(true, this, defaultOptions, o);
+        $.extend(true, this, {initial: obj, $el: $(obj.$el), box: obj.box, model: obj.model, id: obj.id});
 
         this.channels = {};
-        this.status = {};
+        this.state = {};
 
         this.chartCreator= new ChartCreator();
 
@@ -77,7 +78,7 @@ define([
 
         var isSuitable = this._isSuitable();
 
-        log.info("Is tab suitable? " + isSuitable);
+        log.info("Chart tab: is tab suitable? " + isSuitable);
 
         return isSuitable;
 
@@ -244,13 +245,23 @@ define([
         log.info("Listen to event: " + this._getEventTopic("toolbar"));
         log.trace(payload);
 
-        if (this.toolbarIsHidden !== true) {
-            this.$toolbar.slideUp();
-            this.toolbarIsHidden = true;
-        } else {
+        var direction = this.toolbarPosition !== "up" ? "up" : "down";
+
+        this._slideToolbar(direction)
+
+    };
+
+    ChartTab.prototype._slideToolbar = function (direction) {
+
+        if (direction !== "up") {
             this.$toolbar.slideDown();
-            this.toolbarIsHidden = false;
+            this.toolbarPosition = "down";
+        } else {
+            this.$toolbar.slideUp();
+            this.toolbarPosition = "up";
         }
+
+        this._setState("toolbarPosition", this.toolbarPosition);
 
     };
 
@@ -316,6 +327,7 @@ define([
 
         //id olap "table-" + this.id*/
 
+
     };
 
     ChartTab.prototype._renderToolbar = function () {
@@ -332,7 +344,7 @@ define([
 
     ChartTab.prototype._createFilterConfiguration = function () {
 
-        var configuration = $.extend(true, {}, Utils.mergeConfigurations(ToolbarModel, this.syncModel || {}));
+        var configuration = $.extend(true, {}, FilterUtils.mergeConfigurations(ToolbarModel, this.syncModel || {}));
 
         try {
 
@@ -396,7 +408,10 @@ define([
 
         this._renderToolbar();
 
-        //Table will be create when filter is 'ready'
+        //Chart will be create when filter is 'ready'
+
+        //init toolbar position
+        this._slideToolbar(this.initial.toolbarPosition || C.toolbarPosition || CD.toolbarPosition);
     };
 
 
@@ -416,7 +431,7 @@ define([
 
     ChartTab.prototype._dispose = function () {
 
-        if (this.status.ready === true) {
+        if (this.ready === true) {
             this._unbindEventListeners();
         }
     };
@@ -424,6 +439,14 @@ define([
     ChartTab.prototype._getEventTopic = function (evt) {
 
         return EVT[evt] ? EVT[evt] + this.id : evt + this.id;
+    };
+
+    ChartTab.prototype._setState = function (key, val) {
+
+        Utils.assign(this.state, key, val);
+
+        this._trigger("state", $.extend(true, {}, this.state));
+
     };
 
     return ChartTab;
