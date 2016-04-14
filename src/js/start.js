@@ -9,6 +9,7 @@ define([
     "fx-v-b/config/config-default",
     "fx-v-b/config/errors",
     "fx-v-b/config/events",
+    "fx-v-b/js/utils",
     "text!fx-v-b/html/template.hbs",
     "fx-common/json-menu",
     "fx-v-b/config/right-menu-model",
@@ -16,7 +17,7 @@ define([
     "q",
     "amplify",
     "bootstrap"
-], function (log, require, $, _, Handlebars, C, CD, ERR, EVT, Template, JsonMenu, RightMenuModel, i18nLabels, Q) {
+], function (log, require, $, _, Handlebars, C, CD, ERR, EVT, Utils, Template, JsonMenu, RightMenuModel, i18nLabels, Q) {
 
     'use strict';
 
@@ -273,23 +274,8 @@ define([
 
     Box.prototype._setObjState = function (key, val) {
 
-        assign(this.state, key, val);
-
-        function assign(obj, prop, value) {
-            if (typeof prop === "string")
-                prop = prop.split(".");
-
-            if (prop.length > 1) {
-                var e = prop.shift();
-                assign(obj[e] =
-                        Object.prototype.toString.call(obj[e]) === "[object Object]"
-                            ? obj[e]
-                            : {},
-                    prop,
-                    value);
-            } else
-                obj[prop[0]] = value;
-        }
+        Utils.assign(this.state, key, val);
+        
     };
 
     Box.prototype._getObjState = function (path) {

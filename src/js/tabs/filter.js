@@ -349,7 +349,7 @@ define([
 
     FilterTab.prototype._dispose = function () {
 
-        if (this.status.ready === true) {
+        if (this.ready === true) {
             this._unbindEventListeners();
             this.filter.dispose();
         }
