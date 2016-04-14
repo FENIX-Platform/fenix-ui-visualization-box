@@ -14,16 +14,17 @@ define([
     "fx-filter/start",
     "fx-v-b/config/tabs/map-toolbar-model",
 
-    "fx-olap/start",
     "fx-common/pivotator/functions",
+    "fx-m-c/start",
     "amplify"
 ], function ($, log, _, Handlebars,
         C, CD, ERR, EVT, Utils,
         mapTemplate,
-        Filter, ToolbarModel,
-        myRenderer, myFunc) {
+        Filter,
+        ToolbarModel,
 
-    'use strict';
+        myFunc,
+        MapCreator) {
 
     var defaultOptions = {}, s = {
         TOOLBAR: "[data-role='toolbar']",
@@ -149,16 +150,6 @@ define([
         var valid = true,
             errors = [];
 
-        //Check if box has an id
-        /*        if (!this.id) {
-
-         window.fx_vis_box_id >= 0 ? window.fx_vis_box_id++ : window.fx_vis_box_id = 0;
-
-         this.id = window.fx_vis_box_id;
-
-         log.warn("Impossible to find id. Set auto id to: " + this.id);
-         }         */
-
         //Check if $el exist
         if (this.$el.length === 0) {
 
@@ -259,16 +250,45 @@ define([
 
     MapTab.prototype._onToolbarBtnClick = function () {
 
-        this._renderTable();
+        this._renderMap();
 
     };
 
-    MapTab.prototype._renderTable = function () {
+    MapTab.prototype._renderMap = function () {
+
+
+        var mapCreator = new MapCreator();
 
         var myrenderer = new myRenderer();
         
-        var tempConf = this.toolbar.getValues();
-        var optGr = {
+        var tempConf = this.toolbar.getValues(),
+            model = this.model;
+
+        mapCreator.render({
+            container: "map_" + this.id
+        });
+
+        // TODO: add map to existing map
+
+        // TODO: add JOIN from catalog to the map
+        amplify.subscribe('fx.component.map.ready', function () {
+
+/*            $.get('http://fenix.fao.org/d3s/msd/resources/uid/FAOSTAT_fertilizer_test?full=true&dsd=true', function (model) {
+
+                mapCreator.addLayer(model, { colorramp: 'Greens' });
+                mapCreator.addCountryBoundaries();
+            });*/
+
+
+            $.get('dataset/bangkok.json', function (model) {
+
+                mapCreator.addLayer(model, { colorramp: 'Greens' });
+                mapCreator.addCountryBoundaries();
+                //mapCreator.addCountryLabels();
+            });
+
+        });
+/*      var optGr = {
             Aggregator: tempConf.values.aggregation[0],
             Formater: "localstring",
             GetValue: "Classic",
@@ -287,7 +307,7 @@ define([
         myrenderer.rendererGridFX(this.model, "table_" + this.id, optGr);
         //	myrenderer.rendererGridFX(this.model,"result",optGr);
 
-        //id olap "table-" + this.id
+        //id olap "table-" + this.id*/
 
     };
 
@@ -299,7 +319,7 @@ define([
             $el: this.$el.find(s.TOOLBAR)
         });
 
-        this.toolbar.on("ready", _.bind(this._renderTable, this))
+        this.toolbar.on("ready", _.bind(this._renderMap, this))
 
     };
 
