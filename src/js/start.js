@@ -10,6 +10,7 @@ define([
     "fx-v-b/config/errors",
     "fx-v-b/config/events",
     "fx-v-b/js/utils",
+    "fx-md-v/start",
     "text!fx-v-b/html/template.hbs",
     "fx-common/json-menu",
     "fx-v-b/config/right-menu-model",
@@ -17,7 +18,7 @@ define([
     "q",
     "amplify",
     "bootstrap"
-], function (log, require, $, _, Handlebars, C, CD, ERR, EVT, Utils, Template, JsonMenu, RightMenuModel, i18nLabels, Q) {
+], function (log, require, $, _, Handlebars, C, CD, ERR, EVT, Utils, MetadataViewer, Template, JsonMenu, RightMenuModel, i18nLabels, Q) {
 
     'use strict';
 
@@ -29,7 +30,9 @@ define([
         FRONT_CONTENT: "[data-role='front-content']",
         PROCESS_STEPS: "[data-role='process-steps']",
         PROCESS_DETAILS: "[data-role='process-details']",
-        BACK_CONTENT: "[data-role='back-content']"
+        BACK_CONTENT: "[data-role='back-content']",
+        MODAL : "[data-role='modal']",
+        MODAL_METADATA_CONTAINER : "[data-role='modal'] [data-role='metadata-container']"
     };
 
     /* API */
@@ -243,6 +246,9 @@ define([
         this.$processSteps = this.$el.find(s.PROCESS_STEPS);
         this.$processStepDetails = this.$el.find(s.PROCESS_DETAILS);
 
+        //modal
+        this.$modal = this.$el.find(s.MODAL);
+
     };
 
     Box.prototype._initObjState = function () {
@@ -275,7 +281,7 @@ define([
     Box.prototype._setObjState = function (key, val) {
 
         Utils.assign(this.state, key, val);
-        
+
     };
 
     Box.prototype._getObjState = function (path) {
@@ -463,7 +469,17 @@ define([
     Box.prototype._renderBoxFrontFace = function () {
 
         log.info("Start rendering box front face");
+
         this._checkSuitableTabs();
+
+        //render metadata modal
+        this.metadataModal = new MetadataViewer();
+
+        this.metadataModal.render({
+            model: this.model.metadata ,
+            lang: this.lang.toUpperCase() || "EN",
+            el: this.$el.find(s.MODAL_METADATA_CONTAINER)
+        });
 
     };
 
@@ -1021,6 +1037,10 @@ define([
 
             this._setSize(size);
         }
+
+        //Exclude id for publish events
+        amplify.publish(this._getEventTopic("resize", true), $.extend(true, {}, this.getState()));
+
     };
 
     Box.prototype._onCloneEvent = function (payload) {
@@ -1061,12 +1081,19 @@ define([
 
     Box.prototype._onMetadataEvent = function (payload) {
         log.info("Listen to event: " + this._getEventTopic("metadata"));
-        log.trace(payload)
+        log.trace(payload);
+
+        this.$modal.modal('show');
     };
 
     Box.prototype._onMinimizeEvent = function (payload) {
         log.info("Listen to event: " + this._getEventTopic("minimize"));
-        log.trace(payload)
+        log.trace(payload);
+
+        //Exclude id for publish events
+        amplify.publish(this._getEventTopic("minimize", true), $.extend(true, {}, this.getState()));
+
+        this.dispose();
     };
 
     Box.prototype._onTabEvent = function (payload) {
@@ -1483,6 +1510,8 @@ define([
             this._callTabInstanceMethod({tab: tab, method: "dispose"});
 
         }, this));
+
+        this.metadataModal.dispose();
 
         this.frontFaceIsRendered = false;
 
