@@ -283,7 +283,7 @@ define([
     TableTab.prototype._renderTable = function () {
 
         console.log("TODO render table here")
-        return;
+  //      return;
 
         var myrenderer = new myRenderer();
 

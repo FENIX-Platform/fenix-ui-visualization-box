@@ -285,7 +285,7 @@ define([
     ChartTab.prototype._renderChart = function () {
 
         console.log("TODO render chart here")
-        return;
+       // return;
 
         var tempConf = this.toolbar.getValues();
         var optGr = {
@@ -372,7 +372,7 @@ define([
                 }
             }
 
-            for (i in FX.columns) {
+   for (i in FX.columns) {
                 if (FX.columns.hasOwnProperty(i)) {
                     if (FX.columns[i].subject == "value") {
                         configuration.sort.selector.source.push({
@@ -380,15 +380,7 @@ define([
                             "label": FX.columns[i].id,
                             parent: 'HIDDEN'
                         })
-                    }
-                    else if (FX.columns[i].subject != "time") {
-                        configuration.sort.selector.source.push({
-                            "value": FX.columns[i].id,
-                            "label": FX.columns[i].id,
-                            parent: 'ROWS'
-                        })
-                    }
-                    else if (FX.columns[i].subject == "time") {
+                    } else if (FX.columns[i].subject == "time" || FX.columns[i].id=="period") {
 
                         configuration.sort.selector.source.push({
                             "value": FX.columns[i].id,
@@ -396,6 +388,19 @@ define([
                             parent: 'COLS'
                         })
                     }
+                    else if (FX.columns[i].key && FX.columns[i].key==true) {
+                        configuration.sort.selector.source.push({
+                            "value": FX.columns[i].id,
+                            "label": FX.columns[i].id,
+                            parent: 'ROWS'
+                        })
+                    }
+					else{  configuration.sort.selector.source.push({
+                            "value": FX.columns[i].id,
+                            "label": FX.columns[i].id,
+                            parent: 'AGG'
+                        })}
+                   
                 }
 
             }

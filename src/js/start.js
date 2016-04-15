@@ -461,7 +461,7 @@ define([
 
         if (this.backFaceIsRendered !== true) {
 
-            //this._renderBoxBackFace();
+            this._renderBoxBackFace();
 
             this.backFaceIsRendered = true;
         }

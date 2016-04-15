@@ -40,7 +40,9 @@ define([
                     "source": [], // Static data
                     "config": { //Selectize configuration
                         "maxItems": 1
-                    }
+                    },
+					default:["sum"]
+					
                 },
 
                 "template": {
