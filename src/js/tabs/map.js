@@ -258,8 +258,6 @@ define([
 
 
         var mapCreator = new MapCreator();
-
-        var myrenderer = new myRenderer();
         
         var tempConf = this.toolbar.getValues(),
             model = this.model;
