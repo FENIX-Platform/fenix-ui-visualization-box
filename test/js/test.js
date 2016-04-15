@@ -112,8 +112,8 @@ define([
 
         var box = this.createBox({
             el: s.LARGE,
-            //model: valid_model,
-            uid: "adam_country_indicators",
+            model: valid_model,
+            //uid: "adam_country_indicators",
             //version: "",
             /*            process: [
              {
