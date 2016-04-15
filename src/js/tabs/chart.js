@@ -244,12 +244,11 @@ define([
             });
         });
 
-        this.$toolbarBtn.on("click", _.bind(this._onToolbarBtnClick, this));
+        //this.$toolbarBtn.on("click", _.bind(this._onToolbarBtnClick, this));
 
         //Toolbar events
-        this.toolbar.on('ready', _.bind(function () {
-            this.toolbar.on('change', _.bind(this._onToolbarChangeEvent, this));
-        }, this));
+        this.toolbar.on('change', _.bind(this._onToolbarChangeEvent, this));
+
     };
 
     ChartTab.prototype._onToolbarEvent = function (payload) {
@@ -284,9 +283,6 @@ define([
 
     ChartTab.prototype._renderChart = function () {
 
-        console.log("TODO render chart here")
-       // return;
-
         var tempConf = this.toolbar.getValues();
         var optGr = {
             Aggregator: tempConf.values.aggregation[0],
@@ -319,28 +315,6 @@ define([
             }
 
         });
-
-/*        var myrenderer = new myRenderer();
-        var tempConf = this.toolbar.getValues();
-        var optGr = {
-            Aggregator: tempConf.values.aggregation[0],
-            Formater: "localstring",
-            GetValue: "Classic",
-            nbDecimal: 5,
-            AGG: [],
-            COLS: [],
-            ROWS: [],
-            HIDDEN: []
-        };
-        for (var i in tempConf.values.sort) {
-            optGr[tempConf.values.sort[i].parent].push(tempConf.values.sort[i].value)
-            //console.log("CREATE CONF",tempConf.values.sort[i].parent,tempConf.values.sort[i].value)
-        }
-        myrenderer.rendererGridFX(this.model, "chart_" + this.id, optGr);
-        //	myrenderer.rendererGridFX(this.model,"result",optGr);
-
-        //id olap "table-" + this.id*/
-
 
     };
 
@@ -419,7 +393,7 @@ define([
 
         this._trigger("filter", this.toolbar.getValues());
 
-        //this._renderChart();
+        this._renderChart();
 
     };
 
@@ -430,7 +404,14 @@ define([
         //Chart will be create when filter is 'ready'
 
         //init toolbar position
-        this._slideToolbar(this.initial.toolbarPosition || C.toolbarPosition || CD.toolbarPosition);
+        var position = this.initial.toolbarPosition || C.toolbarPosition || CD.toolbarPosition;
+        if (position === 'up') {
+            this.toolbarPosition = 'up';
+            this.$toolbar.hide();
+        } else {
+            this.toolbarPosition = 'down';
+        }
+
     };
 
 

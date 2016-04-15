@@ -55,21 +55,21 @@ define([
      * Method invoked when the tab is shown in the FENIX visualization box
      * Mandatory method
      */
-    MapTab.prototype.show = function (state) {
+    MapTab.prototype.show = function () {
 
         var valid = this._validateInput();
 
         if (valid === true) {
 
-            this._show(state);
+            this._show();
 
-            log.info("Tab shown successfully");
+            log.info("Map tab shown successfully");
 
             return this;
 
         } else {
 
-            log.error("Impossible to create show table tab");
+            log.error("Impossible to create show map tab");
             log.error(valid)
         }
     };
@@ -127,11 +127,9 @@ define([
     MapTab.prototype.sync = function (state) {
         log.info("Sync tab. State:" + JSON.stringify(state));
 
-        if (state.hasOwnProperty("toolbar") && this.toolbar) {
-            this.toolbar.setValues(state.toolbar, true);
-        } else {
-            log.warn("Abort toolbar sync");
-        }
+        this.syncState = state;
+
+        this.toSync = true;
 
         return this;
     };
@@ -169,17 +167,11 @@ define([
 
     };
 
-    MapTab.prototype._show = function (syncModel) {
+    MapTab.prototype._show = function () {
 
-        if (this.initialized === true) {
+        if (this.initialized !== true) {
 
-            log.info("Tab table shown again");
-
-        } else {
-
-            log.info("Tab table shown for the first time");
-
-            this.syncModel = syncModel;
+            log.info("Table table shown for the first time");
 
             this._attach();
 
@@ -190,7 +182,21 @@ define([
             this._bindEventListeners();
 
             this.initialized = true;
+
+        } else {
+            log.info("Tab chart shown again");
         }
+
+        if (this.toSync === true) {
+            log.info("Sync tab. State:" + JSON.stringify(this.syncState));
+
+            if (this.syncState.hasOwnProperty("toolbar") && this.toolbar) {
+                this.toolbar.setValues(this.syncState.toolbar, true);
+            }
+
+        }
+
+        return this;
 
     };
 
@@ -244,13 +250,23 @@ define([
         log.info("Listen to event: " + this._getEventTopic("toolbar"));
         log.trace(payload);
 
-        if (this.toolbarIsHidden !== true) {
-            this.$toolbar.slideUp();
-            this.toolbarIsHidden = true;
-        } else {
+        var direction = this.toolbarPosition !== "up" ? "up" : "down";
+
+        this._slideToolbar(direction)
+
+    };
+
+    MapTab.prototype._slideToolbar = function (direction) {
+
+        if (direction !== "up") {
             this.$toolbar.slideDown();
-            this.toolbarIsHidden = false;
+            this.toolbarPosition = "down";
+        } else {
+            this.$toolbar.slideUp();
+            this.toolbarPosition = "up";
         }
+
+        this._setState("toolbarPosition", this.toolbarPosition);
 
     };
 
@@ -392,6 +408,16 @@ define([
         this._renderToolbar();
 
         //Table will be create when filter is 'ready'
+
+        //init toolbar position
+        var position = this.initial.toolbarPosition || C.toolbarPosition || CD.toolbarPosition;
+        if (position === 'up') {
+            this.toolbarPosition = 'up';
+            this.$toolbar.hide();
+        } else {
+            this.toolbarPosition = 'down';
+        }
+
     };
 
 

@@ -242,12 +242,10 @@ define([
             });
         });
 
-        this.$toolbarBtn.on("click", _.bind(this._onToolbarBtnClick, this));
+        //this.$toolbarBtn.on("click", _.bind(this._onToolbarBtnClick, this));
 
-        //Toolbar events
-        this.toolbar.on('ready', _.bind(function () {
-            this.toolbar.on('change', _.bind(this._onToolbarChangeEvent, this));
-        }, this));
+        this.toolbar.on('change', _.bind(this._onToolbarChangeEvent, this));
+
     };
 
     TableTab.prototype._onToolbarEvent = function (payload) {
@@ -426,6 +424,8 @@ define([
 
         this._trigger("filter", this.toolbar.getValues());
 
+        this._renderTable();
+
     };
 
     TableTab.prototype._renderComponents = function () {
@@ -435,7 +435,14 @@ define([
         //Table will be create when filter is 'ready'
 
         //init toolbar position
-        this._slideToolbar(this.initial.toolbarPosition || C.toolbarPosition || CD.toolbarPosition);
+        var position = this.initial.toolbarPosition || C.toolbarPosition || CD.toolbarPosition;
+        if (position === 'up') {
+            this.toolbarPosition = 'up';
+            this.$toolbar.hide();
+        } else {
+            this.toolbarPosition = 'down';
+        }
+
     };
 
 
