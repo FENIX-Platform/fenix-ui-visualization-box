@@ -80,7 +80,12 @@ define([
 
         log.info("Chart tab: is tab suitable? " + isSuitable);
 
-        return isSuitable;
+        if (isSuitable === true) {
+            return true;
+        } else {
+            this._setState("errors", isSuitable);
+            return false;
+        }
 
     };
 
@@ -426,7 +431,12 @@ define([
 
     ChartTab.prototype._isSuitable = function () {
 
-        return true;
+        var valid = true,
+            errors = [];
+
+        //errors.push({code: ERR.MISSING_CONTAINER});
+
+        return errors.length > 0 ? errors : valid;
     };
 
     ChartTab.prototype._dispose = function () {

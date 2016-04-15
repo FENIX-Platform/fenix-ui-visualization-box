@@ -9,6 +9,7 @@ define([
     "fx-v-b/config/config-default",
     "fx-v-b/config/errors",
     "fx-v-b/config/events",
+    "fx-v-b/js/utils",
     "fx-filter/js/utils",
     "text!fx-v-b/html/tabs/map.hbs",
     "fx-filter/start",
@@ -18,7 +19,7 @@ define([
     "fx-m-c/start",
     "amplify"
 ], function ($, log, _, Handlebars,
-        C, CD, ERR, EVT, Utils,
+        C, CD, ERR, EVT, Utils, FilterUtils,
         mapTemplate,
         Filter,
         ToolbarModel,
@@ -36,7 +37,7 @@ define([
         $.extend(true, this, defaultOptions, o);
 
         this.channels = {};
-        this.status = {};
+        this.state = {};
 
         return this;
     }
@@ -81,9 +82,14 @@ define([
 
         var isSuitable = this._isSuitable();
 
-        log.info("Is map suitable? " + isSuitable);
+        log.info("Map tab: is tab suitable? " + isSuitable);
 
-        return isSuitable;
+        if (isSuitable === true) {
+            return true;
+        } else {
+            this._setState("errors", isSuitable);
+            return false;
+        }
 
     };
 
@@ -323,7 +329,7 @@ define([
 
     MapTab.prototype._createFilterConfiguration = function () {
 
-        var configuration = $.extend(true, {}, Utils.mergeConfigurations(ToolbarModel, this.syncModel || {}));
+        var configuration = $.extend(true, {}, FilterUtils.mergeConfigurations(ToolbarModel, this.syncModel || {}));
 
         try {
 
@@ -400,12 +406,17 @@ define([
 
     MapTab.prototype._isSuitable = function () {
 
-        return true;
+        var valid = true,
+            errors = [];
+
+        //errors.push({code: ERR.MISSING_CONTAINER});
+
+        return errors.length > 0 ? errors : valid;
     };
 
     MapTab.prototype._dispose = function () {
 
-        if (this.status.ready === true) {
+        if (this.ready === true) {
             this._unbindEventListeners();
         }
     };
@@ -413,6 +424,13 @@ define([
     MapTab.prototype._getEventTopic = function (evt) {
 
         return EVT[evt] ? EVT[evt] + this.id : evt + this.id;
+    };
+
+    MapTab.prototype._setState = function (key, val) {
+
+        Utils.assign(this.state, key, val);
+
+        this._trigger("state", $.extend(true, {}, this.state));
     };
 
     return MapTab;

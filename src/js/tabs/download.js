@@ -74,12 +74,17 @@ define([
      * Mandatory method
      */
     DownloadTab.prototype.isSuitable = function () {
-
+        
         var isSuitable = this._isSuitable();
 
-        log.info("Is tab suitable? " + isSuitable);
+        log.info("Download tab: is tab suitable? " + isSuitable);
 
-        return isSuitable;
+        if (isSuitable === true) {
+            return true;
+        } else {
+            this._setState("errors", isSuitable);
+            return false;
+        }
 
     };
 
@@ -227,7 +232,13 @@ define([
 
     DownloadTab.prototype._isSuitable = function () {
 
-        return true;
+        var valid = true,
+            errors = [];
+
+        //errors.push({code: ERR.MISSING_CONTAINER});
+
+        return errors.length > 0 ? errors : valid;
+        
     };
 
     DownloadTab.prototype._dispose = function () {

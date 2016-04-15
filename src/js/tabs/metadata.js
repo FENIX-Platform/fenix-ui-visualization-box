@@ -77,9 +77,14 @@ define([
 
         var isSuitable = this._isSuitable();
 
-        log.info("Is tab suitable? " + isSuitable);
+        log.info("Metadata tab: is tab suitable? " + isSuitable);
 
-        return isSuitable;
+        if (isSuitable === true) {
+            return true;
+        } else {
+            this._setState("errors", isSuitable);
+            return false;
+        }
 
     };
 
@@ -227,7 +232,12 @@ define([
 
     MetadataTab.prototype._isSuitable = function () {
 
-        return true;
+        var valid = true,
+            errors = [];
+
+        //errors.push({code: ERR.MISSING_CONTAINER});
+
+        return errors.length > 0 ? errors : valid;
     };
 
     MetadataTab.prototype._dispose = function () {

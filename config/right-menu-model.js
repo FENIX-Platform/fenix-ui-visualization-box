@@ -1,9 +1,10 @@
-/* global define */
+/*global define*/
 define(function () {
 
     'use strict';
 
     return [
+        //Metadata
         {
             "name": "Metadata",
             "url": "#",
@@ -12,9 +13,10 @@ define(function () {
             "a_attrs": {
                 "data-action": "tab",
                 "data-tab": "metadata",
-                "class" : "hidden"
+                "class": "hidden"
             }
         },
+        //Download
         {
             "name": "Download",
             "url": "#",
@@ -23,14 +25,17 @@ define(function () {
             "a_attrs": {
                 "data-action": "tab",
                 "data-tab": "download",
-                "class" : "hidden"
+                "class": "hidden"
             }
-        }, {
+        },
+        //Layout
+        {
             "name": "Widget layout",
             "url": "#",
             "parent_id": "-1",
             "id": "2"
-        }, {
+        },
+        {
             "name": "1/2 - 1/2",
             "url": "#",
             "parent_id": "2",
@@ -80,6 +85,7 @@ define(function () {
                 "data-size": "full"
             }
         },
+        //Visualize as
         {
             "name": "Visualize as",
             "url": "#",
@@ -87,14 +93,26 @@ define(function () {
             "id": "8"
         },
         {
+            "name": "Blank",
+            "url": "#",
+            "parent_id": "8",
+            "id": "blank",
+            "a_attrs": {
+                "data-action": "tab",
+                "data-tab": "blank",
+                "class": "hidden"
+            }
+        },
+        //Chart
+        {
             "name": "Chart",
             "url": "#",
             "parent_id": "8",
             "id": "9",
             "a_attrs": {
                 "data-action": "tab",
-                "data-tab": "blank",
-                "class" : "hidden"
+                "data-tab": "chart",
+                "class": "hidden"
             }
         },
         {
@@ -118,17 +136,8 @@ define(function () {
                 "data-tab": "chart",
                 "data-type": "timeseries"
             }
-        },{
-            "name": "Blank",
-            "url": "#",
-            "parent_id": "8",
-            "id": "blank",
-            "a_attrs": {
-                "data-action": "tab",
-                "data-tab": "blank",
-                "class" : "hidden"
-            }
         },
+        //Map
         {
             "name": "Map",
             "url": "#",
@@ -137,9 +146,10 @@ define(function () {
             "a_attrs": {
                 "data-action": "tab",
                 "data-tab": "map",
-                "class" : "hidden"
+                "class": "hidden"
             }
         },
+        //Table
         {
             "name": "Table",
             "url": "#",
@@ -148,10 +158,11 @@ define(function () {
             "a_attrs": {
                 "data-action": "tab",
                 "data-tab": "table",
-                "data-type": "standard",  
-                "class" : "hidden"
+                "data-type": "standard",
+                "class": "hidden"
             }
-        }, {
+        },
+        {
             "name": "Standard",
             "url": "#",
             "parent_id": "11",
