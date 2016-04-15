@@ -1,5 +1,14 @@
-<div data-role="filter"></div>
+<div class="row">
+    <div class="col-xs-12">
+        <div data-role="filter"></div>
+    </div>
+</div>
+
 {{#unless hideFooterButtons}}
-<button type="button" data-role="submit" class="btn btn-default" disabled>{{submit_button}}</button>
-<button type="button" data-role="reset" class="btn btn-default" disabled>{{reset_button}}</button>
+    <div class="row">
+        <div class="col-xs-12">
+            <button type="button" data-role="submit" class="btn btn-default" disabled>{{submit_button}}</button>
+            <button type="button" data-role="reset" class="btn btn-default" disabled>{{reset_button}}</button>
+        </div>
+    </div>
 {{/unless}}

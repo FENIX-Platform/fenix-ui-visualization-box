@@ -164,11 +164,10 @@ define([
      */
     FilterTab.prototype.rebuild = function (payload) {
 
-        this.config = payload.config;
-
-        $.extend(true, this, payload);
-
-        this.values = this.getValues();
+        this.initial.config = payload.config;
+        this.initial.template = $.extend(true, {}, this.template);
+        this.initial.labels = $.extend(true, {}, this.labels);
+        this.initial.values = $.extend(true, {}, this.getValues(null));
 
         this.dispose();
 
@@ -246,7 +245,7 @@ define([
     FilterTab.prototype._attach = function () {
 
         var template = Handlebars.compile(tabTemplate),
-            m = $.extend(true, {}, this.template, i18nLabels, this.labels),
+            m = $.extend(true, {}, defaultOptions.template, this.template, i18nLabels, this.labels),
             html = template(m);
 
         this.$el.html(html);
@@ -261,7 +260,9 @@ define([
         this.config = this.initial.config;
         this.values = this.initial.values || {};
         this.labels = this.initial.labels || {};
-        this.template = this.initial.labels;
+        this.template = this.initial.template;
+
+        console.log("template", this.template)
     };
 
     FilterTab.prototype._bindEventListeners = function () {

@@ -32,7 +32,8 @@ define([
         PROCESS_DETAILS: "[data-role='process-details']",
         BACK_CONTENT: "[data-role='back-content']",
         MODAL : "[data-role='modal']",
-        MODAL_METADATA_CONTAINER : "[data-role='modal'] [data-role='metadata-container']"
+        MODAL_METADATA_CONTAINER : "[data-role='modal'] [data-role='metadata-container']",
+        BOX_TITLE : "[data-role='box-title']"
     };
 
     /* API */
@@ -249,6 +250,8 @@ define([
         //modal
         this.$modal = this.$el.find(s.MODAL);
 
+        this.$boxTitle = this.$el.find(s.BOX_TITLE);
+
     };
 
     Box.prototype._initObjState = function () {
@@ -386,6 +389,8 @@ define([
         log.info("Load resource success");
         this.model = data || {data: []};
 
+        this._setObjState("model", this.model);
+
         this.setStatus("ready");
 
         //TODO uncomment during distribution
@@ -404,6 +409,8 @@ define([
         log.info("Render box start:");
 
         this._renderBoxFaces();
+
+        this._updateBoxTitle();
 
     };
 
@@ -461,6 +468,15 @@ define([
 
             this.backFaceIsRendered = true;
         }
+
+    };
+
+    Box.prototype._updateBoxTitle = function () {
+
+        var title = Utils.getNestedProperty("metadata.title", this._getObjState("model")) || {},
+            uid = Utils.getNestedProperty("metadata.uid", this._getObjState("model"));
+
+        this.$boxTitle.html( title[this.lang] || uid);
 
     };
 
@@ -824,7 +840,7 @@ define([
                         title: label
                     },
                     dependencies: {},
-                    className: "col-xs-9"
+                    //className: "col-xs-9"
                 };
 
                 filter[c.id] = order;
