@@ -16,7 +16,7 @@ define([
 
         return this;
     }
-    
+
     Utils.prototype.assign = function(obj, prop, value) {
         if (typeof prop === "string")
             prop = prop.split(".");
@@ -31,6 +31,17 @@ define([
                 value);
         } else
             obj[prop[0]] = value;
+    };
+
+    Utils.prototype.getNestedProperty = function (path, obj) {
+
+        var obj = $.extend(true, {}, obj),
+            arr = path.split(".");
+
+        while (arr.length && (obj = obj[arr.shift()]));
+
+        return obj;
+
     };
 
 
