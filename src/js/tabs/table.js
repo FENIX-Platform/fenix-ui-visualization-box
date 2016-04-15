@@ -274,6 +274,7 @@ define([
         var myrenderer = new myRenderer();
         
         var tempConf = this.toolbar.getValues();
+		console.log("tempConf",tempConf)
         var optGr = {
             Aggregator: tempConf.values.aggregation[0],
             Formater: "localstring",
@@ -295,8 +296,10 @@ define([
         myrenderer.render({
             model : this.model,
             el : "#table_" + this.id,
-            options: optGr
-        });
+            //options: optGr
+        config: optGr
+        
+		});
 
         /*
 
@@ -369,6 +372,13 @@ var $olapContainer = $("#olap");
                             "label": FX.columns[i].id,
                             parent: 'HIDDEN'
                         })
+                    } else if (FX.columns[i].subject == "time" || FX.columns[i].id=="period") {
+
+                        configuration.sort.selector.source.push({
+                            "value": FX.columns[i].id,
+                            "label": FX.columns[i].id,
+                            parent: 'COLS'
+                        })
                     }
                     else if (FX.columns[i].subject != "time") {
                         configuration.sort.selector.source.push({
@@ -377,14 +387,7 @@ var $olapContainer = $("#olap");
                             parent: 'ROWS'
                         })
                     }
-                    else if (FX.columns[i].subject == "time") {
-
-                        configuration.sort.selector.source.push({
-                            "value": FX.columns[i].id,
-                            "label": FX.columns[i].id,
-                            parent: 'COLS'
-                        })
-                    }
+                   
                 }
 
             }
