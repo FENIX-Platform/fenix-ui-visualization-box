@@ -8,7 +8,7 @@ define(function () {
     return {
 
         defaultStatus : "loading",
-        defaultTab : "download",
+        defaultTab : "chart",
         defaultSize : "large",
         defaultFace : "front", // back || front
         tabRegistry: {
@@ -36,12 +36,12 @@ define(function () {
         },
         tabs: {
             //'blank': {type: 'simple', callback: 'once'},
-            //'table': {type: 'simple', callback: 'once'},
-            'metadata': {type: 'simple', callback: 'once'},
-            'filter': {type: 'simple', callback: 'once'},
-            'map': {type: 'simple', callback: 'always'},
+            'table': {type: 'simple', callback: 'once'},
+            //'metadata': {type: 'simple', callback: 'once'},
+            //'filter': {type: 'simple', callback: 'once'},
+            //'map': {type: 'simple', callback: 'always'},
             'chart': {type: 'simple', callback: 'always'},
-            'download': {type: 'simple', callback: 'always'}
+            //'download': {type: 'simple', callback: 'always'}
         },
 
         flippedClassName : "flipped",

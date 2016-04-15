@@ -20,25 +20,31 @@
                                     <div class="pull-left">
                                         <div data-role="right-menu" class="dropdown">
                                             <a href="" class="btn dropdown-toggle" data-toggle="dropdown">
-                                                <span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>
+                                                <span class="glyphicon glyphicon-menu-hamburger"
+                                                      aria-hidden="true">
+                                                </span>
                                             </a>
-
                                         </div>
                                     </div>
 
                                 {{/unless}}
 
-                                <div class="pull-right">
+                                <div class="pull-left">
                                     {{#unless hideMetadataButton}}
                                         <button data-action="metadata" class="btn btn-default" type="button">metadata
                                         </button>
                                     {{/unless}}
-                                        <span data-role="box-title"></span>
+                                    <span data-role="box-title"></span>
+                                </div>
+
+                                <div class="pull-right">
                                     {{#unless hideRemoveButton}}
-                                        <button data-action="remove" class="btn btn-default" type="button">remove</button>
+                                        <button data-action="remove" class="btn btn-default" type="button">remove
+                                        </button>
                                     {{/unless}}
                                     {{#unless hideResizeButton}}
-                                        <button data-action="resize" data-size="2" class="btn btn-default" type="button">
+                                        <button data-action="resize" data-size="2" class="btn btn-default"
+                                                type="button">
                                             resize
                                         </button>
                                     {{/unless}}
@@ -61,27 +67,14 @@
 
                         <div data-role="front-content" class="front-content">
 
-                            <div data-section="chart">
-                                <h4>Chart</h4>
-                            </div>
-                            <div data-section="map">
-                                <h4>Map</h4>
-                            </div>
-                            <div data-section="table">
-                                <h4>Table</h4>
-                            </div>
-                            <div data-section="blank">
-                                <h4>Blank</h4>
-                            </div>
-                            <div data-section="metadata">
-                                <h4>Metadata</h4>
-                            </div>
-                            <div data-section="filter">
-                                <h4>Filter</h4>
-                            </div>
-                            <div data-section="download">
-                                <h4>Download</h4>
-                            </div>
+                            <div data-section="chart"></div>
+                            <div data-section="map"></div>
+                            <div data-section="table"></div>
+                            <div data-section="blank"></div>
+                            <div data-section="metadata"></div>
+                            <div data-section="filter"></div>
+                            <div data-section="download"></div>
+
                         </div>
 
                     </div>
@@ -92,7 +85,8 @@
                         {{#unless hideToolbar}}
                             <!-- back content -->
                             <div data-role="back-toolbar">
-                                <button data-action="flip" class="btn btn-default pull-right" type="button">flip</button>
+                                <button data-action="flip" class="btn btn-default pull-right" type="button">flip
+                                </button>
                             </div>
                         {{/unless}}
 
@@ -101,7 +95,8 @@
                                 <div class="col-xs-3">
                                     <h4>{{ back_current_resource }}</h4>
                                     <ul data-role='process-steps' class="list-unstyled list-group well"></ul>
-                                    <button type="button" data-action="query" class="btn btn-default btn-block" disabled>{{submit_button}}</button>
+                                    <button type="button" data-action="query" class="btn btn-default btn-block"
+                                            disabled>{{submit_button}}</button>
                                 </div>
                                 <div class="col-xs-9">
                                     <ul data-role="process-details" class="list-unstyled list-group">
@@ -116,16 +111,22 @@
 
         </div>
 
-        <div data-content="error">
+        <div data-content="error" class="text-center">
             Error
+            <button data-action="filter" class="btn btn-default" type="button">
+                <span class="glyphicon glyphicon-filter" aria-hidden="true"></span>
+            </button>
         </div>
 
-        <div data-content="loading">
+        <div data-content="loading" class="text-center">
             <span class="loading loading-48"></span>
         </div>
 
-        <div data-content="empty">
+        <div data-content="empty" class="text-center">
             Empty
+            <button data-action="filter" class="btn btn-default" type="button">
+                <span class="glyphicon glyphicon-filter" aria-hidden="true"></span>
+            </button>
         </div>
 
         <!-- Modal -->
@@ -133,8 +134,10 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title" id="myModalLabel">FENIX metadata</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">
+                            <span data-action="download-metadata" class="glyphicon glyphicon-cloud-download" aria-hidden="true"></span> FENIX metadata</h4>
                     </div>
                     <div class="modal-body">
                         <div data-role="metadata-container"></div>

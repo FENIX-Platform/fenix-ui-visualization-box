@@ -49,13 +49,13 @@ define([
      * Method invoked when the tab is shown in the FENIX visualization box
      * Mandatory method
      */
-    TableTab.prototype.show = function (state) {
+    TableTab.prototype.show = function () {
 
         var valid = this._validateInput();
 
         if (valid === true) {
 
-            this._show(state);
+            this._show();
 
             log.info("Tab shown successfully");
 
@@ -121,11 +121,9 @@ define([
     TableTab.prototype.sync = function (state) {
         log.info("Sync tab. State:" + JSON.stringify(state));
 
-        if (state.hasOwnProperty("toolbar") && this.toolbar) {
-            this.toolbar.setValues(state.toolbar, true);
-        } else {
-            log.warn("Abort toolbar sync");
-        }
+        this.syncState = state;
+
+        this.toSync = true;
 
         return this;
     };
@@ -173,17 +171,11 @@ define([
 
     };
 
-    TableTab.prototype._show = function (syncModel) {
+    TableTab.prototype._show = function () {
 
-        if (this.initialized === true) {
-
-            log.info("Tab table shown again");
-
-        } else {
+        if (this.initialized !== true) {
 
             log.info("Tab table shown for the first time");
-
-            this.syncModel = syncModel;
 
             this._attach();
 
@@ -194,7 +186,21 @@ define([
             this._bindEventListeners();
 
             this.initialized = true;
+
+        } else {
+            log.info("Tab table shown again");
         }
+
+        if (this.toSync === true) {
+            log.info("Sync tab. State:" + JSON.stringify(this.syncState));
+
+            if (this.syncState.hasOwnProperty("toolbar") && this.toolbar) {
+                this.toolbar.setValues(this.syncState.toolbar, true);
+            }
+
+        }
+
+        return this;
 
     };
 
@@ -276,8 +282,11 @@ define([
 
     TableTab.prototype._renderTable = function () {
 
+        console.log("TODO render table here")
+        return;
+
         var myrenderer = new myRenderer();
-        
+
         var tempConf = this.toolbar.getValues();
 		console.log("tempConf",tempConf)
         var optGr = {
@@ -288,16 +297,16 @@ define([
             AGG: [],
             COLS: [],
             ROWS: [],
-            HIDDEN: [],fulldataformat:true
+            HIDDEN: [], fulldataformat: true
         };
         for (var i in tempConf.values.sort) {
             optGr[tempConf.values.sort[i].parent].push(tempConf.values.sort[i].value)
             //console.log("CREATE CONF",tempConf.values.sort[i].parent,tempConf.values.sort[i].value)
         }
 
-        console.log("optGr",optGr)
+        console.log("optGr", optGr)
         //myrenderer.render(this.model, "table_" + this.id, optGr);
-        
+
         myrenderer.render({
             model : this.model,
             el : "#table_" + this.id,
@@ -308,28 +317,28 @@ define([
 
         /*
 
-        myrenderer.render({
-            model : this.model,
-            el : "#table_" + this.id,
-            options : optGr
-            });
+         myrenderer.render({
+         model : this.model,
+         el : "#table_" + this.id,
+         options : optGr
+         });
 
-------
-var $olapContainer = $("#olap");
+         ------
+         var $olapContainer = $("#olap");
 
          myrenderer.render({
-             model : this.model,
-             el : $olapContainer,
-             options : optGr
-             });
+         model : this.model,
+         el : $olapContainer,
+         options : optGr
+         });
 
-------
+         ------
          var olapContainer = document.getElementById("olap");
 
          myrenderer.render({
-             model : this.model,
-             el : olapContainer,
-             options : optGr
+         model : this.model,
+         el : olapContainer,
+         options : optGr
          });
 
          * */
@@ -355,7 +364,7 @@ var $olapContainer = $("#olap");
 
     TableTab.prototype._createFilterConfiguration = function () {
 
-        var configuration = $.extend(true, {}, FilterUtils.mergeConfigurations(ToolbarModel, this.syncModel || {}));
+        var configuration = $.extend(true, {}, FilterUtils.mergeConfigurations(ToolbarModel, this.syncState || {}));
 
         try {
 

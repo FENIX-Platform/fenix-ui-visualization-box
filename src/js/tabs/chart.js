@@ -51,15 +51,15 @@ define([
      * Method invoked when the tab is shown in the FENIX visualization box
      * Mandatory method
      */
-    ChartTab.prototype.show = function (state) {
+    ChartTab.prototype.show = function () {
 
         var valid = this._validateInput();
 
         if (valid === true) {
 
-            this._show(state);
+            this._show();
 
-            log.info("Tab shown successfully");
+            log.info("Chart tab shown successfully");
 
             return this;
 
@@ -123,11 +123,9 @@ define([
     ChartTab.prototype.sync = function (state) {
         log.info("Sync tab. State:" + JSON.stringify(state));
 
-        if (state.hasOwnProperty("toolbar") && this.toolbar) {
-            this.toolbar.setValues(state.toolbar, true);
-        } else {
-            log.warn("Abort toolbar sync");
-        }
+        this.syncState = state;
+
+        this.toSync = true;
 
         return this;
     };
@@ -175,17 +173,11 @@ define([
 
     };
 
-    ChartTab.prototype._show = function (syncModel) {
+    ChartTab.prototype._show = function () {
 
-        if (this.initialized === true) {
+        if (this.initialized !== true) {
 
-            log.info("Tab table shown again");
-
-        } else {
-
-            log.info("Tab table shown for the first time");
-
-            this.syncModel = syncModel;
+            log.info("Chart table shown for the first time");
 
             this._attach();
 
@@ -196,7 +188,21 @@ define([
             this._bindEventListeners();
 
             this.initialized = true;
+
+        } else {
+            log.info("Tab chart shown again");
         }
+
+        if (this.toSync === true) {
+            log.info("Sync tab. State:" + JSON.stringify(this.syncState));
+
+            if (this.syncState.hasOwnProperty("toolbar") && this.toolbar) {
+                this.toolbar.setValues(this.syncState.toolbar, true);
+            }
+
+        }
+
+        return this;
 
     };
 
@@ -277,6 +283,9 @@ define([
     };
 
     ChartTab.prototype._renderChart = function () {
+
+        console.log("TODO render chart here")
+        return;
 
         var tempConf = this.toolbar.getValues();
         var optGr = {

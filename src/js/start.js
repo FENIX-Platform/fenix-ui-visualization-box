@@ -27,13 +27,15 @@ define([
         CONTENT_READY: "[data-content='ready']",
         RIGHT_MENU: "[data-role='right-menu']",
         FLIP_CONTAINER: "[data-role='flip-container']",
+        FLIP_BUTTONS : "[data-action='flip']",
         FRONT_CONTENT: "[data-role='front-content']",
         PROCESS_STEPS: "[data-role='process-steps']",
         PROCESS_DETAILS: "[data-role='process-details']",
         BACK_CONTENT: "[data-role='back-content']",
         MODAL : "[data-role='modal']",
         MODAL_METADATA_CONTAINER : "[data-role='modal'] [data-role='metadata-container']",
-        BOX_TITLE : "[data-role='box-title']"
+        BOX_TITLE : "[data-role='box-title']",
+        QUERY_BUTTON : "[data-action='query']"
     };
 
     /* API */
@@ -169,11 +171,6 @@ define([
      * @return {Object} box state
      */
     Box.prototype.getState = function () {
-
-        /*
-         * TODO remove
-         * tabs[tab].initialized
-         * */
 
         return this.state;
     };
@@ -464,7 +461,7 @@ define([
 
         if (this.backFaceIsRendered !== true) {
 
-            this._renderBoxBackFace();
+            //this._renderBoxBackFace();
 
             this.backFaceIsRendered = true;
         }
@@ -490,7 +487,6 @@ define([
 
         //render metadata modal
         this.metadataModal = new MetadataViewer();
-
         this.metadataModal.render({
             model: this.model.metadata ,
             lang: this.lang.toUpperCase() || "EN",
@@ -560,7 +556,7 @@ define([
 
         this._setObjState("tabs." + tab + ".initialized", true);
 
-        this._callTabInstanceMethod({tab: tab, method: "show", opt1: this._getObjState("sync")});
+        this._callTabInstanceMethod({tab: tab, method: "show"});
 
     };
 
@@ -642,6 +638,8 @@ define([
             }
 
         }, this));
+
+        this._syncTabs();
 
         this._showDefaultTab();
 
@@ -927,7 +925,7 @@ define([
             if (list.length === readyEventCounter) {
 
                 //Remove disable from query btn
-                this.$el.find(s.BACK_CONTENT).find('[data-action="query"]').attr("disabled", false);
+                this.$el.find(s.BACK_CONTENT).find(s.QUERY_BUTTON).attr("disabled", false);
                 self._bindStepEventListeners();
             }
         }
@@ -1004,6 +1002,10 @@ define([
         amplify.subscribe(this._getEventTopic("minimize"), this, this._onMinimizeEvent);
 
         amplify.subscribe(this._getEventTopic("query"), this, this._onQueryEvent);
+
+        amplify.subscribe(this._getEventTopic("filter"), this, this._onFilterEvent);
+
+        amplify.subscribe(this._getEventTopic("download-metadata"), this, this._onDownloadMetadataEvent);
 
         this.$el.find("[data-action]").each(function () {
 
@@ -1095,6 +1097,14 @@ define([
 
     };
 
+    Box.prototype._disableFlip = function () {
+        this.$el.find(s.FLIP_BUTTONS).attr("disabled", true);
+    };
+
+    Box.prototype._enableFlip = function () {
+        this.$el.find(s.FLIP_BUTTONS).attr("disabled", false);
+    };
+
     Box.prototype._onMetadataEvent = function (payload) {
         log.info("Listen to event: " + this._getEventTopic("metadata"));
         log.trace(payload);
@@ -1145,6 +1155,8 @@ define([
         log.trace(payload);
 
         this._disposeFrontFace();
+
+        this._enableFlip();
 
         var process = this._createQuery();
 
@@ -1389,25 +1401,41 @@ define([
 
     };
 
+    Box.prototype._onFilterEvent = function (payload) {
+        log.info("Listen to event: " + this._getEventTopic("filter"));
+        log.trace(payload);
+
+        this._disableFlip();
+
+        this._flip("back");
+
+        this._setStatus("ready");
+    };
+
+    Box.prototype._onDownloadMetadataEvent = function (payload) {
+        log.info("Listen to event: " + this._getEventTopic("download-metadata"));
+        log.trace(payload);
+
+    };
+
     Box.prototype._syncTabs = function () {
         log.info("Send 'sync' signal");
-
-        return;
 
         var tabsKeys = Object.keys(this.tabs);
 
         _.each(tabsKeys, _.bind(function (tab) {
 
-            if (this._getObjState("tabs." + tab + ".suitable") === true && this._getObjState("tabs." + tab + ".initialized") === true) {
+            if (this._getObjState("tabs." + tab + ".suitable") === true ) {
 
                 this._callTabInstanceMethod({
                     tab: tab,
                     method: 'sync',
-                    opt1: this._getObjState("sync")
+                    opt1: this._getObjState("sync") || {}
                 });
             }
 
         }, this));
+
     };
 
     Box.prototype._setSize = function (size) {
@@ -1565,6 +1593,10 @@ define([
         amplify.unsubscribe(this._getEventTopic("minimize"), this._onMinimizeEvent);
 
         amplify.unsubscribe(this._getEventTopic("query"), this._onQueryEvent);
+
+        amplify.unsubscribe(this._getEventTopic("filter"), this._onFilterEvent);
+
+        amplify.unsubscribe(this._getEventTopic("download-metadata"), this._onDownloadMetadataEvent);
 
         this.$el.find("[data-action]").off();
 
