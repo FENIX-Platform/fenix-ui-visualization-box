@@ -297,7 +297,8 @@ define([
             AGG: [],
             COLS: [],
             ROWS: [],
-            HIDDEN: [], fulldataformat: true
+            HIDDEN: [],
+            fulldataformat: true
         };
         for (var i in tempConf.values.sort) {
             optGr[tempConf.values.sort[i].parent].push(tempConf.values.sort[i].value)
@@ -394,13 +395,18 @@ define([
                             parent: 'COLS'
                         })
                     }
-                    else if (FX.columns[i].subject != "time") {
+                    else if (FX.columns[i].key && FX.columns[i].key==true) {
                         configuration.sort.selector.source.push({
                             "value": FX.columns[i].id,
                             "label": FX.columns[i].id,
                             parent: 'ROWS'
                         })
                     }
+					else{  configuration.sort.selector.source.push({
+                            "value": FX.columns[i].id,
+                            "label": FX.columns[i].id,
+                            parent: 'AGG'
+                        })}
                    
                 }
 
