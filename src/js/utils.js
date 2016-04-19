@@ -29,8 +29,9 @@ define([
                         : {},
                 prop,
                 value);
-        } else
+        } else {
             obj[prop[0]] = value;
+        }
     };
 
     Utils.prototype.getNestedProperty = function (path, obj) {
