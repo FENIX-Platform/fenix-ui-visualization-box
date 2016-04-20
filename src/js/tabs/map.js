@@ -48,6 +48,7 @@ define([
      * Optional method
      */
     MapTab.prototype.init = function () {
+
         log.info("Map initialized successfully");
     };
 
@@ -90,7 +91,6 @@ define([
             this._setState("errors", isSuitable);
             return false;
         }
-
     };
 
     /**
@@ -102,7 +102,6 @@ define([
         this._dispose();
 
         log.info("Tab disposed successfully");
-
     };
 
     /**
@@ -164,7 +163,6 @@ define([
         }
 
         return errors.length > 0 ? errors : valid;
-
     };
 
     MapTab.prototype._show = function () {
@@ -197,7 +195,6 @@ define([
         }
 
         return this;
-
     };
 
     MapTab.prototype._attach = function () {
@@ -213,7 +210,6 @@ define([
         this.$toolbar = this.$el.find(s.TOOLBAR);
 
         this.$toolbarBtn = this.$el.find(s.TOOLBAR_BTN);
-
     };
 
     MapTab.prototype._bindEventListeners = function () {
@@ -267,13 +263,11 @@ define([
         }
 
         this._setState("toolbarPosition", this.toolbarPosition);
-
     };
 
     MapTab.prototype._onToolbarBtnClick = function () {
 
         this._renderMap();
-
     };
 
     MapTab.prototype._renderMap = function () {
@@ -281,8 +275,8 @@ define([
 
         var mapCreator = new MapCreator();
         
-        var tempConf = this.toolbar.getValues(),
-            model = this.model;
+        var tempConf = this.toolbar.getValues();
+        //var model = this.model;
 
         mapCreator.render({
             container: "map_" + this.id
@@ -298,7 +292,6 @@ define([
                 mapCreator.addLayer(model, { colorramp: 'Greens' });
                 mapCreator.addCountryBoundaries();
             });*/
-
 
             $.get('dataset/bangkok.json', function (model) {
 
@@ -339,7 +332,9 @@ define([
             $el: this.$el.find(s.TOOLBAR)
         });
 
-        this.toolbar.on("ready", _.bind(this._renderMap, this))
+        this.toolbar.on("ready", _.bind(
+            this._renderMap,
+        this))
 
     };
 
