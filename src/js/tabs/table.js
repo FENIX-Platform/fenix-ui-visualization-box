@@ -467,7 +467,7 @@ define([
 
     TableTab.prototype._dispose = function () {
 
-        if (this.status.ready === true) {
+        if (this.state.ready === true) {
             this._unbindEventListeners();
         }
     };

@@ -6,7 +6,7 @@ define(function () {
     return [
         //Metadata
         {
-            "name": "Metadata",
+            "label": "Metadata",
             "url": "#",
             "parent_id": "-1",
             "id": "0",
@@ -18,7 +18,7 @@ define(function () {
         },
         //Download
         {
-            "name": "Download",
+            "label": "Download",
             "url": "#",
             "parent_id": "-1",
             "id": "1",
@@ -30,13 +30,13 @@ define(function () {
         },
         //Layout
         {
-            "name": "Widget layout",
+            "label": "Widget layout",
             "url": "#",
             "parent_id": "-1",
             "id": "2"
         },
         {
-            "name": "1/2 - 1/2",
+            "label": "1/2 - 1/2",
             "url": "#",
             "parent_id": "2",
             "id": "3",
@@ -46,7 +46,7 @@ define(function () {
             }
         },
         {
-            "name": "2/2 - 1/2",
+            "label": "2/2 - 1/2",
             "url": "#",
             "parent_id": "2",
             "id": "4",
@@ -56,7 +56,7 @@ define(function () {
             }
         },
         {
-            "name": "1/2 - 2/2",
+            "label": "1/2 - 2/2",
             "url": "#",
             "parent_id": "2",
             "id": "5",
@@ -66,7 +66,7 @@ define(function () {
             }
         },
         {
-            "name": "2/2 - 2/2",
+            "label": "2/2 - 2/2",
             "url": "#",
             "parent_id": "2",
             "id": "6",
@@ -76,7 +76,7 @@ define(function () {
             }
         },
         {
-            "name": "Fullscreen",
+            "label": "Fullscreen",
             "url": "#",
             "parent_id": "2",
             "id": "7",
@@ -87,13 +87,13 @@ define(function () {
         },
         //Visualize as
         {
-            "name": "Visualize as",
+            "label": "Visualize as",
             "url": "#",
             "parent_id": "-1",
             "id": "8"
         },
         {
-            "name": "Blank",
+            "label": "Blank",
             "url": "#",
             "parent_id": "8",
             "id": "blank",
@@ -105,7 +105,7 @@ define(function () {
         },
         //Chart
         {
-            "name": "Chart",
+            "label": "Chart",
             "url": "#",
             "parent_id": "8",
             "id": "9",
@@ -116,7 +116,7 @@ define(function () {
             }
         },
         {
-            "name": "Pie chart",
+            "label": "Pie chart",
             "url": "#",
             "parent_id": "9",
             "id": "9-1",
@@ -127,7 +127,7 @@ define(function () {
             }
         },
         {
-            "name": "Time series",
+            "label": "Time series",
             "url": "#",
             "parent_id": "9",
             "id": "9-2",
@@ -139,7 +139,7 @@ define(function () {
         },
         //Map
         {
-            "name": "Map",
+            "label": "Map",
             "url": "#",
             "parent_id": "8",
             "id": "10",
@@ -151,7 +151,7 @@ define(function () {
         },
         //Table
         {
-            "name": "Table",
+            "label": "Table",
             "url": "#",
             "parent_id": "8",
             "id": "11",
@@ -163,7 +163,7 @@ define(function () {
             }
         },
         {
-            "name": "Standard",
+            "label": "Standard",
             "url": "#",
             "parent_id": "11",
             "id": "11-1",
@@ -174,7 +174,7 @@ define(function () {
             }
         },
         {
-            "name": "Pivot",
+            "label": "Pivot",
             "url": "#",
             "parent_id": "11",
             "id": "11-2",
