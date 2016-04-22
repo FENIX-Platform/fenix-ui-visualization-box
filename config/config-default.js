@@ -3,8 +3,6 @@ define(function () {
 
     'use strict';
 
-    var HOST =  "http://fenix.fao.org/";
-
     return {
 
         defaultStatus : "loading",
@@ -54,7 +52,6 @@ define(function () {
         toolbarPosition : "up", // up | down
 
         //Load resource
-        d3pUrl: HOST + "d3s_dev/processes/",
         d3pQueryParameters : {
             language : "EN"
         }

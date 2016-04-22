@@ -445,7 +445,6 @@ define([
 
     };
 
-
     TableTab.prototype._unbindEventListeners = function () {
 
         this.$toolbarBtn.off();

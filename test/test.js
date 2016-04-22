@@ -30,7 +30,6 @@ require.config({
         metadataViewerPaths : pathProjectRoot + 'submodules/fenix-ui-metadata-viewer/src/js/paths',
         catalogPaths : pathProjectRoot + 'submodules/fenix-ui-catalog/js/paths',
         dataManagementPaths : pathProjectRoot + 'submodules/fenix-ui-data-management/src/js/paths',
-
     }
 });
 

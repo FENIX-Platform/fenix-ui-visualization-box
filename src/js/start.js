@@ -15,10 +15,10 @@ define([
     "fx-common/json-menu",
     "fx-v-b/config/right-menu-model",
     "i18n!fx-v-b/nls/box",
-    "q",
+    "fx-common/bridge",
     "amplify",
     "bootstrap"
-], function (log, require, $, _, Handlebars, C, CD, ERR, EVT, Utils, MetadataViewer, Template, JsonMenu, RightMenuModel, i18nLabels, Q) {
+], function (log, require, $, _, Handlebars, C, CD, ERR, EVT, Utils, MetadataViewer, Template, JsonMenu, RightMenuModel, i18nLabels, Bridge) {
 
     'use strict';
 
@@ -27,15 +27,15 @@ define([
         CONTENT_READY: "[data-content='ready']",
         RIGHT_MENU: "[data-role='right-menu']",
         FLIP_CONTAINER: "[data-role='flip-container']",
-        FLIP_BUTTONS : "[data-action='flip']",
+        FLIP_BUTTONS: "[data-action='flip']",
         FRONT_CONTENT: "[data-role='front-content']",
         PROCESS_STEPS: "[data-role='process-steps']",
         PROCESS_DETAILS: "[data-role='process-details']",
         BACK_CONTENT: "[data-role='back-content']",
-        MODAL : "[data-role='modal']",
-        MODAL_METADATA_CONTAINER : "[data-role='modal'] [data-role='metadata-container']",
-        BOX_TITLE : "[data-role='box-title']",
-        QUERY_BUTTON : "[data-action='query']"
+        MODAL: "[data-role='modal']",
+        MODAL_METADATA_CONTAINER: "[data-role='modal'] [data-role='metadata-container']",
+        BOX_TITLE: "[data-role='box-title']",
+        QUERY_BUTTON: "[data-action='query']"
     };
 
     /* API */
@@ -353,33 +353,15 @@ define([
 
         this.setStatus("loading");
 
-        var d3pUrl = C.d3pUrl || CD.d3pUrl,
-            url = d3pUrl + this._getObjState("uid"),
-            queryParams = C.d3pQueryParameters || CD.d3pQueryParameters,
+        var queryParams = C.d3pQueryParameters || CD.d3pQueryParameters,
             process = _.union(Array.isArray(p) ? p : [], this.process);
 
-        if (this._getObjState("version")) {
-            url = url.concat("/").concat(this._getObjState("version"));
-        }
-
-        if (queryParams && typeof queryParams === 'object') {
-
-            url = url.concat("?");
-
-            _.each(queryParams, function (value, key) {
-                url = url.concat(key).concat("=").concat(value).concat("&");
-            });
-
-            url = url.substring(0, url.length - 1);
-        }
-
-        return Q($.ajax({
-            url: url,
-            type: 'post',
-            contentType: 'application/json',
-            dataType: 'json',
-            data: JSON.stringify(process)
-        }));
+        return Bridge.getProcessedResourcePromise({
+            body: process,
+            uid: this._getObjState("uid"),
+            version: this._getObjState("version"),
+            params: queryParams
+        });
     };
 
     Box.prototype._onLoadResourceSuccess = function (data) {
@@ -473,7 +455,7 @@ define([
         var title = Utils.getNestedProperty("metadata.title", this._getObjState("model")) || {},
             uid = Utils.getNestedProperty("metadata.uid", this._getObjState("model"));
 
-        this.$boxTitle.html( title[this.lang] || uid);
+        this.$boxTitle.html(title[this.lang] || uid);
 
     };
 
@@ -488,7 +470,7 @@ define([
         //render metadata modal
         this.metadataModal = new MetadataViewer();
         this.metadataModal.render({
-            model: this.model.metadata ,
+            model: this.model.metadata,
             lang: this.lang.toUpperCase() || "EN",
             el: this.$el.find(s.MODAL_METADATA_CONTAINER)
         });
@@ -625,7 +607,7 @@ define([
                 this._setObjState("tabs." + tab + ".suitable",
                     this._callTabInstanceMethod({tab: tab, method: 'isSuitable'}));
 
-                log.info(tab + " tab is suitable? ",  this._callTabInstanceMethod({tab: tab, method: 'isSuitable'}))
+                log.info(tab + " tab is suitable? ", this._callTabInstanceMethod({tab: tab, method: 'isSuitable'}))
 
                 if (this._getObjState("tabs." + tab + ".suitable") === true) {
                     this._showMenuItem(tab);
@@ -1033,11 +1015,14 @@ define([
         log.info("Listen to event: " + this._getEventTopic("remove"));
         log.trace(payload);
 
-        var r = confirm(i18nLabels.confirm_remove);
+        var r = confirm(i18nLabels.confirm_remove),
+            state = $.extend(true, {}, this.getState());
 
         if (r == true) {
             amplify.publish(EVT['remove'], this);
             this._dispose();
+
+            this._trigger("remove", state);
         } else {
             log.info("Abort remove");
         }
@@ -1116,8 +1101,12 @@ define([
         log.info("Listen to event: " + this._getEventTopic("minimize"));
         log.trace(payload);
 
+        var state = $.extend(true, {}, this.getState());
+
         //Exclude id for publish events
-        amplify.publish(this._getEventTopic("minimize", true), $.extend(true, {}, this.getState()));
+        amplify.publish(this._getEventTopic("minimize", true), state);
+
+        this._trigger("minimize", state);
 
         this.dispose();
     };
@@ -1425,7 +1414,7 @@ define([
 
         _.each(tabsKeys, _.bind(function (tab) {
 
-            if (this._getObjState("tabs." + tab + ".suitable") === true ) {
+            if (this._getObjState("tabs." + tab + ".suitable") === true) {
 
                 this._callTabInstanceMethod({
                     tab: tab,
@@ -1447,11 +1436,15 @@ define([
             return;
         }
 
+        var state = $.extend(true, {}, this.getState());
+
         this._setObjState("size", size);
 
         this.$el.find(s.BOX).attr("data-size", this._getObjState("size"));
 
-        amplify.publish(EVT["resize"], this)
+        amplify.publish(EVT["resize"], this);
+
+        this._trigger("resize", state);
 
     };
 

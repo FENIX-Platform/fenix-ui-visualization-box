@@ -14,18 +14,11 @@ define([
     "text!fx-v-b/html/tabs/map.hbs",
     "fx-filter/start",
     "fx-v-b/config/tabs/map-toolbar-model",
-
     "fx-common/pivotator/functions",
     "fx-m-c/start",
     "amplify"
-], function ($, log, _, Handlebars,
-        C, CD, ERR, EVT, Utils, FilterUtils,
-        mapTemplate,
-        Filter,
-        ToolbarModel,
-
-        myFunc,
-        MapCreator) {
+], function ($, log, _, Handlebars, C, CD, ERR, EVT, Utils, FilterUtils,
+             mapTemplate, Filter, ToolbarModel, myFunc, MapCreator) {
 
     var defaultOptions = {}, s = {
         TOOLBAR: "[data-role='toolbar']",
@@ -274,7 +267,7 @@ define([
 
 
         var mapCreator = new MapCreator();
-        
+
         var tempConf = this.toolbar.getValues();
         //var model = this.model;
 
@@ -287,40 +280,40 @@ define([
         // TODO: add JOIN from catalog to the map
         amplify.subscribe('fx.component.map.ready', function () {
 
-/*            $.get('http://fenix.fao.org/d3s/msd/resources/uid/FAOSTAT_fertilizer_test?full=true&dsd=true', function (model) {
+            /*            $.get('http://fenix.fao.org/d3s/msd/resources/uid/FAOSTAT_fertilizer_test?full=true&dsd=true', function (model) {
 
-                mapCreator.addLayer(model, { colorramp: 'Greens' });
-                mapCreator.addCountryBoundaries();
-            });*/
+             mapCreator.addLayer(model, { colorramp: 'Greens' });
+             mapCreator.addCountryBoundaries();
+             });*/
 
             $.get('dataset/bangkok.json', function (model) {
 
-                mapCreator.addLayer(model, { colorramp: 'Greens' });
+                mapCreator.addLayer(model, {colorramp: 'Greens'});
                 mapCreator.addCountryBoundaries();
                 //mapCreator.addCountryLabels();
             });
 
         });
-/*      var optGr = {
-            Aggregator: tempConf.values.aggregation[0],
-            Formater: "localstring",
-            GetValue: "Classic",
-            nbDecimal: 5,
-            AGG: [],
-            COLS: [],
-            ROWS: [],
-            HIDDEN: []
-        };
-        for (var i in tempConf.values.sort) {
-            optGr[tempConf.values.sort[i].parent].push(tempConf.values.sort[i].value)
-            //console.log("CREATE CONF",tempConf.values.sort[i].parent,tempConf.values.sort[i].value)
-        }
+        /*      var optGr = {
+         Aggregator: tempConf.values.aggregation[0],
+         Formater: "localstring",
+         GetValue: "Classic",
+         nbDecimal: 5,
+         AGG: [],
+         COLS: [],
+         ROWS: [],
+         HIDDEN: []
+         };
+         for (var i in tempConf.values.sort) {
+         optGr[tempConf.values.sort[i].parent].push(tempConf.values.sort[i].value)
+         //console.log("CREATE CONF",tempConf.values.sort[i].parent,tempConf.values.sort[i].value)
+         }
 
-        console.log("optGr",optGr)
-        myrenderer.rendererGridFX(this.model, "table_" + this.id, optGr);
-        //	myrenderer.rendererGridFX(this.model,"result",optGr);
+         console.log("optGr",optGr)
+         myrenderer.rendererGridFX(this.model, "table_" + this.id, optGr);
+         //	myrenderer.rendererGridFX(this.model,"result",optGr);
 
-        //id olap "table-" + this.id*/
+         //id olap "table-" + this.id*/
 
     };
 
@@ -334,7 +327,7 @@ define([
 
         this.toolbar.on("ready", _.bind(
             this._renderMap,
-        this))
+            this))
 
     };
 
