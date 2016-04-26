@@ -156,9 +156,7 @@ define([
         var box1 = this.createBox({
                 el: s.MEDIUM_1,
                 model: empty_model,
-                config: {
-                    defaultTab : "map",
-                }
+                tab: "map"
             });
 
         log.trace("Rendering medium boxes: end");
@@ -172,9 +170,7 @@ define([
         var box = this.createBox({
             el: s.DESTROY,
             model: valid_model,
-            config: {
-                defaultTab : "map",
-            }
+            tab: "map"
         });
 
         $(s.DESTROY_BTN).on("click", function () {
@@ -194,9 +190,7 @@ define([
         var box = this.createBox({
             el: s.STATUS,
             model: valid_model,
-            config: {
-                defaultTab : "map",
-            }            
+            tab: "map"          
         });
 
         $(s.STATUS_BTNS).on("click", function () {
@@ -218,7 +212,8 @@ define([
         log.trace("Rendering async box: start");
 
         var box = this.createBox({
-            el: s.ASYNC
+            el: s.ASYNC,
+            tab: "map"
         });
 
         $(s.ASYNC_BTN).on("click", function () {
@@ -241,7 +236,8 @@ define([
 
         var box = this.createBox({
             el: s.TAB,
-            model: valid_model
+            model: valid_model,
+            tab:"map"
         });
 
         $(s.TAB_BTNS).on("click", function () {
@@ -264,7 +260,8 @@ define([
 
         var box = this.createBox({
             el: s.FLIP,
-            model: valid_model
+            model: valid_model,
+            tab: "map"
         });
 
         $(s.FLIP_BTNS).on("click", function () {
@@ -287,7 +284,8 @@ define([
 
         var box = this.createBox({
             el: s.STATE,
-            model: valid_model
+            model: valid_model,
+            tab: "map"
         });
 
         $(s.STATE_BTN).on("click", function () {
