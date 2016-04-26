@@ -25,9 +25,10 @@ define([
         TOOLBAR_BTN: "[data-role='toolbar'] [data-role='toolbar-btn']"
     };
 
-    function MapTab(o) {
+    function MapTab(obj) {
 
-        $.extend(true, this, defaultOptions, o);
+        //$.extend(true, this, defaultOptions, o);
+        $.extend(true, this, {initial: obj, $el: $(obj.$el), box: obj.box, model: obj.model, id: obj.id});
 
         this.channels = {};
         this.state = {};
