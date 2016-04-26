@@ -143,7 +143,8 @@
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                                 aria-hidden="true">&times;</span></button>
                         <h4 class="modal-title">
-                            <span data-action="download-metadata" class="glyphicon glyphicon-cloud-download" aria-hidden="true"></span> FENIX metadata</h4>
+                            <span data-action="download-metadata" class="glyphicon glyphicon-cloud-download"
+                                  aria-hidden="true"></span> FENIX metadata</h4>
                     </div>
                     <div class="modal-body">
                         <div data-role="metadata-container"></div>
@@ -160,7 +161,45 @@
         {{ metadata.uid }} <br>
         {{ metadata.version }}
     </li>
+
     <li data-role="step-filter">
         <h3>{{ labels.title }}</h3>
     </li>
+
+    <div data-role="filter-aggregation-template">
+
+        <div class="row" data-selector="aggregations">
+            <div class="col-xs-4">
+                <div data-sortable-list data-group="dimensions">
+                    <h3>{{ aggregations_dimensions }}</h3>
+                    <ul class="filter-sortable-list list-unstyled list-group"></ul>
+                </div>
+            </div>
+            <div class="col-xs-4">
+                <div data-sortable-list data-group="group">
+                    <h3>{{ aggregations_group }}</h3>
+                    <ul class="filter-sortable-list list-unstyled list-group"></ul>
+                </div>
+            </div>
+            <div class="col-xs-4">
+                <div data-sortable-list data-group="sum">
+                    <h3>{{ aggregations_sum }}</h3>
+                    <ul class="filter-sortable-list list-unstyled list-group"></ul>
+                </div>
+                <div data-sortable-list data-group="avg">
+                    <h3>{{ aggregations_avg }}</h3>
+                    <ul class="filter-sortable-list list-unstyled list-group"></ul>
+                </div>
+                <div data-sortable-list data-group="first">
+                    <h3>{{ aggregations_first}}</h3>
+                    <ul class="filter-sortable-list list-unstyled list-group"></ul>
+                </div>
+                <div data-sortable-list data-group="last">
+                    <h3>{{ aggregations_last }}</h3>
+                    <ul class="filter-sortable-list list-unstyled list-group"></ul>
+                </div>
+
+            </div>
+        </div>
+    </div>
 </div>

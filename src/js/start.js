@@ -38,7 +38,8 @@ define([
         QUERY_BUTTON: "[data-action='query']",
         ERROR_TEXT: "[data-role='error-text']",
         ERROR_BUTTON: "[data-role='error-BUTTON']",
-        BACK_FILTER_ERRORS: "[data-role='filter-error']"
+        BACK_FILTER_ERRORS: "[data-role='filter-error']",
+        FILTER_AGGREGATION_TEMPLATE: "[data-role='filter-aggregation-template']"
     };
 
     /* API */
@@ -754,7 +755,8 @@ define([
             subject: "aggregations",
             params: {
                 config: aggregationConfiguration.filter,
-                values: values.aggregations
+                values: values.aggregations,
+                template : aggregationConfiguration.template
             },
             labels: {
                 title: "Aggregations"
@@ -768,7 +770,6 @@ define([
                 config: columnsConfiguration.filter,
                 template: columnsConfiguration.template,
                 values: values.columns
-
             },
             labels: {
                 title: "Columns"
@@ -846,7 +847,9 @@ define([
                         }
                     }
                 }
-            }
+            },
+
+            template: Handlebars.compile($(Template).find(s.FILTER_AGGREGATION_TEMPLATE)[0].outerHTML)(i18nLabels)
         };
     };
 
@@ -956,6 +959,7 @@ define([
                 }
                 this.$processStepDetails.append($el);
             }
+
             //render tab
             var Instance = new Tab({
                 $el: $el,
@@ -1022,8 +1026,7 @@ define([
                         config: config.filter
                     });
 
-                }
-                else {
+                } else {
                     log.warn("Abort rebuild");
                 }
             })
@@ -1252,7 +1255,7 @@ define([
             errors = [],
             aggregations = Utils.getNestedProperty("aggregations.values.aggregations", values) || [];
 
-        //wrong aggregations
+        // aggregations on dataType !== number
         var sum = _.where(aggregations, {parent: 'sum'}).map(function (item) {
                 return item.value;
             }),
@@ -1290,6 +1293,8 @@ define([
 
         });
 
+        //TODO add validation rules
+
         return errors.length > 0 ? errors : valid;
 
     };
@@ -1297,7 +1302,7 @@ define([
     Box.prototype._printFilterError = function (errors) {
 
         var err = {},
-            $message = $("<ul></ul>");
+            $message = $("<ul class='list-unstyled'></ul>");
 
         _.each(errors, function (obj) {
 
