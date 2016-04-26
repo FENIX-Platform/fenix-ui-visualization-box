@@ -49,13 +49,13 @@ define([
      * Method invoked when the tab is shown in the FENIX visualization box
      * Mandatory method
      */
-    TableTab.prototype.show = function () {
+    TableTab.prototype.show = function (opts) {
 
         var valid = this._validateInput();
 
         if (valid === true) {
 
-            this._show();
+            this._show(opts);
 
             log.info("Tab shown successfully");
 
@@ -171,7 +171,9 @@ define([
 
     };
 
-    TableTab.prototype._show = function () {
+    TableTab.prototype._show = function (opts) {
+
+        //TODO opts contain the chart type
 
         if (this.initialized !== true) {
 
@@ -196,6 +198,7 @@ define([
 
             if (this.syncState.hasOwnProperty("toolbar") && this.toolbar) {
                 this.toolbar.setValues(this.syncState.toolbar, true);
+                this._renderTable();
             }
 
         }

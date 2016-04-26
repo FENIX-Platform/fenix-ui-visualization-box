@@ -221,12 +221,6 @@ define([
 
     Box.prototype._initObj = function () {
 
-        var size = this.initial.size || C.size || CD.size,
-            status = this.initial.status || C.status || CD.status;
-
-        this._setObjState("size", size);
-        this._setObjState("status", status);
-
         //Inject box blank template
         var template = Handlebars.compile($(Template).find(s.BOX)[0].outerHTML),
             $html = $(template($.extend(true, {}, this.state, i18nLabels)));
@@ -267,6 +261,7 @@ define([
 
         //tabs
         this._setObjState("tabStates", this.initial.tabStates || {});
+        this._setObjState("tabOpts", this.initial.tabOpts );
 
         //flip side
         this._setObjState("face", this.initial.face || C.face || CD.face);
@@ -278,6 +273,9 @@ define([
         this._setObjState("values", this.initial.values);
         this._setObjState("process", this.initial.process);
         this._setObjState("uid", this.initial.uid || Utils.getNestedProperty("metadata.uid", this._getObjState("model")));
+
+        this._setObjState("size", this.initial.size || C.size || CD.size);
+        this._setObjState("status",  this.initial.status || C.status || CD.status);
 
     };
 
@@ -555,11 +553,12 @@ define([
             return;
         }
 
-        var currentTab = this._getObjState("tab");
+        var currentTab = this._getObjState("tab"),
+            currentOpts = this._getObjState("tabOpts");
 
         //TODO check if currentTab is undefined
 
-        if (currentTab === tab) {
+        if (currentTab === tab && _.isEqual(currentOpts, opts)){
             log.info("Aborting show tab current tab is equal to selected one");
             return;
         }
@@ -573,13 +572,14 @@ define([
         log.info("Show '" + tab + "' tab for result id: " + this.id);
 
         this._setObjState("tab", tab);
+        this._setObjState("tabOpts", opts);
 
         //hide all tabs and show the selected one
         //this.$el.find(s.CONTENT_READY).find("[data-section]").hide();
         //this.$el.find(s.CONTENT_READY).find("[data-section='" + tab + "']").show();
         this.$el.find(s.CONTENT_READY).attr("data-tab", this._getObjState("tab"));
 
-        this._showTabContent(opts);
+        this._showTabContent();
     };
 
     Box.prototype._showTabContent = function () {
@@ -603,7 +603,7 @@ define([
 
         this._setObjState("tabs." + tab + ".initialized", true);
 
-        this._callTabInstanceMethod({tab: tab, method: "show"});
+        this._callTabInstanceMethod({tab: tab, method: "show", opt1 : this._getObjState("tabOpts")});
 
     };
 

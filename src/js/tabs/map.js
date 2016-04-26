@@ -50,13 +50,13 @@ define([
      * Method invoked when the tab is shown in the FENIX visualization box
      * Mandatory method
      */
-    MapTab.prototype.show = function () {
+    MapTab.prototype.show = function (opts) {
 
         var valid = this._validateInput();
 
         if (valid === true) {
 
-            this._show();
+            this._show(opts);
 
             log.info("Map tab shown successfully");
 
@@ -159,7 +159,9 @@ define([
         return errors.length > 0 ? errors : valid;
     };
 
-    MapTab.prototype._show = function () {
+    MapTab.prototype._show = function (opts) {
+
+        //opts contain visualization options
 
         if (this.initialized !== true) {
 
