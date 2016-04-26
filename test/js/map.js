@@ -92,7 +92,8 @@ define([
         var box = this.createBox({
                 el: s.CLONE,
                 //uid: "adam_country_indicators"
-                model : valid_model
+                model : valid_model,
+                tab : "chart",
             });
 
 

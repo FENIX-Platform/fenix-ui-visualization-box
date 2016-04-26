@@ -49,13 +49,11 @@ define([
         log.info("Create box");
         log.trace(obj);
 
-        var config = obj.config || {};
-
         this._registerHandlebarsHelpers();
 
         //Extend instance with obj and $el
-        $.extend(true, this, C, CD, config, {initial: obj || {}, $el: $(obj.el)});
-        
+        $.extend(true, this, C, CD, {initial: obj || {}, $el: $(obj.el)});
+
         var valid = this._validateInput();
 
         if (valid === true) {
@@ -221,8 +219,8 @@ define([
 
     Box.prototype._initObj = function () {
 
-        var size = this.initial.size || C.defaultSize || CD.defaultSize,
-            status = this.initial.status || C.defaultStatus || CD.defaultStatus;
+        var size = this.initial.size || C.size || CD.size,
+            status = this.initial.status || C.status || CD.status;
 
         this._setObjState("size", size);
         this.status = status;
@@ -269,7 +267,7 @@ define([
         this._setObjState("tabStates", this.initial.tabStates || {});
 
         //flip side
-        this._setObjState("face", this.initial.face || C.defaultFace || CD.defaultFace);
+        this._setObjState("face", this.initial.face || C.face || CD.face);
 
         //resource process steps
         this._setObjState("model", this.initial.model);
@@ -310,11 +308,14 @@ define([
                         _.bind(this._onLoadResourceSuccess, this),
                         _.bind(this._onLoadResourceError, this));
                 break;
-            case "to_filter":
+            case "missing_metadata":
                 this._loadResourceMetadata()
                     .then(
                         _.bind(this._loadResourceMetadataSuccess, this),
                         _.bind(this._loadResourceMetadataError, this));
+                break;
+            case "to_filter":
+                this._forceFilterResource();
                 break;
             default :
                 this.setStatus("error");
@@ -328,46 +329,42 @@ define([
             process = this._getObjState("process"),
             version = this._getObjState("version"),
             model = this._getObjState("model");
-        
-        
-        
 
+        if (model) {
 
-
-
-
-        if (!this.model) {
-
-            if ( && ) {
-                return 'to_load';
-            }
-
-            if (this._getObjState("uid") ) {
-                return 'to_filter';
-            }
-
-            return 'no_model';
-
-        } else {
-
-            if (typeof this.model !== 'object') {
+            if (typeof model !== 'object') {
                 return 'error';
             }
 
-            if (this.model.size === 0) {
+            if (model.size === 0) {
                 return 'empty';
             }
 
-            if (Array.isArray(this.model.data) && this.model.data.length === 0) {
+            if (!Array.isArray(model.data)) {
+                return 'to_filter';
+            }
+
+            if (Array.isArray(model.data) && model.data.length === 0) {
                 return 'empty';
             }
 
-            if (Array.isArray(this.model.data) && this.model.data.length > 0) {
+            if (Array.isArray(model.data) && model.data.length > 0) {
                 return 'ready';
             }
 
             return 'error';
         }
+
+        if (uid) {
+
+            if (process) {
+                return 'to_load';
+            }
+
+            return 'missing_metadata';
+        }
+
+        return 'error';
 
     };
 
@@ -407,10 +404,6 @@ define([
         this._setStatus("error");
     };
 
-
-
-
-
     Box.prototype._loadResourceMetadata = function () {
         log.info("Loading FENIX resource metadata");
 
@@ -418,23 +411,21 @@ define([
 
         var queryParams = C.d3pQueryParameters || CD.d3pQueryParameters;
 
-        return Bridge.getResourceMetadata({
+        return Bridge.getMetadata({
             uid: this._getObjState("uid"),
             version: this._getObjState("version"),
-            params: queryParams
+            params: $.extend(queryParams, {dsd: true, full: true})
         });
     };
 
     Box.prototype._loadResourceMetadataSuccess = function (data) {
         log.info("Load resource metadata success");
-        this.model = data || {data: []};
 
-        this._setObjState("model", this.model);
+        this._setObjState("model", {metadata: data});
+
+        this.model = this._getObjState("model");
 
         this.setStatus("ready");
-
-        //TODO uncomment during distribution
-        //this._flip("front");
 
         this._checkModelStatus();
 
@@ -444,14 +435,6 @@ define([
         log.info("Impossible to load resource");
         this._setStatus("error");
     };
-
-
-
-
-
-
-
-    this._forceFilterResource();
 
     Box.prototype._renderBox = function () {
         log.info("Render box start:");
@@ -693,7 +676,7 @@ define([
 
     Box.prototype._showDefaultTab = function () {
 
-        var tab = this.initial.tab || this.defaultTab || C.defaultTab || CD.defaultTab;
+        var tab = this.initial.tab || this.tab || C.tab || CD.tab;
 
         this._showTab(tab);
     };
@@ -949,7 +932,6 @@ define([
                 }
                 this.$processStepDetails.append($el);
             }
-
             //render tab
             var Instance = new Tab({
                 $el: $el,
@@ -961,7 +943,6 @@ define([
                 labels: step.labels,
                 template: step.params.template
             });
-
             Instance.on("ready", _.bind(onTabReady, this));
 
             this.back_tab_instances[step.subject] = Instance;
@@ -1464,16 +1445,16 @@ define([
         log.info("Listen to event: " + this._getEventTopic("filter"));
         log.trace(payload);
 
-this._forceFilterResource();
+        this._forceFilterResource();
     };
 
     Box.prototype._forceFilterResource = function () {
 
-        this._renderBoxBackFace();
-
         this._disableFlip();
 
         this._flip("back");
+
+        this._renderBoxBackFace();
 
         this._setStatus("ready");
 

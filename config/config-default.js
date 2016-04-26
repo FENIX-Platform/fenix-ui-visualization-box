@@ -5,10 +5,10 @@ define(function () {
 
     return {
 
-        defaultStatus : "loading",
-        defaultTab : "chart",
-        defaultSize : "large",
-        defaultFace : "front", // back || front
+        status : "loading",
+        tab : "chart",
+        size : "large",
+        face : "front", // back || front
         tabRegistry: {
             'blank': {
                 path: 'fx-v-b/js/tabs/blank'
