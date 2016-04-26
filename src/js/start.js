@@ -283,7 +283,6 @@ define([
     Box.prototype._setObjState = function (key, val) {
 
         Utils.assign(this.state, key, val);
-
     };
 
     Box.prototype._getObjState = function (path) {
@@ -311,6 +310,12 @@ define([
                         _.bind(this._onLoadResourceSuccess, this),
                         _.bind(this._onLoadResourceError, this));
                 break;
+            case "to_filter":
+                this._loadResourceMetadata()
+                    .then(
+                        _.bind(this._loadResourceMetadataSuccess, this),
+                        _.bind(this._loadResourceMetadataError, this));
+                break;
             default :
                 this.setStatus("error");
                 break;
@@ -319,10 +324,26 @@ define([
 
     Box.prototype._getModelStatus = function () {
 
+        var uid = this._getObjState("uid"),
+            process = this._getObjState("process"),
+            version = this._getObjState("version"),
+            model = this._getObjState("model");
+        
+        
+        
+
+
+
+
+
         if (!this.model) {
 
-            if (this._getObjState("uid")) {
+            if ( && ) {
                 return 'to_load';
+            }
+
+            if (this._getObjState("uid") ) {
+                return 'to_filter';
             }
 
             return 'no_model';
@@ -356,9 +377,9 @@ define([
         this.setStatus("loading");
 
         var queryParams = C.d3pQueryParameters || CD.d3pQueryParameters,
-            process = _.union(Array.isArray(p) ? p : [], this.process);
+            process = _.union(Array.isArray(p) ? p : [], this._getObjState("process"));
 
-        return Bridge.getProcessedResourcePromise({
+        return Bridge.getResource({
             body: process,
             uid: this._getObjState("uid"),
             version: this._getObjState("version"),
@@ -385,6 +406,52 @@ define([
         log.info("Impossible to load resource");
         this._setStatus("error");
     };
+
+
+
+
+
+    Box.prototype._loadResourceMetadata = function () {
+        log.info("Loading FENIX resource metadata");
+
+        this.setStatus("loading");
+
+        var queryParams = C.d3pQueryParameters || CD.d3pQueryParameters;
+
+        return Bridge.getResourceMetadata({
+            uid: this._getObjState("uid"),
+            version: this._getObjState("version"),
+            params: queryParams
+        });
+    };
+
+    Box.prototype._loadResourceMetadataSuccess = function (data) {
+        log.info("Load resource metadata success");
+        this.model = data || {data: []};
+
+        this._setObjState("model", this.model);
+
+        this.setStatus("ready");
+
+        //TODO uncomment during distribution
+        //this._flip("front");
+
+        this._checkModelStatus();
+
+    };
+
+    Box.prototype._loadResourceMetadataError = function () {
+        log.info("Impossible to load resource");
+        this._setStatus("error");
+    };
+
+
+
+
+
+
+
+    this._forceFilterResource();
 
     Box.prototype._renderBox = function () {
         log.info("Render box start:");
@@ -436,19 +503,9 @@ define([
 
     Box.prototype._renderBoxFaces = function () {
 
-        if (this.frontFaceIsRendered !== true) {
+        this._renderBoxFrontFace();
 
-            this._renderBoxFrontFace();
-
-            this.frontFaceIsRendered = true;
-        }
-
-        if (this.backFaceIsRendered !== true) {
-
-            this._renderBoxBackFace();
-
-            this.backFaceIsRendered = true;
-        }
+        this._renderBoxBackFace();
 
     };
 
@@ -464,8 +521,13 @@ define([
     // Front face
 
     Box.prototype._renderBoxFrontFace = function () {
-
         log.info("Start rendering box front face");
+
+        if (this.frontFaceIsRendered === true) {
+            return;
+        }
+
+        this.frontFaceIsRendered = true;
 
         this._checkSuitableTabs();
 
@@ -640,6 +702,12 @@ define([
 
     Box.prototype._renderBoxBackFace = function () {
         log.info("Start rendering box back face");
+
+        if (this.backFaceIsRendered === true) {
+            return;
+        }
+
+        this.backFaceIsRendered = true;
 
         this._createProcessSteps();
 
@@ -1396,11 +1464,19 @@ define([
         log.info("Listen to event: " + this._getEventTopic("filter"));
         log.trace(payload);
 
+this._forceFilterResource();
+    };
+
+    Box.prototype._forceFilterResource = function () {
+
+        this._renderBoxBackFace();
+
         this._disableFlip();
 
         this._flip("back");
 
         this._setStatus("ready");
+
     };
 
     Box.prototype._onDownloadMetadataEvent = function (payload) {
