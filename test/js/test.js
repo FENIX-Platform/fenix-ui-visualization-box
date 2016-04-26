@@ -95,7 +95,6 @@ define([
                 model : valid_model
             });
 
-
         log.trace("Rendering clone box: end");
 
     };
@@ -112,8 +111,8 @@ define([
 
         var box = this.createBox({
             el: s.LARGE,
-            model: valid_model,
-            //uid: "adam_country_indicators",
+            //model: valid_model,
+            uid: "adam_country_indicators",
             //version: "",
             /*            process: [
              {

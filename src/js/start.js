@@ -35,7 +35,9 @@ define([
         MODAL: "[data-role='modal']",
         MODAL_METADATA_CONTAINER: "[data-role='modal'] [data-role='metadata-container']",
         BOX_TITLE: "[data-role='box-title']",
-        QUERY_BUTTON: "[data-action='query']"
+        QUERY_BUTTON: "[data-action='query']",
+        ERROR_TEXT: "[data-role='error-text']",
+        ERROR_BUTTON: "[data-role='error-BUTTON']"
     };
 
     /* API */
@@ -223,7 +225,7 @@ define([
             status = this.initial.status || C.status || CD.status;
 
         this._setObjState("size", size);
-        this.status = status;
+        this._setObjState("status", status);
 
         //Inject box blank template
         var template = Handlebars.compile($(Template).find(s.BOX)[0].outerHTML),
@@ -268,6 +270,7 @@ define([
 
         //flip side
         this._setObjState("face", this.initial.face || C.face || CD.face);
+        this._setObjState("faces", this.initial.faces || C.faces || CD.faces);
 
         //resource process steps
         this._setObjState("model", this.initial.model);
@@ -289,6 +292,9 @@ define([
     };
 
     Box.prototype._checkModelStatus = function () {
+
+        //reset error
+        this._setObjState("error", null);
 
         switch (this._getModelStatus().toLowerCase()) {
             case 'ready' :
@@ -392,8 +398,7 @@ define([
 
         this.setStatus("ready");
 
-        //TODO uncomment during distribution
-        //this._flip("front");
+        this._flip("front");
 
         this._checkModelStatus();
 
@@ -401,6 +406,9 @@ define([
 
     Box.prototype._onLoadResourceError = function () {
         log.info("Impossible to load resource");
+
+        this._setObjState("error", {code: ERR.LOAD_RESOURCE, filter: true});
+
         this._setStatus("error");
     };
 
@@ -433,6 +441,9 @@ define([
 
     Box.prototype._loadResourceMetadataError = function () {
         log.info("Impossible to load resource");
+
+        this._setObjState("error", {code: ERR.LOAD_METADATA});
+
         this._setStatus("error");
     };
 
@@ -506,7 +517,10 @@ define([
     Box.prototype._renderBoxFrontFace = function () {
         log.info("Start rendering box front face");
 
-        if (this.frontFaceIsRendered === true) {
+        var faces = this._getObjState("faces");
+
+        if (!_.contains(faces, 'front') || this.frontFaceIsRendered === true) {
+            log.warn("Abort 'front' face rendering. face is already renderd: " + this.frontFaceIsRendered + ", confing render face: " + _.contains(faces, 'front'))
             return;
         }
 
@@ -533,6 +547,8 @@ define([
         //check if it is a valid tab
         if (!tabs[tab]) {
             log.error("Error on show tab content: " + tab);
+
+            this._setObjState("error", {code: ERR.MISSING_TAB});
 
             this._setStatus("error");
 
@@ -573,6 +589,8 @@ define([
 
         if (!tabs[tab]) {
             log.error("Error on show tab content: " + tab);
+
+            this._setObjState("error", {code: ERR.MISSING_TAB});
 
             this._setStatus("error");
 
@@ -686,7 +704,10 @@ define([
     Box.prototype._renderBoxBackFace = function () {
         log.info("Start rendering box back face");
 
-        if (this.backFaceIsRendered === true) {
+        var faces = this._getObjState("faces");
+
+        if (!_.contains(faces, 'back') || this.backFaceIsRendered === true) {
+            log.warn("Abort 'front' face rendering. face is already renderd: " + this.backFaceIsRendered + ", confing render face: " + _.contains(faces, 'front'))
             return;
         }
 
@@ -1569,9 +1590,28 @@ define([
     Box.prototype._setStatus = function (status) {
         log.info("Set '" + status + "' status for result id: " + this.id);
 
-        this.status = status;
+        this._setObjState("status", status);
 
-        this.$el.find(s.BOX).attr("data-status", this.status);
+        this.$el.find(s.BOX).attr("data-status", this._getObjState("status"));
+
+        switch (this._getObjState("status").toLowerCase()) {
+            case "error" :
+
+                var error = this._getObjState("error");
+
+                this.$el.find(s.ERROR_TEXT).html(i18nLabels[error.code] ? i18nLabels[error.code] : error.code);
+
+                //hide/show filter button
+                if (error.filter === true) {
+                    this.$el.find(s.ERROR_BUTTON).show();
+                } else {
+                    this.$el.find(s.ERROR_BUTTON).hide();
+
+                }
+
+                break;
+        }
+
     };
 
     Box.prototype._getEventTopic = function (evt, excludeId) {
@@ -1607,7 +1647,9 @@ define([
 
         }, this));
 
-        this.metadataModal.dispose();
+        if (this.metadataModal && $.isFunction(this.metadataModal.dispose)) {
+            this.metadataModal.dispose();
+        }
 
         this.frontFaceIsRendered = false;
 

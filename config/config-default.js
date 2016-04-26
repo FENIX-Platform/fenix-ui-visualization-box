@@ -9,6 +9,7 @@ define(function () {
         tab : "chart",
         size : "large",
         face : "front", // back || front
+        faces : ["front", "back"],
         tabRegistry: {
             'blank': {
                 path: 'fx-v-b/js/tabs/blank'

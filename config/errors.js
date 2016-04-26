@@ -7,7 +7,11 @@ define(function () {
 
     return {
 
-        MISSING_CONTAINER : prefix + "missing_container"
+        MISSING_CONTAINER : prefix + "missing_container",
+        LOAD_RESOURCE : prefix + "load_resource",
+        LOAD_METADATA : prefix + "load_metadata",
+        MISSING_TAB : prefix + "missing_tab",
+        
 
     };
 });
