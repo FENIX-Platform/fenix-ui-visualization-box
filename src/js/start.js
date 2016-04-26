@@ -37,7 +37,8 @@ define([
         BOX_TITLE: "[data-role='box-title']",
         QUERY_BUTTON: "[data-action='query']",
         ERROR_TEXT: "[data-role='error-text']",
-        ERROR_BUTTON: "[data-role='error-BUTTON']"
+        ERROR_BUTTON: "[data-role='error-BUTTON']",
+        BACK_FILTER_ERRORS: "[data-role='filter-error']"
     };
 
     /* API */
@@ -223,7 +224,7 @@ define([
 
         //Inject box blank template
         var template = Handlebars.compile($(Template).find(s.BOX)[0].outerHTML),
-            $html = $(template($.extend(true, {}, this.state, i18nLabels)));
+            $html = $(template($.extend(true, {}, this.getState(), i18nLabels)));
 
         this.$el.html($html);
 
@@ -261,7 +262,7 @@ define([
 
         //tabs
         this._setObjState("tabStates", this.initial.tabStates || {});
-        this._setObjState("tabOpts", this.initial.tabOpts );
+        this._setObjState("tabOpts", this.initial.tabOpts);
 
         //flip side
         this._setObjState("face", this.initial.face || C.face || CD.face);
@@ -275,7 +276,7 @@ define([
         this._setObjState("uid", this.initial.uid || Utils.getNestedProperty("metadata.uid", this._getObjState("model")));
 
         this._setObjState("size", this.initial.size || C.size || CD.size);
-        this._setObjState("status",  this.initial.status || C.status || CD.status);
+        this._setObjState("status", this.initial.status || C.status || CD.status);
 
     };
 
@@ -286,7 +287,7 @@ define([
 
     Box.prototype._getObjState = function (path) {
 
-        return Utils.getNestedProperty(path, this.state);
+        return Utils.getNestedProperty(path, this.getState());
     };
 
     Box.prototype._checkModelStatus = function () {
@@ -558,7 +559,7 @@ define([
 
         //TODO check if currentTab is undefined
 
-        if (currentTab === tab && _.isEqual(currentOpts, opts)){
+        if (currentTab === tab && _.isEqual(currentOpts, opts)) {
             log.info("Aborting show tab current tab is equal to selected one");
             return;
         }
@@ -603,7 +604,7 @@ define([
 
         this._setObjState("tabs." + tab + ".initialized", true);
 
-        this._callTabInstanceMethod({tab: tab, method: "show", opt1 : this._getObjState("tabOpts")});
+        this._callTabInstanceMethod({tab: tab, method: "show", opt1: this._getObjState("tabOpts")});
 
     };
 
@@ -712,6 +713,8 @@ define([
         }
 
         this.backFaceIsRendered = true;
+
+        this._hideFilterError();
 
         this._createProcessSteps();
 
@@ -1215,29 +1218,122 @@ define([
         log.info("Listen to event: " + this._getEventTopic("query"));
         log.trace(payload);
 
-        this._disposeFrontFace();
+        var valid = this._validateQuery();
 
-        this._enableFlip();
+        if (valid === true) {
 
-        var process = this._createQuery();
+            this._disposeFrontFace();
 
-        log.info("D3P process", process);
+            this._enableFlip();
 
-        this._loadResource(process)
-            .then(
-                _.bind(this._onLoadResourceSuccess, this),
-                _.bind(this._onLoadResourceError, this));
+            var process = this._createQuery();
+
+            log.info("D3P process", process);
+
+            this._loadResource(process)
+                .then(
+                    _.bind(this._onLoadResourceSuccess, this),
+                    _.bind(this._onLoadResourceError, this));
+
+        } else {
+            this._printFilterError(valid);
+        }
 
     };
 
-    Box.prototype._createQuery = function () {
+    Box.prototype._validateQuery = function () {
 
-        var self = this,
-            filter = [],
-            payload = {},
-            filterStep,
-            groupStep,
-            orderStep;
+        this._hideFilterError();
+
+        var values = this._getBackFilterValues() || {},
+            valid = true,
+            model = this._getObjState("model"),
+            columns = Utils.getNestedProperty("metadata.dsd.columns", model),
+            errors = [],
+            aggregations = Utils.getNestedProperty("aggregations.values.aggregations", values) || [];
+
+        //wrong aggregations
+        var sum = _.where(aggregations, {parent: 'sum'}).map(function (item) {
+                return item.value;
+            }),
+            avg = _.where(aggregations, {parent: 'avg'}).map(function (item) {
+                return item.value;
+            });
+
+        _.each(sum, function (dimension) {
+
+            var column = _.findWhere(columns, {id: dimension}) || {},
+                dataType = column.dataType;
+
+            if (dataType !== 'number') {
+                errors.push({
+                    code: ERR.NO_NUMBER_DATATYPE,
+                    value: dimension,
+                    label: _.findWhere(aggregations, {value: dimension}).label
+                });
+            }
+
+        });
+
+        _.each(avg, function (dimension) {
+
+            var column = _.findWhere(columns, {id: dimension}) || {},
+                dataType = column.dataType;
+
+            if (dataType !== 'number') {
+                errors.push({
+                    code: ERR.NO_NUMBER_DATATYPE,
+                    value: dimension,
+                    label: _.findWhere(aggregations, {value: dimension}).label
+                });
+            }
+
+        });
+
+        return errors.length > 0 ? errors : valid;
+
+    };
+
+    Box.prototype._printFilterError = function (errors) {
+
+        var err = {},
+            $message = $("<ul></ul>");
+
+        _.each(errors, function (obj) {
+
+            if (!err[obj.code]) {
+                err[obj.code] = [];
+            }
+
+            err[obj.code].push(obj.label);
+
+        });
+
+        _.each(err, function (values, e) {
+
+            var template = Handlebars.compile(i18nLabels[e]),
+                text = template($.extend(true, {dimensions: values.join()}));
+
+            $message.append($('<li>' + text + '</li>'))
+
+        });
+
+        this._showFilterError($message);
+    };
+
+    Box.prototype._showFilterError = function (err) {
+
+        this.$el.find(s.BACK_FILTER_ERRORS).html(err).show();
+    };
+
+    Box.prototype._hideFilterError = function () {
+
+        this.$el.find(s.BACK_FILTER_ERRORS).hide();
+    };
+
+    Box.prototype._getBackFilterValues = function () {
+
+        var payload = {};
 
         _.each(this.back_tab_instances, _.bind(function (Instance, key) {
 
@@ -1246,6 +1342,19 @@ define([
             }
 
         }, this));
+
+        return payload;
+
+    };
+
+    Box.prototype._createQuery = function () {
+
+        var self = this,
+            filter = [],
+            payload = this._getBackFilterValues(),
+            filterStep,
+            groupStep,
+            orderStep;
 
         this._setObjState("values", $.extend(true, {}, payload));
 

@@ -11,6 +11,9 @@ define(function () {
         LOAD_RESOURCE : prefix + "load_resource",
         LOAD_METADATA : prefix + "load_metadata",
         MISSING_TAB : prefix + "missing_tab",
+
+        //Back filter datatype
+        NO_NUMBER_DATATYPE : "no_number_datatype"
         
 
     };
