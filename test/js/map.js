@@ -92,8 +92,7 @@ define([
         var box = this.createBox({
                 el: s.CLONE,
                 //uid: "adam_country_indicators"
-                model : valid_model,
-                tab : "chart",
+                model : valid_model
             });
 
 
@@ -114,9 +113,7 @@ define([
         var box = this.createBox({
             el: s.LARGE,
             model: valid_model,
-            config: {
-                defaultTab : "map",
-            }
+            tab: 'map',
             //uid: "adam_country_indicators",
             //version: "",
             /*            process: [
@@ -125,9 +122,7 @@ define([
              "parameters": {
              "rows": {
              "year": {"time": [{"from": 2015, "to": 2015}]},
-             "indicator": {"codes": [{"uid": "FLUDE_INDICATORS", "codes": ["Forest"]}]}
-             }
-             }
+             "indicator": {"codes": [{"uid": "FLUDE_INDICATORS", "codes": ["Forest"]}]}}}
              },
              {
              "name": "group",
