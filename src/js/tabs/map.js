@@ -233,9 +233,9 @@ define([
         this.$toolbarBtn.on("click", _.bind(this._onToolbarBtnClick, this));
 
         //Toolbar events
-        this.toolbar.on('ready', _.bind(function () {
+        /*this.toolbar.on('ready', _.bind(function () {
             this.toolbar.on('change', _.bind(this._onToolbarChangeEvent, this));
-        }, this));
+        }, this));*/
     };
 
     MapTab.prototype._onToolbarEvent = function (payload) {
@@ -268,69 +268,50 @@ define([
 
     MapTab.prototype._renderMap = function () {
 
-
-        var mapCreator = new MapCreator();
-
-        var tempConf = this.toolbar.getValues();
-        //var model = this.model;
+        var self = this,
+            mapCreator = new MapCreator();
 
         mapCreator.render({
-            container: "map_" + this.id
+            container: "map_" + this.id,
+            fenix_ui_map: {
+                guiController: {
+                    container: this.$toolbar,
+                },
+                baselayers: {
+                    "cartodb": {
+                        title_en: "CartoDB light",
+                        url: 'http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png',
+                        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+                        subdomains: 'abcd',
+                        maxZoom: 19
+                    },            
+                    "esri_grayscale": {
+                        url: "http://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}",
+                        title_en: "Esri WorldGrayCanvas",
+                        attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
+                        maxZoom: 16
+                    }
+                }                
+            },
+            onReady: function() {
+                mapCreator.addLayer( self.model );
+            }
         });
 
-        // TODO: add map to existing map
-
-        // TODO: add JOIN from catalog to the map
-        amplify.subscribe('fx.component.map.ready', function () {
-
-            /*            $.get('http://fenix.fao.org/d3s/msd/resources/uid/FAOSTAT_fertilizer_test?full=true&dsd=true', function (model) {
-
-             mapCreator.addLayer(model, { colorramp: 'Greens' });
-             mapCreator.addCountryBoundaries();
-             });*/
-
-            $.get('dataset/bangkok.json', function (model) {
-
-                mapCreator.addLayer(model, {colorramp: 'Greens'});
-                mapCreator.addCountryBoundaries();
-                //mapCreator.addCountryLabels();
-            });
-
-        });
-        /*      var optGr = {
-         Aggregator: tempConf.values.aggregation[0],
-         Formater: "localstring",
-         GetValue: "Classic",
-         nbDecimal: 5,
-         AGG: [],
-         COLS: [],
-         ROWS: [],
-         HIDDEN: []
-         };
-         for (var i in tempConf.values.sort) {
-         optGr[tempConf.values.sort[i].parent].push(tempConf.values.sort[i].value)
-         //console.log("CREATE CONF",tempConf.values.sort[i].parent,tempConf.values.sort[i].value)
-         }
-
-         console.log("optGr",optGr)
-         myrenderer.rendererGridFX(this.model, "table_" + this.id, optGr);
-         //	myrenderer.rendererGridFX(this.model,"result",optGr);
-
-         //id olap "table-" + this.id*/
-
+        
     };
 
     MapTab.prototype._renderToolbar = function () {
         log.info("Table tab render toolbar");
 
-        this.toolbar = new Filter({
+        /*this.toolbar = new Filter({
             items: this._createFilterConfiguration(ToolbarModel),
             $el: this.$el.find(s.TOOLBAR)
-        });
+        });*/
 
-        this.toolbar.on("ready", _.bind(
+        /*this.toolbar.on("ready", _.bind(
             this._renderMap,
-            this))
+        this));*/
 
     };
 
@@ -396,7 +377,8 @@ define([
 
     MapTab.prototype._renderComponents = function () {
 
-        this._renderToolbar();
+        //this._renderToolbar();
+        this._renderMap();
 
         //Table will be create when filter is 'ready'
 
