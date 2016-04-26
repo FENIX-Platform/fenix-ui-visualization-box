@@ -121,7 +121,7 @@ require([
         'loglevel',
         'test/js/map',
         'domReady!'
-    ], function (log, Map) {
+    ], function (log, MapTest) {
 
         //trace, debug, info, warn, error, silent
         log.setLevel('silent');
@@ -129,7 +129,7 @@ require([
         log.warn("~~~~~ FENIX Visualization Box: test");
         log.info("===== Start testing:...");
 
-        Map.start();
+        MapTest.start();
 
         //log.info("===== End testing");
 

@@ -113,6 +113,9 @@ define([
         var box = this.createBox({
             el: s.LARGE,
             model: valid_model,
+            config: {
+                defaultTab : "map",
+            }
             //uid: "adam_country_indicators",
             //version: "",
             /*            process: [
@@ -156,11 +159,10 @@ define([
 
         var box1 = this.createBox({
                 el: s.MEDIUM_1,
-                model: empty_model
-            }),
-            box2 = this.createBox({
-                el: s.MEDIUM_2,
-                model: valid_model
+                model: empty_model,
+                config: {
+                    defaultTab : "map",
+                }
             });
 
         log.trace("Rendering medium boxes: end");
@@ -173,7 +175,10 @@ define([
 
         var box = this.createBox({
             el: s.DESTROY,
-            model: valid_model
+            model: valid_model,
+            config: {
+                defaultTab : "map",
+            }
         });
 
         $(s.DESTROY_BTN).on("click", function () {
@@ -192,7 +197,10 @@ define([
 
         var box = this.createBox({
             el: s.STATUS,
-            model: valid_model
+            model: valid_model,
+            config: {
+                defaultTab : "map",
+            }            
         });
 
         $(s.STATUS_BTNS).on("click", function () {

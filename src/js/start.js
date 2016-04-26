@@ -49,11 +49,13 @@ define([
         log.info("Create box");
         log.trace(obj);
 
+        var config = obj.config || {};
+
         this._registerHandlebarsHelpers();
 
         //Extend instance with obj and $el
-        $.extend(true, this, C, CD, {initial: obj || {}, $el: $(obj.el)});
-
+        $.extend(true, this, C, CD, config, {initial: obj || {}, $el: $(obj.el)});
+        
         var valid = this._validateInput();
 
         if (valid === true) {
