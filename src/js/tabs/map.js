@@ -271,7 +271,7 @@ define([
             mapCreator = new MapCreator();
 
         mapCreator.render({
-            container: "map_" + this.id,
+            container: "#map_" + this.id,
             fenix_ui_map: {
                 guiController: {
                     container: self.$el.find(s.TOOLBAR),
