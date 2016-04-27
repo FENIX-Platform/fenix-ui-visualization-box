@@ -230,12 +230,11 @@ define([
             });
         });
 
+
         this.$toolbarBtn.on("click", _.bind(this._onToolbarBtnClick, this));
 
-        //Toolbar events
-        /*this.toolbar.on('ready', _.bind(function () {
-            this.toolbar.on('change', _.bind(this._onToolbarChangeEvent, this));
-        }, this));*/
+        //this.toolbar.on('change', _.bind(this._onToolbarChangeEvent, this));
+
     };
 
     MapTab.prototype._onToolbarEvent = function (payload) {
@@ -275,7 +274,7 @@ define([
             container: "map_" + this.id,
             fenix_ui_map: {
                 guiController: {
-                    container: this.$toolbar,
+                    container: self.$el.find(s.TOOLBAR),
                 },
                 baselayers: {
                     "cartodb": {
@@ -371,13 +370,15 @@ define([
 
     MapTab.prototype._onToolbarChangeEvent = function () {
 
-        this._trigger("toolbar.change", this.toolbar.getValues());
+        this._trigger("filter", this.toolbar.getValues());
 
+        this._renderMap();
     };
 
     MapTab.prototype._renderComponents = function () {
 
-        //this._renderToolbar();
+        this._renderToolbar();
+
         this._renderMap();
 
         //Table will be create when filter is 'ready'
