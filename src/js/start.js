@@ -756,7 +756,7 @@ define([
             params: {
                 config: aggregationConfiguration.filter,
                 values: values.aggregations,
-                template : aggregationConfiguration.template
+                template: aggregationConfiguration.template
             },
             labels: {
                 title: "Aggregations"
@@ -1016,6 +1016,12 @@ define([
 
                 if (!_.isEqual(payload, lastValues)) {
 
+                    //validation doesn't stop the update of the columns filter
+                    var valid = self._validateQuery();
+                    if (valid !== true) {
+                        self._printFilterError(valid);
+                    }
+
                     lastValues = payload;
 
                     self._setObjState("values", {aggregations: payload});
@@ -1029,7 +1035,16 @@ define([
                 } else {
                     log.warn("Abort rebuild");
                 }
-            })
+            });
+
+            columnsInstance.on("change", function (payload) {
+
+                var valid = self._validateQuery();
+                if (valid !== true) {
+                    self._printFilterError(valid);
+                }
+
+            });
         }
     };
 
@@ -1251,21 +1266,43 @@ define([
         var values = this._getBackFilterValues() || {},
             valid = true,
             model = this._getObjState("model"),
-            columns = Utils.getNestedProperty("metadata.dsd.columns", model),
-            errors = [],
-            aggregations = Utils.getNestedProperty("aggregations.values.aggregations", values) || [];
+            resourceColumns = Utils.getNestedProperty("metadata.dsd.columns", model) || [],
+            resourceKeyColumns = Utils.cleanArray(resourceColumns.map(function (c) {
+                if (c.key === true) {
+                    return c.id;
+                }
 
-        // aggregations on dataType !== number
+            })),
+            errors = [],
+            aggregations = Utils.getNestedProperty("aggregations.values.aggregations", values) || [],
+            columns = Utils.getNestedProperty("columns.values", values) || [];
+
         var sum = _.where(aggregations, {parent: 'sum'}).map(function (item) {
                 return item.value;
             }),
             avg = _.where(aggregations, {parent: 'avg'}).map(function (item) {
                 return item.value;
-            });
+            }),
+            first = _.where(aggregations, {parent: 'first'}).map(function (item) {
+                return item.value;
+            }),
+            last = _.where(aggregations, {parent: 'last'}).map(function (item) {
+                return item.value;
+            }),
+            group = _.where(aggregations, {parent: 'group'}).map(function (item) {
+                return item.value;
+            }),
+            sumLength = parseInt(sum.length, 10),
+            avgLength = parseInt(avg.length, 10),
+            firstLength = parseInt(first.length, 10),
+            lastLength = parseInt(last.length, 10),
+            groupLength = parseInt(group.length, 10),
+            aggregationRulesLength = sumLength + avgLength + firstLength + lastLength;
 
+        // aggregations on dataType !== number
         _.each(sum, function (dimension) {
 
-            var column = _.findWhere(columns, {id: dimension}) || {},
+            var column = _.findWhere(resourceColumns, {id: dimension}) || {},
                 dataType = column.dataType;
 
             if (dataType !== 'number') {
@@ -1277,10 +1314,9 @@ define([
             }
 
         });
-
         _.each(avg, function (dimension) {
 
-            var column = _.findWhere(columns, {id: dimension}) || {},
+            var column = _.findWhere(resourceColumns, {id: dimension}) || {},
                 dataType = column.dataType;
 
             if (dataType !== 'number') {
@@ -1293,7 +1329,72 @@ define([
 
         });
 
-        //TODO add validation rules
+        //no value on group by
+        if (_.contains(group, 'value')) {
+
+            var valueInGroupBy = _.findWhere(aggregations, {value: 'value'});
+
+            errors.push({
+                code: ERR.VALUE_IN_GROUP_BY,
+                value: valueInGroupBy.value,
+                label: valueInGroupBy.label
+            });
+        }
+
+        //if aggregation rules -> group has to be populated
+        if (aggregationRulesLength > 0 && groupLength === 0) {
+            errors.push({
+                code: ERR.MISSING_GROUP_BY
+            });
+        }
+
+        //if group by is populated -> value in aggregation rules
+        if (groupLength > 0) {
+
+            var isValueInAggregationRules =
+                _.contains(sum, "value") || _.contains(avg, "value") || _.contains(first, "value") || _.contains(last, "value");
+
+            if (!isValueInAggregationRules) {
+                errors.push({
+                    code: ERR.MISSING_VALUE_IN_AGGREGATION_RULES
+                });
+            }
+        }
+
+        //in group by only key dimensions
+        /*
+         _.each(group, function (dimension) {
+
+         var column = _.findWhere(resourceColumns, {id: dimension}) || {},
+         key = column.key;
+
+         if (key !== true) {
+         errors.push({
+         code: ERR.GROUP_BY_CONTAINS_NO_KEY,
+         value: dimension,
+         label: _.findWhere(aggregations, {value: dimension}).label
+         });
+         }
+         });*/
+
+        //can not exclude value dimension and key dimensions
+        var mandatoryColumns = ['value'];
+
+        mandatoryColumns = groupLength > 0 ?
+            _.union(mandatoryColumns, group) :
+            _.union(mandatoryColumns, resourceKeyColumns);
+
+        _.each(columns, function (value, dimension) {
+
+            if (_.contains(mandatoryColumns, dimension) && value[0] === 'exclude') {
+                errors.push({
+                    code: ERR.EXCLUDE_KEY_DIMENSION,
+                    value: dimension,
+                    label: _.findWhere(aggregations, {value: dimension}).label
+                });
+            }
+
+        });
 
         return errors.length > 0 ? errors : valid;
 
@@ -1481,25 +1582,25 @@ define([
 
             });
 
-            sum = cleanArray(sum).map(function (i) {
+            sum = Utils.cleanArray(sum).map(function (i) {
                 return {"columns": [i], "rule": "SUM"};
             });
 
-            avg = cleanArray(avg).map(function (i) {
+            avg = Utils.cleanArray(avg).map(function (i) {
                 return {"columns": [i], "rule": "AVG"};
             });
 
-            first = cleanArray(first).map(function (i) {
+            first = Utils.cleanArray(first).map(function (i) {
                 return {"columns": [i], "rule": "FIRST"};
             });
 
-            last = cleanArray(last).map(function (i) {
+            last = Utils.cleanArray(last).map(function (i) {
                 return {"columns": [i], "rule": "LAST"};
             });
 
             //Add group by
             if (by.length > 0) {
-                step.parameters.by = cleanArray(by);
+                step.parameters.by = Utils.cleanArray(by);
                 hasValues = true
             }
 
@@ -1564,15 +1665,6 @@ define([
 
         }
 
-        function cleanArray(actual) {
-            var newArray = [];
-            for (var i = 0; i < actual.length; i++) {
-                if (actual[i]) {
-                    newArray.push(actual[i]);
-                }
-            }
-            return newArray;
-        }
 
     };
 
