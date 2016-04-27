@@ -1,21 +1,37 @@
 <div data-role="download">
 
     <div class="row">
-        <div class="jumbotron text-center">
+        <div class="col-xs-6">
+            <div class="jumbotron text-center">
 
-            <h1>
-                <span class="glyphicon glyphicon-cloud-download" aria-hidden="true"></span>
-            </h1>
-            <p>Select format:</p>
-            <p>
-            <div class="btn-group" role="group" aria-label="...">
-                <button data-action="download" data-format="csv" type="button" class="btn btn-default">CSV</button>
-                <button data-action="download" data-format="json" type="button" class="btn btn-default">JSON</button>
-                <button data-action="download" data-format="zip" type="button" class="btn btn-default">ZIP</button>
+                <h1>
+                    <span class="glyphicon glyphicon-cloud-download" aria-hidden="true"></span>
+                </h1>
+                <p>Data:</p>
+                <p>
+                <div class="btn-group" role="group" aria-label="...">
+                    <button data-action="download" data-format="xls" type="button" class="btn btn-default">Excel
+                    </button>
+                </div>
+                </p>
             </div>
-
-            </p>
         </div>
+        <div class="col-xs-6">
+            <div class="jumbotron text-center">
+
+                <h1>
+                    <span class="glyphicon glyphicon-cloud-download" aria-hidden="true"></span>
+                </h1>
+                <p>Metadata:</p>
+                <p>
+                <div class="btn-group" role="group" aria-label="...">
+                    <button data-action="download" data-format="pdf" type="button" class="btn btn-default">PDF</button>
+                </div>
+
+                </p>
+            </div>
+        </div>
+
     </div>
 
 </div>

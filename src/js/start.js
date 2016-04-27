@@ -210,9 +210,6 @@ define([
 
     Box.prototype._initVariables = function () {
 
-        this.model = this._getObjState("model");
-        this.process = this._getObjState("process");
-
         //resource process steps
         //this.processSteps = this._getObjState("resource.steps");
 
@@ -390,11 +387,10 @@ define([
         });
     };
 
-    Box.prototype._onLoadResourceSuccess = function (data) {
+    Box.prototype._onLoadResourceSuccess = function (resource) {
         log.info("Load resource success");
-        this.model = data || {data: []};
 
-        this._setObjState("model", this.model);
+        this._updateModel(resource);
 
         this.setStatus("ready");
 
@@ -402,6 +398,27 @@ define([
 
         this._checkModelStatus();
 
+    };
+
+    Box.prototype._updateModel = function (resource) {
+
+        var model = this._getObjState("model") || {},
+            newMetadata = Utils.getNestedProperty("metadata", resource),
+            newDsd = Utils.getNestedProperty("dsd", newMetadata),
+            newData = Utils.getNestedProperty("data", resource);
+
+        //if metadata exists updated only dsd
+        if (model.metadata) {
+            Utils.assign(model, "metadata.dsd", newDsd);
+        } else {
+            Utils.assign(model, "metadata", newMetadata);
+        }
+
+        if (Array.isArray(newData)) {
+            Utils.assign(model, "data", newData);
+        }
+
+        this._setObjState("model", model);
     };
 
     Box.prototype._onLoadResourceError = function () {
@@ -426,12 +443,10 @@ define([
         });
     };
 
-    Box.prototype._loadResourceMetadataSuccess = function (data) {
+    Box.prototype._loadResourceMetadataSuccess = function (resource) {
         log.info("Load resource metadata success");
 
-        this._setObjState("model", {metadata: data});
-
-        this.model = this._getObjState("model");
+        this._updateModel({metadata: resource});
 
         this.setStatus("ready");
 
@@ -531,7 +546,7 @@ define([
         //render metadata modal
         this.metadataModal = new MetadataViewer();
         this.metadataModal.render({
-            model: this.model.metadata,
+            model: this._getObjState('model').metadata,
             lang: this.lang.toUpperCase() || "EN",
             el: this.$el.find(s.MODAL_METADATA_CONTAINER)
         });
@@ -618,7 +633,7 @@ define([
             config = $.extend(true, {}, state, {
                 $el: this._getTabContainer(tab),
                 box: this,
-                model: $.extend(true, {}, this.model),
+                model: $.extend(true, {}, this._getObjState("model")),
                 id: tab + "_" + this.id
             }),
             instance = new Tab(config);
@@ -630,7 +645,6 @@ define([
 
         //cache the plugin instance
         this.front_tab_instances[tab] = instance;
-        //this._setObjState("tabs." + tab + ".instance", instance);
 
         return instance;
 
@@ -734,7 +748,7 @@ define([
             tab: "metadata",
             subject: "metadata",
             params: {
-                model: $.extend(true, {}, this.model)
+                model: $.extend(true, {}, this._getObjState("model"))
             }
         }));
 
@@ -742,7 +756,7 @@ define([
             tab: "filter",
             subject: "rows",
             params: {
-                model: $.extend(true, {}, this.model),
+                model: $.extend(true, {}, this._getObjState("model")),
                 values: values.rows
             },
             labels: {
@@ -802,7 +816,7 @@ define([
 
         var source = [],
             lang = this.lang || 'EN',
-            columns = Utils.getNestedProperty("metadata.dsd.columns", this.model);
+            columns = Utils.getNestedProperty("metadata.dsd.columns", this._getObjState("model"));
 
         _.each(columns, function (c) {
 
@@ -865,7 +879,7 @@ define([
                 }),
             filter = {},
             lang = this.lang || 'EN',
-            columns = Utils.getNestedProperty("metadata.dsd.columns", this.model);
+            columns = Utils.getNestedProperty("metadata.dsd.columns", this._getObjState("model"));
 
         _.each(columns, function (c) {
 
@@ -940,7 +954,7 @@ define([
         _.each(list, _.bind(function (step, index) {
 
             var template = Handlebars.compile($(Template).find("[data-role='step-" + step.tab + "']")[0].outerHTML),
-                $html = $(template($.extend(true, {}, step, i18nLabels, this.model)));
+                $html = $(template($.extend(true, {}, step, i18nLabels, this._getObjState("model"))));
 
             this._bindStepLabelEventListeners($html, step);
 
@@ -964,7 +978,7 @@ define([
             var Instance = new Tab({
                 $el: $el,
                 box: this,
-                model: $.extend(true, {}, this.model),
+                model: $.extend(true, {}, this._getObjState("model")),
                 config: step.params.config,
                 values: step.params.values || {},
                 id: "step-" + step.id,
@@ -1500,7 +1514,7 @@ define([
                 columns = [],
                 rowValues = payload.rows,
                 columnsValues = payload.columns.values,
-                columnsSet = Utils.getNestedProperty("metadata.dsd.columns", self.model)
+                columnsSet = Utils.getNestedProperty("metadata.dsd.columns", self._getObjState("model"))
                     .filter(function (c) {
                         return !c.id.endsWith("_" + self.lang.toUpperCase());
                     })

@@ -45,7 +45,6 @@ define([
 
     };
 
-
     Utils.prototype.cleanArray = function(actual) {
         var newArray = [];
         for (var i = 0; i < actual.length; i++) {

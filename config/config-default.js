@@ -6,10 +6,10 @@ define(function () {
     return {
 
         status : "loading",
-        tab : "chart",
+        tab : "download",
         size : "large",
         face : "front", // back || front
-        faces : ["front", "back"],
+        faces : ["front"],
         tabRegistry: {
             'blank': {
                 path: 'fx-v-b/js/tabs/blank'
