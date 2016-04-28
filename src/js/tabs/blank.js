@@ -8,14 +8,13 @@ define([
     "fx-v-b/config/config-default",
     "fx-v-b/config/errors",
     "fx-v-b/config/events",
-    "fx-v-b/js/utils",
     'fx-common/utils',
     "text!fx-v-b/html/tabs/blank.hbs",
     'fx-filter/start',
     "fx-v-b/config/tabs/blank-toolbar-model",
     "handlebars",
     "amplify"
-], function ($, log, _, C, CD, ERR, EVT, Utils, FilterUtils, tabTemplate, Filter, ToolbarModel, Handlebars) {
+], function ($, log, _, C, CD, ERR, EVT, Utils, tabTemplate, Filter, ToolbarModel, Handlebars) {
 
     'use strict';
 
@@ -299,7 +298,7 @@ define([
 
     BlankTab.prototype._createFilterConfiguration = function () {
 
-        var configuration = $.extend(true, {}, FilterUtils.mergeConfigurations(ToolbarModel, this.syncModel || {}));
+        var configuration = $.extend(true, {}, Utils.mergeConfigurations(ToolbarModel, this.syncModel || {}));
 
         return configuration;
 

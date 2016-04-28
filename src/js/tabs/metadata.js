@@ -8,7 +8,7 @@ define([
     "fx-v-b/config/config-default",
     "fx-v-b/config/errors",
     "fx-v-b/config/events",
-    'fx-v-b/js/utils',
+    'fx-common/utils',
     "text!fx-v-b/html/tabs/metadata.hbs",
     'fx-md-v/start',
     "handlebars",

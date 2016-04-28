@@ -9,7 +9,7 @@ define([
     "fx-v-b/config/config-default",
     "fx-v-b/config/errors",
     "fx-v-b/config/events",
-    "fx-v-b/js/utils",
+    "fx-common/utils",
     "fx-md-v/start",
     "text!fx-v-b/html/template.hbs",
     "fx-common/json-menu",

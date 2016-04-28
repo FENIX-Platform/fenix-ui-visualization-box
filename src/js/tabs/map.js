@@ -9,7 +9,6 @@ define([
     "fx-v-b/config/config-default",
     "fx-v-b/config/errors",
     "fx-v-b/config/events",
-    "fx-v-b/js/utils",
     'fx-common/utils',
     "text!fx-v-b/html/tabs/map.hbs",
     "fx-filter/start",
@@ -17,7 +16,7 @@ define([
     "fx-common/pivotator/functions",
     "fx-m-c/start",
     "amplify"
-], function ($, log, _, Handlebars, C, CD, ERR, EVT, Utils, FilterUtils,
+], function ($, log, _, Handlebars, C, CD, ERR, EVT, Utils, Utils,
              mapTemplate, Filter, ToolbarModel, myFunc, MapCreator) {
 
     var defaultOptions = {}, s = {
@@ -317,7 +316,7 @@ define([
 
     MapTab.prototype._createFilterConfiguration = function () {
 
-        var configuration = $.extend(true, {}, FilterUtils.mergeConfigurations(ToolbarModel, this.syncModel || {}));
+        var configuration = $.extend(true, {}, Utils.mergeConfigurations(ToolbarModel, this.syncModel || {}));
 
         try {
 

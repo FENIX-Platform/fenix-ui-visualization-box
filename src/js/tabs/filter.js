@@ -8,14 +8,13 @@ define([
     "fx-v-b/config/config-default",
     "fx-v-b/config/errors",
     "fx-v-b/config/events",
-    'fx-v-b/js/utils',
     'fx-common/utils',
     "text!fx-v-b/html/tabs/filter.hbs",
     'fx-filter/start',
     "i18n!fx-v-b/nls/box",
     "handlebars",
     "amplify"
-], function ($, log, _, C, CD, ERR, EVT, Utils, FilterUtils, tabTemplate, Filter, i18nLabels, Handlebars) {
+], function ($, log, _, C, CD, ERR, EVT, Utils, tabTemplate, Filter, i18nLabels, Handlebars) {
 
     'use strict';
 
@@ -329,11 +328,11 @@ define([
 
     FilterTab.prototype._createFilterConfiguration = function () {
 
-        var configuration = this.config ? $.extend(true, {}, this.config) : FilterUtils.createConfiguration({
+        var configuration = this.config ? $.extend(true, {}, this.config) : Utils.createConfiguration({
                 model: this.model
             }),
-            defaultConfiguration = $.extend(true, {}, FilterUtils.mergeConfigurations(configuration, this.syncModel || {})),
-            finalConfiguration = $.extend(true, {}, FilterUtils.mergeConfigurations(defaultConfiguration, this.values || {}));
+            defaultConfiguration = $.extend(true, {}, Utils.mergeConfigurations(configuration, this.syncModel || {})),
+            finalConfiguration = $.extend(true, {}, Utils.mergeConfigurations(defaultConfiguration, this.values || {}));
 
         return finalConfiguration;
     };

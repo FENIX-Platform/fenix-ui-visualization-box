@@ -8,7 +8,6 @@ define([
     "fx-v-b/config/config-default",
     "fx-v-b/config/errors",
     "fx-v-b/config/events",
-    'fx-v-b/js/utils',
     'fx-common/utils',
     "text!fx-v-b/html/tabs/chart.hbs",
     'fx-filter/start',
@@ -17,7 +16,7 @@ define([
     'fx-c-c/start',
     "fx-common/pivotator/functions",
     "amplify"
-], function ($, log, _, C, CD, ERR, EVT, Utils, FilterUtils, tabTemplate, Filter, ToolbarModel, Handlebars, ChartCreator, myFunc) {
+], function ($, log, _, C, CD, ERR, EVT, Utils, tabTemplate, Filter, ToolbarModel, Handlebars, ChartCreator, myFunc) {
 
     'use strict';
 
@@ -335,7 +334,7 @@ define([
 
     ChartTab.prototype._createFilterConfiguration = function () {
 
-        var configuration = $.extend(true, {}, FilterUtils.mergeConfigurations(ToolbarModel, this.syncModel || {}));
+        var configuration = $.extend(true, {}, Utils.mergeConfigurations(ToolbarModel, this.syncModel || {}));
 
         try {
 
