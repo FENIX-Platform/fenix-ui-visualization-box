@@ -9,7 +9,7 @@ define([
     "fx-v-b/config/errors",
     "fx-v-b/config/events",
     'fx-v-b/js/utils',
-    'fx-filter/js/utils',
+    'fx-common/utils',
     "text!fx-v-b/html/tabs/filter.hbs",
     'fx-filter/start',
     "i18n!fx-v-b/nls/box",

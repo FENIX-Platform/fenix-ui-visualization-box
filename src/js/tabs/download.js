@@ -10,15 +10,16 @@ define([
     "fx-v-b/config/events",
     'fx-v-b/js/utils',
     "text!fx-v-b/html/tabs/download.hbs",
+    "fx-reports/start",
     "handlebars",
     "amplify"
-], function ($, log, _, C, CD, ERR, EVT, Utils, tabTemplate, Handlebars) {
+], function ($, log, _, C, CD, ERR, EVT, Utils, tabTemplate, Report, Handlebars) {
 
     'use strict';
 
     var s = {
         CONTAINER: '[data-role="download"]',
-        DOWNLOAD_BTN :  '[data-action="download"]'
+        DOWNLOAD_BTN: '[data-action="download"]'
     };
 
     function DownloadTab(obj) {
@@ -27,6 +28,8 @@ define([
 
         this.channels = {};
         this.state = {};
+
+        this.report = new Report();
 
         return this;
     }
@@ -74,7 +77,7 @@ define([
      * Mandatory method
      */
     DownloadTab.prototype.isSuitable = function () {
-        
+
         var isSuitable = this._isSuitable();
 
         log.info("Download tab: is tab suitable? " + isSuitable);
@@ -214,9 +217,69 @@ define([
 
             var $this = $(e.target);
 
-            log.info("Download as " + $this.data('format'));
+            this._downloadData($this.data('format'))
 
         }, this));
+
+    };
+
+    DownloadTab.prototype._downloadData = function (format) {
+
+        console.log(this.model.metadata.uid)
+
+        //check if uid exist
+
+        var payload = {
+            resource: {
+                metadata: {
+                    uid: this.model.metadata.uid
+                },
+                data: []
+            },
+            input: {
+                config: {}
+            },
+            output: {
+                config: {
+                    lang: this.lang.toUpperCase()
+                }
+            }
+        };
+
+        this.report.init('tableExport');
+
+        this.report.exportData({
+            config: payload
+        });
+
+    };
+
+    DownloadTab.prototype._downloadMetadata = function (format) {
+
+        //check if uid exist
+
+        var payload = {
+            resource: {
+                metadata: {
+                    uid: this.model.metadata.uid
+                },
+                data: []
+            },
+            input: {
+                config: {}
+            },
+            output: {
+                config: {
+                    lang: this.lang.toUpperCase()
+                }
+            }
+        };
+
+        this.report.init('tableExport');
+
+        this.report.exportData({
+            config: payload
+        });
 
     };
 
@@ -238,7 +301,7 @@ define([
         //errors.push({code: ERR.MISSING_CONTAINER});
 
         return errors.length > 0 ? errors : valid;
-        
+
     };
 
     DownloadTab.prototype._dispose = function () {
@@ -259,8 +322,6 @@ define([
         Utils.assign(this.state, key, val);
 
         this._trigger("state", $.extend(true, {}, this.state));
-
-        
     };
 
     return DownloadTab;

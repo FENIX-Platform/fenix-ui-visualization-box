@@ -633,6 +633,7 @@ define([
             config = $.extend(true, {}, state, {
                 $el: this._getTabContainer(tab),
                 box: this,
+                lang : this.lang,
                 model: $.extend(true, {}, this._getObjState("model")),
                 id: tab + "_" + this.id
             }),
@@ -730,6 +731,8 @@ define([
         this.backFaceIsRendered = true;
 
         this._hideFilterError();
+        
+        //check 
 
         this._createProcessSteps();
 

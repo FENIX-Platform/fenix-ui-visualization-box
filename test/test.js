@@ -29,7 +29,7 @@ require.config({
         metadataEditorPaths : pathProjectRoot + 'submodules/fenix-ui-metadata-editor/js/paths',
         metadataViewerPaths : pathProjectRoot + 'submodules/fenix-ui-metadata-viewer/src/js/paths',
         catalogPaths : pathProjectRoot + 'submodules/fenix-ui-catalog/js/paths',
-        dataManagementPaths : pathProjectRoot + 'submodules/fenix-ui-data-management/src/js/paths',
+        dataManagementPaths : pathProjectRoot + 'submodules/fenix-ui-data-management/src/js/paths'
     }
 });
 
@@ -41,8 +41,9 @@ require([
     "olapPaths",
     "metadataViewerPaths",
     "chartPaths",
-    "mapPaths"
-], function (Compiler, Common, Box, Filter, Olap, MetadataViewer, ChartCreator, MapCreator ) {
+    "mapPaths",
+    "reportPaths"
+], function (Compiler, Common, Box, Filter, Olap, MetadataViewer, ChartCreator, MapCreator, Report ) {
 
     'use strict';
 
@@ -69,7 +70,10 @@ require([
     var mapConfig = MapCreator;
     mapConfig.baseUrl = submodules_path + 'fenix-ui-map-creator/src/js';
 
-    Compiler.resolve([commonConfig, boxConfig, filterConfig, olapConfig, metadataViewerConfig, chartConfig, mapConfig],
+    var reportConfig = Report;
+    reportConfig.baseUrl = submodules_path + 'fenix-ui-reports/src/js';
+
+    Compiler.resolve([commonConfig, boxConfig, filterConfig, olapConfig, metadataViewerConfig, chartConfig, mapConfig, reportConfig],
         {
             placeholders: {"FENIX_CDN": "http://fenixrepo.fao.org/cdn"},
 
