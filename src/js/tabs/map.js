@@ -292,7 +292,8 @@ define([
                     }
                 }                
             },
-            onReady: function() {
+            onReady: function(w) {
+                console.log('mapCreator onReady', w)
                 mapCreator.addLayer( self.model );
             }
         });
