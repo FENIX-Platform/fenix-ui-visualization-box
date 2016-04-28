@@ -42,8 +42,9 @@ require([
     "olapPaths",
     "metadataViewerPaths",
     "chartPaths",
-    "mapPaths"
-], function (Compiler, Common, Box, Filter, Olap, MetadataViewer, ChartCreator, MapCreator ) {
+    "mapPaths",
+    "reportPaths"
+], function (Compiler, Common, Box, Filter, Olap, MetadataViewer, ChartCreator, MapCreator, Report ) {
 
     'use strict';
 
@@ -70,7 +71,10 @@ require([
     var mapConfig = MapCreator;
     mapConfig.baseUrl = submodules_path + 'fenix-ui-map-creator/src/js';
 
-    Compiler.resolve([commonConfig, boxConfig, filterConfig, olapConfig, metadataViewerConfig, chartConfig, mapConfig],
+    var reportConfig = Report;
+    reportConfig.baseUrl = submodules_path + 'fenix-ui-reports/src/js';
+
+    Compiler.resolve([commonConfig, boxConfig, filterConfig, olapConfig, metadataViewerConfig, chartConfig, mapConfig, reportConfig],
         {
             placeholders: {"FENIX_CDN": "http://fenixrepo.fao.org/cdn"},
 
@@ -124,7 +128,7 @@ require([
     ], function (log, MapTest) {
 
         //trace, debug, info, warn, error, silent
-        log.setLevel('silent');
+        log.setLevel('trace');
 
         log.warn("~~~~~ FENIX Visualization Box: test");
         log.info("===== Start testing:...");

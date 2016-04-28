@@ -16,7 +16,7 @@ define([
     "fx-common/pivotator/functions",
     "fx-m-c/start",
     "amplify"
-], function ($, log, _, Handlebars, C, CD, ERR, EVT, Utils, Utils,
+], function ($, log, _, Handlebars, C, CD, ERR, EVT, Utils,
              mapTemplate, Filter, ToolbarModel, myFunc, MapCreator) {
 
     var defaultOptions = {}, s = {
