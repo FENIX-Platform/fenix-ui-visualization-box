@@ -157,7 +157,7 @@ define([
     FilterTab.prototype.getValues = function (format) {
         log.info("Get values. format:" + format);
 
-        return this.filter.getValues(format);
+        return this.filter ? this.filter.getValues(format) : {};
     };
 
     /**
@@ -241,6 +241,7 @@ define([
             this._bindEventListeners();
 
             this.initialized = true;
+
         }
 
     };

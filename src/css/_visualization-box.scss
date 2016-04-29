@@ -4,7 +4,7 @@ $backface: #d2d0d0;
 
 .fx-box {
 
-  height: 600px;
+  height: 450px;
 
   [data-content] {
     display: none;
@@ -24,6 +24,10 @@ $backface: #d2d0d0;
       }
     }
   }
+
+
+
+
 
   [data-content="ready"] {
 
@@ -45,6 +49,12 @@ $backface: #d2d0d0;
       }
     }
   }
+}
+
+
+.swiper-container, .swiper-slide {
+  width: 100%;
+  height: 350px;
 }
 
 /*Flip effect */
@@ -92,6 +102,10 @@ height: 100%;
 .back {
   transform: rotateY(180deg);
   background-color: $backface;
+}
+
+[data-role="back-content"]{
+  height:100%
 }
 
 

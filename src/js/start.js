@@ -16,9 +16,10 @@ define([
     "fx-v-b/config/right-menu-model",
     "i18n!fx-v-b/nls/box",
     "fx-common/bridge",
+    "swiper",
     "amplify",
     "bootstrap"
-], function (log, require, $, _, Handlebars, C, CD, ERR, EVT, Utils, MetadataViewer, Template, JsonMenu, RightMenuModel, i18nLabels, Bridge) {
+], function (log, require, $, _, Handlebars, C, CD, ERR, EVT, Utils, MetadataViewer, Template, JsonMenu, RightMenuModel, i18nLabels, Bridge, Swiper) {
 
     'use strict';
 
@@ -39,7 +40,9 @@ define([
         ERROR_TEXT: "[data-role='error-text']",
         ERROR_BUTTON: "[data-role='error-BUTTON']",
         BACK_FILTER_ERRORS: "[data-role='filter-error']",
-        FILTER_AGGREGATION_TEMPLATE: "[data-role='filter-aggregation-template']"
+        FILTER_AGGREGATION_TEMPLATE: "[data-role='filter-aggregation-template']",
+        FILTER_ROWS_TEMPLATE: "[data-role='filter-rows-template']",
+        ROWS_SWIPER : "[data-role='filter-rows-swiper']"
     };
 
     /* API */
@@ -745,51 +748,46 @@ define([
         var list = [],
             values = this._getObjState("values") || {},
             columnsConfiguration = this._createBackTabConfiguration("columns"),
+            rowsConfiguration = this._createBackTabConfiguration("rows"),
             aggregationConfiguration = this._createBackTabConfiguration("aggregations");
 
         list.push(this._createProcessStep({
             tab: "metadata",
             subject: "metadata",
-            params: {
-                model: $.extend(true, {}, this._getObjState("model"))
-            }
+            model: $.extend(true, {}, this._getObjState("model"))
         }));
 
         list.push(this._createProcessStep({
             tab: "filter",
             subject: "rows",
-            params: {
-                model: $.extend(true, {}, this._getObjState("model")),
-                values: values.rows
-            },
+            model: $.extend(true, {}, this._getObjState("model")),
+            values: values.rows,
+            template : rowsConfiguration.template,
+            onReady: rowsConfiguration.onReady,
             labels: {
-                title: "Rows"
+                title: "Filter"
             }
         }));
 
         list.push(this._createProcessStep({
             tab: "filter",
             subject: "aggregations",
-            params: {
-                config: aggregationConfiguration.filter,
-                values: values.aggregations,
-                template: aggregationConfiguration.template
-            },
+            config: aggregationConfiguration.filter,
+            values: values.aggregations,
+            template: aggregationConfiguration.template,
             labels: {
-                title: "Aggregations"
+                title: "Aggregation"
             }
         }));
 
         list.push(this._createProcessStep({
             tab: "filter",
             subject: "columns",
-            params: {
-                config: columnsConfiguration.filter,
-                template: columnsConfiguration.template,
-                values: values.columns
-            },
+            config: columnsConfiguration.filter,
+            template: columnsConfiguration.template,
+            values: values.columns,
             labels: {
-                title: "Columns"
+                title: "Order"
             }
         }));
 
@@ -808,11 +806,44 @@ define([
             case 'columns':
                 configuration = this._createBackColumnsTabConfiguration();
                 break;
+            case 'rows':
+                configuration = this._createBackRowsTabConfiguration();
+                break;
             default :
                 configuration = {};
         }
 
         return configuration;
+    };
+
+    Box.prototype._createBackRowsTabConfiguration = function () {
+
+        var columns = Utils.getNestedProperty("metadata.dsd.columns", this._getObjState("model"));
+
+        return {
+
+            template: Handlebars.compile($(Template).find(s.FILTER_ROWS_TEMPLATE)[0].outerHTML)({columns: columns}),
+
+            onReady : _.bind(function () {
+
+                var mySwiper = new Swiper(this.$el.find(s.ROWS_SWIPER), {
+                    // Optional parameters
+                    //direction: 'vertical',
+                    //loop: true,
+
+                    // If we need pagination
+                    pagination: this.$el.find(s.ROWS_SWIPER).find('.swiper-pagination'),
+
+                    // Navigation arrows
+                    nextButton: this.$el.find(s.ROWS_SWIPER).find('.swiper-button-next'),
+                    prevButton: this.$el.find(s.ROWS_SWIPER).find('.swiper-button-prev')
+
+                    // And if we need scrollbar
+                    //scrollbar: '.swiper-scrollbar',
+                })
+
+            }, this)
+        };
     };
 
     Box.prototype._createBackAggregationTabConfiguration = function () {
@@ -982,17 +1013,24 @@ define([
                 $el: $el,
                 box: this,
                 model: $.extend(true, {}, this._getObjState("model")),
-                config: step.params.config,
-                values: step.params.values || {},
+                config: step.config,
+                values: step.values || {},
                 id: "step-" + step.id,
                 labels: step.labels,
-                template: step.params.template
+                template: step.template
             });
-            Instance.on("ready", _.bind(onTabReady, this));
 
-            this.back_tab_instances[step.subject] = Instance;
+            //Instance.on("ready", _.bind(onTabReady, this));
 
-            Instance.show();
+            if (typeof step.onReady === 'function') {
+                Instance.on("ready", _.bind(step.onReady, this));
+            }
+
+            this.back_tab_instances[step.id] = Instance;
+
+            onTabReady.call(this);
+
+            //Instance.show();
 
         }, this));
 
@@ -1005,8 +1043,16 @@ define([
                 //Remove disable from query btn
                 this.$el.find(s.BACK_CONTENT).find(s.QUERY_BUTTON).attr("disabled", false);
                 self._bindStepEventListeners();
+                self._onBackTabsReady();
             }
         }
+    };
+
+    Box.prototype._onBackTabsReady = function () {
+
+        var first = Object.keys( this.back_tab_instances)[0];
+        this.back_tab_instances[first].show();
+
     };
 
     Box.prototype._bindStepLabelEventListeners = function ($html, step) {
@@ -1015,6 +1061,8 @@ define([
 
             this.$processStepDetails.find(">li").hide();
             this.$processStepDetails.find(">li[data-role='" + e.data.step.id + "']").show();
+
+            this.back_tab_instances[e.data.step.id].show();
 
         }, this));
 

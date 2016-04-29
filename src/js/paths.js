@@ -19,7 +19,8 @@ define(function () {
             text: '{FENIX_CDN}/js/requirejs/plugins/text/2.0.12/text',
             bootstrap : "{FENIX_CDN}/js/bootstrap/3.3.4/js/bootstrap.min",
             q: '{FENIX_CDN}/js/q/1.1.2/q',
-            loglevel: '{FENIX_CDN}/js/loglevel/1.4.0/loglevel'
+            loglevel: '{FENIX_CDN}/js/loglevel/1.4.0/loglevel',
+            swiper : '{FENIX_CDN}/js/swiper/3.3.1/dist/js/swiper.jquery.min'
         },
         shim: {
             bootstrap : {
@@ -33,6 +34,9 @@ define(function () {
             },
             handlebars: {
                 exports: 'Handlebars'
+            },
+            swiper: {
+                deps : ['jquery']
             }
         }
     };

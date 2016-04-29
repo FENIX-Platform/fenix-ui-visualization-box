@@ -354,21 +354,24 @@ define([
                         configuration.sort.selector.source.push({
                             "value": FX.columns[i].id,
                             "label": FX.columns[i].id,
-                            parent: 'HIDDEN'
+                            parent: 'HIDDEN',
+                            parentLabel : 'Hidden'
                         })
                     } else if (FX.columns[i].subject == "time" || FX.columns[i].id=="period") {
 
                         configuration.sort.selector.source.push({
                             "value": FX.columns[i].id,
                             "label": FX.columns[i].id,
-                            parent: 'COLS'
+                            parent: 'COLS',
+                            parentLabel : 'Columns'
                         })
                     }
                     else if (FX.columns[i].key && FX.columns[i].key==true) {
                         configuration.sort.selector.source.push({
                             "value": FX.columns[i].id,
                             "label": FX.columns[i].id,
-                            parent: 'ROWS'
+                            parent: 'ROWS',
+                            parentLabel : 'Rows'
                         })
                     }
 					else{  configuration.sort.selector.source.push({
