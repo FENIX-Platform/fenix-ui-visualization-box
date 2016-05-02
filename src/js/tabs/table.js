@@ -8,6 +8,7 @@ define([
     "fx-v-b/config/config-default",
     "fx-v-b/config/errors",
     "fx-v-b/config/events",
+    "fx-v-b/js/utils",
     'fx-common/utils',
     "text!fx-v-b/html/tabs/table.hbs",
     'fx-filter/start',
@@ -16,7 +17,7 @@ define([
     'fx-olap/start',
     "fx-common/pivotator/functions",
     "amplify"
-], function ($, log, _, C, CD, ERR, EVT, Utils,  tabTemplate, Filter, ToolbarModel, Handlebars, myRenderer, myFunc) {
+], function ($, log, _, C, CD, ERR, EVT, BoxUtils, Utils,  tabTemplate, Filter, ToolbarModel, Handlebars, myRenderer, myFunc) {
 
     'use strict';
 
@@ -263,10 +264,10 @@ define([
     TableTab.prototype._slideToolbar = function (direction) {
 
         if (direction !== "up") {
-            this.$toolbar.slideDown();
+            this.$toolbar.show();
             this.toolbarPosition = "down";
         } else {
-            this.$toolbar.slideUp();
+            this.$toolbar.hide();
             this.toolbarPosition = "up";
         }
 
@@ -288,9 +289,8 @@ define([
         var myrenderer = new myRenderer();
 
         var tempConf = this.toolbar.getValues();
-		console.log("tempConf",tempConf)
         var optGr = {
-            Aggregator: tempConf.values.aggregation[0],
+            Aggregator: "sum",
             Formater: "localstring",
             GetValue: "Classic",
             nbDecimal: 5,
@@ -305,7 +305,6 @@ define([
             //console.log("CREATE CONF",tempConf.values.sort[i].parent,tempConf.values.sort[i].value)
         }
 
-        console.log("optGr", optGr)
         //myrenderer.render(this.model, "table_" + this.id, optGr);
 
         myrenderer.render({
@@ -365,61 +364,9 @@ define([
 
     TableTab.prototype._createFilterConfiguration = function () {
 
-        var configuration = $.extend(true, {}, Utils.mergeConfigurations(ToolbarModel, this.syncState || {}));
+        var initialConfiguration = $.extend(true, {}, Utils.mergeConfigurations(ToolbarModel, this.syncModel || {}));
 
-        try {
-
-            var aggregatorLists = new myFunc().getListAggregator(),
-                FX = this.model.metadata.dsd;
-
-            for (var i in aggregatorLists) {
-                if (aggregatorLists.hasOwnProperty(i)) {
-                    configuration.aggregation.selector.source
-                        .push({"value": aggregatorLists[i], "label": aggregatorLists[i]})
-                }
-            }
-
-            for (i in FX.columns) {
-                if (FX.columns.hasOwnProperty(i)) {
-                    if (FX.columns[i].subject == "value") {
-                        configuration.sort.selector.source.push({
-                            "value": FX.columns[i].id,
-                            "label": FX.columns[i].id,
-                            parent: 'HIDDEN',
-                            parentLabel : 'Hidden'
-                        })
-                    } else if (FX.columns[i].subject == "time" || FX.columns[i].id=="period") {
-
-                        configuration.sort.selector.source.push({
-                            "value": FX.columns[i].id,
-                            "label": FX.columns[i].id,
-                            parent: 'COLS',
-                            parentLabel : 'Columns'
-                        })
-                    }
-                    else if (FX.columns[i].key && FX.columns[i].key==true) {
-                        configuration.sort.selector.source.push({
-                            "value": FX.columns[i].id,
-                            "label": FX.columns[i].id,
-                            parent: 'ROWS',
-                            parentLabel : 'Rows'
-                        })
-                    }
-					else{  configuration.sort.selector.source.push({
-                            "value": FX.columns[i].id,
-                            "label": FX.columns[i].id,
-                            parent: 'AGG',
-                            parentLabel : 'Aggregations'
-                        })}
-                   
-                }
-
-            }
-        } catch (e) {
-            log.error("Table tab: Error on _createFilterConfiguration() ");
-            log.error(e);
-            return configuration;
-        }
+        var configuration = BoxUtils.createToolbarConfig(initialConfiguration, this.model);
 
         return configuration;
 

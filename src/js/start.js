@@ -42,7 +42,9 @@ define([
         BACK_FILTER_ERRORS: "[data-role='filter-error']",
         FILTER_AGGREGATION_TEMPLATE: "[data-role='filter-aggregation-template']",
         FILTER_ROWS_TEMPLATE: "[data-role='filter-rows-template']",
-        ROWS_SWIPER : "[data-role='filter-rows-swiper']"
+        ROWS_SWIPER: "[data-role='filter-rows-swiper']",
+        BTN_SIDEBAR : "[data-action='show-back-sidebar']",
+        SIDEBAR : "[data-role='back-sidebar']"
     };
 
     /* API */
@@ -636,7 +638,7 @@ define([
             config = $.extend(true, {}, state, {
                 $el: this._getTabContainer(tab),
                 box: this,
-                lang : this.lang,
+                lang: this.lang,
                 model: $.extend(true, {}, this._getObjState("model")),
                 id: tab + "_" + this.id
             }),
@@ -727,20 +729,29 @@ define([
         var faces = this._getObjState("faces");
 
         if (!_.contains(faces, 'back') || this.backFaceIsRendered === true) {
-            log.warn("Abort 'front' face rendering. face is already renderd: " + this.backFaceIsRendered + ", confing render face: " + _.contains(faces, 'front'))
+            log.warn("Abort 'front' face rendering. face is already rendered: " + this.backFaceIsRendered + ", confing render face: " + _.contains(faces, 'front'))
             return;
         }
 
         this.backFaceIsRendered = true;
 
         this._hideFilterError();
-        
+
         //check 
 
         this._createProcessSteps();
 
         this._renderProcessSteps();
 
+        this._bindBackEventListeners()
+
+    };
+
+    Box.prototype._bindBackEventListeners = function() {
+
+        this.$el.find(s.BTN_SIDEBAR).on("click", _.bind(function () {
+            this.$el.find(s.SIDEBAR).toggleClass('hidden-xs hidden-sm');
+        }, this));
     };
 
     Box.prototype._createProcessSteps = function () {
@@ -762,7 +773,7 @@ define([
             subject: "rows",
             model: $.extend(true, {}, this._getObjState("model")),
             values: values.rows,
-            template : rowsConfiguration.template,
+            template: rowsConfiguration.template,
             onReady: rowsConfiguration.onReady,
             labels: {
                 title: "Filter"
@@ -818,13 +829,18 @@ define([
 
     Box.prototype._createBackRowsTabConfiguration = function () {
 
-        var columns = Utils.getNestedProperty("metadata.dsd.columns", this._getObjState("model"));
+        var forbiddenIds = ["value"];
+
+        var columns = Utils.getNestedProperty("metadata.dsd.columns", this._getObjState("model"))
+            .filter(function (col) {
+                return !_.contains(forbiddenIds, col.id);
+            });
 
         return {
 
             template: Handlebars.compile($(Template).find(s.FILTER_ROWS_TEMPLATE)[0].outerHTML)({columns: columns}),
 
-            onReady : _.bind(function () {
+            onReady: _.bind(function () {
 
                 var mySwiper = new Swiper(this.$el.find(s.ROWS_SWIPER), {
                     // Optional parameters
@@ -836,7 +852,11 @@ define([
 
                     // Navigation arrows
                     nextButton: this.$el.find(s.ROWS_SWIPER).find('.swiper-button-next'),
-                    prevButton: this.$el.find(s.ROWS_SWIPER).find('.swiper-button-prev')
+                    prevButton: this.$el.find(s.ROWS_SWIPER).find('.swiper-button-prev'),
+
+                    slidesPerView: 3.5,
+                    freeMode: true,
+                    simulateTouch: false
 
                     // And if we need scrollbar
                     //scrollbar: '.swiper-scrollbar',
@@ -998,9 +1018,9 @@ define([
                 Tab = require(registry[step.tab].path);
 
             //Add details container
-            var $el = this.$processStepDetails.find("[data-role='" + step.id + "']");
+            var $el = this.$processStepDetails.find("[data-tab='" + step.id + "']");
             if ($el.length === 0) {
-                $el = $("<li data-role='" + step.id + "'></li>");
+                $el = $("<li data-tab='" + step.id + "'></li>");
 
                 if (index !== 0) {
                     $el.hide();
@@ -1020,8 +1040,6 @@ define([
                 template: step.template
             });
 
-            //Instance.on("ready", _.bind(onTabReady, this));
-
             if (typeof step.onReady === 'function') {
                 Instance.on("ready", _.bind(step.onReady, this));
             }
@@ -1029,8 +1047,6 @@ define([
             this.back_tab_instances[step.id] = Instance;
 
             onTabReady.call(this);
-
-            //Instance.show();
 
         }, this));
 
@@ -1050,8 +1066,9 @@ define([
 
     Box.prototype._onBackTabsReady = function () {
 
-        var first = Object.keys( this.back_tab_instances)[0];
-        this.back_tab_instances[first].show();
+        var first = Object.keys(this.back_tab_instances)[0];
+
+        this._showBackTab(first);
 
     };
 
@@ -1059,12 +1076,23 @@ define([
 
         $html.on("click", {step: step}, _.bind(function (e) {
 
-            this.$processStepDetails.find(">li").hide();
-            this.$processStepDetails.find(">li[data-role='" + e.data.step.id + "']").show();
-
-            this.back_tab_instances[e.data.step.id].show();
+            this._showBackTab(e.data.step.id);
 
         }, this));
+
+    };
+
+    Box.prototype._showBackTab = function (tab) {
+
+        //show details
+        this.$processStepDetails.find(">li").hide();
+        this.$processStepDetails.find(">li[data-tab='" + tab + "']").show();
+
+        //active handler
+        this.$processSteps.find("[data-tab]").removeClass("active");
+        this.$processSteps.find("[data-tab='" + tab + "']").addClass("active");
+
+        this.back_tab_instances[tab].show();
 
     };
 

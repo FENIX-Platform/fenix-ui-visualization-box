@@ -4,11 +4,9 @@
 /* Boostrap Queries */
 @import '../../../fenix-ui-common/css/themes/fx-bootstrap-queries';
 
-
 $fx-ui-common: '../../../fenix-ui-common/';
 
 @import '../../../fenix-ui-common/css/components/fx-icons';
-
 
 @import '../../../fenix-ui-common/css/utils/fx-mixins';
 @import '../../../fenix-ui-common/css/components/fx-dropdown';
@@ -17,12 +15,4 @@ $fx-ui-common: '../../../fenix-ui-common/';
 @import '../../../fenix-ui-filter/src/css/filter';
 @import '../../../fenix-ui-olap/css/olap';
 
-
 @import '../../src/css/visualization-box';
-
-
-
-
-
-
-

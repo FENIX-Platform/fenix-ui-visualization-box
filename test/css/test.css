@@ -206,7 +206,7 @@
 
 /* Buttons */
 .btn-default {
-  color: #333333; }
+  color: #333; }
 
 /* Tree */
 .tree-holder {
@@ -220,7 +220,7 @@
   margin-bottom: 5px; }
 
 .jstree-anchor, .jstree-anchor:link, .jstree-anchor:visited, .jstree-anchor:hover, .jstree-anchor:active {
-  color: #333333; }
+  color: #333; }
 
 /* Range Slider */
 .irs-bar, .irs-bar-edge, .irs-line {
@@ -365,17 +365,41 @@
   transform: rotateY(0deg);
   background-color: white; }
 
+[data-section] {
+  position: relative; }
+
+[data-role="toolbar"] {
+  z-index: 1;
+  position: absolute;
+  background-color: white; }
+
 /* back, initially hidden pane */
 .back {
   transform: rotateY(180deg);
   background-color: #d2d0d0; }
+
+.back-row {
+  position: relative; }
+
+[data-role='back-sidebar'] {
+  background-color: white;
+  z-index: 1;
+  position: absolute; }
+  @media screen and (min-width: 768px) {
+    [data-role='back-sidebar'] {
+      position: absolute; } }
+  @media screen and (min-width: 992px) {
+    [data-role='back-sidebar'] {
+      position: relative; } }
+  @media screen and (min-width: 1200px) {
+    [data-role='back-sidebar'] {
+      position: relative; } }
 
 [data-role="back-content"] {
   height: 100%; }
 
 /*TODO temporary*/
 [data-role="toolbar"] {
-  position: relative;
   height: 615px; }
 
 [data-group] ul {
@@ -383,3 +407,8 @@
   min-height: 50px;
   min-width: 50px;
   background-color: red; }
+
+[data-tab].active {
+  background-color: red; }
+
+/*# sourceMappingURL=test.css.map */

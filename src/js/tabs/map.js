@@ -249,10 +249,10 @@ define([
     MapTab.prototype._slideToolbar = function (direction) {
 
         if (direction !== "up") {
-            this.$toolbar.slideDown();
+            this.$toolbar.show();
             this.toolbarPosition = "down";
         } else {
-            this.$toolbar.slideUp();
+            this.$toolbar.hide();
             this.toolbarPosition = "up";
         }
 

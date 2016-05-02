@@ -8,6 +8,7 @@ define([
     "fx-v-b/config/config-default",
     "fx-v-b/config/errors",
     "fx-v-b/config/events",
+    "fx-v-b/js/utils",
     'fx-common/utils',
     "text!fx-v-b/html/tabs/chart.hbs",
     'fx-filter/start',
@@ -16,7 +17,7 @@ define([
     'fx-c-c/start',
     "fx-common/pivotator/functions",
     "amplify"
-], function ($, log, _, C, CD, ERR, EVT, Utils, tabTemplate, Filter, ToolbarModel, Handlebars, ChartCreator, myFunc) {
+], function ($, log, _, C, CD, ERR, EVT, BoxUtils, Utils, tabTemplate, Filter, ToolbarModel, Handlebars, ChartCreator, myFunc) {
 
     'use strict';
 
@@ -32,7 +33,7 @@ define([
         this.channels = {};
         this.state = {};
 
-        this.chartCreator= new ChartCreator();
+        this.chartCreator = new ChartCreator();
 
         return this;
     }
@@ -266,10 +267,10 @@ define([
     ChartTab.prototype._slideToolbar = function (direction) {
 
         if (direction !== "up") {
-            this.$toolbar.slideDown();
+            this.$toolbar.show();
             this.toolbarPosition = "down";
         } else {
-            this.$toolbar.slideUp();
+            this.$toolbar.hide();
             this.toolbarPosition = "up";
         }
 
@@ -285,9 +286,13 @@ define([
 
     ChartTab.prototype._renderChart = function () {
 
-        var tempConf = this.toolbar.getValues();
+        var tempConf = this.toolbar.getValues(),
+            controllerConfig = {
+                Aggregator: "sum",
+            };
+
         var optGr = {
-            Aggregator: tempConf.values.aggregation[0],
+            Aggregator: controllerConfig.Aggregator,
             Formater: "value",
             GetValue: "ClassicToNumber",
             nbDecimal: 5,
@@ -296,23 +301,23 @@ define([
             ROWS: [],
             HIDDEN: []
         };
+
         for (var i in tempConf.values.sort) {
             optGr[tempConf.values.sort[i].parent].push(tempConf.values.sort[i].value)
             //console.log("CREATE CONF",tempConf.values.sort[i].parent,tempConf.values.sort[i].value)
         }
-
 
         this.chartCreator.render({
             //$el : "id",
             adapter: {
                 type: "line",
                 model: this.model,
-                config : optGr
+                config: optGr
             },
             template: {},
             creator: {
                 container: "#chart_" + this.id,
-                config : optGr
+                config: optGr
 
             }
 
@@ -334,60 +339,9 @@ define([
 
     ChartTab.prototype._createFilterConfiguration = function () {
 
-        var configuration = $.extend(true, {}, Utils.mergeConfigurations(ToolbarModel, this.syncModel || {}));
+        var initialConfiguration = $.extend(true, {}, Utils.mergeConfigurations(ToolbarModel, this.syncModel || {}));
 
-        try {
-
-            var aggregatorLists = new myFunc().getListAggregator(),
-                FX = this.model.metadata.dsd;
-
-            for (var i in aggregatorLists) {
-                if (aggregatorLists.hasOwnProperty(i)) {
-                    configuration.aggregation.selector.source
-                        .push({"value": aggregatorLists[i], "label": aggregatorLists[i]})
-                }
-            }
-
-   for (i in FX.columns) {
-                if (FX.columns.hasOwnProperty(i)) {
-                    if (FX.columns[i].subject == "value") {
-                        configuration.sort.selector.source.push({
-                            "value": FX.columns[i].id,
-                            "label": FX.columns[i].id,
-                            parent: 'HIDDEN',
-                            parentLabel : 'Hidden'
-                        })
-                    } else if (FX.columns[i].subject == "time" || FX.columns[i].id=="period") {
-
-                        configuration.sort.selector.source.push({
-                            "value": FX.columns[i].id,
-                            "label": FX.columns[i].id,
-                            parent: 'COLS',
-                            parentLabel : 'Columns'
-                        })
-                    }
-                    else if (FX.columns[i].key && FX.columns[i].key==true) {
-                        configuration.sort.selector.source.push({
-                            "value": FX.columns[i].id,
-                            "label": FX.columns[i].id,
-                            parent: 'ROWS',
-                            parentLabel : 'Rows'
-                        })
-                    }
-					else{  configuration.sort.selector.source.push({
-                            "value": FX.columns[i].id,
-                            "label": FX.columns[i].id,
-                            parent: 'AGG'
-                        })}
-                   
-                }
-
-            }
-        } catch (e) {
-            log.error("Table tab: Error on _createFilterConfiguration() ");
-            log.error(e);
-            return configuration;
-        }
+        var configuration = BoxUtils.createToolbarConfig(initialConfiguration, this.model);
 
         return configuration;
 
@@ -416,9 +370,7 @@ define([
         } else {
             this.toolbarPosition = 'down';
         }
-
     };
-
 
     ChartTab.prototype._unbindEventListeners = function () {
 

@@ -26,9 +26,7 @@ define(function () {
                 "hideSwitch": true,
                 "hideRemoveButton": true,
                 "title": "Sort dimension"
-            },
-
-            "className": "col-xs-6"
+            }
 
         },
 
@@ -52,9 +50,7 @@ define(function () {
                 "hideSwitch": true,
                 "hideRemoveButton": true,
                 "title": "Aggregation function"
-            },
-
-            "className": "col-xs-6"
+            }
 
         },
 
@@ -79,9 +75,7 @@ define(function () {
                 "hideSwitch": true,
                 "hideRemoveButton": true,
                 "title": "Renderer function"
-            },
-
-            "className": "col-xs-6"
+            }
 
         },
 
@@ -103,10 +97,7 @@ define(function () {
                 "hideSwitch": true,
                 "hideRemoveButton": true,
                 "title": "Decimal separator"
-            },
-
-
-            "className": "col-xs-6"
+            }
 
         },
 
@@ -127,9 +118,7 @@ define(function () {
                 "hideSwitch": true,
                 "hideRemoveButton": true,
                 "title": "Thousand"
-            },
-
-            "className": "col-xs-6"
+            }
 
         },
 
@@ -148,9 +137,7 @@ define(function () {
                 "hideSwitch": true,
                 "hideRemoveButton": true,
                 "title": "Decimal digit"
-            },
-
-            "className": "col-xs-6"
+            }
 
         }
 
