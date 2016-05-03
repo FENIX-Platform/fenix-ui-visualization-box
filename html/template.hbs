@@ -221,7 +221,8 @@
 
                 {{#each columns}}
                     <div class="swiper-slide">
-                        <div data-selector="{{this.id}}"></div>
+                        <div data-selector="filter_{{this.id}}"></div>
+                        <div data-selector="order_{{this.id}}"></div>
                     </div>
                 {{/each}}
 

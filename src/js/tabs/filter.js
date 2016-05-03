@@ -265,6 +265,7 @@ define([
         this.values = this.initial.values || {};
         this.labels = this.initial.labels || {};
         this.template = this.initial.template;
+        this.common = this.initial.common || {};
 
     };
 
@@ -323,7 +324,8 @@ define([
         this.filter = new Filter({
             items: this._createFilterConfiguration(),
             $el: this.$el.find(s.CONTAINER),
-            template: this.template
+            template: this.template,
+            common :  this.common
         });
     };
 

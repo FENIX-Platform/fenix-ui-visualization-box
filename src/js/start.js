@@ -43,8 +43,8 @@ define([
         FILTER_AGGREGATION_TEMPLATE: "[data-role='filter-aggregation-template']",
         FILTER_ROWS_TEMPLATE: "[data-role='filter-rows-template']",
         ROWS_SWIPER: "[data-role='filter-rows-swiper']",
-        BTN_SIDEBAR : "[data-action='show-back-sidebar']",
-        SIDEBAR : "[data-role='back-sidebar']"
+        BTN_SIDEBAR: "[data-action='show-back-sidebar']",
+        SIDEBAR: "[data-role='back-sidebar']"
     };
 
     /* API */
@@ -747,7 +747,7 @@ define([
 
     };
 
-    Box.prototype._bindBackEventListeners = function() {
+    Box.prototype._bindBackEventListeners = function () {
 
         this.$el.find(s.BTN_SIDEBAR).on("click", _.bind(function () {
             this.$el.find(s.SIDEBAR).toggleClass('hidden-xs hidden-sm');
@@ -771,10 +771,11 @@ define([
         list.push(this._createProcessStep({
             tab: "filter",
             subject: "rows",
-            model: $.extend(true, {}, this._getObjState("model")),
             values: values.rows,
             template: rowsConfiguration.template,
             onReady: rowsConfiguration.onReady,
+            common: rowsConfiguration.common,
+            config: rowsConfiguration.config,
             labels: {
                 title: "Filter"
             }
@@ -834,9 +835,50 @@ define([
         var columns = Utils.getNestedProperty("metadata.dsd.columns", this._getObjState("model"))
             .filter(function (col) {
                 return !_.contains(forbiddenIds, col.id);
+            }),
+            config = Utils.createConfiguration({model: this._getObjState("model")});
+
+        _.each(config, function (item, key) {
+
+            config["filter_" + key] = $.extend(true, {}, item, {
+                template: {
+                    hideSwitch: false
+                }
             });
 
+            config["order_" + key] = {
+                selector: {
+                    id: "dropdown",
+                    source: [
+                        {value: "none", label: "No ordering"},
+                        {value: "ASC", label: "Ascending"},
+                        {value: "DESC", label: "Descending"}
+                    ],
+                    default: ["none"],
+                    config: {
+                        "maxItems": 1
+                    }
+                },
+                template: {
+                    hideSwitch: true
+                },
+                dependencies: {}
+            };
+
+            var dep = {};
+
+            dep["filter_" + key] = {id: "disable", event: "disable"};
+
+            config["order_" + key].dependencies = dep;
+
+            //remove original config
+            delete config[key];
+
+        });
+
         return {
+
+            config: config,
 
             template: Handlebars.compile($(Template).find(s.FILTER_ROWS_TEMPLATE)[0].outerHTML)({columns: columns}),
 
@@ -863,6 +905,7 @@ define([
                 })
 
             }, this)
+
         };
     };
 
@@ -1034,6 +1077,7 @@ define([
                 box: this,
                 model: $.extend(true, {}, this._getObjState("model")),
                 config: step.config,
+                common: step.common,
                 values: step.values || {},
                 id: "step-" + step.id,
                 labels: step.labels,
