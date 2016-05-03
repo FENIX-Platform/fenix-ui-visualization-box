@@ -15,9 +15,8 @@ define([
     "fx-v-b/config/tabs/table-toolbar-model",
     "handlebars",
     'fx-olap/start',
-    "fx-common/pivotator/functions",
     "amplify"
-], function ($, log, _, C, CD, ERR, EVT, BoxUtils, Utils,  tabTemplate, Filter, ToolbarModel, Handlebars, myRenderer, myFunc) {
+], function ($, log, _, C, CD, ERR, EVT, BoxUtils, Utils, tabTemplate, Filter, ToolbarModel, Handlebars, Olap) {
 
     'use strict';
 
@@ -285,70 +284,14 @@ define([
 
     TableTab.prototype._renderTable = function () {
 
-        console.log("TODO render table here")
-  //      return;
+        var olap = new Olap();
 
-        var myrenderer = new myRenderer();
-
-        var tempConf = this.toolbar.getValues();
-        var optGr = {
-            Aggregator: "sum",
-            Formater: "localstring",
-            GetValue: "Classic",
-            nbDecimal: 5,
-            AGG: [],
-            COLS: [],
-            ROWS: [],
-            HIDDEN: [],
-            fulldataformat: true
-        };
-        for (var i in tempConf.values.sort) {
-            optGr[tempConf.values.sort[i].parent].push(tempConf.values.sort[i].value)
-            //console.log("CREATE CONF",tempConf.values.sort[i].parent,tempConf.values.sort[i].value)
-        }
-
-        //myrenderer.render(this.model, "table_" + this.id, optGr);
-
-        myrenderer.render({
-            model : this.model,
-            el : "#table_" + this.id,
-            //options: optGr
-        config: optGr
-        
-		});
-
-        /*
-
-         myrenderer.render({
-         model : this.model,
-         el : "#table_" + this.id,
-         options : optGr
-         });
-
-         ------
-         var $olapContainer = $("#olap");
-
-         myrenderer.render({
-         model : this.model,
-         el : $olapContainer,
-         options : optGr
-         });
-
-         ------
-         var olapContainer = document.getElementById("olap");
-
-         myrenderer.render({
-         model : this.model,
-         el : olapContainer,
-         options : optGr
-         });
-
-         * */
-
-
-        //	myrenderer.rendererGridFX(this.model,"result",optGr);
-
-        //id olap "table-" + this.id
+        var toolbarValues = this.toolbar.getValues(),
+            configuration = BoxUtils.getCreatorConfiguration(toolbarValues, this.model.metadata.dsd);
+        olap.render($.extend(true, {}, {
+            model: this.model,
+            el: "#table_" + this.id
+        }, configuration));
 
     };
 
@@ -373,7 +316,6 @@ define([
         return configuration;
 
     };
-
 
     TableTab.prototype._onToolbarChangeEvent = function () {
 

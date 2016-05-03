@@ -32,9 +32,6 @@ define([
 
         this.channels = {};
         this.state = {};
-
-        this.chartCreator = new ChartCreator();
-
         return this;
     }
 
@@ -288,41 +285,15 @@ define([
 
     ChartTab.prototype._renderChart = function () {
 
-        var tempConf = this.toolbar.getValues(),
-            controllerConfig = {
-                Aggregator: "sum"
-            };
+        var chart = new ChartCreator();
 
-        var optGr = {
-            Aggregator: controllerConfig.Aggregator,
-            Formater: "value",
-            GetValue: "ClassicToNumber",
-            nbDecimal: 5,
-            AGG: [],
-            COLS: [],
-            ROWS: [],
-            HIDDEN: []
-        };
+        var toolbarValues = this.toolbar.getValues(),
+            configuration = BoxUtils.getCreatorConfiguration(toolbarValues, this.model.metadata.dsd);
 
-        for (var i in tempConf.values.sort) {
-            optGr[tempConf.values.sort[i].parent].push(tempConf.values.sort[i].value)
-        }
-
-        this.chartCreator.render({
-            //$el : "id",
-            adapter: {
-                type: "line",
-                model: this.model,
-                config: optGr
-            },
-            template: {},
-            creator: {
-                container: "#chart_" + this.id,
-                config: optGr
-
-            }
-
-        });
+        chart.render($.extend(true, {}, {
+            model: this.model,
+            el: "#table_" + this.id
+        }, configuration));
 
     };
 

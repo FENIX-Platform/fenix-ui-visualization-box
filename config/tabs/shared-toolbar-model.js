@@ -10,11 +10,14 @@ define(function () {
 
             "selector": {
                 "id": "sortable",
-                "source": [
-                    {"value": "", "label": "", parent: 'AGG'}
-                ], // Static data
+                "source": [ ], // Static data
                 "config": { //SortableJS configuration
                     //disabled: true
+                    groups : {
+                        rows : "Rows",
+                        columns : "Columns",
+                        hidden : "Hidden"
+                    }
                 }
             },
 
