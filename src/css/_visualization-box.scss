@@ -99,10 +99,53 @@ height: 100%;
 }
 
 /* back, initially hidden pane */
+[data-section] {
+  position : relative;
+
+}
+
+[data-role="toolbar"] {
+  z-index: 1;
+  position : absolute;
+  background-color: white;
+}
+
+
+/* back, initially hidden pane */
 .back {
   transform: rotateY(180deg);
   background-color: $backface;
 }
+.back-row {
+  position : relative;
+}
+
+[data-role='back-sidebar'] {
+  background-color: white;
+  z-index: 1;
+  position : absolute;
+
+  @media screen and (max-width: $screen-xs) {
+
+  }
+
+  @media screen and (min-width: $screen-sm) {
+    position : absolute;
+  }
+
+  @media screen and (min-width: $screen-md) {
+    position : relative;
+  }
+
+  @media screen and (min-width: $screen-lg) {
+    position : relative;
+  }
+
+
+
+}
+
+
 
 [data-role="back-content"]{
   height:100%
@@ -111,6 +154,11 @@ height: 100%;
 
 /*TODO temporary*/
 [data-role="toolbar"] {
-  position: relative;
   height: 615px;
 }
+
+
+[data-tab].active {
+  background-color: red;
+}
+
