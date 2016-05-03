@@ -23,7 +23,7 @@ define([
 
     var s = {
         TOOLBAR: "[data-role='toolbar']",
-        TOOLBAR_BTN: "[data-role='toolbar'] [data-role='toolbar-btn']"
+        FILTER_BTN: "[data-role='filter-btn']"
     };
 
     function ChartTab(obj) {
@@ -221,7 +221,7 @@ define([
 
         this.$toolbar = this.$el.find(s.TOOLBAR);
 
-        this.$toolbarBtn = this.$el.find(s.TOOLBAR_BTN);
+        this.$toolbarBtn = this.$el.find(s.FILTER_BTN);
 
     };
 
@@ -247,10 +247,10 @@ define([
             });
         });
 
-        //this.$toolbarBtn.on("click", _.bind(this._onToolbarBtnClick, this));
+        this.$toolbarBtn.on("click", _.bind(this._onToolbarBtnClick, this));
 
         //Toolbar events
-        this.toolbar.on('change', _.bind(this._onToolbarChangeEvent, this));
+        //this.toolbar.on('change', _.bind(this._onToolbarChangeEvent, this));
 
     };
 
@@ -280,6 +280,8 @@ define([
 
     ChartTab.prototype._onToolbarBtnClick = function () {
 
+        this._onToolbarEvent();
+
         this._renderChart();
 
     };
@@ -288,7 +290,7 @@ define([
 
         var tempConf = this.toolbar.getValues(),
             controllerConfig = {
-                Aggregator: "sum",
+                Aggregator: "sum"
             };
 
         var optGr = {
@@ -304,7 +306,6 @@ define([
 
         for (var i in tempConf.values.sort) {
             optGr[tempConf.values.sort[i].parent].push(tempConf.values.sort[i].value)
-            //console.log("CREATE CONF",tempConf.values.sort[i].parent,tempConf.values.sort[i].value)
         }
 
         this.chartCreator.render({

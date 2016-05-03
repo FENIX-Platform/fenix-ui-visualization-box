@@ -20,7 +20,7 @@ define([
 
     var s = {
         TOOLBAR: "[data-role='toolbar']",
-        TOOLBAR_BTN: "[data-role='toolbar'] [data-role='toolbar-btn']"
+        FILTER_BTN: "[data-role='toolbar'] [data-role='filter-btn']"
     };
 
     function BlankTab(obj) {
@@ -206,7 +206,7 @@ define([
 
         this.$toolbar = this.$el.find(s.TOOLBAR);
 
-        this.$toolbarBtn = this.$el.find(s.TOOLBAR_BTN);
+        this.$toolbarBtn = this.$el.find(s.FILTER_BTN);
 
     };
 

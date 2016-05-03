@@ -1276,6 +1276,7 @@ define([
         //Exclude id for publish events
         amplify.publish(this._getEventTopic("resize", true), $.extend(true, {}, this.getState()));
 
+        this._trigger("resize");
     };
 
     Box.prototype._onCloneEvent = function (payload) {
