@@ -758,26 +758,29 @@ define([
 
         var list = [],
             values = this._getObjState("values") || {},
-            columnsConfiguration = this._createBackTabConfiguration("columns"),
-            rowsConfiguration = this._createBackTabConfiguration("rows"),
+            //columnsConfiguration = this._createBackTabConfiguration("columns"),
+            filterConfiguration = this._createBackTabConfiguration("filter"),
             aggregationConfiguration = this._createBackTabConfiguration("aggregations");
 
         list.push(this._createProcessStep({
             tab: "metadata",
             subject: "metadata",
-            model: $.extend(true, {}, this._getObjState("model"))
+            model: $.extend(true, {}, this._getObjState("model")),
+            labels : {
+                title: i18nLabels["step_metadata"]
+            }
         }));
 
         list.push(this._createProcessStep({
             tab: "filter",
             subject: "rows",
             values: values.rows,
-            template: rowsConfiguration.template,
-            onReady: rowsConfiguration.onReady,
-            common: rowsConfiguration.common,
-            config: rowsConfiguration.config,
+            template: filterConfiguration.template,
+            onReady: filterConfiguration.onReady,
+            common: filterConfiguration.common,
+            config: filterConfiguration.config,
             labels: {
-                title: "Filter"
+                title: i18nLabels["step_filter"]
             }
         }));
 
@@ -788,20 +791,20 @@ define([
             values: values.aggregations,
             template: aggregationConfiguration.template,
             labels: {
-                title: "Aggregation"
+                title: i18nLabels["step_aggregations"]
             }
         }));
 
-        list.push(this._createProcessStep({
+/*        list.push(this._createProcessStep({
             tab: "filter",
             subject: "columns",
             config: columnsConfiguration.filter,
             template: columnsConfiguration.template,
             values: values.columns,
             labels: {
-                title: "Order"
+                title: i18nLabels["step_order]
             }
-        }));
+        }));*/
 
         this.processSteps = list;
 
@@ -818,8 +821,8 @@ define([
             case 'columns':
                 configuration = this._createBackColumnsTabConfiguration();
                 break;
-            case 'rows':
-                configuration = this._createBackRowsTabConfiguration();
+            case 'filter':
+                configuration = this._createBackFilterTabConfiguration();
                 break;
             default :
                 configuration = {};
@@ -828,7 +831,7 @@ define([
         return configuration;
     };
 
-    Box.prototype._createBackRowsTabConfiguration = function () {
+    Box.prototype._createBackFilterTabConfiguration = function () {
 
         var forbiddenIds = ["value"];
 
@@ -1123,7 +1126,6 @@ define([
             this._showBackTab(e.data.step.id);
 
         }, this));
-
     };
 
     Box.prototype._showBackTab = function (tab) {

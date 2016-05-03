@@ -24,7 +24,13 @@ define(function () {
         aggregations_sum : "Sum",
         aggregations_avg : "Average",
         aggregations_first : "First",
-        aggregations_last : "Last"
+        aggregations_last : "Last",
+
+        //back steps
+        step_metadata : "Metadata",
+        step_filter: "Filter",
+        step_aggregations : "Aggregations"
+
 
     }
 });
