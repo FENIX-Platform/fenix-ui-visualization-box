@@ -42,6 +42,7 @@ define([
         BACK_FILTER_ERRORS: "[data-role='filter-error']",
         FILTER_AGGREGATION_TEMPLATE: "[data-role='filter-aggregation-template']",
         FILTER_ROWS_TEMPLATE: "[data-role='filter-rows-template']",
+        FILTER_MAP_TEMPLATE: "[data-role='filter-map-template']",
         ROWS_SWIPER: "[data-role='filter-rows-swiper']",
         BTN_SIDEBAR: "[data-action='show-back-sidebar']",
         SIDEBAR: "[data-role='back-sidebar']"
@@ -760,7 +761,8 @@ define([
             values = this._getObjState("values") || {},
             //columnsConfiguration = this._createBackTabConfiguration("columns"),
             filterConfiguration = this._createBackTabConfiguration("filter"),
-            aggregationConfiguration = this._createBackTabConfiguration("aggregations");
+            aggregationConfiguration = this._createBackTabConfiguration("aggregations"),
+            mapConfiguration = this._createBackTabConfiguration("map");
 
         list.push(this._createProcessStep({
             tab: "metadata",
@@ -795,16 +797,16 @@ define([
             }
         }));
 
-/*        list.push(this._createProcessStep({
-            tab: "filter",
+        list.push(this._createProcessStep({
+            tab: "map",
             subject: "columns",
-            config: columnsConfiguration.filter,
-            template: columnsConfiguration.template,
+            config: mapConfiguration.filter,
+            template: mapConfiguration.template,
             values: values.columns,
             labels: {
-                title: i18nLabels["step_order]
+                title: i18nLabels["step_map"]
             }
-        }));*/
+        }));
 
         this.processSteps = list;
 
@@ -824,6 +826,9 @@ define([
             case 'filter':
                 configuration = this._createBackFilterTabConfiguration();
                 break;
+            case 'map':
+                configuration = this._createBackMapTabConfiguration();
+                break;                
             default :
                 configuration = {};
         }
@@ -906,6 +911,68 @@ define([
                     // And if we need scrollbar
                     //scrollbar: '.swiper-scrollbar',
                 })
+
+            }, this)
+
+        };
+    };
+
+    Box.prototype._createBackMapTabConfiguration = function () {
+
+        var forbiddenIds = ["value"];
+
+        var columns = Utils.getNestedProperty("metadata.dsd.columns", this._getObjState("model"))
+            .filter(function (col) {
+                return !_.contains(forbiddenIds, col.id);
+            }),
+            config = Utils.createConfiguration({model: this._getObjState("model")});
+
+/*        _.each(config, function (item, key) {
+
+            config["filter_" + key] = $.extend(true, {}, item, {
+                template: {
+                    hideSwitch: false
+                }
+            });
+
+            config["order_" + key] = {
+                selector: {
+                    id: "dropdown",
+                    source: [
+                        {value: "none", label: "No ordering"},
+                        {value: "ASC", label: "Ascending"},
+                        {value: "DESC", label: "Descending"}
+                    ],
+                    default: ["none"],
+                    config: {
+                        "maxItems": 1
+                    }
+                },
+                template: {
+                    hideSwitch: true
+                },
+                dependencies: {}
+            };
+
+            var dep = {};
+
+            dep["filter_" + key] = {id: "disable", event: "disable"};
+
+            config["order_" + key].dependencies = dep;
+
+            //remove original config
+            delete config[key];
+        });*/
+
+        return {
+
+            config: config,
+
+            template: Handlebars.compile($(Template).find(s.FILTER_MAP_TEMPLATE)[0].outerHTML)({layers: []}),
+
+            onReady: _.bind(function () {
+
+                console.log('onReady _createBackMapTabConfiguration')
 
             }, this)
 
