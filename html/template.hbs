@@ -13,17 +13,15 @@
 
                         {{#unless hideToolbar}}
 
-                            <div data-role="front-toolbar" class="front-toolbar">
+                            <div data-role="front-toolbar" class="vb-toolbar front-toolbar clearfix">
 
                                 {{#unless hideMenu}}
 
                                     <div class="pull-left">
                                         <div data-role="right-menu" class="dropdown">
-                                            <a href="" class="btn dropdown-toggle" data-toggle="dropdown">
-                                                <span class="glyphicon glyphicon-menu-hamburger"
-                                                      aria-hidden="true">
-                                                </span>
-                                            </a>
+                                            <button class="btn btn-default" type="button" data-toggle="dropdown">
+                                                <span class="icojam_preview_list"></span>
+                                            </button>
                                         </div>
                                     </div>
 
@@ -31,39 +29,45 @@
 
                                 <div class="pull-left">
                                     {{#unless hideMetadataButton}}
-                                        <button data-action="metadata" class="btn btn-default" type="button">metadata
+                                        <button data-action="metadata" class="btn btn-default meta-btn" type="button">META
                                         </button>
                                     {{/unless}}
-                                    <span data-role="box-title" data-grid="fx-grid-item-handle"></span>
+                                    <span data-role="box-title" class="box-title text-uppercase" data-grid="fx-grid-item-handle"></span>
                                 </div>
 
                                 <div class="btn-group pull-right">
-                                    {{#unless hideRemoveButton}}
-                                        <button data-action="remove" class="btn btn-default" type="button">remove
+                                    {{#unless hideFlipButton}}
+                                        <button data-action="flip" class="btn btn-default" type="button">
+                                            <span class="icojam_options_1"></span>
                                         </button>
                                     {{/unless}}
                                     {{#unless hideResizeButton}}
                                         <button data-action="resize" data-size="2" class="btn btn-default"
                                                 type="button">
-                                            resize
+                                            <span class="icojam_swap_horizontal_1"></span>
                                         </button>
                                     {{/unless}}
                                     {{#unless hideCloneButton}}
-                                        <button data-action="clone" class="btn btn-default" type="button">clone</button>
-                                    {{/unless}}
-                                    {{#unless hideMinimizeButton}}
-                                        <button data-action="minimize" class="btn btn-default" type="button">minimize
+                                        <button data-action="clone" class="btn btn-default" type="button">
+                                            <span class="icojam_wedding_jewel"></span>
                                         </button>
                                     {{/unless}}
-                                    {{#unless hideFlipButton}}
-                                        <button data-action="flip" class="btn btn-default" type="button">flip</button>
+                                    {{#unless hideMinimizeButton}}
+                                        <button data-action="minimize" class="btn btn-default" type="button">
+                                            <span class="icojam_view_roll-up_1"></span>
+                                        </button>
                                     {{/unless}}
+                                    {{#unless hideRemoveButton}}
+                                        <button data-action="remove" class="btn btn-default" type="button">
+                                            <span class="icojam_button_delete_1"></span>
+                                        </button>
+                                    {{/unless}}
+
                                 </div>
                             </div>
 
                         {{/unless}}
-                        <br>
-                        <br>
+
 
                         <div data-role="front-content" class="front-content">
 
@@ -82,15 +86,68 @@
                     <!-- back -->
                     <div class="back">
 
+
                         {{#unless hideToolbar}}
-                            <!-- back content -->
-                            <div data-role="back-toolbar">
-                                <button data-action="flip" class="btn btn-default pull-right" type="button">flip
-                                </button>
+
+                            <div data-role="back-toolbar" class="vb-toolbar back-toolbar clearfix">
+
+                                {{#unless hideMenu}}
+
+                                    <div class="toolbar-cmd-left">
+                                        <div data-role="right-menu" class="dropdown pull-left">
+
+                                            <button class="btn btn-default" type="button" data-toggle="dropdown">
+                                                <span class="icojam_preview_list"></span>
+                                            </button>
+                                        </div>
+                                        {{#unless hideMetadataButton}}
+                                            <button data-action="metadata" class="btn btn-default meta-btn pull-left" type="button">META
+                                            </button>
+                                        {{/unless}}
+                                    </div>
+
+                                {{/unless}}
+
+
+
+                                    <h6 data-role="box-title" class="box-title text-uppercase truncate" data-grid="fx-grid-item-handle">ADAM Recipient/Donor Country Indicators data</h6>
+
+
+                                <div class="btn-group toolbar-cmd-right">
+                                    {{#unless hideFlipButton}}
+                                        <button data-action="flip" class="btn btn-default" type="button">
+                                            <span class="icojam_options_1"></span>
+                                        </button>
+                                    {{/unless}}
+                                    {{#unless hideResizeButton}}
+                                        <button data-action="resize" data-size="2" class="btn btn-default"
+                                                type="button">
+                                            <span class="icojam_swap_horizontal_1"></span>
+                                        </button>
+                                    {{/unless}}
+                                    {{#unless hideCloneButton}}
+                                        <button data-action="clone" class="btn btn-default" type="button">
+                                            <span class="icojam_wedding_jewel"></span>
+                                        </button>
+                                    {{/unless}}
+                                    {{#unless hideMinimizeButton}}
+                                        <button data-action="minimize" class="btn btn-default" type="button">
+                                            <span class="icojam_view_roll-up_1"></span>
+                                        </button>
+                                    {{/unless}}
+                                    {{#unless hideRemoveButton}}
+                                        <button data-action="remove" class="btn btn-default" type="button">
+                                            <span class="icojam_button_delete_1"></span>
+                                        </button>
+                                    {{/unless}}
+
+                                </div>
                             </div>
+
                         {{/unless}}
 
-                        <div data-role="back-content" class="container-fluid">
+
+                        <div data-role="back-content" class="container-fluid back-content">
                             <div class="alert alert-danger" role="alert" data-role="filter-error">...</div>
                             <div class="row back-row">
                                 <div data-role='back-sidebar' class="col-xs-12 col-sm-8 col-md-3 hidden-xs hidden-sm">
@@ -98,20 +155,28 @@
                                     <ul data-role='process-steps' class="list-unstyled list-group well"></ul>
 
                                 </div>
-                                <button data-action="show-back-sidebar" class="btn btn-default visible-sm visible-xs" type="button">
+                                <button data-action="show-back-sidebar" class="btn btn-default visible-sm visible-xs show-back-sidebar" type="button">
                                   SIDEBAR
                                 </button>
 
-                                <div class="col-md-9 col-xs-12">
-                                    <ul data-role="process-details" class="list-unstyled list-group">
-                                    </ul>
+                                <div class="col-md-9 col-xs-12 back-right-content">
+
+                                    <ul data-role="process-details" class="list-unstyled list-group process-details"></ul>
+
+                                    <div class="row">
+                                        <div class="col-xs-12">
+                                            <div class="btn-group pull-right back-btns">
+
+                                                <button type="button" data-action="flip" class="btn btn-default"
+                                                        disabled>Cancel</button>
+                                                <button type="button" data-action="query" class="btn btn-primary"
+                                                        disabled>{{submit_button}}</button>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-xs-12">
-                                    <button type="button" data-action="query" class="btn btn-default pull-right"
-                                            disabled>{{submit_button}}</button>
-                                </div>
+
                             </div>
                         </div>
 
@@ -165,10 +230,8 @@
     </div>
 
     <li data-role="step-metadata" data-tab="{{ id }}">
-        <h3>{{ labels.title }}</h3>
-        {{ i18n metadata.title}} <br>
-        {{ metadata.uid }} <br>
-        {{ metadata.version }}
+        <h3>{{ i18n metadata.title}}</h3>
+
     </li>
 
     <li data-role="step-filter" data-tab="{{ id }}">
