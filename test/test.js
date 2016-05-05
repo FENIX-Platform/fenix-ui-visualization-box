@@ -59,7 +59,7 @@ require([
     filterConfig.baseUrl = submodules_path + 'fenix-ui-filter/src/js';
 
     var olapConfig = Olap;
-    olapConfig.baseUrl = submodules_path + 'fenix-ui-olap/js';
+    olapConfig.baseUrl = submodules_path + 'fenix-ui-olap/src/js';
 	
     var metadataViewerConfig = MetadataViewer;
     metadataViewerConfig.baseUrl = submodules_path + 'fenix-ui-metadata-viewer/src/js';
