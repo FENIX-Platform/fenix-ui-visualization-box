@@ -110,7 +110,7 @@
 
 
 
-                                    <h6 data-role="box-title" class="box-title text-uppercase truncate" data-grid="fx-grid-item-handle">ADAM Recipient/Donor Country Indicators data</h6>
+                                    <h6 data-role="box-title" class="box-title truncate" data-grid="fx-grid-item-handle">ADAM Recipient/Donor Country Indicators data</h6>
 
 
                                 <div class="btn-group toolbar-cmd-right">
@@ -120,8 +120,7 @@
                                         </button>
                                     {{/unless}}
                                     {{#unless hideResizeButton}}
-                                        <button data-action="resize" data-size="2" class="btn btn-default"
-                                                type="button">
+                                        <button data-action="resize" data-size="2" class="btn btn-default" type="button">
                                             <span class="icojam_swap_horizontal_1"></span>
                                         </button>
                                     {{/unless}}
@@ -151,9 +150,10 @@
                             <div class="alert alert-danger" role="alert" data-role="filter-error">...</div>
                             <div class="row back-row">
                                 <div data-role='back-sidebar' class="col-xs-12 col-sm-8 col-md-3 hidden-xs hidden-sm">
-                                    <h4>{{ back_current_resource }}</h4>
-                                    <ul data-role='process-steps' class="list-unstyled list-group well"></ul>
-
+                                    <div class="sidebar-content">
+                                        <h6 class="sidebar-title">{{ back_current_resource }}</h6>
+                                        <ul data-role='process-steps' class="list-unstyled list-group"></ul>
+                                    </div>
                                 </div>
                                 <button data-action="show-back-sidebar" class="btn btn-default visible-sm visible-xs show-back-sidebar" type="button">
                                   SIDEBAR
@@ -230,16 +230,16 @@
     </div>
 
     <li data-role="step-metadata" data-tab="{{ id }}">
-        <h3>{{ i18n metadata.title}}</h3>
+        <h6 class="truncate step-container">{{ i18n metadata.title}}</h6>
 
     </li>
 
     <li data-role="step-filter" data-tab="{{ id }}">
-        <h3>{{ labels.title }}</h3>
+        <h6 class="truncate step-container">{{ labels.title }}</h6>
     </li>
 
     <li data-role="step-map" data-tab="{{ id }}">
-        <h3>map</h3>
+        <h6 class="truncate step-container">map</h6>
     </li>    
 
     <div data-role="filter-aggregation-template">

@@ -11,7 +11,7 @@ define(function () {
         add_button : "Add",
         remove_button : "Remove",
 
-        back_current_resource : "Current resource",
+        back_current_resource : "Resources",
         no_number_datatype : "Impossible to aggregate for [{{ dimensions }}] because the data type is not number",
         value_in_group_by : "'Value' dimension can not be in group by",
         missing_group_by : "Specify at least one 'group by'",
