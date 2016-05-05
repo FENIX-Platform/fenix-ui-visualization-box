@@ -14,7 +14,7 @@ define([
     'fx-filter/start',
     "fx-v-b/config/tabs/chart-toolbar-model",
     "handlebars",
-    'fx-c-c/start',
+    'fx-chart/start',
     "fx-common/pivotator/functions",
     "amplify"
 ], function ($, log, _, C, CD, ERR, EVT, BoxUtils, Utils, tabTemplate, Filter, ToolbarModel, Handlebars, ChartCreator, myFunc) {
