@@ -5584,11 +5584,18 @@ input[type="radio"]:disabled + label {
 
 .fx-selector-title {
   display: inline-block;
-  max-width: 40%; }
+  max-width: 45%; }
 
-.fx-enabled-switch {
-  position: relative;
-  top: 2px; }
+.filter-enabled-label {
+  width: 10px;
+  font-size: 0;
+  /* Small devices (tablets, 768px and up) */
+  /* Medium devices (desktops, 992px and up) */
+  /* Large devices (large desktops, 1200px and up) */ }
+  @media (min-width: 992px) {
+    .filter-enabled-label {
+      width: auto;
+      font-size: inherit; } }
 
 .selector-footer [data-role="summary"] {
   margin: 0; }
@@ -5617,6 +5624,10 @@ input[type="radio"]:disabled + label {
 /* Buttons */
 .btn-default {
   color: #333333; }
+
+[data-role="remove"].btn-round {
+  position: relative;
+  top: -2px; }
 
 /* Tree */
 .tree-holder {
