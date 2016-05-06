@@ -47,14 +47,14 @@ $cmd-right-width: 192px;
       .toolbar-cmd-left, .toolbar-cmd-right{
         opacity:0;
         pointer-events: none;
-        @include animate(0.3s, 0.3s);
+        @include animate(0.3s, 0.2s);
       }
 
 
       .box-title {
         margin-left: 15px;
         margin-right: 15px;
-        @include animate(0.3s, 0.3s);
+        @include animate(0.3s, 0.2s);
       }
 
 
