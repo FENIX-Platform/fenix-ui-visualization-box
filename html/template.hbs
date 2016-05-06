@@ -1,5 +1,5 @@
 <div>
-    <div data-role="box" class="fx-box" data-status="{{ status }}" data-size="{{ size }}">
+        <div data-role="box" class="fx-box" data-status="{{ status }}" data-size="{{ size }}" >
 
         <div data-content="ready" data-tab="{{ default_tab }}">
 
@@ -17,25 +17,26 @@
 
                                 {{#unless hideMenu}}
 
-                                    <div class="pull-left">
-                                        <div data-role="right-menu" class="dropdown">
+                                    <div class="toolbar-cmd-left">
+                                        <div data-role="right-menu" class="dropdown pull-left">
+
                                             <button class="btn btn-default" type="button" data-toggle="dropdown">
                                                 <span class="icojam_preview_list"></span>
                                             </button>
                                         </div>
+                                        {{#unless hideMetadataButton}}
+                                            <button data-action="metadata" class="btn btn-default meta-btn pull-left"
+                                                    type="button">META
+                                            </button>
+                                        {{/unless}}
                                     </div>
 
                                 {{/unless}}
 
-                                <div class="pull-left">
-                                    {{#unless hideMetadataButton}}
-                                        <button data-action="metadata" class="btn btn-default meta-btn" type="button">META
-                                        </button>
-                                    {{/unless}}
-                                    <span data-role="box-title" class="box-title text-uppercase" data-grid="fx-grid-item-handle"></span>
-                                </div>
+                                <h6 data-role="box-title" class="box-title truncate"
+                                    data-grid="fx-grid-item-handle"></h6>
 
-                                <div class="btn-group pull-right">
+                                <div class="btn-group toolbar-cmd-right">
                                     {{#unless hideFlipButton}}
                                         <button data-action="flip" class="btn btn-default" type="button">
                                             <span class="icojam_options_1"></span>
@@ -67,7 +68,6 @@
                             </div>
 
                         {{/unless}}
-
 
                         <div data-role="front-content" class="front-content">
 
@@ -101,17 +101,15 @@
                                             </button>
                                         </div>
                                         {{#unless hideMetadataButton}}
-                                            <button data-action="metadata" class="btn btn-default meta-btn pull-left" type="button">META
+                                            <button data-action="metadata" class="btn btn-default meta-btn pull-left"
+                                                    type="button">META
                                             </button>
                                         {{/unless}}
                                     </div>
 
                                 {{/unless}}
 
-
-
-                                    <h6 data-role="box-title" class="box-title truncate" data-grid="fx-grid-item-handle">ADAM Recipient/Donor Country Indicators data</h6>
-
+                                <h6 data-role="box-title" class="box-title truncate"></h6>
 
                                 <div class="btn-group toolbar-cmd-right">
                                     {{#unless hideFlipButton}}
@@ -120,7 +118,8 @@
                                         </button>
                                     {{/unless}}
                                     {{#unless hideResizeButton}}
-                                        <button data-action="resize" data-size="2" class="btn btn-default" type="button">
+                                        <button data-action="resize" data-size="2" class="btn btn-default"
+                                                type="button">
                                             <span class="icojam_swap_horizontal_1"></span>
                                         </button>
                                     {{/unless}}
@@ -155,20 +154,23 @@
                                         <ul data-role='process-steps' class="list-unstyled list-group"></ul>
                                     </div>
                                 </div>
-                                <button data-action="show-back-sidebar" class="btn btn-default visible-sm visible-xs show-back-sidebar" type="button">
-                                  SIDEBAR
+                                <button data-action="show-back-sidebar"
+                                        class="btn btn-default visible-sm visible-xs show-back-sidebar" type="button">
+                                    SIDEBAR
                                 </button>
 
                                 <div class="col-md-9 col-xs-12 back-right-content">
 
-                                    <ul data-role="process-details" class="list-unstyled list-group process-details"></ul>
+                                    <ul data-role="process-details"
+                                        class="list-unstyled list-group process-details"></ul>
 
                                     <div class="row">
                                         <div class="col-xs-12">
                                             <div class="btn-group pull-right back-btns">
 
                                                 <button type="button" data-action="flip" class="btn btn-default"
-                                                        disabled>Cancel</button>
+                                                        disabled>Cancel
+                                                </button>
                                                 <button type="button" data-action="query" class="btn btn-primary"
                                                         disabled>{{submit_button}}</button>
                                             </div>
@@ -229,7 +231,7 @@
 
     </div>
 
-    <li data-role="step-metadata" data-tab="{{ id }}">
+    <li data-role="step-metadata" data-tab="{{ id }}" data-resourceRepresentationType="{{ metadata.meContent.resourceRepresentationType}}">
         <h6 class="truncate step-container">{{ i18n metadata.title}}</h6>
 
     </li>
@@ -240,7 +242,7 @@
 
     <li data-role="step-map" data-tab="{{ id }}">
         <h6 class="truncate step-container">map</h6>
-    </li>    
+    </li>
 
     <div data-role="filter-aggregation-template">
 
@@ -309,5 +311,5 @@
 
         <h1>[[selections of map layers]]</h1>
 
-    </div>    
+    </div>
 </div>

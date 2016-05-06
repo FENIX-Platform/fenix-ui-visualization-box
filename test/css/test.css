@@ -1,3 +1,4 @@
+@charset "UTF-8";
 /* Fenix Common CSS */
 /*#0076ff*/
 /* Boostrap Queries */
@@ -140,6 +141,12 @@
 @keyframes loading {
   100% {
     transform: rotate(360deg); } }
+/* Fenix Typography */
+.truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; }
+
 /* Fenix Fonts Import */
 /* Eldorado */
 /* ELDORADO FONT STANDARD CONFIGURATION*/
@@ -5172,7 +5179,7 @@ button_new_2:before {
 
 .fa-border {
   padding: .2em .25em .15em;
-  border: solid 0.08em #eeeeee;
+  border: solid 0.08em #eee;
   border-radius: .1em; }
 
 .pull-right {
@@ -5194,7 +5201,6 @@ button_new_2:before {
   0% {
     -webkit-transform: rotate(0deg);
     transform: rotate(0deg); }
-
   100% {
     -webkit-transform: rotate(359deg);
     transform: rotate(359deg); } }
@@ -5202,7 +5208,6 @@ button_new_2:before {
   0% {
     -webkit-transform: rotate(0deg);
     transform: rotate(0deg); }
-
   100% {
     -webkit-transform: rotate(359deg);
     transform: rotate(359deg); } }
@@ -5264,84 +5269,84 @@ button_new_2:before {
   font-size: 2em; }
 
 .fa-inverse {
-  color: white; }
+  color: #fff; }
 
 /* Font Awesome uses the Unicode Private Use Area (PUA) to ensure screen
    readers do not read off random characters that represent icons */
 .fa-search:before {
-  content: "\f002"; }
+  content: ""; }
 
 .fa-th:before {
-  content: "\f00a"; }
+  content: ""; }
 
 .fa-th-list:before {
-  content: "\f00b"; }
+  content: ""; }
 
 .fa-home:before {
-  content: "\f015"; }
+  content: ""; }
 
 .fa-clock-o:before {
-  content: "\f017"; }
+  content: ""; }
 
 .fa-refresh:before {
-  content: "\f021"; }
+  content: ""; }
 
 .fa-lock:before {
-  content: "\f023"; }
+  content: ""; }
 
 .fa-barcode:before {
-  content: "\f02a"; }
+  content: ""; }
 
 .fa-map-marker:before {
-  content: "\f041"; }
+  content: ""; }
 
 .fa-calendar:before {
-  content: "\f073"; }
+  content: ""; }
 
 .fa-twitter-square:before {
-  content: "\f081"; }
+  content: ""; }
 
 .fa-facebook-square:before {
-  content: "\f082"; }
+  content: ""; }
 
 .fa-globe:before {
-  content: "\f0ac"; }
+  content: ""; }
 
 .fa-wrench:before {
-  content: "\f0ad"; }
+  content: ""; }
 
 .fa-google-plus-square:before {
-  content: "\f0d4"; }
+  content: ""; }
 
 .fa-google-plus:before {
-  content: "\f0d5"; }
+  content: ""; }
 
 .fa-caret-down:before {
-  content: "\f0d7"; }
+  content: ""; }
 
 .fa-caret-up:before {
-  content: "\f0d8"; }
+  content: ""; }
 
 .fa-caret-left:before {
-  content: "\f0d9"; }
+  content: ""; }
 
 .fa-caret-right:before {
-  content: "\f0da"; }
+  content: ""; }
 
 .fa-rss-square:before {
-  content: "\f143"; }
+  content: ""; }
 
 .fa-slack:before {
-  content: "\f198"; }
+  content: ""; }
 
 .fa-database:before {
-  content: "\f1c0"; }
+  content: ""; }
 
 /* Tabs component */
 .fx-tabs .nav-tabs {
   border: 0; }
   .fx-tabs .nav-tabs > li > a {
-    color: #333333;
+    color: #333;
     border-color: transparent; }
     .fx-tabs .nav-tabs > li > a:hover, .fx-tabs .nav-tabs > li > a:focus {
       border-color: transparent;
@@ -5409,6 +5414,11 @@ input[type="button"]::-moz-focus-inner {
   -moz-border-radius: 50%;
   -ms-border-radius: 50%;
   border-radius: 50%; }
+  .btn-round:last-child:not(:first-child), .btn-round:not(:first-child) {
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    -ms-border-radius: 50%;
+    border-radius: 50%; }
 
 /* Visualization Box btns */
 .btn-default.meta-btn {
@@ -5427,7 +5437,7 @@ input[type="button"]::-moz-focus-inner {
 
 /* Fenix - Js tree */
 .jstree-default .jstree-search {
-  color: #333333;
+  color: #333;
   font-weight: 300;
   font-style: normal; }
 .jstree-default .jstree-node:not(.jstree-open) {
@@ -5449,7 +5459,7 @@ input[type="button"]::-moz-focus-inner {
 
 .jstree-default .jstree-wholerow-hovered {
   background: none;
-  background-color: #e5f1ff; }
+  background-color: #e6f1ff; }
 
 .jstree-default .jstree-disabled.jstree-clicked {
   background: none;
@@ -5556,6 +5566,15 @@ input[type="radio"]:disabled + label {
   /* Mandatory */
   /* Disabled */
   /* Hovered */ }
+  [data-selector] .controller, [data-semantic] .controller {
+    position: absolute;
+    right: 0;
+    top: 17px; }
+    [data-selector] .controller .btn-round, [data-semantic] .controller .btn-round {
+      -webkit-border-radius: 50% !important;
+      -moz-border-radius: 50% !important;
+      -ms-border-radius: 50% !important;
+      border-radius: 50% !important; }
   [data-selector] .disabled, [data-semantic] .disabled {
     cursor: no-drop;
     opacity: 0.4; }
@@ -5567,24 +5586,27 @@ input[type="radio"]:disabled + label {
     [data-selector] .controller, [data-semantic] .controller {
       opacity: 0;
       pointer-events: none;
-      -webkit-transition: all 0.3s ease 0s;
-      -moz-transition: all 0.3s ease 0s;
-      -ms-transition: all 0.3s ease 0s;
-      -o-transition: all 0.3s ease 0s;
-      transition: all 0.3s ease 0s; }
+      -webkit-transition: all 0.3s ease 0.3s;
+      -moz-transition: all 0.3s ease 0.3s;
+      -ms-transition: all 0.3s ease 0.3s;
+      -o-transition: all 0.3s ease 0.3s;
+      transition: all 0.3s ease 0.3s; }
     [data-selector]:hover .controller, [data-semantic]:hover .controller {
       opacity: 1;
       pointer-events: auto; } }
 
 .selector-header {
-  padding: 10px 0; }
-  .selector-header h1, .selector-header h2, .selector-header h3, .selector-header h4, .selector-header h5 {
-    margin: 0;
-    margin-top: 2px; }
+  padding: 10px 0;
+  position: relative; }
 
 .fx-selector-title {
-  display: inline-block;
-  max-width: 45%; }
+  margin-right: 50px;
+  /* Small devices (tablets, 768px and up) */
+  /* Medium devices (desktops, 992px and up) */
+  /* Large devices (large desktops, 1200px and up) */ }
+  @media (min-width: 992px) {
+    .fx-selector-title {
+      margin-right: 105px; } }
 
 .filter-enabled-label {
   width: 10px;
@@ -5599,11 +5621,6 @@ input[type="radio"]:disabled + label {
 
 .selector-footer [data-role="summary"] {
   margin: 0; }
-
-.truncate {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis; }
 
 [data-code] {
   display: inline-block;
@@ -5623,7 +5640,7 @@ input[type="radio"]:disabled + label {
 
 /* Buttons */
 .btn-default {
-  color: #333333; }
+  color: #333; }
 
 [data-role="remove"].btn-round {
   position: relative;
@@ -5641,7 +5658,7 @@ input[type="radio"]:disabled + label {
   margin-bottom: 5px; }
 
 .jstree-anchor, .jstree-anchor:link, .jstree-anchor:visited, .jstree-anchor:hover, .jstree-anchor:active {
-  color: #333333; }
+  color: #333; }
 
 /* Range Slider */
 .irs-bar, .irs-bar-edge, .irs-line {
@@ -5751,19 +5768,19 @@ input[type="radio"]:disabled + label {
     .fx-box .toolbar-cmd-left, .fx-box .toolbar-cmd-right {
       opacity: 0;
       pointer-events: none;
-      -webkit-transition: all 0.3s ease 0s;
-      -moz-transition: all 0.3s ease 0s;
-      -ms-transition: all 0.3s ease 0s;
-      -o-transition: all 0.3s ease 0s;
-      transition: all 0.3s ease 0s; }
+      -webkit-transition: all 0.3s ease 0.3s;
+      -moz-transition: all 0.3s ease 0.3s;
+      -ms-transition: all 0.3s ease 0.3s;
+      -o-transition: all 0.3s ease 0.3s;
+      transition: all 0.3s ease 0.3s; }
     .fx-box .box-title {
       margin-left: 15px;
       margin-right: 15px;
-      -webkit-transition: all 0.3s ease 0s;
-      -moz-transition: all 0.3s ease 0s;
-      -ms-transition: all 0.3s ease 0s;
-      -o-transition: all 0.3s ease 0s;
-      transition: all 0.3s ease 0s; }
+      -webkit-transition: all 0.3s ease 0.3s;
+      -moz-transition: all 0.3s ease 0.3s;
+      -ms-transition: all 0.3s ease 0.3s;
+      -o-transition: all 0.3s ease 0.3s;
+      transition: all 0.3s ease 0.3s; }
     .fx-box:hover .toolbar-cmd-left, .fx-box:hover .toolbar-cmd-right {
       opacity: 1;
       pointer-events: auto; }
@@ -5878,6 +5895,7 @@ input[type="radio"]:disabled + label {
 
 /* hide back of pane during swap */
 .front, .back {
+  -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
   width: 100%;
   position: absolute;
@@ -5970,3 +5988,5 @@ input[type="radio"]:disabled + label {
 /*TODO temporary*/
 [data-role="toolbar"] {
   height: 615px; }
+
+/*# sourceMappingURL=test.css.map */

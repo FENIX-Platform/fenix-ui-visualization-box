@@ -250,6 +250,7 @@ define([
 
         this.$boxTitle = this.$el.find(s.BOX_TITLE);
 
+
     };
 
     Box.prototype._initObjState = function () {
@@ -473,8 +474,6 @@ define([
 
         this._renderBoxFaces();
 
-        this._updateBoxTitle();
-
     };
 
     Box.prototype._preloadTabSources = function () {
@@ -541,7 +540,7 @@ define([
         var faces = this._getObjState("faces");
 
         if (!_.contains(faces, 'front') || this.frontFaceIsRendered === true) {
-            log.warn("Abort 'front' face rendering. face is already renderd: " + this.frontFaceIsRendered + ", confing render face: " + _.contains(faces, 'front'))
+            log.warn("Abort 'front' face rendering. face is already rendered: " + this.frontFaceIsRendered + ", config render face: " + _.contains(faces, 'front'));
             return;
         }
 
@@ -555,6 +554,32 @@ define([
             model: this._getObjState('model').metadata,
             lang: this.lang.toUpperCase() || "EN",
             el: this.$el.find(s.MODAL_METADATA_CONTAINER)
+        });
+
+
+        this._bindFrontFaceEventListeners();
+
+
+    };
+
+    Box.prototype._bindFrontFaceEventListeners = function() {
+
+        var self = this;
+
+        this.$el.find("[data-action]").each(function () {
+
+            var $this = $(this),
+                action = $this.data("action"),
+                event = self._getEventTopic(action);
+
+            $this.off().on("click", {event: event, box: self}, function (e) {
+                e.preventDefault();
+
+                log.info("Raise event: " + e.data.event);
+
+                amplify.publish(event, {target: this, box: e.data.box, state: self.getState()});
+
+            });
         });
 
     };
@@ -744,15 +769,38 @@ define([
 
         this._renderProcessSteps();
 
-        this._bindBackEventListeners()
+        this._bindBackFaceEventListeners();
+
+        this._updateBoxTitle();
 
     };
 
-    Box.prototype._bindBackEventListeners = function () {
+    Box.prototype._bindBackFaceEventListeners = function() {
+
+        var self = this;
 
         this.$el.find(s.BTN_SIDEBAR).on("click", _.bind(function () {
             this.$el.find(s.SIDEBAR).toggleClass('hidden-xs hidden-sm');
         }, this));
+
+        this.$el.find("[data-action]").each(function () {
+
+            var $this = $(this),
+                action = $this.data("action"),
+                event = self._getEventTopic(action);
+
+            console.log(1)
+
+            $this.off().on("click", {event: event, box: self}, function (e) {
+                e.preventDefault();
+
+                log.info("Raise event: " + e.data.event);
+
+                amplify.publish(event, {target: this, box: e.data.box, state: self.getState()});
+
+            });
+        });
+
     };
 
     Box.prototype._createProcessSteps = function () {
@@ -1294,7 +1342,7 @@ define([
                 action = $this.data("action"),
                 event = self._getEventTopic(action);
 
-            $this.on("click", {event: event, box: self}, function (e) {
+            $this.off().on("click", {event: event, box: self}, function (e) {
                 e.preventDefault();
 
                 log.info("Raise event: " + e.data.event);

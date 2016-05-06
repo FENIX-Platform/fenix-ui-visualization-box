@@ -13,7 +13,11 @@ $fx-ui-common: '../../../fenix-ui-common/';
 @import '../../../fenix-ui-common/css/components/fx-preload';
 
 
+@import '../../../fenix-ui-common/css/base/fx-typography';
 @import '../../../fenix-ui-common/css/base/fx-fonts-import';
+
+
+
 @import '../../../fenix-ui-common/css/components/fx-tabs';
 @import '../../../fenix-ui-common/css/components/fx-buttons';
 @import '../../../fenix-ui-common/css/vendor/fx-jstree';
@@ -22,7 +26,8 @@ $fx-ui-common: '../../../fenix-ui-common/';
 
 
 @import '../../../fenix-ui-filter/src/css/filter';
-//@import '../../../fenix-ui-olap/src/css/olap';
+@import '../../../fenix-ui-olap/src/css/olap';
+
 
 @import '../../src/css/visualization-box';
 

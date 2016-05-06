@@ -1,4 +1,5 @@
 /* Visualization Box Style */
+
 $box-height: 450px; // 430px content + 23px toolbar height + 1px border between vb-toolbar and content (the border affects the dimensions because of the nature of the h6 title inside)
 $back-and-border-color: $fenix-light-gray; // $fenix-light-gray
 $box-content-height: 424px; // 450px minus the 23px vb-toolbar
@@ -46,14 +47,14 @@ $cmd-right-width: 192px;
       .toolbar-cmd-left, .toolbar-cmd-right{
         opacity:0;
         pointer-events: none;
-        @include animate(0.3s);
+        @include animate(0.3s, 0.3s);
       }
 
 
       .box-title {
         margin-left: 15px;
         margin-right: 15px;
-        @include animate(0.3s);
+        @include animate(0.3s, 0.3s);
       }
 
 
@@ -253,6 +254,7 @@ $cmd-right-width: 192px;
 
 /* hide back of pane during swap */
 .front, .back {
+  -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
   width: 100%;
   position: absolute;
