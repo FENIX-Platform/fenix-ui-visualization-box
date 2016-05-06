@@ -272,6 +272,9 @@ define([
         mapCreator.render({
             container: "#map_" + this.id,
             fenix_ui_map: {
+                plugins: {
+                    fullscreen: false
+                },
                 guiController: {
                     container: self.$el.find(s.TOOLBAR),
                 },
