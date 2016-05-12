@@ -35,7 +35,8 @@ define([
             $el: $(obj.$el),
             box: obj.box,
             model: obj.model,
-            id: obj.id
+            id: obj.id,
+            onReady : obj.onReady
         });
 
         this.channels = {};
@@ -323,7 +324,7 @@ define([
 
         this.filter = new Filter({
             items: this._createFilterConfiguration(),
-            $el: this.$el.find(s.CONTAINER),
+            el: this.$el.find(s.CONTAINER),
             template: this.template,
             common :  this.common
         });

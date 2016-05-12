@@ -126,6 +126,11 @@ define([
         return this;
     };
 
+    MapTab.prototype.update = function ( obj ) {
+
+       alert("Update")
+    };
+
     /* END - API */
 
     MapTab.prototype._trigger = function (channel) {
@@ -270,7 +275,7 @@ define([
             mapCreator = new MapCreator();
 
         mapCreator.render({
-            container: "#map_" + this.id,
+            container: self.$el.find("#map_" + this.id),
             fenix_ui_map: {
                 plugins: {
                     fullscreen: false

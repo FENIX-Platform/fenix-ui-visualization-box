@@ -127,7 +127,7 @@ require([
     ], function (log, MapTest) {
 
         //trace, debug, info, warn, error, silent
-        log.setLevel('trace');
+        log.setLevel('silent');
 
         log.warn("~~~~~ FENIX Visualization Box: test");
         log.info("===== Start testing:...");

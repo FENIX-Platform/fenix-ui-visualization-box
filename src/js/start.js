@@ -789,8 +789,6 @@ define([
                 action = $this.data("action"),
                 event = self._getEventTopic(action);
 
-            console.log(1)
-
             $this.off().on("click", {event: event, box: self}, function (e) {
                 e.preventDefault();
 
@@ -846,11 +844,12 @@ define([
         }));
 
         list.push(this._createProcessStep({
-            tab: "map",
-            subject: "columns",
+            tab: "filter",
+            subject: "map",
             config: mapConfiguration.filter,
             template: mapConfiguration.template,
             values: values.columns,
+            onReady: mapConfiguration.onReady,
             labels: {
                 title: i18nLabels["step_map"]
             }
@@ -967,58 +966,22 @@ define([
 
     Box.prototype._createBackMapTabConfiguration = function () {
 
-        var forbiddenIds = ["value"];
-
-        var columns = Utils.getNestedProperty("metadata.dsd.columns", this._getObjState("model"))
-            .filter(function (col) {
-                return !_.contains(forbiddenIds, col.id);
-            }),
-            config = Utils.createConfiguration({model: this._getObjState("model")});
-
-/*        _.each(config, function (item, key) {
-
-            config["filter_" + key] = $.extend(true, {}, item, {
-                template: {
-                    hideSwitch: false
-                }
-            });
-
-            config["order_" + key] = {
-                selector: {
-                    id: "dropdown",
-                    source: [
-                        {value: "none", label: "No ordering"},
-                        {value: "ASC", label: "Ascending"},
-                        {value: "DESC", label: "Descending"}
-                    ],
-                    default: ["none"],
-                    config: {
-                        "maxItems": 1
-                    }
-                },
-                template: {
-                    hideSwitch: true
-                },
-                dependencies: {}
-            };
-
-            var dep = {};
-
-            dep["filter_" + key] = {id: "disable", event: "disable"};
-
-            config["order_" + key].dependencies = dep;
-
-            //remove original config
-            delete config[key];
-        });*/
-
         return {
 
-            config: config,
+            filter: {
+
+                stefano : {
+                    selector : {
+                        id : "input",
+                        type : "checkbox",
+                        source : [ { value : "t", label :"Fist"}]
+                    }
+                }
+            },
 
             template: Handlebars.compile($(Template).find(s.FILTER_MAP_TEMPLATE)[0].outerHTML)({layers: []}),
 
-            onReady: _.bind(function () {
+            onReady: _.bind(function ( payload ) {
 
                 console.log('onReady _createBackMapTabConfiguration')
 
@@ -1167,7 +1130,6 @@ define([
             list = this.processSteps;
 
         _.each(list, _.bind(function (step, index) {
-
             var template = Handlebars.compile($(Template).find("[data-role='step-" + step.tab + "']")[0].outerHTML),
                 $html = $(template($.extend(true, {}, step, i18nLabels, this._getObjState("model"))));
 
@@ -1199,7 +1161,8 @@ define([
                 values: step.values || {},
                 id: "step-" + step.id,
                 labels: step.labels,
-                template: step.template
+                template: step.template,
+                onReady : step.onReady
             });
 
             if (typeof step.onReady === 'function') {
@@ -1492,6 +1455,9 @@ define([
         log.trace(payload);
 
         var valid = this._validateQuery();
+        
+        //if resource filter has not changed
+        this._updateMap()
 
         if (valid === true) {
 
