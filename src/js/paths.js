@@ -4,7 +4,7 @@ define(function () {
     var config = {
 
         paths: {
-            'fx-v-b/start': './start',
+            'fx-v-b/start': './box',
             'fx-v-b/html': '../../html',
             'fx-v-b/js': './',
             'fx-v-b/config' :  '../../config',
