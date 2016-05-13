@@ -9,6 +9,7 @@ define([
     "fx-v-b/config/config-default",
     "fx-v-b/config/errors",
     "fx-v-b/config/events",
+    "fx-v-b/js/utils",
     'fx-common/utils',
     "text!fx-v-b/html/tabs/map.hbs",
     "fx-filter/start",
@@ -16,12 +17,11 @@ define([
     "fx-common/pivotator/functions",
     "fx-m-c/start",
     "amplify"
-], function ($, log, _, Handlebars, C, CD, ERR, EVT, Utils,
-             mapTemplate, Filter, ToolbarModel, myFunc, MapCreator) {
+], function ($, log, _, Handlebars, C, CD, ERR, EVT, BoxUtils, Utils, mapTemplate, Filter, ToolbarModel, myFunc, MapCreator) {
 
     var defaultOptions = {}, s = {
         TOOLBAR: "[data-role='toolbar']",
-        TOOLBAR_BTN: "[data-role='toolbar'] [data-role='toolbar-btn']"
+        TOOLBAR_BTN: "[data-role='toolbar'] [data-role='filter-btn']"
     };
 
     function MapTab(obj) {
@@ -234,7 +234,6 @@ define([
             });
         });
 
-
         this.$toolbarBtn.on("click", _.bind(this._onToolbarBtnClick, this));
 
         //this.toolbar.on('change', _.bind(this._onToolbarChangeEvent, this));
@@ -266,59 +265,65 @@ define([
 
     MapTab.prototype._onToolbarBtnClick = function () {
 
+        this._onToolbarEvent();
+
         this._renderMap();
     };
 
     MapTab.prototype._renderMap = function () {
 
-        var self = this,
-            mapCreator = new MapCreator();
+        var toolbarValues = this.toolbar.getValues(),
+            configuration = BoxUtils.getMapConfiguration(toolbarValues, this.model.metadata.dsd);
 
-        mapCreator.render({
-            container: self.$el.find("#map_" + this.id),
-            fenix_ui_map: {
-                plugins: {
-                    fullscreen: false
-                },
-                guiController: {
-                    container: self.$el.find(s.TOOLBAR),
-                },
-                baselayers: {
-                    "cartodb": {
-                        title_en: "CartoDB light",
-                        url: 'http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png',
-                        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
-                        subdomains: 'abcd',
-                        maxZoom: 19
-                    },            
-                    "esri_grayscale": {
-                        url: "http://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}",
-                        title_en: "Esri WorldGrayCanvas",
-                        attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
-                        maxZoom: 16
+        console.log(configuration)
+
+        return;
+
+        var self = this;
+
+        this.map = new MapCreator({
+                container: this.$el.find("#map_" + this.id),
+                fenix_ui_map: {
+                    plugins: {
+                        fullscreen: false
+                    },
+                    guiController: {
+                        container: this.$el.find(s.TOOLBAR),
+                    },
+                    baselayers: {
+                        "cartodb": {
+                            title_en: "CartoDB light",
+                            url: 'http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png',
+                            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+                            subdomains: 'abcd',
+                            maxZoom: 19
+                        },
+                        "esri_grayscale": {
+                            url: "http://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}",
+                            title_en: "Esri WorldGrayCanvas",
+                            attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
+                            maxZoom: 16
+                        }
                     }
-                }                
-            },
-            onReady: function(w) {
-                console.log('mapCreator onReady', w)
-                mapCreator.addLayer( self.model );
-            }
-        });
+                },
+                onReady: function(w) {
+                    self.map.addLayer( self.model );
+                }
+            });
 
-        
     };
 
     MapTab.prototype._renderToolbar = function () {
         log.info("Table tab render toolbar");
 
-        /*this.toolbar = new Filter({
+        this.toolbar = new Filter({
             items: this._createFilterConfiguration(ToolbarModel),
-            $el: this.$el.find(s.TOOLBAR)
-        });*/
+            el: this.$el.find(s.TOOLBAR)
+        });
 
-        /*this.toolbar.on("ready", _.bind(
-            this._renderMap,
-        this));*/
+        //TODO uncomment
+        log.warn("Temporary the map render is blocked")
+        //this.toolbar.on("ready", _.bind(this._renderMap, this))
 
     };
 
@@ -387,9 +392,8 @@ define([
 
         this._renderToolbar();
 
-        this._renderMap();
-
-        //Table will be create when filter is 'ready'
+        //Map will be create when filter is 'ready'
+        //this._renderMap();
 
         //init toolbar position
         var position = this.initial.toolbarPosition || C.toolbarPosition || CD.toolbarPosition;

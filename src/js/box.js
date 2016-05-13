@@ -550,15 +550,14 @@ define([
 
         //render metadata modal
         this.metadataModal = new MetadataViewer();
+
         this.metadataModal.render({
             model: this._getObjState('model').metadata,
             lang: this.lang.toUpperCase() || "EN",
             el: this.$el.find(s.MODAL_METADATA_CONTAINER)
         });
 
-
         this._bindFrontFaceEventListeners();
-
 
     };
 
@@ -572,7 +571,7 @@ define([
                 action = $this.data("action"),
                 event = self._getEventTopic(action);
 
-            $this.off().on("click", {event: event, box: self}, function (e) {
+            $this.on("click", {event: event, box: self}, function (e) {
                 e.preventDefault();
 
                 log.info("Raise event: " + e.data.event);
@@ -763,7 +762,7 @@ define([
 
         this._hideFilterError();
 
-        //check 
+        //TODO check which tab render
 
         this._createProcessSteps();
 
@@ -792,7 +791,7 @@ define([
             $this.off().on("click", {event: event, box: self}, function (e) {
                 e.preventDefault();
 
-                log.info("Raise event: " + e.data.event);
+                log.info("Raise box event: " + e.data.event);
 
                 amplify.publish(event, {target: this, box: e.data.box, state: self.getState()});
 
@@ -810,18 +809,18 @@ define([
             aggregationConfiguration = this._createBackTabConfiguration("aggregations"),
             mapConfiguration = this._createBackTabConfiguration("map");
 
-        list.push(this._createProcessStep({
+        list.push({
             tab: "metadata",
-            subject: "metadata",
+            id: "metadata",
             model: $.extend(true, {}, this._getObjState("model")),
             labels : {
                 title: i18nLabels["step_metadata"]
             }
-        }));
+        });
 
-        list.push(this._createProcessStep({
+        list.push({
             tab: "filter",
-            subject: "rows",
+            id: "rows",
             values: values.rows,
             template: filterConfiguration.template,
             onReady: filterConfiguration.onReady,
@@ -830,22 +829,22 @@ define([
             labels: {
                 title: i18nLabels["step_filter"]
             }
-        }));
+        });
 
-        list.push(this._createProcessStep({
+        list.push({
             tab: "filter",
-            subject: "aggregations",
+            id: "aggregations",
             config: aggregationConfiguration.filter,
             values: values.aggregations,
             template: aggregationConfiguration.template,
             labels: {
                 title: i18nLabels["step_aggregations"]
             }
-        }));
+        });
 
-        list.push(this._createProcessStep({
+        list.push({
             tab: "filter",
-            subject: "map",
+            id: "map",
             config: mapConfiguration.filter,
             template: mapConfiguration.template,
             values: values.columns,
@@ -853,7 +852,7 @@ define([
             labels: {
                 title: i18nLabels["step_map"]
             }
-        }));
+        });
 
         this.processSteps = list;
 
@@ -895,39 +894,11 @@ define([
 
         _.each(config, function (item, key) {
 
-            config["filter_" + key] = $.extend(true, {}, item, {
+            config[key] = $.extend(true, {}, item, {
                 template: {
                     hideSwitch: false
                 }
             });
-
-            config["order_" + key] = {
-                selector: {
-                    id: "dropdown",
-                    source: [
-                        {value: "none", label: "No ordering"},
-                        {value: "ASC", label: "Ascending"},
-                        {value: "DESC", label: "Descending"}
-                    ],
-                    default: ["none"],
-                    config: {
-                        "maxItems": 1
-                    }
-                },
-                template: {
-                    hideSwitch: true
-                },
-                dependencies: {}
-            };
-
-            var dep = {};
-
-            dep["filter_" + key] = {id: "disable", event: "disable"};
-
-            config["order_" + key].dependencies = dep;
-
-            //remove original config
-            delete config[key];
 
         });
 
@@ -993,7 +964,7 @@ define([
     Box.prototype._createBackAggregationTabConfiguration = function () {
 
         var source = [],
-            lang = this.lang || 'EN',
+            lang = this.lang,
             columns = Utils.getNestedProperty("metadata.dsd.columns", this._getObjState("model"));
 
         _.each(columns, function (c) {
@@ -1069,7 +1040,6 @@ define([
                 label = title[lang];
             } else {
                 window.fx_vis_box_missing_title >= 0 ? window.fx_vis_box_missing_title++ : window.fx_vis_box_missing_title = 0;
-                //label = "Missing dimension title " + window.fx_vis_box_missing_title
                 label = "Missing dimension title [" + c.id + "]";
             }
 
@@ -1093,28 +1063,10 @@ define([
                     template: {
                         title: label
                     },
-                    dependencies: {},
-                    //className: "col-xs-9"
+                    dependencies: {}
                 };
 
                 filter[c.id] = order;
-
-                /*
-                 TODO double selector
-                 filter[c.id + "_order"] = order;
-                 order.dependencies[c.id + "_include"] = {id: "disable", event: "select"}
-
-                 filter[c.id + "_include"] = {
-                 selector: {
-                 id: "input",
-                 type: "checkbox",
-                 source: [
-                 {value: "true", label: "Include"}
-                 ],
-                 default: ["true"]
-                 },
-                 className: "col-xs-3"
-                 };*/
             }
         });
 
@@ -1265,14 +1217,6 @@ define([
         }
     };
 
-    Box.prototype._createProcessStep = function (obj) {
-
-        window.fx_vis_box_step_id >= 0 ? window.fx_vis_box_step_id++ : window.fx_vis_box_step_id = 0;
-
-        return $.extend(true, obj, {id: "process-step-" + window.fx_vis_box_step_id});
-
-    };
-
     // Event binding and callbacks
 
     Box.prototype._bindObjEventListeners = function () {
@@ -1305,7 +1249,7 @@ define([
                 action = $this.data("action"),
                 event = self._getEventTopic(action);
 
-            $this.off().on("click", {event: event, box: self}, function (e) {
+            $this.on("click", {event: event, box: self}, function (e) {
                 e.preventDefault();
 
                 log.info("Raise event: " + e.data.event);
@@ -1455,9 +1399,6 @@ define([
         log.trace(payload);
 
         var valid = this._validateQuery();
-        
-        //if resource filter has not changed
-        this._updateMap()
 
         if (valid === true) {
 
@@ -1492,7 +1433,6 @@ define([
                 if (c.key === true) {
                     return c.id;
                 }
-
             })),
             errors = [],
             aggregations = Utils.getNestedProperty("aggregations.values.aggregations", values) || [],
@@ -1583,22 +1523,7 @@ define([
         }
 
         //in group by only key dimensions
-        /*
-         _.each(group, function (dimension) {
 
-         var column = _.findWhere(resourceColumns, {id: dimension}) || {},
-         key = column.key;
-
-         if (key !== true) {
-         errors.push({
-         code: ERR.GROUP_BY_CONTAINS_NO_KEY,
-         value: dimension,
-         label: _.findWhere(aggregations, {value: dimension}).label
-         });
-         }
-         });*/
-
-        //can not exclude value dimension and key dimensions
         var mandatoryColumns = ['value'];
 
         mandatoryColumns = groupLength > 0 ?
@@ -1680,8 +1605,7 @@ define([
             filter = [],
             payload = this._getBackFilterValues(),
             filterStep,
-            groupStep,
-            orderStep;
+            groupStep;
 
         this._setObjState("values", $.extend(true, {}, payload));
 
@@ -1691,7 +1615,6 @@ define([
 
         filterStep = createFilterStep(payload);
         groupStep = createGroupStep(payload);
-        orderStep = createOrderStep(payload);
 
         if (filterStep) {
             filter.push(filterStep);
@@ -1701,15 +1624,11 @@ define([
             filter.push(groupStep);
         }
 
-        if (orderStep) {
-            filter.push(orderStep);
-        }
-
         return filter;
 
         function createFilterStep(payload) {
 
-            if (!payload.columns && !payload.rows) {
+            if (!payload.rows) {
                 return;
             }
 
@@ -1720,7 +1639,7 @@ define([
                 hasValues = false,
                 columns = [],
                 rowValues = payload.rows,
-                columnsValues = payload.columns.values,
+                //columnsValues = payload.columns.values,
                 columnsSet = Utils.getNestedProperty("metadata.dsd.columns", self._getObjState("model"))
                     .filter(function (c) {
                         return !c.id.endsWith("_" + self.lang.toUpperCase());
@@ -1736,26 +1655,14 @@ define([
                 log.warn("Filter.rows not included");
             }
 
-            _.each(columnsValues, function (obj, key) {
-                // double selector
-                // if (key.endsWith("_include") && Boolean(obj[0]) === true) {   columns.push(key.replace("_include", ""));}
-
-                if (obj[0] !== "exclude") {
-                    columns.push(key);
-                }
-
-            });
-
             //If they are equals it means i want to include all columns so no filter is needed
             columns = columns.sort();
 
             if (!_.isEqual(columnsSet, columns)) {
                 step.parameters.columns = columns;
-
                 hasValues = true;
             } else {
                 log.warn("Filter.columns not included");
-
             }
 
             return hasValues ? step : null;
@@ -1773,7 +1680,7 @@ define([
                     parameters: {}
                 },
                 hasValues = false,
-                values = payload.aggregations.values.aggregations || {},
+                values = Utils.getNestedProperty("aggregations.values.aggregations", payload),
                 by = [],
                 sum = [],
                 avg = [],
@@ -1840,53 +1747,7 @@ define([
             }
 
             return hasValues ? step : null;
-
         }
-
-        function createOrderStep(payload) {
-
-            if (!payload.columns) {
-                return;
-            }
-
-            var step = {
-                    name: "order",
-                    parameters: null
-                },
-                hasValues = false,
-                columnsValues = payload.columns.values,
-                order = {};
-
-            _.each(columnsValues, function (obj, key) {
-
-                var ordering = (Array.isArray(obj) && obj.length > 0) ? obj[0].toUpperCase() : "none";
-
-                /* double selector
-                 if (key.endsWith("_order") && (ordering === 'ASC' || ordering === 'DESC')) {
-                 order[key.replace("_order", "")] = ordering;
-                 }
-                 */
-
-                if (ordering === 'ASC' || ordering === 'DESC') {
-                    order[key] = ordering;
-                }
-
-
-            });
-
-            if (Object.getOwnPropertyNames(order).length > 0) {
-                step.parameters = order;
-
-                hasValues = true;
-            } else {
-                log.warn("Filter.order not included");
-            }
-
-            return hasValues ? step : null;
-
-        }
-
-
     };
 
     Box.prototype._onFilterEvent = function (payload) {
@@ -2033,7 +1894,6 @@ define([
                     this.$el.find(s.ERROR_BUTTON).show();
                 } else {
                     this.$el.find(s.ERROR_BUTTON).hide();
-
                 }
 
                 break;
@@ -2049,6 +1909,7 @@ define([
     };
 
     // Disposition
+
     Box.prototype._dispose = function () {
 
         this._unbindObjEventListeners();

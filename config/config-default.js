@@ -6,7 +6,7 @@ define(function () {
     return {
 
         status : "loading",
-        tab : "chart",
+        tab : "map",
         size : "large",
         face : "front", // back || front
         faces : ["front", "back"],

@@ -285,14 +285,16 @@ define([
 
     ChartTab.prototype._renderChart = function () {
 
-        var chart = new ChartCreator();
-
         var toolbarValues = this.toolbar.getValues(),
-            configuration = BoxUtils.getCreatorConfiguration(toolbarValues, this.model.metadata.dsd);
+            configuration = BoxUtils.getChartConfiguration(toolbarValues, this.model.metadata.dsd);
 
-        chart.render($.extend(true, {}, {
+        console.log(configuration)
+
+        return;
+
+        this.chart = new ChartCreator($.extend(true, {}, {
             model: this.model,
-            el: "#table_" + this.id
+            el: "#chart_" + this.id
         }, configuration));
 
     };
@@ -302,10 +304,12 @@ define([
 
         this.toolbar = new Filter({
             items: this._createFilterConfiguration(ToolbarModel),
-            $el: this.$el.find(s.TOOLBAR)
+            el: this.$el.find(s.TOOLBAR)
         });
 
-        this.toolbar.on("ready", _.bind(this._renderChart, this))
+        //TODO uncomment
+        log.warn("Temporary the chart render is blocked")
+        //this.toolbar.on("ready", _.bind(this._renderChart, this))
 
     };
 
@@ -318,7 +322,6 @@ define([
         return configuration;
 
     };
-
 
     ChartTab.prototype._onToolbarChangeEvent = function () {
 

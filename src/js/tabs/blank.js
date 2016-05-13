@@ -291,7 +291,7 @@ define([
 
         this.toolbar = new Filter({
             items: this._createFilterConfiguration(ToolbarModel),
-            $el: this.$el.find(s.TOOLBAR)
+            el: this.$el.find(s.TOOLBAR)
         });
 
     };

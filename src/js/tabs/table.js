@@ -199,11 +199,9 @@ define([
                 this.toolbar.setValues(this.syncState.toolbar, true);
                 this._renderTable();
             }
-
         }
 
         return this;
-
     };
 
     TableTab.prototype._attach = function () {
@@ -284,15 +282,17 @@ define([
 
     TableTab.prototype._renderTable = function () {
 
-        var olap = new Olap();
-
         var toolbarValues = this.toolbar.getValues(),
-            configuration = BoxUtils.getCreatorConfiguration(toolbarValues, this.model.metadata.dsd);
-        olap.render($.extend(true, {}, {
+            configuration = BoxUtils.getTableConfiguration(toolbarValues, this.model.metadata.dsd);
+
+        console.log(configuration)
+        
+        return;
+
+        this.table = new Olap($.extend(true, {}, {
             model: this.model,
             el: "#table_" + this.id
         }, configuration));
-
     };
 
     TableTab.prototype._renderToolbar = function () {
@@ -300,10 +300,12 @@ define([
 
         this.toolbar = new Filter({
             items: this._createFilterConfiguration(ToolbarModel),
-            $el: this.$el.find(s.TOOLBAR)
+            el: this.$el.find(s.TOOLBAR)
         });
 
-        this.toolbar.on("ready", _.bind(this._renderTable, this))
+        //TODO uncomment
+        log.warn("Temporary the chart render is blocked")
+        //this.toolbar.on("ready", _.bind(this._renderTable, this))
 
     };
 
