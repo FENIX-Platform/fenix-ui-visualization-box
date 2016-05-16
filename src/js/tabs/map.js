@@ -380,7 +380,6 @@ define([
 
     };
 
-
     MapTab.prototype._onToolbarChangeEvent = function () {
 
         this._trigger("filter", this.toolbar.getValues());

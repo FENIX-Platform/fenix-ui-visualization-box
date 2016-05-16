@@ -12,7 +12,7 @@ define(function () {
 
             //3rd party libs
             jquery: '{FENIX_CDN}/js/jquery/2.1.1/jquery.min',
-            handlebars: "{FENIX_CDN}/js/handlebars/2.0.0/handlebars",
+            handlebars: "{FENIX_CDN}/js/handlebars/4.0.5/handlebars.min",
             amplify : '{FENIX_CDN}/js/amplify/1.1.2/amplify.min',
             underscore: "{FENIX_CDN}/js/underscore/1.7.0/underscore.min",
             i18n: "{FENIX_CDN}/js/requirejs/plugins/i18n/2.0.4/i18n",
