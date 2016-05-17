@@ -4,6 +4,7 @@ define([
     "require",
     "jquery",
     "underscore",
+    "underscoreString",
     "handlebars",
     "fx-v-b/config/config",
     "fx-v-b/config/config-default",
@@ -20,7 +21,7 @@ define([
     "swiper",
     "amplify",
     "bootstrap"
-], function (log, require, $, _, Handlebars, C, CD, ERR, EVT, Utils, MetadataViewer, Template, JsonMenu, RightMenuModel, i18nLabels, Bridge, 
+], function (log, require, $, _, _str, Handlebars, C, CD, ERR, EVT, Utils, MetadataViewer, Template, JsonMenu, RightMenuModel, i18nLabels, Bridge, 
     mapBackModel,
     Swiper) {
 
@@ -975,15 +976,19 @@ define([
                     selector: {
                         id: "tree",
                         source: _.map(mapBackModel, function(layer) {
+
+                            var title = layer.Title.replace('area','').replace('3857','');
+
                             return {
-                                label: layer.Title,
-                                value: {
+                                label: _str.humanize(title),
+                                value: 'earthstat:'+layer.Name
+                                /*value: {
                                     urlWMS: "http://fenix.fao.org/demo/fenix/geoserver/earthstat/wms",                                
                                     layers: 'earthstat:'+layer.Name,
                                     layertitle: layer.Title,
                                     opacity: '0.8',
                                     lang: 'EN'
-                                }
+                                }*/
                             };
                         }),
                         config: { core: { multiple: true} }

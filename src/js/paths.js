@@ -15,6 +15,7 @@ define(function () {
             handlebars: "{FENIX_CDN}/js/handlebars/4.0.5/handlebars.min",
             amplify : '{FENIX_CDN}/js/amplify/1.1.2/amplify.min',
             underscore: "{FENIX_CDN}/js/underscore/1.7.0/underscore.min",
+            underscoreString: "{FENIX_CDN}/js/underscore.string/3.2.2/underscore.string.min",
             i18n: "{FENIX_CDN}/js/requirejs/plugins/i18n/2.0.4/i18n",
             text: '{FENIX_CDN}/js/requirejs/plugins/text/2.0.12/text',
             bootstrap : "{FENIX_CDN}/js/bootstrap/3.3.4/js/bootstrap.min",
@@ -29,6 +30,7 @@ define(function () {
             underscore: {
                 exports: '_'
             },
+            underscoreString: ['underscore'],
             amplify : {
                 deps : ['jquery']
             },
