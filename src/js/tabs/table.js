@@ -244,7 +244,9 @@ define([
 
         this.$toolbarBtn.on("click", _.bind(this._onToolbarBtnClick, this));
 
-        //this.toolbar.on('change', _.bind(this._onToolbarChangeEvent, this));
+        if (C.sync_tabs_on_toolbar_change === true || CD.sync_tabs_on_toolbar_change === true) {
+            this.toolbar.on('change', _.bind(this._onToolbarChangeEvent, this));
+        }
 
     };
 
@@ -276,7 +278,7 @@ define([
 
         this._onToolbarEvent();
 
-        this._renderTable();
+        this._onConfigurationChange();
 
     };
 
@@ -321,10 +323,15 @@ define([
 
     TableTab.prototype._onToolbarChangeEvent = function () {
 
+        this._onConfigurationChange();
+
+    };
+
+    TableTab.prototype._onConfigurationChange = function () {
+
         this._trigger("filter", this.toolbar.getValues());
 
         this._renderTable();
-
     };
 
     TableTab.prototype._renderComponents = function () {

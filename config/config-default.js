@@ -6,7 +6,7 @@ define(function () {
     return {
 
         status : "loading",
-        tab : "map",
+        tab : "chart",
         size : "large",
         face : "front", // back || front
         faces : ["front", "back"],
@@ -55,7 +55,9 @@ define(function () {
         //Load resource
         d3pQueryParameters : {
             language : "EN"
-        }
+        },
+
+        sync_tabs_on_toolbar_change : false
 
     };
 });

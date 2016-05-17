@@ -611,8 +611,6 @@ define([
         var currentTab = this._getObjState("tab"),
             currentOpts = this._getObjState("tabOpts");
 
-        console.log(tab, opts)
-
         //TODO check if currentTab is undefined
 
         if (currentTab === tab && _.isEqual(currentOpts, opts)) {

@@ -235,9 +235,10 @@ define([
         this.$toolbarBtn.on("click", _.bind(this._onToolbarBtnClick, this));
 
         //Toolbar events
-        this.toolbar.on('ready', _.bind(function () {
+
+        if (C.sync_tabs_on_toolbar_change === true || CD.sync_tabs_on_toolbar_change === true) {
             this.toolbar.on('change', _.bind(this._onToolbarChangeEvent, this));
-        }, this));
+        }
     };
 
     BlankTab.prototype._onToolbarEvent = function (payload) {
@@ -266,11 +267,19 @@ define([
 
     BlankTab.prototype._onToolbarBtnClick = function () {
 
-        console.log(this.toolbar.getValues())
+        this._onToolbarEvent();
+
+        this._onConfigurationChange();
 
     };
 
     BlankTab.prototype._onToolbarChangeEvent = function () {
+
+        this._onConfigurationChange();
+
+    };
+
+    BlankTab.prototype._onConfigurationChange = function () {
 
         this._trigger("filter", this.toolbar.getValues());
 
