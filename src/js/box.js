@@ -34,6 +34,8 @@ define([
         FLIP_CONTAINER: "[data-role='flip-container']",
         FLIP_BUTTONS: "[data-action='flip']",
         FRONT_CONTENT: "[data-role='front-content']",
+        FRONT_TOOLBAR: "[data-role='front-toolbar']",
+        BACK_TOOLBAR: "[data-role='back-toolbar']",
         PROCESS_STEPS: "[data-role='process-steps']",
         PROCESS_DETAILS: "[data-role='process-details']",
         BACK_CONTENT: "[data-role='back-content']",
@@ -49,7 +51,9 @@ define([
         FILTER_MAP_TEMPLATE: "[data-role='filter-map-template']",
         ROWS_SWIPER: "[data-role='filter-rows-swiper']",
         BTN_SIDEBAR: "[data-action='show-back-sidebar']",
-        SIDEBAR: "[data-role='back-sidebar']"
+        SIDEBAR: "[data-role='back-sidebar']",
+        FRONT_FACE: "[data-face='front']",
+        BACK_FACE: "[data-face='back']"
     };
 
     /* API */
@@ -82,7 +86,7 @@ define([
 
             this._renderMenu();
 
-            this._bindObjEventListeners();
+            this.bindEventListeners();
 
             this._preloadTabSources();
 
@@ -569,7 +573,7 @@ define([
 
         var self = this;
 
-        this.$el.find("[data-action]").each(function () {
+        this.$el.find(s.FRONT_FACE).find("[data-action]").each(function () {
 
             var $this = $(this),
                 action = $this.data("action"),
@@ -606,6 +610,8 @@ define([
 
         var currentTab = this._getObjState("tab"),
             currentOpts = this._getObjState("tabOpts");
+
+        console.log(tab, opts)
 
         //TODO check if currentTab is undefined
 
@@ -786,13 +792,14 @@ define([
             this.$el.find(s.SIDEBAR).toggleClass('hidden-xs hidden-sm');
         }, this));
 
-        this.$el.find("[data-action]").each(function () {
+        
+        this.$el.find(s.BACK_FACE).find("[data-action]").each(function () {
 
             var $this = $(this),
                 action = $this.data("action"),
                 event = self._getEventTopic(action);
 
-            $this.off().on("click", {event: event, box: self}, function (e) {
+            $this.on("click", {event: event, box: self}, function (e) {
                 e.preventDefault();
 
                 log.info("Raise box event: " + e.data.event);
@@ -878,7 +885,7 @@ define([
                 break;
             case 'map':
                 configuration = this._createBackMapTabConfiguration();
-                break;                
+                break;
             default :
                 configuration = {};
         }
@@ -1273,7 +1280,7 @@ define([
 
     // Event binding and callbacks
 
-    Box.prototype._bindObjEventListeners = function () {
+    Box.prototype.bindEventListeners = function () {
 
         var self = this;
 
@@ -1296,22 +1303,6 @@ define([
         amplify.subscribe(this._getEventTopic("filter"), this, this._onFilterEvent);
 
         amplify.subscribe(this._getEventTopic("download-metadata"), this, this._onDownloadMetadataEvent);
-
-        this.$el.find("[data-action]").each(function () {
-
-            var $this = $(this),
-                action = $this.data("action"),
-                event = self._getEventTopic(action);
-
-            $this.on("click", {event: event, box: self}, function (e) {
-                e.preventDefault();
-
-                log.info("Raise event: " + e.data.event);
-
-                amplify.publish(event, {target: this, box: e.data.box, state: self.getState()});
-
-            });
-        });
 
         this.$el.find(s.RIGHT_MENU).on('click', "a", function (e) {
             e.preventDefault();
@@ -1966,7 +1957,7 @@ define([
 
     Box.prototype._dispose = function () {
 
-        this._unbindObjEventListeners();
+        this.unbindEventListeners();
 
         this._disposeFrontFace();
 
@@ -2012,7 +2003,7 @@ define([
 
     };
 
-    Box.prototype._unbindObjEventListeners = function () {
+    Box.prototype.unbindEventListeners = function () {
 
         amplify.unsubscribe(this._getEventTopic("remove"), this._onRemoveEvent);
 

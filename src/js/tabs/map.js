@@ -331,6 +331,11 @@ define([
 
         var configuration = $.extend(true, {}, Utils.mergeConfigurations(ToolbarModel, this.syncModel || {}));
 
+
+        log.warn("TODO map toolbar configuration")
+
+        return {};
+
         try {
 
             var aggregatorLists = new myFunc().getListAggregator(),
