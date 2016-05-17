@@ -285,7 +285,7 @@ define([
     TableTab.prototype._renderTable = function () {
 
         var toolbarValues = this.toolbar.getValues(),
-            configuration = BoxUtils.getTableConfiguration(toolbarValues, this.model.metadata.dsd);
+            configuration = BoxUtils.getTableCreatorConfiguration(toolbarValues, this.model.metadata.dsd);
 
         console.log(configuration)
         
@@ -315,7 +315,7 @@ define([
 
         var initialConfiguration = $.extend(true, {}, Utils.mergeConfigurations(ToolbarModel, this.syncModel || {}));
 
-        var configuration = BoxUtils.createToolbarConfig(initialConfiguration, this.model);
+        var configuration = BoxUtils.getTableToolbarConfig(initialConfiguration, this.model);
 
         return configuration;
 

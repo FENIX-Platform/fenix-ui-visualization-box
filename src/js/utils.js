@@ -18,7 +18,9 @@ define([
         return this;
     }
 
-    Utils.prototype.createToolbarConfig = function (config, mod) {
+    //Toolbar configurations
+
+    Utils.prototype.getToolbarConfig = function (config, mod) {
 
         var configuration = $.extend(true, {}, config),
             model = $.extend(true, {}, mod);
@@ -64,6 +66,20 @@ define([
         return configuration;
     };
 
+    Utils.prototype.getTableToolbarConfig = function (config, mod) {
+        return this.getToolbarConfig(config, mod);
+    };
+
+    Utils.prototype.getChartToolbarConfig = function (config, mod) {
+        return this.getToolbarConfig(config, mod);
+    };
+
+    Utils.prototype.getMapToolbarConfig = function (config, mod) {
+        return this.getToolbarConfig(config, mod);
+    };
+
+    //Creators configurations
+
     Utils.prototype.getCreatorConfiguration = function (values, dsd) {
 
         var ret = {
@@ -102,7 +118,7 @@ define([
         return ret;
     };
 
-    Utils.prototype.getChartConfiguration = function (values, dsd) {
+    Utils.prototype.getChartCreatorConfiguration = function (values, dsd) {
 
         var creatorConfig = this.getCreatorConfiguration(values, dsd);
 
@@ -128,7 +144,7 @@ define([
         return pc;
     };
 
-    Utils.prototype.getTableConfiguration = function (values, dsd) {
+    Utils.prototype.getTableCreatorConfiguration = function (values, dsd) {
 
         var creatorConfig = this.getCreatorConfiguration(values, dsd);
 
@@ -137,7 +153,7 @@ define([
         return creatorConfig;
     };
 
-    Utils.prototype.getMapConfiguration = function (values, dsd) {
+    Utils.prototype.getMapCreatorConfiguration = function (values, dsd) {
 
         var creatorConfig = this.getCreatorConfiguration(values, dsd);
 

@@ -273,7 +273,7 @@ define([
     MapTab.prototype._renderMap = function () {
 
         var toolbarValues = this.toolbar.getValues(),
-            configuration = BoxUtils.getMapConfiguration(toolbarValues, this.model.metadata.dsd);
+            configuration = BoxUtils.getMapCreatorConfiguration(toolbarValues, this.model.metadata.dsd);
 
         console.log(configuration)
 
@@ -329,10 +329,11 @@ define([
 
     MapTab.prototype._createFilterConfiguration = function () {
 
-        var configuration = $.extend(true, {}, Utils.mergeConfigurations(ToolbarModel, this.syncModel || {}));
+        var initialConfiguration = $.extend(true, {}, Utils.mergeConfigurations(ToolbarModel, this.syncModel || {}));
 
+        var configuration = BoxUtils.getMapToolbarConfig(initialConfiguration, this.model);
 
-        log.warn("TODO map toolbar configuration")
+        //return configuration;
 
         return {};
 

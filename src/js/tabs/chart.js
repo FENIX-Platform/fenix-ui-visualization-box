@@ -288,7 +288,7 @@ define([
     ChartTab.prototype._renderChart = function () {
 
         var toolbarValues = this.toolbar.getValues(),
-            configuration = BoxUtils.getChartConfiguration(toolbarValues, this.model.metadata.dsd);
+            configuration = BoxUtils.getChartCreatorConfiguration(toolbarValues, this.model.metadata.dsd);
 
         console.log(configuration)
 
@@ -319,7 +319,7 @@ define([
 
         var initialConfiguration = $.extend(true, {}, Utils.mergeConfigurations(ToolbarModel, this.syncModel || {}));
 
-        var configuration = BoxUtils.createToolbarConfig(initialConfiguration, this.model);
+        var configuration = BoxUtils.getChartToolbarConfig(initialConfiguration, this.model);
 
         return configuration;
 
