@@ -1,7 +1,7 @@
 /* Visualization Box Style */
 
 $box-height: 450px; // 430px content + 23px toolbar height + 1px border between vb-toolbar and content (the border affects the dimensions because of the nature of the h6 title inside)
-$back-and-border-color: $fenix-light-gray; // $fenix-light-gray
+$back-and-border-color: #e0e0e0; // $fenix-light-gray
 $box-content-height: 424px; // 450px minus the 23px vb-toolbar
 $detail-height: 350px;
 $toolbar-font-size: 11px;
@@ -10,12 +10,20 @@ $cmd-right-width: 192px;
 
 
 .fx-box {
-
   height: $box-height;
+  border: 1px solid $back-and-border-color;
+
 
   [data-content] {
     display: none;
     height: $box-height;
+    position: relative;
+
+    .loading{
+      position: absolute;
+      top: 45%;
+
+    }
 
   }
 
@@ -270,7 +278,7 @@ $cmd-right-width: 192px;
   /* for firefox 31 */
   transform: rotateY(0deg);
   background-color: white;
-  border: 1px solid $back-and-border-color;
+  //border: 1px solid $back-and-border-color;
 }
 
 [data-role="toolbar"] {
@@ -293,7 +301,7 @@ $cmd-right-width: 192px;
 .back {
   transform: rotateY(180deg);
   background-color: $back-and-border-color;
-  border: 1px solid $back-and-border-color;
+  //border: 1px solid $back-and-border-color;
 }
 
 [data-role="back-content"]{

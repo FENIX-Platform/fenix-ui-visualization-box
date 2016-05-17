@@ -5491,7 +5491,7 @@ input[type="radio"] + label {
     display: inline-block;
     height: 15px;
     width: 15px;
-    background-color: #dddddd;
+    background-color: #bdbdbd;
     -webkit-border-radius: 100%;
     -moz-border-radius: 100%;
     -ms-border-radius: 100%;
@@ -5527,11 +5527,7 @@ input[type="checkbox"] + label {
     display: inline-block;
     height: 15px;
     width: 15px;
-    background-color: #dddddd;
-    -webkit-border-radius: 100%;
-    -moz-border-radius: 100%;
-    -ms-border-radius: 100%;
-    border-radius: 100%;
+    background-color: #bdbdbd;
     border: 0 solid #0076ff;
     position: relative;
     top: 2px;
@@ -5570,6 +5566,11 @@ input[type="radio"]:disabled + label {
     position: absolute;
     right: 0;
     top: 17px; }
+    [data-selector] .controller input[type="checkbox"] + label:before, [data-semantic] .controller input[type="checkbox"] + label:before {
+      -webkit-border-radius: 50% !important;
+      -moz-border-radius: 50% !important;
+      -ms-border-radius: 50% !important;
+      border-radius: 50% !important; }
     [data-selector] .controller .btn-round, [data-semantic] .controller .btn-round {
       -webkit-border-radius: 50% !important;
       -moz-border-radius: 50% !important;
@@ -5676,7 +5677,7 @@ input[type="radio"]:disabled + label {
   background: #0076ff; }
 
 .irs-line {
-  background: #dddddd;
+  background: #bdbdbd;
   border-color: transparent; }
 
 .irs-slider {
@@ -5752,10 +5753,15 @@ input[type="radio"]:disabled + label {
 /* Visualization Box Style */
 .fx-box {
   height: 450px;
+  border: 1px solid #e0e0e0;
   /* Hovered */ }
   .fx-box [data-content] {
     display: none;
-    height: 450px; }
+    height: 450px;
+    position: relative; }
+    .fx-box [data-content] .loading {
+      position: absolute;
+      top: 45%; }
   .fx-box .front-content, .fx-box .back-content {
     height: 424px; }
   .fx-box .box-title {
@@ -5812,7 +5818,7 @@ input[type="radio"]:disabled + label {
 
 .vb-toolbar {
   background-color: white;
-  border-bottom: 1px solid #dddddd; }
+  border-bottom: 1px solid #e0e0e0; }
   .vb-toolbar .meta-btn {
     margin-top: 2px; }
   .vb-toolbar .toolbar-cmd-left {
@@ -5835,7 +5841,7 @@ input[type="radio"]:disabled + label {
       /* Avoid 1px bug of the bootstrap's btn-group */
       display: inline-block; }
       .vb-toolbar .toolbar-cmd-right button[data-action="flip"] {
-        background-color: #dddddd; }
+        background-color: #e0e0e0; }
       .vb-toolbar .toolbar-cmd-right button:last-child {
         margin-right: 0;
         /* Remove margin from the last child of btn-group */ }
@@ -5869,7 +5875,7 @@ input[type="radio"]:disabled + label {
     .vb-toolbar button:hover {
       border: 0;
       border-color: transparent;
-      background-color: #dddddd;
+      background-color: #e0e0e0;
       color: #0076ff; }
   .vb-toolbar .box-title {
     color: #0076ff;
@@ -5907,8 +5913,7 @@ input[type="radio"]:disabled + label {
   z-index: 2;
   /* for firefox 31 */
   transform: rotateY(0deg);
-  background-color: white;
-  border: 1px solid #dddddd; }
+  background-color: white; }
 
 [data-role="toolbar"] {
   z-index: 1;
@@ -5921,8 +5926,7 @@ input[type="radio"]:disabled + label {
 /* BACK, initially hidden pane */
 .back {
   transform: rotateY(180deg);
-  background-color: #dddddd;
-  border: 1px solid #dddddd; }
+  background-color: #e0e0e0; }
 
 [data-role="back-content"] {
   height: 100%; }

@@ -934,7 +934,7 @@ define([
                     nextButton: this.$el.find(s.ROWS_SWIPER).find('.swiper-button-next'),
                     prevButton: this.$el.find(s.ROWS_SWIPER).find('.swiper-button-prev'),
 
-                    slidesPerView: 3.5,
+                    //slidesPerView: 3.5,
                     freeMode: true,
                     simulateTouch: false
 
