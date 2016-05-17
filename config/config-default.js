@@ -35,12 +35,12 @@ define(function () {
         },
         tabs: {
             //'blank': {type: 'simple', callback: 'once'},
-            'table': {type: 'simple', callback: 'once'},
-            'metadata': {type: 'simple', callback: 'once'},
-            'filter': {type: 'simple', callback: 'once'},
-            'map': {type: 'simple', callback: 'always'},
-            'chart': {type: 'simple', callback: 'always'},
-            'download': {type: 'simple', callback: 'always'}
+            'table': {type: 'simple', callback: 'once', tabOpts : {}},
+            'metadata': {type: 'simple', callback: 'once', tabOpts : {}},
+            'filter': {type: 'simple', callback: 'once', tabOpts : {}},
+            'map': {type: 'simple', callback: 'always', tabOpts : {}},
+            'chart': {type: 'simple', callback: 'always', tabOpts : {type : "pie"}},
+            'download': {type: 'simple', callback: 'always', tabOpts : {}}
         },
 
         flippedClassName : "flipped",

@@ -626,6 +626,11 @@ define([
 
         log.info("Show '" + tab + "' tab for result id: " + this.id);
 
+        //if opts is empty get default options
+        if (!opts) {
+            opts = Utils.getNestedProperty("tabOpts", this.tabs[tab])
+        }
+
         this._setObjState("tab", tab);
         this._setObjState("tabOpts", opts);
 
