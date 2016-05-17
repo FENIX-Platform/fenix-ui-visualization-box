@@ -16,10 +16,13 @@ define([
     "fx-v-b/config/right-menu-model",
     "i18n!fx-v-b/nls/box",
     "fx-common/bridge",
+    "fx-v-b/config/tabs/map-back-model",
     "swiper",
     "amplify",
     "bootstrap"
-], function (log, require, $, _, Handlebars, C, CD, ERR, EVT, Utils, MetadataViewer, Template, JsonMenu, RightMenuModel, i18nLabels, Bridge, Swiper) {
+], function (log, require, $, _, Handlebars, C, CD, ERR, EVT, Utils, MetadataViewer, Template, JsonMenu, RightMenuModel, i18nLabels, Bridge, 
+    mapBackModel,
+    Swiper) {
 
     'use strict';
 
@@ -942,7 +945,7 @@ define([
             filter: {
 
 //TODO move to toolbar
-/*                map_boundaries: {
+                /* map_boundaries: {
                     selector : {
                         id : "input",
                         type : "checkbox",
@@ -956,7 +959,7 @@ define([
                         type : "checkbox",
                         source : [ { value : "t", label :"Fist"}]
                     }
-                }   */
+                } */
                 layergroups: {
                     selector: {
                         id: "tree",
@@ -965,26 +968,25 @@ define([
                             {label: "Uneca",     value: "uneca"},
                         ],
                         default: ["earthstat"],
-                        config: {
-                            core: {
-                                multiple: false
-                            }
-                        }
+                        config: { core: { multiple: false } }
                     }
                 },
                 layers: {
                     selector: {
                         id: "tree",
-                        source: [
-                            {label: "Earthstat", value: "earthstat"},
-                            {label: "Uneca",     value: "uneca"},
-                        ],
-                        default: ["earthstat"],
-                        config: {
-                            core: {
-                                multiple: false
-                            }
-                        }
+                        source: _.map(mapBackModel, function(layer) {
+                            return {
+                                label: layer.Title,
+                                value: {
+                                    urlWMS: "http://fenix.fao.org/demo/fenix/geoserver/earthstat/wms",                                
+                                    layers: 'earthstat:'+layer.Name,
+                                    layertitle: layer.Title,
+                                    opacity: '0.8',
+                                    lang: 'EN'
+                                }
+                            };
+                        }),
+                        config: { core: { multiple: true} }
                     },
                     "dependencies": {
                         "layergroups": {id: "focus", event: "select"}
