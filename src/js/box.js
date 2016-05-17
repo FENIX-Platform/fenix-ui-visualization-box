@@ -941,13 +941,60 @@ define([
 
             filter: {
 
-                stefano : {
+//TODO move to toolbar
+/*                map_boundaries: {
                     selector : {
                         id : "input",
                         type : "checkbox",
                         source : [ { value : "t", label :"Fist"}]
                     }
-                }
+                },
+
+                map_labels: {
+                    selector : {
+                        id : "input",
+                        type : "checkbox",
+                        source : [ { value : "t", label :"Fist"}]
+                    }
+                }   */
+                layergroups: {
+                    selector: {
+                        id: "tree",
+                        source: [
+                            {label: "Earthstat", value: "earthstat"},
+                            {label: "Uneca",     value: "uneca"},
+                        ],
+                        default: ["earthstat"],
+                        config: {
+                            core: {
+                                multiple: false
+                            }
+                        }
+                    }
+                },
+                layers: {
+                    selector: {
+                        id: "tree",
+                        source: [
+                            {label: "Earthstat", value: "earthstat"},
+                            {label: "Uneca",     value: "uneca"},
+                        ],
+                        default: ["earthstat"],
+                        config: {
+                            core: {
+                                multiple: false
+                            }
+                        }
+                    },
+                    "dependencies": {
+                        "layergroups": {id: "focus", event: "select"}
+                    }           
+                },
+                /*template: {
+                    title: "Select Over Layer",
+                    hideSwitch: false,
+                    hideRemoveButton: false
+                }*/
             },
 
             template: Handlebars.compile($(Template).find(s.FILTER_MAP_TEMPLATE)[0].outerHTML)({layers: []}),

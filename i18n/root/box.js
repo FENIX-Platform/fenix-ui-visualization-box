@@ -26,12 +26,12 @@ define(function () {
         aggregations_first : "First",
         aggregations_last : "Last",
 
+        map_select_overlay : "Select Overlayer",
+
         //back steps
         step_metadata : "Metadata",
         step_filter: "Filter",
         step_aggregations : "Aggregations",
-        step_map : "Map Layers"
-
-
+        step_map : "Map Settings"
     }
 });
