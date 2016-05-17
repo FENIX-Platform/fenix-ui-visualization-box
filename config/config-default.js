@@ -34,7 +34,7 @@ define(function () {
             }
         },
         tabs: {
-            //'blank': {type: 'simple', callback: 'once'},
+            //'blank': {type: 'simple', callback: 'once', tabOpts : {}},
             'table': {type: 'simple', callback: 'once', tabOpts : {}},
             'metadata': {type: 'simple', callback: 'once', tabOpts : {}},
             'filter': {type: 'simple', callback: 'once', tabOpts : {}},

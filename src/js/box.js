@@ -1987,6 +1987,8 @@ define([
             this.metadataModal.dispose();
         }
 
+        this.$el.find(s.FRONT_FACE).find("[data-action]").off();
+
         this.frontFaceIsRendered = false;
 
     };
@@ -2001,6 +2003,8 @@ define([
             this._callTabInstanceMethod({tab: tab, method: "dispose", face: "back"});
 
         }, this));
+
+        this.$el.find(s.BACK_FACE).find("[data-action]").off();
 
         this.backFaceIsRendered = false;
 
