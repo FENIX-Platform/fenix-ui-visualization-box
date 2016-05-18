@@ -288,7 +288,7 @@ define([
     ChartTab.prototype._renderChart = function () {
 
         var toolbarValues = this.toolbar.getValues(),
-            configuration = BoxUtils.getChartCreatorConfiguration(toolbarValues, this.model.metadata.dsd);
+            configuration = BoxUtils.getChartCreatorConfiguration(toolbarValues);
 
         console.log(configuration)
 

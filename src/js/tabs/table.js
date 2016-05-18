@@ -285,7 +285,7 @@ define([
     TableTab.prototype._renderTable = function () {
 
         var toolbarValues = this.toolbar.getValues(),
-            configuration = BoxUtils.getTableCreatorConfiguration(toolbarValues, this.model.metadata.dsd);
+            configuration = BoxUtils.getTableCreatorConfiguration(toolbarValues);
 
         console.log(configuration)
         

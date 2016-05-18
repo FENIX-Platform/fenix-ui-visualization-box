@@ -13,154 +13,47 @@ define([
 
     'use strict';
 
-
     function Utils() {
+        this.fenixTool = new FenixTool();
         return this;
     }
 
     //Toolbar configurations
 
-    Utils.prototype.getToolbarConfig = function (config, mod) {
+    Utils.prototype._getToolbarConfig = function (Model) {
 
-        var configuration = $.extend(true, {}, config),
-            model = $.extend(true, {}, mod);
-
-        var fenixtool = new FenixTool(),
-            fxMod = fenixtool.initFXT(model.metadata.dsd, {});
-console.log("fxMod in utils",fxMod);	
-        var aggregations = fxMod.aggregations,
-            columns = fxMod.columns,
-            rows = fxMod.rows,
-            hidden = fxMod.hidden,
-            values = fxMod.values;
-
-        if (columns.length !== 0) {
-            _.each(columns, function (dim) {
-                dim.parent = "columns";
-                configuration.sort.selector.source.push(dim)
-            });
-        } else {
-            configuration.sort.selector.source.push({value: "", label: "", parent: "columns"})
-        }
-
-        if (rows.length !== 0) {
-            _.each(rows, function (dim) {
-				console.log("dim",dim);
-                dim.parent = "rows";
-                configuration.sort.selector.source.push(dim)
-            });
-        } else {
-            configuration.sort.selector.source.push({value: "", label: "", parent: "rows"})
-
-        }
-
-        if (hidden.length !== 0) {
-            _.each(rows, function (dim) {
-                dim.parent = "hidden";
-                configuration.sort.selector.source.push(dim)
-            });
-        } else {
-            configuration.sort.selector.source.push({value: "", label: "", parent: "hidden"})
-
-        }
-
-        return configuration;
+        return this.fenixTool.toFilter(Model);
     };
 
-    Utils.prototype.getTableToolbarConfig = function (config, mod) {
-        return this.getToolbarConfig(config, mod);
+    Utils.prototype.getTableToolbarConfig = function (Model) {
+
+        return this._getToolbarConfig(Model);
     };
 
-    Utils.prototype.getChartToolbarConfig = function (config, mod) {
-        return this.getToolbarConfig(config, mod);
+    Utils.prototype.getChartToolbarConfig = function (Model) {
+        return this._getToolbarConfig(Model);
     };
 
-    Utils.prototype.getMapToolbarConfig = function (config, mod) {
-        return this.getToolbarConfig(config, mod);
+    Utils.prototype.getMapToolbarConfig = function (Model) {
+
+        return {};
     };
 
     //Creators configurations
 
-    Utils.prototype.getCreatorConfiguration = function (values, dsd) {
+    Utils.prototype.getChartCreatorConfiguration = function (values) {
 
-        var ret = {
-            aggregations: {},
-            columns: {},
-            rows: {},
-            hidden: {},
-            values: {},
-            aggregationFn : {}
-        };
-
-        for (var i in values.values.sort) {
-            var sorttemp = values.values.sort[i]
-            if (sorttemp.parent == "rows") {
-                ret.rows[sorttemp.value] = true;
-            }
-            else if (sorttemp.parent == "columns") {
-                ret.columns[sorttemp.value] = true;
-            }
-        }
-        ret.aggregationFn["value"] = true;
-        ret.valueOutputType = "classicToNumber";
-        ret.formatter = "value";
-        ret.decimals = 2;
-        ret.showUnit = false;
-        ret.showFlag = false;
-        ret.showCode = false;
-        ret.showRowHeaders = true;
-
-        var myFenixTool = new FenixTool();
-
-        var ret2 = myFenixTool.initFXD(dsd, ret);
-
-        $.extend(ret, ret2);
-
-        return ret;
+        return this.fenixTool.toChartConfig(values);
     };
 
-    Utils.prototype.getChartCreatorConfiguration = function (values, dsd) {
+    Utils.prototype.getTableCreatorConfiguration = function (values) {
 
-        var creatorConfig = this.getCreatorConfiguration(values, dsd);
-
-        var pc = {};
-
-        pc.aggregationFn = creatorConfig.aggregationFn;
-
-        pc.aggregations = creatorConfig.aggregations || [];
-        pc.hidden = creatorConfig.hidden || [];
-        pc.x = creatorConfig.columns || [];
-        pc.y = creatorConfig.values || ["value"];
-        pc.series = creatorConfig.rows;
-
-        pc.formatter = creatorConfig.formatter || "value";
-        pc.valueOutputType = creatorConfig.valueOutputType;
-        pc.showRowHeaders = creatorConfig.showRowHeaders || false;
-        pc.decimals = creatorConfig.decimals || 2;
-
-        pc.showCode = creatorConfig.showCode || false;
-        pc.showFlag = creatorConfig.showFlag || false;
-        pc.showUnit = creatorConfig.showUnit || false;
-
-        return pc;
+        return this.fenixTool.toTableConfig(values);
     };
 
-    Utils.prototype.getTableCreatorConfiguration = function (values, dsd) {
+    Utils.prototype.getMapCreatorConfiguration = function (values) {
 
-        var creatorConfig = this.getCreatorConfiguration(values, dsd);
-
-        //convert here
-
-        return creatorConfig;
-    };
-
-    Utils.prototype.getMapCreatorConfiguration = function (values, dsd) {
-
-        var creatorConfig = this.getCreatorConfiguration(values, dsd);
-
-        //convert here
-
-        return creatorConfig;
+        return {};
     };
 
     return new Utils();
