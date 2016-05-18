@@ -27,7 +27,7 @@ define([
 
         var fenixtool = new FenixTool(),
             fxMod = fenixtool.initFXT(model.metadata.dsd, {});
-
+console.log("fxMod in utils",fxMod);	
         var aggregations = fxMod.aggregations,
             columns = fxMod.columns,
             rows = fxMod.rows,
@@ -45,6 +45,7 @@ define([
 
         if (rows.length !== 0) {
             _.each(rows, function (dim) {
+				console.log("dim",dim);
                 dim.parent = "rows";
                 configuration.sort.selector.source.push(dim)
             });
