@@ -17,12 +17,14 @@ define([
     "fx-v-b/config/right-menu-model",
     "i18n!fx-v-b/nls/box",
     "fx-common/bridge",
-    "fx-v-b/config/tabs/map-back-model",
+    
+    "fx-v-b/config/tabs/map-earthstat-layers",
+
     "swiper",
     "amplify",
     "bootstrap"
 ], function (log, require, $, _, _str, Handlebars, C, CD, ERR, EVT, Utils, MetadataViewer, Template, JsonMenu, RightMenuModel, i18nLabels, Bridge, 
-    mapBackModel,
+    mapEarthstatLayers,
     Swiper) {
 
     'use strict';
@@ -816,14 +818,15 @@ define([
 
     Box.prototype._createProcessSteps = function () {
 
-        var list = [],
-            values = this._getObjState("values") || {},
+        var values = this._getObjState("values") || {},
             //columnsConfiguration = this._createBackTabConfiguration("columns"),
             filterConfiguration = this._createBackTabConfiguration("filter"),
             aggregationConfiguration = this._createBackTabConfiguration("aggregations"),
             mapConfiguration = this._createBackTabConfiguration("map");
 
-        list.push({
+        this.processSteps = [];
+
+        this.processSteps.push({
             tab: "metadata",
             id: "metadata",
             model: $.extend(true, {}, this._getObjState("model")),
@@ -832,7 +835,7 @@ define([
             }
         });
 
-        list.push({
+        this.processSteps.push({
             tab: "filter",
             id: "rows",
             values: values.rows,
@@ -845,7 +848,7 @@ define([
             }
         });
 
-        list.push({
+        this.processSteps.push({
             tab: "filter",
             id: "aggregations",
             config: aggregationConfiguration.filter,
@@ -856,20 +859,17 @@ define([
             }
         });
 
-        list.push({
+        this.processSteps.push({
             tab: "filter",
             id: "map",
             config: mapConfiguration.filter,
             template: mapConfiguration.template,
-            values: values.columns,
+            values: values.layers,
             onReady: mapConfiguration.onReady,
             labels: {
-                title: i18nLabels["step_map"]
+                title: "Earthstat Layer Collection"
             }
         });
-
-        this.processSteps = list;
-
     };
 
     Box.prototype._createBackTabConfiguration = function (tab) {
@@ -971,21 +971,10 @@ define([
                         source : [ { value : "t", label :"Fist"}]
                     }
                 } */
-                layergroups: {
-                    selector: {
-                        id: "tree",
-                        source: [
-                            {label: "Earthstat", value: "earthstat"},
-                            {label: "Uneca",     value: "uneca"},
-                        ],
-                        default: ["earthstat"],
-                        config: { core: { multiple: false } }
-                    }
-                },
                 layers: {
                     selector: {
                         id: "tree",
-                        source: _.map(mapBackModel, function(layer) {
+                        source: _.map(mapEarthstatLayers, function(layer) {
 
                             var title = layer.Title.replace('area','').replace('3857','');
 
@@ -1005,13 +994,13 @@ define([
                     },
                     "dependencies": {
                         "layergroups": {id: "focus", event: "select"}
-                    }           
-                },
-                /*template: {
-                    title: "Select Over Layer",
-                    hideSwitch: false,
-                    hideRemoveButton: false
-                }*/
+                    },
+                    template: {
+                        title: "Select layers to show on map",
+                        hideSwitch: true,
+                        hideRemoveButton: true
+                    }
+                }
             },
 
             template: Handlebars.compile($(Template).find(s.FILTER_MAP_TEMPLATE)[0].outerHTML)({layers: []}),
