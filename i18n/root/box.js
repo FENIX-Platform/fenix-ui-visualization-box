@@ -31,6 +31,7 @@ define(function () {
         //back steps
         step_metadata : "Metadata",
         step_filter: "Filter",
-        step_aggregations : "Aggregations"
+        step_aggregations : "Aggregations",
+        step_map : "Earthstat Layer Collection"
     }
 });

@@ -290,10 +290,6 @@ define([
         var toolbarValues = this.toolbar.getValues(),
             configuration = BoxUtils.getChartCreatorConfiguration(toolbarValues);
 
-        console.log(configuration)
-
-        return;
-
         this.chart = new ChartCreator($.extend(true, {}, {
             model: this.model,
             el: "#chart_" + this.id
@@ -319,7 +315,7 @@ define([
 
         var initialConfiguration = $.extend(true, {}, Utils.mergeConfigurations(ToolbarModel, this.syncModel || {}));
 
-        var configuration = BoxUtils.getChartToolbarConfig(initialConfiguration, this.model);
+        var configuration = BoxUtils.getChartToolbarConfig(initialConfiguration, this.model.metadata.dsd);
 
         return configuration;
 

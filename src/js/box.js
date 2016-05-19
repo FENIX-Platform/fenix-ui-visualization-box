@@ -859,17 +859,19 @@ define([
             }
         });
 
-        this.processSteps.push({
-            tab: "filter",
-            id: "map",
-            config: mapConfiguration.filter,
-            template: mapConfiguration.template,
-            values: values.layers,
-            onReady: mapConfiguration.onReady,
-            labels: {
-                title: "Earthstat Layers Resource"
-            }
-        });
+            this.processSteps.push({
+                tab: "filter",
+                id: "map",
+                config: mapConfiguration.filter,
+                template: mapConfiguration.template,
+                values: values.layers,
+                onReady: mapConfiguration.onReady,
+                labels: {
+                    title: i18nLabels["step_map"]
+                }
+            });
+        }
+
     };
 
     Box.prototype._createBackTabConfiguration = function (tab) {
@@ -1016,6 +1018,8 @@ define([
 
     Box.prototype._createBackAggregationTabConfiguration = function () {
 
+        //TODO integrate fenixTool
+
         var source = [],
             lang = this.lang,
             columns = Utils.getNestedProperty("metadata.dsd.columns", this._getObjState("model"));
@@ -1070,6 +1074,8 @@ define([
     };
 
     Box.prototype._createBackColumnsTabConfiguration = function () {
+
+        //TODO integrate fenixTool
 
         var values = Utils.getNestedProperty("aggregations.values.aggregations", this._getObjState("values")) || [],
             include = values
