@@ -867,7 +867,7 @@ define([
             values: values.layers,
             onReady: mapConfiguration.onReady,
             labels: {
-                title: "Earthstat Layer Collection"
+                title: "Earthstat Layers Resource"
             }
         });
     };
@@ -1434,6 +1434,8 @@ define([
     Box.prototype._onQueryEvent = function (payload) {
         log.info("Listen to event: " + this._getEventTopic("query"));
         log.trace(payload);
+
+        console.log('_onQueryEvent',payload);
 
         var valid = this._validateQuery();
 

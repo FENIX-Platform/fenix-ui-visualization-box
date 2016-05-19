@@ -112,9 +112,9 @@ define([
 
         var box = this.createBox({
             el: s.LARGE,
-            model: valid_model,
+            //model: valid_model,
             tab: 'map',
-            //uid: "adam_country_indicators",
+            uid: "adam_country_indicators",
             //version: "",
             /*            process: [
              {
