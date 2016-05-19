@@ -290,6 +290,8 @@ define([
         var toolbarValues = this.toolbar.getValues(),
             configuration = BoxUtils.getChartCreatorConfiguration(toolbarValues);
 
+        return;
+
         this.chart = new ChartCreator($.extend(true, {}, {
             model: this.model,
             el: "#chart_" + this.id

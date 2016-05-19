@@ -859,7 +859,7 @@ define([
             }
         });
 
-            this.processSteps.push({
+        this.processSteps.push({
                 tab: "filter",
                 id: "map",
                 config: mapConfiguration.filter,
@@ -870,7 +870,6 @@ define([
                     title: i18nLabels["step_map"]
                 }
             });
-        }
 
     };
 

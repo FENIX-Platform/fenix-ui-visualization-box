@@ -287,6 +287,8 @@ define([
         var toolbarValues = this.toolbar.getValues(),
             configuration = BoxUtils.getTableCreatorConfiguration(toolbarValues);
 
+        return;
+
         this.table = new Olap($.extend(true, {}, {
             model: this.model,
             el: "#table_" + this.id
