@@ -12,8 +12,7 @@ define(function () {
             "id": "0",
             "a_attrs": {
                 "data-action": "tab",
-                "data-tab": "metadata",
-                "class": "hidden"
+                "data-tab": "metadata"
             }
         },
         //Download
@@ -24,8 +23,7 @@ define(function () {
             "id": "1",
             "a_attrs": {
                 "data-action": "tab",
-                "data-tab": "download",
-                "class": "hidden"
+                "data-tab": "download"
             }
         },
         //Layout
@@ -86,7 +84,7 @@ define(function () {
             }
         },
         //Visualize as
-        {
+        {"class": "hidden"
             "label": "Visualize as",
             "url": "#",
             "parent_id": "-1",
