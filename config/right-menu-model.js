@@ -84,7 +84,7 @@ define(function () {
             }
         },
         //Visualize as
-        {"class": "hidden"
+        {
             "label": "Visualize as",
             "url": "#",
             "parent_id": "-1",
