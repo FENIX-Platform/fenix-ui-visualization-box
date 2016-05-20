@@ -215,9 +215,11 @@ define([
 
         this.$el.find(s.DOWNLOAD_BTN).on("click", _.bind(function (e) {
 
+            debugger;
             var $this = $(e.target);
 
-            this._downloadData($this.data('format'))
+            var format = $this.data('format');
+            (format== 'pdf')? this._downloadMetadata(format): this._downloadData(format);
 
         }, this));
 
@@ -225,23 +227,23 @@ define([
 
     DownloadTab.prototype._downloadData = function (format) {
 
-        console.log(this.model.metadata.uid)
-
         //check if uid exist
+        var resource = (this.model.data) ? this.model :
+        {
+            "metadata": {
+                "uid": this.model.metadata.uid
+            },
+            "data": []
+        };
 
         var payload = {
-            resource: {
-                metadata: {
-                    uid: this.model.metadata.uid
-                },
-                data: []
-            },
+            resource: resource,
             input: {
                 config: {}
             },
             output: {
                 config: {
-                    lang: this.lang.toUpperCase()
+                    lang: this.box.lang.toUpperCase()
                 }
             }
         };
@@ -255,8 +257,12 @@ define([
     };
 
     DownloadTab.prototype._downloadMetadata = function (format) {
-
+        
         //check if uid exist
+        var fileName = this.model.metadata.title['EN'].replace(/[^a-z0-9]/gi, '_').toLowerCase();
+
+        var template = this.model.metadata.dsd && this.model.metadata.dsd.contextSystem && this.model.metadata.dsd.contextSystem  === 'uneca'?
+            'uneca' : 'fao';
 
         var payload = {
             resource: {
@@ -270,12 +276,14 @@ define([
             },
             output: {
                 config: {
-                    lang: this.lang.toUpperCase()
+                    template : template,
+                    lang: this.box.lang.toUpperCase(),
+                    fileName: fileName+'.pdf'
                 }
             }
         };
 
-        this.report.init('tableExport');
+        this.report.init('metadataExport');
 
         this.report.exportData({
             config: payload

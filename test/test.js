@@ -56,7 +56,7 @@ require([
     boxConfig.baseUrl = submodules_path + 'fenix-ui-visualization-box/src/js';
 
     var filterConfig = Filter;
-    filterConfig.baseUrl = submodules_path + 'fenix-ui-filter/src/js';
+    filterConfig.baseUrl = submodules_path + 'fenix-ui-filter';
 
     var olapConfig = Olap;
     olapConfig.baseUrl = submodules_path + 'fenix-ui-olap/src/js';
@@ -127,7 +127,7 @@ require([
     ], function (log, Test) {
 
         //trace, debug, info, warn, error, silent
-        log.setLevel('silent');
+        log.setLevel('trace');
 
         log.warn("~~~~~ FENIX Visualization Box: test");
         log.info("===== Start testing:...");
