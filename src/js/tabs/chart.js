@@ -176,7 +176,7 @@ define([
 
         if (this.initialized !== true) {
 
-            log.info("Chart table shown for the first time");
+            log.info("Tab chart shown for the first time");
 
             this._attach();
 
@@ -199,7 +199,6 @@ define([
                 this.toolbar.setValues(this.syncState.toolbar, true);
                 this._renderChart();
             }
-
         }
 
         return this;
@@ -249,6 +248,8 @@ define([
         //Toolbar events
         if (C.sync_tabs_on_toolbar_change === true || CD.sync_tabs_on_toolbar_change === true) {
             this.toolbar.on('change', _.bind(this._onToolbarChangeEvent, this));
+        } else {
+            log.warn("Tab sync is disabled by configuration")
         }
 
     };
@@ -290,7 +291,10 @@ define([
         var toolbarValues = this.toolbar.getValues(),
             configuration = BoxUtils.getChartCreatorConfiguration(toolbarValues);
 
-        return;
+        if (C.render_visualization_components === false || CD.render_visualization_components === false) {
+            log.warn("Render Visualization component blocked by configuration");
+            return;
+        }
 
         this.chart = new ChartCreator($.extend(true, {}, {
             model: this.model,
@@ -300,24 +304,23 @@ define([
     };
 
     ChartTab.prototype._renderToolbar = function () {
-        log.info("Table tab render toolbar");
+        log.info("Chart tab render toolbar");
 
         this.toolbar = new Filter({
-            items: this._createFilterConfiguration(ToolbarModel),
+            items: this._createFilterConfiguration(),
             el: this.$el.find(s.TOOLBAR)
         });
 
-        //TODO uncomment
-        log.warn("Temporary the chart render is blocked")
-        //this.toolbar.on("ready", _.bind(this._renderChart, this))
+        this.toolbar.on("ready", _.bind(this._renderChart, this))
 
     };
 
     ChartTab.prototype._createFilterConfiguration = function () {
 
-        var initialConfiguration = $.extend(true, {}, Utils.mergeConfigurations(ToolbarModel, this.syncModel || {}));
+        var initialConfiguration = $.extend(true, {}, Utils.mergeConfigurations(ToolbarModel, this.syncModel || {})),
+            configurationFromFenixTool = BoxUtils.getChartToolbarConfig(this.model);
 
-        var configuration = BoxUtils.getChartToolbarConfig(initialConfiguration, this.model.metadata.dsd);
+        var configuration = $.extend(true, {}, Utils.mergeConfigurations(initialConfiguration, configurationFromFenixTool));
 
         return configuration;
 

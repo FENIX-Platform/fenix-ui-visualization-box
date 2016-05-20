@@ -29,7 +29,8 @@ require.config({
         metadataEditorPaths : pathProjectRoot + 'submodules/fenix-ui-metadata-editor/js/paths',
         metadataViewerPaths : pathProjectRoot + 'submodules/fenix-ui-metadata-viewer/src/js/paths',
         catalogPaths : pathProjectRoot + 'submodules/fenix-ui-catalog/js/paths',
-        dataManagementPaths : pathProjectRoot + 'submodules/fenix-ui-data-management/src/js/paths'
+        dataManagementPaths : pathProjectRoot + 'submodules/fenix-ui-data-management/src/js/paths',
+        fenixMap : pathProjectRoot + 'submodules/fenix-ui-map/src/paths',
     }
 });
 
@@ -42,8 +43,9 @@ require([
     "metadataViewerPaths",
     "chartPaths",
     "mapPaths",
-    "reportPaths"
-], function (Compiler, Common, Box, Filter, Olap, MetadataViewer, ChartCreator, MapCreator, Report ) {
+    "reportPaths",
+    "fenixMap"
+], function (Compiler, Common, Box, Filter, Olap, MetadataViewer, ChartCreator, MapCreator, Report, Map ) {
 
     'use strict';
 
@@ -67,13 +69,16 @@ require([
     var chartConfig = ChartCreator;
     chartConfig.baseUrl = submodules_path + 'fenix-ui-chart-creator/src/js';
 
-    var mapConfig = MapCreator;
-    mapConfig.baseUrl = submodules_path + 'fenix-ui-map-creator/src/js';
+    var mapCreatorConfig = MapCreator;
+    mapCreatorConfig.baseUrl = submodules_path + 'fenix-ui-map-creator/src/js';
 
     var reportConfig = Report;
     reportConfig.baseUrl = submodules_path + 'fenix-ui-reports/src/js';
 
-    Compiler.resolve([commonConfig, boxConfig, filterConfig, olapConfig, metadataViewerConfig, chartConfig, mapConfig, reportConfig],
+    var mapConfig = Map;
+    mapConfig.baseUrl = submodules_path + 'fenix-ui-map';
+
+    Compiler.resolve([commonConfig, boxConfig, filterConfig, olapConfig, metadataViewerConfig, chartConfig, mapCreatorConfig, reportConfig, mapConfig],
         {
             placeholders: {"FENIX_CDN": "http://fenixrepo.fao.org/cdn"},
 
@@ -127,7 +132,8 @@ require([
     ], function (log, Test) {
 
         //trace, debug, info, warn, error, silent
-        log.setLevel('trace');
+        //log.setLevel('trace');
+        log.setLevel('silent');
 
         log.warn("~~~~~ FENIX Visualization Box: test");
         log.info("===== Start testing:...");

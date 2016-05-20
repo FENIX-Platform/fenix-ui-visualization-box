@@ -6,7 +6,7 @@ define(function () {
     return {
 
         status : "loading",
-        tab : "download",
+        tab : "map",
         size : "large",
         face : "front", // back || front
         faces : ["front", "back"],
@@ -57,7 +57,8 @@ define(function () {
             language : "EN"
         },
 
-        sync_tabs_on_toolbar_change : false
+        sync_tabs_on_toolbar_change : false,
+        render_visualization_components : true
 
     };
 });

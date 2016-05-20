@@ -311,9 +311,11 @@ define([
 
     TableTab.prototype._createFilterConfiguration = function () {
 
-        var initialConfiguration = $.extend(true, {}, Utils.mergeConfigurations(ToolbarModel, this.syncModel || {}));
 
-        var configuration = BoxUtils.getTableToolbarConfig(initialConfiguration, this.model);
+        var initialConfiguration = $.extend(true, {}, Utils.mergeConfigurations(ToolbarModel, this.syncModel || {})),
+            configurationFromFenixTool = BoxUtils.getTableToolbarConfig(this.model);
+
+        var configuration = $.extend(true, {}, Utils.mergeConfigurations(initialConfiguration, configurationFromFenixTool));
 
         return configuration;
 

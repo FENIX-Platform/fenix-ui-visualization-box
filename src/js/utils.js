@@ -36,7 +36,16 @@ define([
 
     Utils.prototype.getMapToolbarConfig = function (Model) {
 
-        return {};
+        return {
+
+            radio : {
+                selector : {
+                    id : "input",
+                    type: "checkbox",
+                    source : [{value : "a", label : "Test 1"}]
+                }
+            }
+        };
     };
 
     //Creators configurations

@@ -1440,8 +1440,6 @@ define([
         log.info("Listen to event: " + this._getEventTopic("query"));
         log.trace(payload);
 
-        console.log('_onQueryEvent',payload);
-
         var valid = this._validateQuery();
 
         if (valid === true) {

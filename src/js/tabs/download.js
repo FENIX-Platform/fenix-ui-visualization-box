@@ -215,7 +215,6 @@ define([
 
         this.$el.find(s.DOWNLOAD_BTN).on("click", _.bind(function (e) {
 
-            debugger;
             var $this = $(e.target);
 
             var format = $this.data('format');

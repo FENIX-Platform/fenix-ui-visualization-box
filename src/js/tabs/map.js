@@ -273,16 +273,15 @@ define([
     MapTab.prototype._renderMap = function () {
 
         var toolbarValues = this.toolbar.getValues(),
-            configuration = BoxUtils.getMapCreatorConfiguration(toolbarValues, this.model.metadata.dsd);
+            configuration = BoxUtils.getMapCreatorConfiguration(toolbarValues);
 
-        console.log(configuration)
-
-        return;
-
-        var self = this;
+        if (C.render_visualization_components === false || CD.render_visualization_components === false) {
+            log.warn("Render Visualization component blocked by configuration");
+            return;
+        }
 
         this.map = new MapCreator({
-                container: this.$el.find("#map_" + this.id),
+                el: this.$el.find("#map_" + this.id),
                 fenix_ui_map: {
                     plugins: {
                         fullscreen: false
@@ -306,9 +305,9 @@ define([
                         }
                     }
                 },
-                onReady: function(w) {
-                    self.map.addLayer( self.model );
-                }
+                onReady: _.bind(function(w) {
+                    this.map.addLayer( this.model );
+                }, this)
             });
 
     };
@@ -321,9 +320,7 @@ define([
             el: this.$el.find(s.TOOLBAR)
         });
 
-        //TODO uncomment
-        log.warn("Temporary the map render is blocked")
-        //this.toolbar.on("ready", _.bind(this._renderMap, this))
+        this.toolbar.on("ready", _.bind(this._renderMap, this))
 
     };
 
@@ -332,55 +329,6 @@ define([
         var initialConfiguration = $.extend(true, {}, Utils.mergeConfigurations(ToolbarModel, this.syncModel || {}));
 
         var configuration = BoxUtils.getMapToolbarConfig(initialConfiguration, this.model);
-
-        //return configuration;
-
-        return {};
-
-        try {
-
-            var aggregatorLists = new myFunc().getListAggregator(),
-                FX = this.model.metadata.dsd;
-
-            for (var i in aggregatorLists) {
-                if (aggregatorLists.hasOwnProperty(i)) {
-                    configuration.aggregation.selector.source
-                        .push({"value": aggregatorLists[i], "label": aggregatorLists[i]})
-                }
-            }
-
-            for (i in FX.columns) {
-                if (FX.columns.hasOwnProperty(i)) {
-                    if (FX.columns[i].subject == "value") {
-                        configuration.sort.selector.source.push({
-                            "value": FX.columns[i].id,
-                            "label": FX.columns[i].id,
-                            parent: 'HIDDEN'
-                        })
-                    }
-                    else if (FX.columns[i].subject != "time") {
-                        configuration.sort.selector.source.push({
-                            "value": FX.columns[i].id,
-                            "label": FX.columns[i].id,
-                            parent: 'ROWS'
-                        })
-                    }
-                    else if (FX.columns[i].subject == "time") {
-
-                        configuration.sort.selector.source.push({
-                            "value": FX.columns[i].id,
-                            "label": FX.columns[i].id,
-                            parent: 'COLS'
-                        })
-                    }
-                }
-
-            }
-        } catch (e) {
-            log.error("Table tab: Error on _createFilterConfiguration() ");
-            log.error(e);
-            return configuration;
-        }
 
         return configuration;
 
