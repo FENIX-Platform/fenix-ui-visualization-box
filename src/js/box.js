@@ -17,18 +17,16 @@ define([
     "fx-v-b/config/right-menu-model",
     "i18n!fx-v-b/nls/box",
     "fx-common/bridge",
-    
+
     "fx-v-b/config/tabs/map-earthstat-layers",
 
     "swiper",
     "amplify",
     "bootstrap"
-], function (log, require, $, _, _str, Handlebars, C, CD, ERR, EVT, Utils, MetadataViewer, Template, JsonMenu, RightMenuModel, i18nLabels, Bridge, 
-    
-    //DEMO DATA: waiting for data from the D3S
-    mapEarthstatLayers,
-
-    Swiper) {
+], function (log, require, $, _, _str, Handlebars, C, CD, ERR, EVT, Utils, MetadataViewer, Template, JsonMenu, RightMenuModel, i18nLabels, Bridge,
+             //DEMO DATA: waiting for data from the D3S
+             mapEarthstatLayers,
+             Swiper) {
 
     'use strict';
 
@@ -52,7 +50,7 @@ define([
         ERROR_BUTTON: "[data-role='error-BUTTON']",
         BACK_FILTER_ERRORS: "[data-role='filter-error']",
         FILTER_AGGREGATION_TEMPLATE: "[data-role='filter-aggregation-template']",
-        FILTER_ROWS_TEMPLATE: "[data-role='filter-rows-template']",
+        FILTER_FILTER_TEMPLATE: "[data-role='filter-filter-template']",
         FILTER_MAP_TEMPLATE: "[data-role='filter-map-template']",
         ROWS_SWIPER: "[data-role='filter-rows-swiper']",
         BTN_SIDEBAR: "[data-action='show-back-sidebar']",
@@ -530,9 +528,9 @@ define([
 
     Box.prototype._renderBoxFaces = function () {
 
-        this._renderBoxFrontFace();
+        this.renderFrontFace();
 
-        this._renderBoxBackFace();
+        this.renderBackFace();
 
     };
 
@@ -547,7 +545,7 @@ define([
 
     // Front face
 
-    Box.prototype._renderBoxFrontFace = function () {
+    Box.prototype.renderFrontFace = function () {
         log.info("Start rendering box front face");
 
         var faces = this._getObjState("faces");
@@ -574,7 +572,7 @@ define([
 
     };
 
-    Box.prototype._bindFrontFaceEventListeners = function() {
+    Box.prototype._bindFrontFaceEventListeners = function () {
 
         var self = this;
 
@@ -766,7 +764,7 @@ define([
 
     //Back face
 
-    Box.prototype._renderBoxBackFace = function () {
+    Box.prototype.renderBackFace = function () {
         log.info("Start rendering box back face");
 
         var faces = this._getObjState("faces");
@@ -792,7 +790,7 @@ define([
 
     };
 
-    Box.prototype._bindBackFaceEventListeners = function() {
+    Box.prototype._bindBackFaceEventListeners = function () {
 
         var self = this;
 
@@ -800,7 +798,7 @@ define([
             this.$el.find(s.SIDEBAR).toggleClass('hidden-xs hidden-sm');
         }, this));
 
-        
+
         this.$el.find(s.BACK_FACE).find("[data-action]").each(function () {
 
             var $this = $(this),
@@ -822,7 +820,6 @@ define([
     Box.prototype._createProcessSteps = function () {
 
         var values = this._getObjState("values") || {},
-            //columnsConfiguration = this._createBackTabConfiguration("columns"),
             filterConfiguration = this._createBackTabConfiguration("filter"),
             aggregationConfiguration = this._createBackTabConfiguration("aggregations"),
             mapConfiguration = this._createBackTabConfiguration("map");
@@ -833,14 +830,14 @@ define([
             tab: "metadata",
             id: "metadata",
             model: $.extend(true, {}, this._getObjState("model")),
-            labels : {
+            labels: {
                 title: i18nLabels["step_metadata"]
             }
         });
 
         this.processSteps.push({
             tab: "filter",
-            id: "rows",
+            id: "filter",
             values: values.rows,
             template: filterConfiguration.template,
             onReady: filterConfiguration.onReady,
@@ -884,9 +881,6 @@ define([
             case 'aggregations':
                 configuration = this._createBackAggregationTabConfiguration();
                 break;
-            case 'columns':
-                configuration = this._createBackColumnsTabConfiguration();
-                break;
             case 'filter':
                 configuration = this._createBackFilterTabConfiguration();
                 break;
@@ -905,9 +899,9 @@ define([
         var forbiddenIds = ["value"];
 
         var columns = Utils.getNestedProperty("metadata.dsd.columns", this._getObjState("model"))
-            .filter(function (col) {
-                return !_.contains(forbiddenIds, col.id);
-            }),
+                .filter(function (col) {
+                    return !_.contains(forbiddenIds, col.id.toLowerCase());
+                }),
             config = Utils.createConfiguration({model: this._getObjState("model")});
 
         _.each(config, function (item, key) {
@@ -924,7 +918,7 @@ define([
 
             config: config,
 
-            template: Handlebars.compile($(Template).find(s.FILTER_ROWS_TEMPLATE)[0].outerHTML)({columns: columns}),
+            template: Handlebars.compile($(Template).find(s.FILTER_FILTER_TEMPLATE)[0].outerHTML)({columns: columns}),
 
             onReady: _.bind(function () {
 
@@ -961,24 +955,24 @@ define([
                 layers: {
                     selector: {
                         id: "tree",
-                        source: _.map(mapEarthstatLayers, function(layer) {
+                        source: _.map(mapEarthstatLayers, function (layer) {
 
-                            var title = layer.Title.replace('area','').replace('3857','');
+                            var title = layer.Title.replace('area', '').replace('3857', '');
 
                             /*value: {
-                                urlWMS: "http://fenix.fao.org/demo/fenix/geoserver/earthstat/wms",                                
-                                layers: 'earthstat:'+layer.Name,
-                                layertitle: layer.Title,
-                                opacity: '0.8',
-                                lang: 'EN'
-                            }*/
+                             urlWMS: "http://fenix.fao.org/demo/fenix/geoserver/earthstat/wms",
+                             layers: 'earthstat:'+layer.Name,
+                             layertitle: layer.Title,
+                             opacity: '0.8',
+                             lang: 'EN'
+                             }*/
 
                             return {
                                 label: _str.humanize(title),
-                                value: 'earthstat:'+layer.Name
+                                value: 'earthstat:' + layer.Name
                             };
                         }),
-                        config: { core: { multiple: true} }
+                        config: {core: {multiple: true}}
                     },
                     "dependencies": {
                         "layergroups": {id: "focus", event: "select"}
@@ -993,9 +987,7 @@ define([
 
             template: Handlebars.compile($(Template).find(s.FILTER_MAP_TEMPLATE)[0].outerHTML)({layers: []}),
 
-            onReady: _.bind(function ( payload ) {
-
-                console.log('onReady _createBackMapTabConfiguration')
+            onReady: _.bind(function (payload) {
 
             }, this)
 
@@ -1019,7 +1011,6 @@ define([
                 label = title[lang];
             } else {
                 window.fx_vis_box_missing_title >= 0 ? window.fx_vis_box_missing_title++ : window.fx_vis_box_missing_title = 0;
-                //label = "Missing dimension title " + window.fx_vis_box_missing_title;
                 label = "Missing dimension title [" + c.id + "]";
             }
 
@@ -1041,82 +1032,11 @@ define([
                     "selector": {
                         "id": "sortable",
                         "source": source, // Static data
-                        "config": {
-                            "groups": {
-                                dimensions: "Dimensions",
-                                group: "Group by",
-                                sum: "Sum",
-                                avg: "Average",
-                                first: "First",
-                                last: "Last"
-                            }
-                        }
                     }
                 }
             },
 
             template: Handlebars.compile($(Template).find(s.FILTER_AGGREGATION_TEMPLATE)[0].outerHTML)(i18nLabels)
-        };
-    };
-
-    Box.prototype._createBackColumnsTabConfiguration = function () {
-
-        //TODO integrate fenixTool
-
-        var values = Utils.getNestedProperty("aggregations.values.aggregations", this._getObjState("values")) || [],
-            include = values
-                .filter(function (c) {
-                    return c.parent !== 'dimensions';
-                })
-                .map(function (c) {
-                    return c.value;
-                }),
-            filter = {},
-            lang = this.lang || 'EN',
-            columns = Utils.getNestedProperty("metadata.dsd.columns", this._getObjState("model"));
-
-        _.each(columns, function (c) {
-
-            var title = Utils.getNestedProperty("title", c),
-                label,
-                toBeIncluded = include.length > 0 ? _.contains(include, c.id) : true;
-
-            if (typeof title === 'object' && title[lang]) {
-                label = title[lang];
-            } else {
-                window.fx_vis_box_missing_title >= 0 ? window.fx_vis_box_missing_title++ : window.fx_vis_box_missing_title = 0;
-                label = "Missing dimension title [" + c.id + "]";
-            }
-
-            if (toBeIncluded && !c.id.endsWith("_" + lang.toUpperCase())) {
-
-                var order = {
-                    selector: {
-                        id: "dropdown",
-                        source: [
-                            //{value: "include", label: "Include"},
-                            {value: "none", label: "No ordering"},
-                            {value: "ASC", label: "Ascending"},
-                            {value: "DESC", label: "Descending"},
-                            {value: "exclude", label: "Exclude"}
-                        ],
-                        default: ["none"],
-                        config: {
-                            "maxItems": 1
-                        }
-                    },
-                    template: {
-                        title: label
-                    },
-                    dependencies: {}
-                };
-
-                filter[c.id] = order;
-            }
-        });
-
-        return {
-            filter: filter
         };
     };
 
@@ -1159,7 +1079,7 @@ define([
                 id: "step-" + step.id,
                 labels: step.labels,
                 template: step.template,
-                onReady : step.onReady
+                onReady: step.onReady
             });
 
             if (typeof step.onReady === 'function') {
@@ -1213,60 +1133,80 @@ define([
         this.$processSteps.find("[data-tab]").removeClass("active");
         this.$processSteps.find("[data-tab='" + tab + "']").addClass("active");
 
-        this.back_tab_instances[tab].show();
+        this.back_tab_instances[tab].show(this._getBackSyncModel());
 
     };
 
     Box.prototype._bindStepEventListeners = function () {
 
-        var lastValues,
-            self = this,
-            aggregationInstance = this.back_tab_instances["aggregations"],
-            columnsInstance = this.back_tab_instances["columns"];
+        var aggregationInstance = this.back_tab_instances["aggregations"],
+            filterInstance = this.back_tab_instances["filter"];
 
-        if (aggregationInstance && columnsInstance) {
+        if (aggregationInstance && filterInstance) {
 
-            aggregationInstance.on("change", function (payload) {
+            filterInstance.on("change", _.bind(function (payload) {
 
-                if (!_.isEqual(payload, lastValues)) {
+                var valid = this._validateQuery();
 
-                    //validation doesn't stop the update of the columns filter
-                    var valid = self._validateQuery();
-                    if (valid !== true) {
-                        self._printFilterError(valid);
-                    }
-
-                    lastValues = payload;
-
-                    self._setObjState("values", {aggregations: payload});
-
-                    var config = self._createBackTabConfiguration("columns");
-
-                    columnsInstance.rebuild({
-                        config: config.filter
-                    });
-
-                } else {
-                    log.warn("Abort rebuild");
-                }
-            });
-
-            columnsInstance.on("change", function (payload) {
-
-                var valid = self._validateQuery();
                 if (valid !== true) {
-                    self._printFilterError(valid);
+                    this._printFilterError(valid);
+                    return;
                 }
 
-            });
+                this._syncBackTabs();
+
+            }, this));
+        }
+    };
+
+    Box.prototype._getBackSyncModel = function () {
+
+        var values = this._getBackFilterValues(),
+            aggregationsValues = Utils.getNestedProperty("aggregations.values.aggregations", values) || [],
+            columns = Utils.getNestedProperty("filter.values", values) || {},
+            columnsKeys = Object.keys(columns),
+            resourceColumns = Utils.getNestedProperty("metadata.dsd.columns", this._getObjState("model")) || [];
+
+        //Remove disabled columns
+        var config = _.filter(aggregationsValues, function (agg) {
+            return _.contains(columnsKeys, agg.value);
+        });
+
+        //Add not present columns to aggregations
+        _.each(columnsKeys, _.bind(function (c) {
+
+            var col = _.findWhere(config, {value: c});
+
+            if (!col) {
+                config.push({
+                    value: c,
+                    parent: "dimensions",
+                    label: _.findWhere(resourceColumns, {id: c}).title[this.lang]
+                })
+            }
+        }, this));
+
+        var sync = {};
+
+        Utils.assign(sync, "values.aggregations", config);
+
+        return sync;
+
+    };
+
+    Box.prototype._syncBackTabs = function () {
+
+        var aggregationInstance = this.back_tab_instances["aggregations"],
+            sync = this._getBackSyncModel();
+
+        if (aggregationInstance) {
+            aggregationInstance.setValues(sync);
         }
     };
 
     // Event binding and callbacks
 
     Box.prototype.bindEventListeners = function () {
-
-        var self = this;
 
         amplify.subscribe(this._getEventTopic("remove"), this, this._onRemoveEvent);
 
@@ -1454,7 +1394,7 @@ define([
 
         this._hideFilterError();
 
-        var values = this._getBackFilterValues() || {},
+        var values = $.extend(true, {}, this._getBackFilterValues()) || {},
             valid = true,
             model = this._getObjState("model"),
             resourceColumns = Utils.getNestedProperty("metadata.dsd.columns", model) || [],
@@ -1465,7 +1405,8 @@ define([
             })),
             errors = [],
             aggregations = Utils.getNestedProperty("aggregations.values.aggregations", values) || [],
-            columns = Utils.getNestedProperty("columns.values", values) || [];
+            columns = Utils.getNestedProperty("filter.values", values) || {},
+            columnsKey = Object.keys(columns) || [];
 
         var sum = _.where(aggregations, {parent: 'sum'}).map(function (item) {
                 return item.value;
@@ -1519,7 +1460,7 @@ define([
 
         });
 
-        //no value on group by
+        //no 'value' on group by
         if (_.contains(group, 'value')) {
 
             var valueInGroupBy = _.findWhere(aggregations, {value: 'value'});
@@ -1551,25 +1492,20 @@ define([
             }
         }
 
-        //in group by only key dimensions
+        //no exclude key dimensions
+        var excludedColumns = _.difference(resourceKeyColumns, columnsKey);
+        if (excludedColumns.length > 0) {
 
-        var mandatoryColumns = ['value'];
+            var labels = _.map(excludedColumns, _.bind(function (dim) {
+                return _.findWhere(resourceColumns, {id: dim}).title[this.lang]
+            }, this));
 
-        mandatoryColumns = groupLength > 0 ?
-            _.union(mandatoryColumns, group) :
-            _.union(mandatoryColumns, resourceKeyColumns);
-
-        _.each(columns, function (value, dimension) {
-
-            if (_.contains(mandatoryColumns, dimension) && value[0] === 'exclude') {
-                errors.push({
-                    code: ERR.EXCLUDE_KEY_DIMENSION,
-                    value: dimension,
-                    label: _.findWhere(aggregations, {value: dimension}).label
-                });
-            }
-
-        });
+            errors.push({
+                code: ERR.EXCLUDE_KEY_DIMENSION,
+                value: labels,
+                label: labels.join(", ")
+            });
+        }
 
         return errors.length > 0 ? errors : valid;
 
@@ -1624,7 +1560,7 @@ define([
 
         }, this));
 
-        return payload;
+        return $.extend(true, {}, payload);
 
     };
 
@@ -1638,8 +1574,8 @@ define([
 
         this._setObjState("values", $.extend(true, {}, payload));
 
-        if (this.back_tab_instances.hasOwnProperty("rows") && $.isFunction(this.back_tab_instances['rows'].getValues)) {
-            payload["rows"] = this.back_tab_instances['rows'].getValues("fenix");
+        if (this.back_tab_instances.hasOwnProperty("filter") && $.isFunction(this.back_tab_instances["filter"].getValues)) {
+            payload["filter"] = this.back_tab_instances["filter"].getValues("fenix");
         }
 
         filterStep = createFilterStep(payload);
@@ -1657,7 +1593,7 @@ define([
 
         function createFilterStep(payload) {
 
-            if (!payload.rows) {
+            if (!payload.filter) {
                 return;
             }
 
@@ -1667,8 +1603,8 @@ define([
                 },
                 hasValues = false,
                 columns = [],
-                rowValues = payload.rows,
-                //columnsValues = payload.columns.values,
+                rowValues = payload.filter,
+            //columnsValues = payload.columns.values,
                 columnsSet = Utils.getNestedProperty("metadata.dsd.columns", self._getObjState("model"))
                     .filter(function (c) {
                         return !c.id.endsWith("_" + self.lang.toUpperCase());
@@ -1678,16 +1614,16 @@ define([
                     }).sort();
 
             if (Object.getOwnPropertyNames(rowValues).length > 0) {
-                step.parameters.rows = rowValues;
+                step.parameters.filter = rowValues;
                 hasValues = true;
             } else {
-                log.warn("Filter.rows not included");
+                log.warn("Filter.filter not included");
             }
 
             //If they are equals it means i want to include all columns so no filter is needed
             columns = columns.sort();
 
-            if (!_.isEqual(columnsSet, columns) && columns.length > 0 ) {
+            if (!_.isEqual(columnsSet, columns) && columns.length > 0) {
                 step.parameters.columns = columns;
                 hasValues = true;
             } else {
@@ -1792,7 +1728,7 @@ define([
 
         this._flip("back");
 
-        this._renderBoxBackFace();
+        this.renderBackFace();
 
         this._setStatus("ready");
 

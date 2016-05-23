@@ -33,5 +33,6 @@ define(function () {
         step_filter: "Filter",
         step_aggregations : "Aggregations",
         step_map : "Earthstat Layer Collection"
+
     }
 });

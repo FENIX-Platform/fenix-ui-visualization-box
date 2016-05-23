@@ -147,7 +147,8 @@ define([
     FilterTab.prototype.setValues = function (values, silent) {
         log.info("Set values. values:" + JSON.stringify(values));
 
-        this.filter.setValues(values, silent);
+        return this.filter ? this.filter.setValues(values, silent) : {};
+        
     };
 
     /**
@@ -328,6 +329,7 @@ define([
             template: this.template,
             common :  this.common
         });
+        
     };
 
     FilterTab.prototype._createFilterConfiguration = function () {
