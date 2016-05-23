@@ -310,12 +310,11 @@ define([
                             maxZoom: 16
                         }
                     }
-                },
-                onReady: _.bind(function() {
-                    this.map.addLayer( this.model );
-                }, this)
-            });
-
+                }
+            }).on('ready', function(e) {
+                console.log('VBOX map creator on event',this),
+                this.map.addLayer( this.model );
+            })
     };
 
     MapTab.prototype._renderToolbar = function () {
@@ -327,7 +326,6 @@ define([
         });
 
         this.toolbar.on("ready", _.bind(this._renderMap, this))
-
     };
 
     MapTab.prototype._createFilterConfiguration = function () {
