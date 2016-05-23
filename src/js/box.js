@@ -24,7 +24,10 @@ define([
     "amplify",
     "bootstrap"
 ], function (log, require, $, _, _str, Handlebars, C, CD, ERR, EVT, Utils, MetadataViewer, Template, JsonMenu, RightMenuModel, i18nLabels, Bridge, 
+    
+    //DEMO DATA: waiting for data from the D3S
     mapEarthstatLayers,
+
     Swiper) {
 
     'use strict';
@@ -860,16 +863,16 @@ define([
         });
 
         this.processSteps.push({
-                tab: "filter",
-                id: "map",
-                config: mapConfiguration.filter,
-                template: mapConfiguration.template,
-                values: values.layers,
-                onReady: mapConfiguration.onReady,
-                labels: {
-                    title: i18nLabels["step_map"]
-                }
-            });
+            tab: "filter",
+            id: "map",
+            config: mapConfiguration.filter,
+            template: mapConfiguration.template,
+            values: values.layers,
+            onReady: mapConfiguration.onReady,
+            labels: {
+                title: i18nLabels["step_map"]
+            }
+        });
 
     };
 
@@ -955,23 +958,6 @@ define([
         return {
 
             filter: {
-
-//TODO move to toolbar
-                /* map_boundaries: {
-                    selector : {
-                        id : "input",
-                        type : "checkbox",
-                        source : [ { value : "t", label :"Fist"}]
-                    }
-                },
-
-                map_labels: {
-                    selector : {
-                        id : "input",
-                        type : "checkbox",
-                        source : [ { value : "t", label :"Fist"}]
-                    }
-                } */
                 layers: {
                     selector: {
                         id: "tree",
@@ -979,16 +965,17 @@ define([
 
                             var title = layer.Title.replace('area','').replace('3857','');
 
+                            /*value: {
+                                urlWMS: "http://fenix.fao.org/demo/fenix/geoserver/earthstat/wms",                                
+                                layers: 'earthstat:'+layer.Name,
+                                layertitle: layer.Title,
+                                opacity: '0.8',
+                                lang: 'EN'
+                            }*/
+
                             return {
                                 label: _str.humanize(title),
                                 value: 'earthstat:'+layer.Name
-                                /*value: {
-                                    urlWMS: "http://fenix.fao.org/demo/fenix/geoserver/earthstat/wms",                                
-                                    layers: 'earthstat:'+layer.Name,
-                                    layertitle: layer.Title,
-                                    opacity: '0.8',
-                                    lang: 'EN'
-                                }*/
                             };
                         }),
                         config: { core: { multiple: true} }

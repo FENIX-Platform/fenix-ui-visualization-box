@@ -17,7 +17,13 @@ define([
     "fx-common/pivotator/functions",
     "fx-m-c/start",
     "amplify"
-], function ($, log, _, Handlebars, C, CD, ERR, EVT, BoxUtils, Utils, mapTemplate, Filter, ToolbarModel, myFunc, MapCreator) {
+], function ($, log, _, Handlebars,
+    C, CD, ERR, EVT,
+    BoxUtils, Utils,
+    mapTemplate, Filter,
+    ToolbarModel,
+    myFunc,
+    MapCreator) {
 
     var defaultOptions = {}, s = {
         TOOLBAR: "[data-role='toolbar']",
@@ -305,7 +311,7 @@ define([
                         }
                     }
                 },
-                onReady: _.bind(function(w) {
+                onReady: _.bind(function() {
                     this.map.addLayer( this.model );
                 }, this)
             });
@@ -316,7 +322,7 @@ define([
         log.info("Table tab render toolbar");
 
         this.toolbar = new Filter({
-            items: this._createFilterConfiguration(ToolbarModel),
+            items: this._createFilterConfiguration(),
             el: this.$el.find(s.TOOLBAR)
         });
 

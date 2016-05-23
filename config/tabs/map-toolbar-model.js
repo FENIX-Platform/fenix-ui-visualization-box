@@ -10,7 +10,23 @@ define([
 
     return $.extend(true, {}, {
 
-        "maptoolbar": {
+        map_boundaries: {
+            selector : {
+                id : "mapboundaries",
+                type : "checkbox",
+                source : [ { value : true, label :"Show Map Boundaries"}]
+            }
+        },
+
+        map_labels: {
+            selector : {
+                id : "maplabels",
+                type : "checkbox",
+                source : [ { value : true, label :"Show Map Labels"}]
+            }
+        },
+
+        /*"maptoolbar": {
 
             selector: {
                 id: "sortable",
@@ -35,7 +51,7 @@ define([
             template: {
                 title: "Map Filter"
             }
-        }
+        }//*/
 
     }, Shared)
 
