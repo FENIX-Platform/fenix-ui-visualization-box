@@ -6,7 +6,7 @@ define(function () {
     return {
 
         status : "loading",
-        tab : "map",
+        tab : "chart",
         size : "large",
         face : "front", // back || front
         faces : ["front", "back"],
@@ -39,7 +39,7 @@ define(function () {
             'metadata': {type: 'simple', callback: 'once', tabOpts : {}},
             'filter': {type: 'simple', callback: 'once', tabOpts : {}},
             'map': {type: 'simple', callback: 'always', tabOpts : {}},
-            'chart': {type: 'simple', callback: 'always', tabOpts : {type : "pie"}},
+            'chart': {type: 'simple', callback: 'always', tabOpts : {type : "line"}},
             'download': {type: 'simple', callback: 'always', tabOpts : {}}
         },
 

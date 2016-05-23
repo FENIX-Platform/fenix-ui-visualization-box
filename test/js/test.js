@@ -104,15 +104,34 @@ define([
         log.trace("Rendering large box: start");
 
         /*
-         * FLUDE_TOPIC_1
-         * adam_country_indicators
-         * adam_usd_disbursement
+         UNECA_Education
+         UNECA_Population
+         UNECA_Health
+         UNECA_BalanceOfPayments
+         UNECA_Debt
+         UNECA_MiningProduction4
+         UNECA_Infrastructure
+         UNECA_AgricultureProduction3
+         ILO_Labour
+         Uneca_PopulationNew
+         UNECA_Labour
+         UNECA_MonetaryStatistics
+         UNECA_Inflation
+         UNECA_Poverty
+         UNECA_FinancialFlows
+         UNECA_Tourism
+         UNECA_PublicFinance
+         UNECA_GDP
+         UNECA_GDP_NC
+         UNECA_ExpenditureGDPCostant
+         UNECA_ExpenditureGDPCurrent
+         UNECA_GDP_USD
          * */
 
         var box = this.createBox({
             el: s.LARGE,
-            model: valid_model,
-            //uid: "adam_country_indicators",
+            //model: valid_model,
+            uid: "UNECA_Education",
             //version: "",
             /*            process: [
              {
@@ -142,7 +161,8 @@ define([
             //hideCloneButton: true,
             //hideFlipButton: true,
             //hideMinimizeButton: true,
-            //face: "back"
+            //face: "back",
+            environment : "develop"
         });
 
         log.trace("Rendering large box: end");

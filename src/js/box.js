@@ -295,6 +295,7 @@ define([
 
         this._setObjState("size", this.initial.size || C.size || CD.size);
         this._setObjState("status", this.initial.status || C.status || CD.status);
+        this._setObjState("environment", this.initial.environment);
 
     };
 
@@ -486,7 +487,6 @@ define([
         log.info("Render box start:");
 
         this._renderBoxFaces();
-
     };
 
     Box.prototype._preloadTabSources = function () {
@@ -1687,7 +1687,7 @@ define([
             //If they are equals it means i want to include all columns so no filter is needed
             columns = columns.sort();
 
-            if (!_.isEqual(columnsSet, columns)) {
+            if (!_.isEqual(columnsSet, columns) && columns.length > 0 ) {
                 step.parameters.columns = columns;
                 hasValues = true;
             } else {

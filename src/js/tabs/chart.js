@@ -321,7 +321,7 @@ define([
         var initialConfiguration = $.extend(true, {}, Utils.mergeConfigurations(ToolbarModel, this.syncModel || {})),
             configurationFromFenixTool = BoxUtils.getChartToolbarConfig(this.model);
 
-        var configuration = $.extend(true, {}, Utils.mergeConfigurations(initialConfiguration, configurationFromFenixTool));
+        var configuration = $.extend(true, {}, initialConfiguration, configurationFromFenixTool);
 
         return configuration;
 

@@ -80,8 +80,6 @@ require([
 
     Compiler.resolve([commonConfig, boxConfig, filterConfig, olapConfig, metadataViewerConfig, chartConfig, mapCreatorConfig, reportConfig, mapConfig],
         {
-            placeholders: {"FENIX_CDN": "http://fenixrepo.fao.org/cdn"},
-
             config: {
 
                 config : {

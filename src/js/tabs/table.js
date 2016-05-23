@@ -287,7 +287,11 @@ define([
         var toolbarValues = this.toolbar.getValues(),
             configuration = BoxUtils.getTableCreatorConfiguration(toolbarValues);
 
-        return;
+
+        if (C.render_visualization_components === false || CD.render_visualization_components === false) {
+            log.warn("Render Visualization component blocked by configuration");
+            return;
+        }
 
         this.table = new Olap($.extend(true, {}, {
             model: this.model,
@@ -303,19 +307,16 @@ define([
             el: this.$el.find(s.TOOLBAR)
         });
 
-        //TODO uncomment
-        log.warn("Temporary the chart render is blocked")
-        //this.toolbar.on("ready", _.bind(this._renderTable, this))
+        this.toolbar.on("ready", _.bind(this._renderTable, this))
 
     };
 
     TableTab.prototype._createFilterConfiguration = function () {
 
-
         var initialConfiguration = $.extend(true, {}, Utils.mergeConfigurations(ToolbarModel, this.syncModel || {})),
             configurationFromFenixTool = BoxUtils.getTableToolbarConfig(this.model);
 
-        var configuration = $.extend(true, {}, Utils.mergeConfigurations(initialConfiguration, configurationFromFenixTool));
+        var configuration = $.extend(true, {}, initialConfiguration, configurationFromFenixTool);
 
         return configuration;
 

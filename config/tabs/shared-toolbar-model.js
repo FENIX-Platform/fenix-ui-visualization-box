@@ -6,30 +6,6 @@ define(function () {
 
     return {
 
-        sort: {
-
-            "selector": {
-                "id": "sortable",
-                "source": [ ], // Static data
-                "config": { //SortableJS configuration
-                    //disabled: true
-                    groups : {
-                        rows : "Rows",
-                        columns : "Columns",
-                        hidden : "Hidden"
-                    }
-                }
-            },
-
-            "template": {
-                //"hideHeader": true,
-                "hideSwitch": true,
-                "hideRemoveButton": true,
-                "title": "Sort dimension"
-            }
-
-        },
-
         format : {
 
             selector : {
