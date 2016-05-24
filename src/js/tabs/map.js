@@ -335,9 +335,10 @@ define([
 
     MapTab.prototype._createFilterConfiguration = function () {
 
-        var initialConfiguration = $.extend(true, {}, Utils.mergeConfigurations(ToolbarModel, this.syncModel || {}));
+        var initialConfiguration = $.extend(true, {}, Utils.mergeConfigurations(ToolbarModel, this.syncModel || {})),
+            configurationFromFenixTool = BoxUtils.getMapToolbarConfig(this.model);
 
-        var configuration = BoxUtils.getMapToolbarConfig(initialConfiguration, this.model);
+        var configuration = $.extend(true, {}, initialConfiguration, configurationFromFenixTool);
 
         return configuration;
 

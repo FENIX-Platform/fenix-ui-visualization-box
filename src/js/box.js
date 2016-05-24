@@ -79,7 +79,7 @@ define([
 
         if (valid === true) {
 
-            this._initObjState();
+            this.initState();
 
             this._initVariables();
 
@@ -89,7 +89,7 @@ define([
 
             this._renderMenu();
 
-            this.bindEventListeners();
+            this._bindEventListeners();
 
             this._preloadTabSources();
 
@@ -153,7 +153,7 @@ define([
      */
     Box.prototype.showTab = function (tab, opts) {
 
-        this._showTab(tab, opts);
+        this._showFrontTab(tab, opts);
     };
 
     /**
@@ -227,9 +227,6 @@ define([
 
     Box.prototype._initVariables = function () {
 
-        //resource process steps
-        //this.processSteps = this._getObjState("resource.steps");
-
         this.front_tab_instances = {};
         this.back_tab_instances = {};
 
@@ -264,7 +261,7 @@ define([
 
     };
 
-    Box.prototype._initObjState = function () {
+    Box.prototype.initState = function () {
 
         //template options
         this._setObjState("hideToolbar", !!this.initial.hideToolbar);
@@ -300,6 +297,8 @@ define([
     Box.prototype._setObjState = function (key, val) {
 
         Utils.assign(this.state, key, val);
+
+        return val;
     };
 
     Box.prototype._getObjState = function (path) {
@@ -528,9 +527,9 @@ define([
 
     Box.prototype._renderBoxFaces = function () {
 
-        this.renderFrontFace();
+        this._renderFrontFace();
 
-        this.renderBackFace();
+        this._renderBackFace();
 
     };
 
@@ -543,9 +542,282 @@ define([
 
     };
 
+    // load resource
+    Box.prototype._validateQuery = function () {
+
+        this._hideFilterError();
+
+        var values = $.extend(true, {}, this._getBackFilterValues()) || {},
+            valid = true,
+            model = this._getObjState("model"),
+            resourceColumns = Utils.getNestedProperty("metadata.dsd.columns", model) || [],
+            resourceKeyColumns = Utils.cleanArray(resourceColumns.map(function (c) {
+                if (c.key === true) {
+                    return c.id;
+                }
+            })),
+            errors = [],
+            aggregations = Utils.getNestedProperty("aggregations.values.aggregations", values) || [],
+            columns = Utils.getNestedProperty("filter.values", values) || {},
+            columnsKey = Object.keys(columns) || [];
+
+        var sum = _.where(aggregations, {parent: 'sum'}).map(function (item) {
+                return item.value;
+            }),
+            avg = _.where(aggregations, {parent: 'avg'}).map(function (item) {
+                return item.value;
+            }),
+            first = _.where(aggregations, {parent: 'first'}).map(function (item) {
+                return item.value;
+            }),
+            last = _.where(aggregations, {parent: 'last'}).map(function (item) {
+                return item.value;
+            }),
+            group = _.where(aggregations, {parent: 'group'}).map(function (item) {
+                return item.value;
+            }),
+            sumLength = parseInt(sum.length, 10),
+            avgLength = parseInt(avg.length, 10),
+            firstLength = parseInt(first.length, 10),
+            lastLength = parseInt(last.length, 10),
+            groupLength = parseInt(group.length, 10),
+            aggregationRulesLength = sumLength + avgLength + firstLength + lastLength;
+
+        // aggregations on dataType !== number
+        _.each(sum, function (dimension) {
+
+            var column = _.findWhere(resourceColumns, {id: dimension}) || {},
+                dataType = column.dataType;
+
+            if (dataType !== 'number') {
+                errors.push({
+                    code: ERR.NO_NUMBER_DATATYPE,
+                    value: dimension,
+                    label: _.findWhere(aggregations, {value: dimension}).label
+                });
+            }
+
+        });
+        _.each(avg, function (dimension) {
+
+            var column = _.findWhere(resourceColumns, {id: dimension}) || {},
+                dataType = column.dataType;
+
+            if (dataType !== 'number') {
+                errors.push({
+                    code: ERR.NO_NUMBER_DATATYPE,
+                    value: dimension,
+                    label: _.findWhere(aggregations, {value: dimension}).label
+                });
+            }
+
+        });
+
+        //no 'value' on group by
+        if (_.contains(group, 'value')) {
+
+            var valueInGroupBy = _.findWhere(aggregations, {value: 'value'});
+
+            errors.push({
+                code: ERR.VALUE_IN_GROUP_BY,
+                value: valueInGroupBy.value,
+                label: valueInGroupBy.label
+            });
+        }
+
+        //if aggregation rules -> group has to be populated
+        if (aggregationRulesLength > 0 && groupLength === 0) {
+            errors.push({
+                code: ERR.MISSING_GROUP_BY
+            });
+        }
+
+        //if group by is populated -> value in aggregation rules
+        if (groupLength > 0) {
+
+            var isValueInAggregationRules =
+                _.contains(sum, "value") || _.contains(avg, "value") || _.contains(first, "value") || _.contains(last, "value");
+
+            if (!isValueInAggregationRules) {
+                errors.push({
+                    code: ERR.MISSING_VALUE_IN_AGGREGATION_RULES
+                });
+            }
+        }
+
+        //no exclude key dimensions
+        var excludedColumns = _.difference(resourceKeyColumns, columnsKey);
+        if (excludedColumns.length > 0) {
+
+            var labels = _.map(excludedColumns, _.bind(function (dim) {
+                return _.findWhere(resourceColumns, {id: dim}).title[this.lang]
+            }, this));
+
+            errors.push({
+                code: ERR.EXCLUDE_KEY_DIMENSION,
+                value: labels,
+                label: labels.join(", ")
+            });
+        }
+
+        return errors.length > 0 ? errors : valid;
+
+    };
+
+    Box.prototype._createQuery = function () {
+
+        var self = this,
+            filter = [],
+            payload = this._getBackFilterValues(),
+            filterStep,
+            groupStep;
+
+        this._setObjState("values", $.extend(true, {}, payload));
+
+        if (this.back_tab_instances.hasOwnProperty("filter") && $.isFunction(this.back_tab_instances["filter"].getValues)) {
+            payload["filter"] = this.back_tab_instances["filter"].getValues("fenix");
+        }
+
+        filterStep = createFilterStep(payload);
+        groupStep = createGroupStep(payload);
+
+        if (filterStep) {
+            filter.push(filterStep);
+        }
+
+        if (groupStep) {
+            filter.push(groupStep);
+        }
+
+        return filter;
+
+        function createFilterStep(payload) {
+
+            if (!payload.filter) {
+                return;
+            }
+
+            var step = {
+                    name: "filter",
+                    parameters: {}
+                },
+                hasValues = false,
+                columns = [],
+                rowValues = payload.filter,
+            //columnsValues = payload.columns.values,
+                columnsSet = Utils.getNestedProperty("metadata.dsd.columns", self._getObjState("model"))
+                    .filter(function (c) {
+                        return !c.id.endsWith("_" + self.lang.toUpperCase());
+                    })
+                    .map(function (c) {
+                        return c.id;
+                    }).sort();
+
+            if (Object.getOwnPropertyNames(rowValues).length > 0) {
+                step.parameters.filter = rowValues;
+                hasValues = true;
+            } else {
+                log.warn("Filter.filter not included");
+            }
+
+            //If they are equals it means i want to include all columns so no filter is needed
+            columns = columns.sort();
+
+            if (!_.isEqual(columnsSet, columns) && columns.length > 0) {
+                step.parameters.columns = columns;
+                hasValues = true;
+            } else {
+                log.warn("Filter.columns not included");
+            }
+
+            return hasValues ? step : null;
+
+        }
+
+        function createGroupStep(payload) {
+
+            if (!payload.aggregations) {
+                return;
+            }
+
+            var step = {
+                    name: "group",
+                    parameters: {}
+                },
+                hasValues = false,
+                values = Utils.getNestedProperty("aggregations.values.aggregations", payload),
+                by = [],
+                sum = [],
+                avg = [],
+                first = [],
+                last = [],
+                aggregations = [];
+
+            _.each(values, function (obj) {
+
+                switch (obj.parent.toLowerCase()) {
+                    case "group":
+                        by.push(obj.value);
+                        break;
+                    case "sum":
+                        sum.push(obj.value);
+                        break;
+                    case "avg":
+                        avg.push(obj.value);
+                        break;
+                    case "first":
+                        first.push(obj.value);
+                        break;
+                    case "last":
+                        last.push(obj.value);
+                        break;
+                }
+
+            });
+
+            sum = Utils.cleanArray(sum).map(function (i) {
+                return {"columns": [i], "rule": "SUM"};
+            });
+
+            avg = Utils.cleanArray(avg).map(function (i) {
+                return {"columns": [i], "rule": "AVG"};
+            });
+
+            first = Utils.cleanArray(first).map(function (i) {
+                return {"columns": [i], "rule": "FIRST"};
+            });
+
+            last = Utils.cleanArray(last).map(function (i) {
+                return {"columns": [i], "rule": "LAST"};
+            });
+
+            //Add group by
+            if (by.length > 0) {
+                step.parameters.by = Utils.cleanArray(by);
+                hasValues = true
+            }
+
+            //Add aggregations
+            _.each([sum, avg, first, last], function (a) {
+
+                if (a.length > 0) {
+                    aggregations = _.uniq(_.union(aggregations, a), false);
+                }
+
+            });
+
+            if (aggregations.length > 0) {
+                step.parameters.aggregations = aggregations;
+                hasValues = true
+            }
+
+            return hasValues ? step : null;
+        }
+    };
+
     // Front face
 
-    Box.prototype.renderFrontFace = function () {
+    Box.prototype._renderFrontFace = function () {
         log.info("Start rendering box front face");
 
         var faces = this._getObjState("faces");
@@ -594,7 +866,7 @@ define([
 
     };
 
-    Box.prototype._showTab = function (tab, opts) {
+    Box.prototype._showFrontTab = function (tab, opts) {
         log.info('Show tab ' + tab);
         log.info(opts);
 
@@ -749,22 +1021,42 @@ define([
 
         }, this));
 
-        this._syncTabs();
+        this._syncFrontTabs();
 
-        this._showDefaultTab();
+        this._showDefaultFrontTab();
 
     };
 
-    Box.prototype._showDefaultTab = function () {
+    Box.prototype._showDefaultFrontTab = function () {
 
         var tab = this.initial.tab || this.tab || C.tab || CD.tab;
 
-        this._showTab(tab);
+        this._showFrontTab(tab);
     };
 
-    //Back face
+    Box.prototype._syncFrontTabs = function () {
+        log.info("Send front 'sync' signal");
 
-    Box.prototype.renderBackFace = function () {
+        var tabsKeys = Object.keys(this.tabs);
+
+        _.each(tabsKeys, _.bind(function (tab) {
+
+            if (this._getObjState("tabs." + tab + ".suitable") === true) {
+
+                this._callTabInstanceMethod({
+                    tab: tab,
+                    method: 'sync',
+                    opt1: this._getObjState("sync") || {}
+                });
+            }
+
+        }, this));
+
+    };
+
+    // Back face
+
+    Box.prototype._renderBackFace = function () {
         log.info("Start rendering box back face");
 
         var faces = this._getObjState("faces");
@@ -996,6 +1288,35 @@ define([
 
     Box.prototype._createBackAggregationTabConfiguration = function () {
 
+        var source = [] = this._getSourceForAggregationTabConfiguration();
+
+        return {
+
+            filter: {
+                aggregations: {
+                    selector: {
+                        id: "sortable",
+                        source: source, // Static data
+                        config: {
+                            groups: {
+                                dimensions: i18nLabels['aggregations_dimensions'],
+                                group: i18nLabels['aggregations_group'],
+                                sum: i18nLabels['aggregations_sum'],
+                                avg: i18nLabels['aggregations_avg'],
+                                first: i18nLabels['aggregations_first'],
+                                last: i18nLabels['aggregations_last']
+                            }
+                        }
+                    }
+                }
+            },
+
+            template: Handlebars.compile($(Template).find(s.FILTER_AGGREGATION_TEMPLATE)[0].outerHTML)(i18nLabels)
+        };
+    };
+
+    Box.prototype._getSourceForAggregationTabConfiguration = function () {
+
         //TODO integrate fenixTool
 
         var source = [],
@@ -1025,29 +1346,7 @@ define([
             }
         });
 
-        return {
-
-            filter: {
-                aggregations: {
-                    selector: {
-                        id: "sortable",
-                        source: source, // Static data
-                        config : {
-                            groups : {
-                                dimensions: i18nLabels['aggregations_dimensions'],
-                                group: i18nLabels['aggregations_group'],
-                                sum: i18nLabels['aggregations_sum'],
-                                avg:  i18nLabels['aggregations_avg'],
-                                first :  i18nLabels['aggregations_first'],
-                                last:  i18nLabels['aggregations_last']
-                            }
-                        }
-                    }
-                }
-            },
-
-            template: Handlebars.compile($(Template).find(s.FILTER_AGGREGATION_TEMPLATE)[0].outerHTML)(i18nLabels)
-        };
+        return source;
     };
 
     Box.prototype._renderProcessSteps = function () {
@@ -1171,34 +1470,49 @@ define([
 
     Box.prototype._getBackSyncModel = function () {
 
-        var values = this._getBackFilterValues(),
+        var sync = {},
+            source = [],
+            values = this._getBackFilterValues(),
+            filterIsInitialized = !!Utils.getNestedProperty("filter.values", values),
             aggregationsValues = Utils.getNestedProperty("aggregations.values.aggregations", values) || [],
-            columns = Utils.getNestedProperty("filter.values", values) || {},
-            columnsKeys = Object.keys(columns),
-            resourceColumns = Utils.getNestedProperty("metadata.dsd.columns", this._getObjState("model")) || [];
+            enabledColumns = Utils.getNestedProperty("filter.values", values) || {},
+            enabledColumnsIds = Object.keys(enabledColumns),
+            resourceColumns = Utils.getNestedProperty("metadata.dsd.columns", this._getObjState("model")) || [],
+            resourceColumnsIds = _.map(resourceColumns, function (col) {
+                return col.id;
+            }),
+            disabledColumnsIds = _.without.apply(_, [resourceColumnsIds].concat(enabledColumnsIds));
 
-        //Remove disabled columns
-        var config = _.filter(aggregationsValues, function (agg) {
-            return _.contains(columnsKeys, agg.value);
-        });
+        if (filterIsInitialized === true) {
 
-        //Add not present columns to aggregations
-        _.each(columnsKeys, _.bind(function (c) {
+            _.each(resourceColumnsIds, _.bind(function (id) {
 
-            var col = _.findWhere(config, {value: c});
+                if (!_.contains(disabledColumnsIds, id)) {
 
-            if (!col) {
-                config.push({
-                    value: c,
-                    parent: "dimensions",
-                    label: _.findWhere(resourceColumns, {id: c}).title[this.lang]
-                })
-            }
-        }, this));
+                    var item = _.findWhere(aggregationsValues, {value: id});
 
-        var sync = {};
+                    if (!item) {
+                        source.push({
+                            value: id,
+                            parent: "dimensions",
+                            label: _.findWhere(resourceColumns, {id: id}).title[this.lang]
+                        })
+                    } else {
+                        source.push(item);
+                    }
+                }
 
-        Utils.assign(sync, "values.aggregations", config);
+            }, this));
+
+        } else {
+
+            // if filter is not initialized get default source
+            source = this._getSourceForAggregationTabConfiguration();
+        }
+
+        if (source.length > 0) {
+            Utils.assign(sync, "values.aggregations", source);
+        }
 
         return sync;
 
@@ -1216,7 +1530,7 @@ define([
 
     // Event binding and callbacks
 
-    Box.prototype.bindEventListeners = function () {
+    Box.prototype._bindEventListeners = function () {
 
         amplify.subscribe(this._getEventTopic("remove"), this, this._onRemoveEvent);
 
@@ -1302,28 +1616,6 @@ define([
 
     };
 
-    Box.prototype._flip = function (side) {
-
-        var face = side || "front";
-
-        if (face !== "front") {
-            this.$el.find(s.FLIP_CONTAINER).addClass(C.flippedClassName || CD.flippedClassName);
-        } else {
-            this.$el.find(s.FLIP_CONTAINER).removeClass(C.flippedClassName || CD.flippedClassName);
-        }
-
-        this._setObjState('face', face);
-
-    };
-
-    Box.prototype._disableFlip = function () {
-        this.$el.find(s.FLIP_BUTTONS).attr("disabled", true);
-    };
-
-    Box.prototype._enableFlip = function () {
-        this.$el.find(s.FLIP_BUTTONS).attr("disabled", false);
-    };
-
     Box.prototype._onMetadataEvent = function (payload) {
         log.info("Listen to event: " + this._getEventTopic("metadata"));
         log.trace(payload);
@@ -1352,7 +1644,7 @@ define([
         var opts = {};
         opts.type = $(payload.target).data("type");
 
-        this._showTab($(payload.target).data("tab"), opts);
+        this._showFrontTab($(payload.target).data("tab"), opts);
 
     };
 
@@ -1360,7 +1652,7 @@ define([
 
         if (!_.isEmpty(values.values)) {
             this._setObjState("sync.toolbar", values);
-            this._syncTabs();
+            this._syncFrontTabs();
         } else {
             log.warn("Abort sync");
         }
@@ -1370,7 +1662,6 @@ define([
     Box.prototype._onTabStateChangeEvent = function (tab, state) {
 
         this._setObjState("tabStates." + tab, state);
-
     };
 
     Box.prototype._onQueryEvent = function (payload) {
@@ -1400,126 +1691,44 @@ define([
 
     };
 
-    Box.prototype._validateQuery = function () {
-
-        this._hideFilterError();
-
-        var values = $.extend(true, {}, this._getBackFilterValues()) || {},
-            valid = true,
-            model = this._getObjState("model"),
-            resourceColumns = Utils.getNestedProperty("metadata.dsd.columns", model) || [],
-            resourceKeyColumns = Utils.cleanArray(resourceColumns.map(function (c) {
-                if (c.key === true) {
-                    return c.id;
-                }
-            })),
-            errors = [],
-            aggregations = Utils.getNestedProperty("aggregations.values.aggregations", values) || [],
-            columns = Utils.getNestedProperty("filter.values", values) || {},
-            columnsKey = Object.keys(columns) || [];
-
-        var sum = _.where(aggregations, {parent: 'sum'}).map(function (item) {
-                return item.value;
-            }),
-            avg = _.where(aggregations, {parent: 'avg'}).map(function (item) {
-                return item.value;
-            }),
-            first = _.where(aggregations, {parent: 'first'}).map(function (item) {
-                return item.value;
-            }),
-            last = _.where(aggregations, {parent: 'last'}).map(function (item) {
-                return item.value;
-            }),
-            group = _.where(aggregations, {parent: 'group'}).map(function (item) {
-                return item.value;
-            }),
-            sumLength = parseInt(sum.length, 10),
-            avgLength = parseInt(avg.length, 10),
-            firstLength = parseInt(first.length, 10),
-            lastLength = parseInt(last.length, 10),
-            groupLength = parseInt(group.length, 10),
-            aggregationRulesLength = sumLength + avgLength + firstLength + lastLength;
-
-        // aggregations on dataType !== number
-        _.each(sum, function (dimension) {
-
-            var column = _.findWhere(resourceColumns, {id: dimension}) || {},
-                dataType = column.dataType;
-
-            if (dataType !== 'number') {
-                errors.push({
-                    code: ERR.NO_NUMBER_DATATYPE,
-                    value: dimension,
-                    label: _.findWhere(aggregations, {value: dimension}).label
-                });
-            }
-
-        });
-        _.each(avg, function (dimension) {
-
-            var column = _.findWhere(resourceColumns, {id: dimension}) || {},
-                dataType = column.dataType;
-
-            if (dataType !== 'number') {
-                errors.push({
-                    code: ERR.NO_NUMBER_DATATYPE,
-                    value: dimension,
-                    label: _.findWhere(aggregations, {value: dimension}).label
-                });
-            }
-
-        });
-
-        //no 'value' on group by
-        if (_.contains(group, 'value')) {
-
-            var valueInGroupBy = _.findWhere(aggregations, {value: 'value'});
-
-            errors.push({
-                code: ERR.VALUE_IN_GROUP_BY,
-                value: valueInGroupBy.value,
-                label: valueInGroupBy.label
-            });
-        }
-
-        //if aggregation rules -> group has to be populated
-        if (aggregationRulesLength > 0 && groupLength === 0) {
-            errors.push({
-                code: ERR.MISSING_GROUP_BY
-            });
-        }
-
-        //if group by is populated -> value in aggregation rules
-        if (groupLength > 0) {
-
-            var isValueInAggregationRules =
-                _.contains(sum, "value") || _.contains(avg, "value") || _.contains(first, "value") || _.contains(last, "value");
-
-            if (!isValueInAggregationRules) {
-                errors.push({
-                    code: ERR.MISSING_VALUE_IN_AGGREGATION_RULES
-                });
-            }
-        }
-
-        //no exclude key dimensions
-        var excludedColumns = _.difference(resourceKeyColumns, columnsKey);
-        if (excludedColumns.length > 0) {
-
-            var labels = _.map(excludedColumns, _.bind(function (dim) {
-                return _.findWhere(resourceColumns, {id: dim}).title[this.lang]
-            }, this));
-
-            errors.push({
-                code: ERR.EXCLUDE_KEY_DIMENSION,
-                value: labels,
-                label: labels.join(", ")
-            });
-        }
-
-        return errors.length > 0 ? errors : valid;
+    Box.prototype._onDownloadMetadataEvent = function (payload) {
+        log.info("Listen to event: " + this._getEventTopic("download-metadata"));
+        log.trace(payload);
 
     };
+
+    Box.prototype._onFilterEvent = function (payload) {
+        log.info("Listen to event: " + this._getEventTopic("filter"));
+        log.trace(payload);
+
+        this._forceFilterResource();
+    };
+
+    // flip
+
+    Box.prototype._flip = function (side) {
+
+        var face = side || "front";
+
+        if (face !== "front") {
+            this.$el.find(s.FLIP_CONTAINER).addClass(C.flippedClassName || CD.flippedClassName);
+        } else {
+            this.$el.find(s.FLIP_CONTAINER).removeClass(C.flippedClassName || CD.flippedClassName);
+        }
+
+        this._setObjState('face', face);
+
+    };
+
+    Box.prototype._disableFlip = function () {
+        this.$el.find(s.FLIP_BUTTONS).attr("disabled", true);
+    };
+
+    Box.prototype._enableFlip = function () {
+        this.$el.find(s.FLIP_BUTTONS).attr("disabled", false);
+    };
+
+    // error handling
 
     Box.prototype._printFilterError = function (errors) {
 
@@ -1574,224 +1783,7 @@ define([
 
     };
 
-    Box.prototype._createQuery = function () {
-
-        var self = this,
-            filter = [],
-            payload = this._getBackFilterValues(),
-            filterStep,
-            groupStep;
-
-        this._setObjState("values", $.extend(true, {}, payload));
-
-        if (this.back_tab_instances.hasOwnProperty("filter") && $.isFunction(this.back_tab_instances["filter"].getValues)) {
-            payload["filter"] = this.back_tab_instances["filter"].getValues("fenix");
-        }
-
-        filterStep = createFilterStep(payload);
-        groupStep = createGroupStep(payload);
-
-        if (filterStep) {
-            filter.push(filterStep);
-        }
-
-        if (groupStep) {
-            filter.push(groupStep);
-        }
-
-        return filter;
-
-        function createFilterStep(payload) {
-
-            if (!payload.filter) {
-                return;
-            }
-
-            var step = {
-                    name: "filter",
-                    parameters: {}
-                },
-                hasValues = false,
-                columns = [],
-                rowValues = payload.filter,
-            //columnsValues = payload.columns.values,
-                columnsSet = Utils.getNestedProperty("metadata.dsd.columns", self._getObjState("model"))
-                    .filter(function (c) {
-                        return !c.id.endsWith("_" + self.lang.toUpperCase());
-                    })
-                    .map(function (c) {
-                        return c.id;
-                    }).sort();
-
-            if (Object.getOwnPropertyNames(rowValues).length > 0) {
-                step.parameters.filter = rowValues;
-                hasValues = true;
-            } else {
-                log.warn("Filter.filter not included");
-            }
-
-            //If they are equals it means i want to include all columns so no filter is needed
-            columns = columns.sort();
-
-            if (!_.isEqual(columnsSet, columns) && columns.length > 0) {
-                step.parameters.columns = columns;
-                hasValues = true;
-            } else {
-                log.warn("Filter.columns not included");
-            }
-
-            return hasValues ? step : null;
-
-        }
-
-        function createGroupStep(payload) {
-
-            if (!payload.aggregations) {
-                return;
-            }
-
-            var step = {
-                    name: "group",
-                    parameters: {}
-                },
-                hasValues = false,
-                values = Utils.getNestedProperty("aggregations.values.aggregations", payload),
-                by = [],
-                sum = [],
-                avg = [],
-                first = [],
-                last = [],
-                aggregations = [];
-
-            _.each(values, function (obj) {
-
-                switch (obj.parent.toLowerCase()) {
-                    case "group":
-                        by.push(obj.value);
-                        break;
-                    case "sum":
-                        sum.push(obj.value);
-                        break;
-                    case "avg":
-                        avg.push(obj.value);
-                        break;
-                    case "first":
-                        first.push(obj.value);
-                        break;
-                    case "last":
-                        last.push(obj.value);
-                        break;
-                }
-
-            });
-
-            sum = Utils.cleanArray(sum).map(function (i) {
-                return {"columns": [i], "rule": "SUM"};
-            });
-
-            avg = Utils.cleanArray(avg).map(function (i) {
-                return {"columns": [i], "rule": "AVG"};
-            });
-
-            first = Utils.cleanArray(first).map(function (i) {
-                return {"columns": [i], "rule": "FIRST"};
-            });
-
-            last = Utils.cleanArray(last).map(function (i) {
-                return {"columns": [i], "rule": "LAST"};
-            });
-
-            //Add group by
-            if (by.length > 0) {
-                step.parameters.by = Utils.cleanArray(by);
-                hasValues = true
-            }
-
-            //Add aggregations
-            _.each([sum, avg, first, last], function (a) {
-
-                if (a.length > 0) {
-                    aggregations = _.uniq(_.union(aggregations, a), false);
-                }
-
-            });
-
-            if (aggregations.length > 0) {
-                step.parameters.aggregations = aggregations;
-                hasValues = true
-            }
-
-            return hasValues ? step : null;
-        }
-    };
-
-    Box.prototype._onFilterEvent = function (payload) {
-        log.info("Listen to event: " + this._getEventTopic("filter"));
-        log.trace(payload);
-
-        this._forceFilterResource();
-    };
-
-    Box.prototype._forceFilterResource = function () {
-
-        this._disableFlip();
-
-        this._flip("back");
-
-        this.renderBackFace();
-
-        this._setStatus("ready");
-
-    };
-
-    Box.prototype._onDownloadMetadataEvent = function (payload) {
-        log.info("Listen to event: " + this._getEventTopic("download-metadata"));
-        log.trace(payload);
-
-    };
-
-    Box.prototype._syncTabs = function () {
-        log.info("Send 'sync' signal");
-
-        var tabsKeys = Object.keys(this.tabs);
-
-        _.each(tabsKeys, _.bind(function (tab) {
-
-            if (this._getObjState("tabs." + tab + ".suitable") === true) {
-
-                this._callTabInstanceMethod({
-                    tab: tab,
-                    method: 'sync',
-                    opt1: this._getObjState("sync") || {}
-                });
-            }
-
-        }, this));
-
-    };
-
-    Box.prototype._setSize = function (size) {
-
-        //TODO check if it is a valid size
-
-        if (this._getObjState("size") === size) {
-            log.info("Aborting resize because current size is equal to selected one");
-            return;
-        }
-
-        var state = $.extend(true, {}, this.getState());
-
-        this._setObjState("size", size);
-
-        this.$el.find(s.BOX).attr("data-size", this._getObjState("size"));
-
-        amplify.publish(EVT["resize"], this);
-
-        this._trigger("resize", state);
-
-    };
-
-    // Lateral menu
+    // Box menu
 
     Box.prototype._renderMenu = function () {
 
@@ -1822,7 +1814,7 @@ define([
         }
     };
 
-    // Utils
+    // Internal methods
 
     Box.prototype._callTabInstanceMethod = function (obj) {
 
@@ -1876,6 +1868,27 @@ define([
 
     };
 
+    Box.prototype._setSize = function (size) {
+
+        //TODO check if it is a valid size
+
+        if (this._getObjState("size") === size) {
+            log.info("Aborting resize because current size is equal to selected one");
+            return;
+        }
+
+        var state = $.extend(true, {}, this.getState());
+
+        this._setObjState("size", size);
+
+        this.$el.find(s.BOX).attr("data-size", this._getObjState("size"));
+
+        amplify.publish(EVT["resize"], this);
+
+        this._trigger("resize", state);
+
+    };
+
     Box.prototype._getEventTopic = function (evt, excludeId) {
 
         var baseEvent = EVT[evt] ? EVT[evt] : evt;
@@ -1883,11 +1896,23 @@ define([
         return excludeId === true ? baseEvent : baseEvent + "." + this.id;
     };
 
+    Box.prototype._forceFilterResource = function () {
+
+        this._disableFlip();
+
+        this._flip("back");
+
+        this._renderBackFace();
+
+        this._setStatus("ready");
+
+    };
+
     // Disposition
 
     Box.prototype._dispose = function () {
 
-        this.unbindEventListeners();
+        this.un_bindEventListeners();
 
         this._disposeFrontFace();
 
@@ -1937,7 +1962,7 @@ define([
 
     };
 
-    Box.prototype.unbindEventListeners = function () {
+    Box.prototype.un_bindEventListeners = function () {
 
         amplify.unsubscribe(this._getEventTopic("remove"), this._onRemoveEvent);
 
@@ -1965,7 +1990,8 @@ define([
 
     };
 
-    //Utils
+    // Utils
+
     Box.prototype._registerHandlebarsHelpers = function () {
 
         Handlebars.registerHelper('i18n', function (keyword) {
