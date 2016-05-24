@@ -1028,10 +1028,20 @@ define([
         return {
 
             filter: {
-                "aggregations": {
-                    "selector": {
-                        "id": "sortable",
-                        "source": source, // Static data
+                aggregations: {
+                    selector: {
+                        id: "sortable",
+                        source: source, // Static data
+                        config : {
+                            groups : {
+                                dimensions: i18nLabels['aggregations_dimensions'],
+                                group: i18nLabels['aggregations_group'],
+                                sum: i18nLabels['aggregations_sum'],
+                                avg:  i18nLabels['aggregations_avg'],
+                                first :  i18nLabels['aggregations_first'],
+                                last:  i18nLabels['aggregations_last']
+                            }
+                        }
                     }
                 }
             },
