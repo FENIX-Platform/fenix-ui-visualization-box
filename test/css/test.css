@@ -5943,7 +5943,13 @@ input[type="radio"]:disabled + label {
   left: 15px; }
 
 .sidebar-title {
-  color: #999999; }
+  color: #999999;
+  padding: 0 15px;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 10px; }
+
+.filter-slide {
+  width: 250px !important; }
 
 .back-right-content {
   height: 100%;
@@ -5967,9 +5973,15 @@ input[type="radio"]:disabled + label {
     width: calc(100% - 30px);
     position: absolute;
     top: 15px;
-    left: 15px;
-    padding-right: 15px;
-    padding-left: 15px; }
+    left: 15px; }
+    [data-role='back-sidebar'] .sidebar-content .process-steps-container {
+      padding: 5px 15px;
+      position: absolute;
+      bottom: 0;
+      height: 360px;
+      width: 100%;
+      overflow-x: hidden;
+      overflow-y: scroll; }
   @media screen and (min-width: 768px) {
     [data-role='back-sidebar'] {
       position: absolute; } }
@@ -5980,14 +5992,50 @@ input[type="radio"]:disabled + label {
     [data-role='back-sidebar'] {
       position: relative; } }
 
-[data-tab].active .step-container {
-  background-color: #fd433c;
-  color: white; }
-
 .step-container {
   padding: 5px 10px;
-  font-weight: normal;
-  cursor: pointer; }
+  margin: 7px 0;
+  cursor: pointer;
+  background-color: #e0e0e0;
+  position: relative; }
+  .step-container .step-title {
+    font-weight: normal;
+    margin: 2px 0;
+    margin-left: 23px;
+    color: white; }
+  .step-container .step-icon {
+    display: inline-block;
+    position: absolute;
+    height: 100%;
+    width: 29px;
+    background-color: #333;
+    top: 0;
+    left: 0;
+    color: white; }
+    .step-container .step-icon:before {
+      font-size: 20px;
+      position: relative;
+      top: 3px;
+      left: 5px; }
+  .step-container.active:before {
+    content: '';
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0 0 8px 8px;
+    border-color: transparent transparent #333 transparent;
+    line-height: 0px;
+    _border-color: #000000 #000000 #333 #000000;
+    _filter: progid:DXImageTransform.Microsoft.Chroma(color='#000000'); }
+
+[data-resourcerepresentationtype].step-container {
+  background-color: #fd433c; }
+  [data-resourcerepresentationtype].step-container .step-icon {
+    background-color: #b02f2a; }
 
 /*TODO temporary*/
 [data-role="toolbar"] {

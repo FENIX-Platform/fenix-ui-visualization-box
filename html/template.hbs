@@ -147,10 +147,13 @@
                         <div data-role="back-content" class="container-fluid back-content">
                             <div class="alert alert-danger" role="alert" data-role="filter-error">...</div>
                             <div class="row back-row">
-                                <div data-role='back-sidebar' class="col-xs-12 col-sm-8 col-md-3 hidden-xs hidden-sm">
+                                <div data-role='back-sidebar' class="col-xs-12 col-sm-8 col-md-4 hidden-xs hidden-sm">
                                     <div class="sidebar-content">
                                         <h6 class="sidebar-title">{{ back_current_resource }}</h6>
-                                        <ul data-role='process-steps' class="list-unstyled list-group"></ul>
+                                        <div class="process-steps-container">
+                                            <ul data-role='process-steps' class="list-unstyled list-group"></ul>
+                                        </div>
+
                                     </div>
                                 </div>
                                 <button data-action="show-back-sidebar"
@@ -158,7 +161,7 @@
                                     SIDEBAR
                                 </button>
 
-                                <div class="col-md-9 col-xs-12 back-right-content">
+                                <div class="col-md-8 col-xs-12 back-right-content">
 
                                     <ul data-role="process-details"
                                         class="list-unstyled list-group process-details"></ul>
@@ -232,17 +235,18 @@
 
     </div>
 
-    <li data-role="step-metadata" data-tab="{{ id }}" data-resourceRepresentationType="{{ metadata.meContent.resourceRepresentationType}}">
-        <h6 class="truncate step-container">{{ i18n metadata.title}}</h6>
+    <li data-role="step-metadata" class="step-container" data-tab="{{ id }}" data-resourceRepresentationType="{{ metadata.meContent.resourceRepresentationType}}">
+        <span class="step-icon icojam_box"></span>
+        <h6 class="truncate step-title">{{ i18n metadata.title}}</h6>
 
     </li>
 
-    <li data-role="step-filter" data-tab="{{ id }}">
-        <h6 class="truncate step-container">{{ labels.title }}</h6>
+    <li data-role="step-filter" class="step-container" data-tab="{{ id }}">
+        <h6 class="truncate step-title">{{ labels.title }}</h6>
     </li>
 
-    <li data-role="step-map" data-tab="{{ id }}">
-        <h6 class="truncate step-container">{{ labels.title }}</h6>
+    <li data-role="step-map" class="step-container" data-tab="{{ id }}">
+        <h6 class="truncate step-title">{{ labels.title }}</h6>
     </li>
 
     <div data-role="filter-aggregation-template">

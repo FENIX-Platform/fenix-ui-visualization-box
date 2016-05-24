@@ -4,6 +4,7 @@ $box-height: 450px; // 430px content + 23px toolbar height + 1px border between 
 $back-and-border-color: #e0e0e0; // $fenix-light-gray
 $box-content-height: 424px; // 450px minus the 23px vb-toolbar
 $detail-height: 350px;
+$sidebar-process-container-height: 360px;
 $toolbar-font-size: 11px;
 $cmd-left-width: 85px;
 $cmd-right-width: 192px;
@@ -323,10 +324,15 @@ $cmd-right-width: 192px;
 
 .sidebar-title{
   color: $fenix-secondary-text;
+  padding: 0 15px;
+  border-bottom: 1px solid $back-and-border-color;
+  padding-bottom: 10px;
 }
 
 
-
+.filter-slide{
+  width: 250px !important;
+}
 
 .back-right-content{
   height: 100%;
@@ -355,9 +361,19 @@ $cmd-right-width: 192px;
     position : absolute;
     top: 15px;
     left: 15px;
-    padding-right: 15px;
-    padding-left: 15px;
+
+    .process-steps-container{
+      padding: 5px 15px;
+      position: absolute;
+      bottom: 0;
+      height: $sidebar-process-container-height;
+      width: 100%;
+      overflow-x: hidden;
+      overflow-y: scroll;
+    }
+
   }
+
 
 
   @media screen and (max-width: $screen-xs) {
@@ -382,18 +398,81 @@ $cmd-right-width: 192px;
 }
 
 [data-tab].active {
-  .step-container{
-    background-color: #fd433c;
-    color: white;
-  }
+  //.step-container{
+  //  background-color: #fd433c;
+  //  color: white;
+  //}
 }
 
 
 .step-container{
   padding: 5px 10px;
-  font-weight: normal;
+  margin: 7px 0;
   cursor: pointer;
+  background-color: $back-and-border-color;
+  position: relative;
+
+  .step-title{
+    font-weight: normal;
+    margin: 2px 0;
+    margin-left: 23px;
+    color: white;
+  }
+
+  .step-icon{
+
+    display: inline-block;
+    position: absolute;
+    height: 100%;
+    width: 29px;
+    background-color: #333;
+    top: 0;
+    left: 0;
+    color: white;
+
+
+    &:before{
+      font-size: 20px;
+      position: relative;
+      top: 3px;
+      left: 5px;
+    }
+
+  }
+
+  &.active{
+
+    &:before{
+      content: '';
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      z-index: 1;
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 0 0 8px 8px;
+      border-color: transparent transparent $fenix-text transparent;
+      line-height: 0px;
+      _border-color: #000000 #000000 $fenix-text #000000;
+      _filter: progid:DXImageTransform.Microsoft.Chroma(color='#000000');
+    }
+  }
+
+
+
 }
+
+[data-resourcerepresentationtype].step-container{
+  background-color: #fd433c;
+
+
+  .step-icon{
+    background-color: #b02f2a;
+  }
+}
+
+
 
 /*TODO temporary*/
 [data-role="toolbar"] {
