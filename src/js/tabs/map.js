@@ -278,22 +278,27 @@ define([
 
     MapTab.prototype._renderMap = function () {
 
-        var toolbarValues = this.toolbar.getValues(),
-            configuration = BoxUtils.getMapCreatorConfiguration(toolbarValues);
+        var self = this;
+        //var toolbarValues = this.toolbar.getValues(),
+        //    configuration = BoxUtils.getMapCreatorConfiguration(toolbarValues);
 
         if (C.render_visualization_components === false || CD.render_visualization_components === false) {
             log.warn("Render Visualization component blocked by configuration");
             return;
         }
-
+        
+        var $elMap = this.$el.find("#map_" + this.id);
+        $elMap.height(400);
+        
         this.map = new MapCreator({
-                el: this.$el.find("#map_" + this.id),
+                el: $elMap,
                 fenix_ui_map: {
                     plugins: {
                         fullscreen: false
                     },
                     guiController: {
                         container: this.$el.find(s.TOOLBAR),
+                        wmsLoader: false                        
                     },
                     baselayers: {
                         "cartodb": {
@@ -312,8 +317,8 @@ define([
                     }
                 }
             }).on('ready', function(e) {
-                console.log('VBOX map creator on event',this),
-                this.map.addLayer( this.model );
+                console.log('VBOX map creator on event',self.model)
+                self.map.addLayer( self.model );
             })
     };
 
@@ -347,10 +352,10 @@ define([
 
     MapTab.prototype._renderComponents = function () {
 
-        this._renderToolbar();
+        //this._renderToolbar();
 
         //Map will be create when filter is 'ready'
-        //this._renderMap();
+        this._renderMap();
 
         //init toolbar position
         var position = this.initial.toolbarPosition || C.toolbarPosition || CD.toolbarPosition;
