@@ -5801,6 +5801,8 @@ input[type="radio"]:disabled + label {
     display: block; }
   .fx-box[data-status="empty"] [data-content="empty"] {
     display: block; }
+  .fx-box[data-status="huge"] [data-content="huge"] {
+    display: block; }
   .fx-box [data-content="ready"] [data-section] {
     display: none; }
   .fx-box [data-content="ready"][data-tab="chart"] [data-section="chart"] {

@@ -102,7 +102,7 @@ $cmd-right-width: 192px;
 
 
   //show only the status only correspondent tab content
-  $statuses: "ready" "error" "loading" "empty";
+  $statuses: "ready" "error" "loading" "empty" "huge";
 
   @each $status in $statuses {
 

@@ -56,7 +56,8 @@ define([
         BTN_SIDEBAR: "[data-action='show-back-sidebar']",
         SIDEBAR: "[data-role='back-sidebar']",
         FRONT_FACE: "[data-face='front']",
-        BACK_FACE: "[data-face='back']"
+        BACK_FACE: "[data-face='back']",
+        OTHER_CONTENT: "[data-content='empty'], [data-content='error'], [data-content='huge']"
     };
 
     /* API */
@@ -68,7 +69,7 @@ define([
      */
     function Box(obj) {
         log.info("Create box");
-        log.trace(obj);
+        log.info(obj);
 
         this._registerHandlebarsHelpers();
 
@@ -119,7 +120,7 @@ define([
 
         $.extend(true, this, obj);
 
-        this._checkModelStatus();
+        this._reactToModelStatus();
     };
 
     /**
@@ -258,7 +259,6 @@ define([
 
         this.$boxTitle = this.$el.find(s.BOX_TITLE);
 
-
     };
 
     Box.prototype.initState = function () {
@@ -292,6 +292,10 @@ define([
         this._setObjState("status", this.initial.status || C.status || CD.status);
         this._setObjState("environment", this.initial.environment);
 
+        //data validation
+        this._setObjState("max_size", this.initial.max_data_size || C.max_data_size || CD.max_data_size);
+
+
     };
 
     Box.prototype._setObjState = function (key, val) {
@@ -306,18 +310,23 @@ define([
         return Utils.getNestedProperty(path, this.getState());
     };
 
-    Box.prototype._checkModelStatus = function () {
+    Box.prototype._reactToModelStatus = function ( status ) {
 
         //reset error
         this._setObjState("error", null);
 
-        switch (this._getModelStatus().toLowerCase()) {
+        var status = status || this._getModelStatus();
+
+        switch (status) {
             case 'ready' :
                 this.setStatus("ready");
                 this._renderBox();
                 break;
             case 'empty' :
                 this.setStatus("empty");
+                break;
+            case 'huge' :
+                this.setStatus("huge");
                 break;
             case 'no_model' :
                 this.setStatus("loading");
@@ -369,6 +378,10 @@ define([
                 return 'empty';
             }
 
+            if (Array.isArray(model.data) && model.data.length > this._getObjState("max_size")) {
+                return 'huge';
+            }
+
             if (Array.isArray(model.data) && model.data.length > 0) {
                 return 'ready';
             }
@@ -401,12 +414,22 @@ define([
             body: process,
             uid: this._getObjState("uid"),
             version: this._getObjState("version"),
-            params: queryParams
+            params: $.extend(true, {}, queryParams)
         });
+    };
+
+    Box.prototype._onLoadResourceError = function () {
+        log.info("Impossible to load resource");
+
+        this._setObjState("error", {code: ERR.LOAD_RESOURCE, filter: true});
+
+        this._setStatus("error");
     };
 
     Box.prototype._onLoadResourceSuccess = function (resource) {
         log.info("Load resource success");
+
+        this._disposeBoxFaces();
 
         this._updateModel(resource);
 
@@ -414,7 +437,7 @@ define([
 
         this._flip("front");
 
-        this._checkModelStatus();
+        this._reactToModelStatus();
 
     };
 
@@ -423,7 +446,8 @@ define([
         var model = this._getObjState("model") || {},
             newMetadata = Utils.getNestedProperty("metadata", resource),
             newDsd = Utils.getNestedProperty("dsd", newMetadata),
-            newData = Utils.getNestedProperty("data", resource);
+            newData = Utils.getNestedProperty("data", resource),
+            newSize = Utils.getNestedProperty("size", resource);
 
         //if metadata exists updated only dsd
         if (model.metadata) {
@@ -436,16 +460,14 @@ define([
             Utils.assign(model, "data", newData);
         }
 
+        if (model.size !== newSize) {
+            Utils.assign(model, "size", newSize);
+        }
+
         this._setObjState("model", model);
     };
 
-    Box.prototype._onLoadResourceError = function () {
-        log.info("Impossible to load resource");
-
-        this._setObjState("error", {code: ERR.LOAD_RESOURCE, filter: true});
-
-        this._setStatus("error");
-    };
+    //preload resource info
 
     Box.prototype._loadResourceMetadata = function () {
         log.info("Loading FENIX resource metadata");
@@ -461,23 +483,100 @@ define([
         });
     };
 
-    Box.prototype._loadResourceMetadataSuccess = function (resource) {
-        log.info("Load resource metadata success");
-
-        this._updateModel({metadata: resource});
-
-        this.setStatus("ready");
-
-        this._checkModelStatus();
-
-    };
-
     Box.prototype._loadResourceMetadataError = function () {
         log.info("Impossible to load resource");
 
         this._setObjState("error", {code: ERR.LOAD_METADATA});
 
         this._setStatus("error");
+    };
+
+    Box.prototype._loadResourceMetadataSuccess = function (resource) {
+        log.info("Load resource metadata success");
+
+        this._updateModel({metadata: resource});
+
+        this._checkResourceType();
+
+    };
+
+    Box.prototype._checkResourceType = function () {
+        log.info("Check Resource type");
+
+        var model = this._getObjState("model"),
+            resourceType = Utils.getNestedProperty("metadata.meContent.resourceRepresentationType", model) || "";
+
+        log.info("Resource type is: " + resourceType);
+
+        switch (resourceType.toLowerCase()) {
+            case "dataset" :
+                var datasources = Utils.getNestedProperty("metadata.dsd.datasources", model);
+
+                if (Array.isArray(datasources) && datasources.length > 0) {
+
+                    this._fetchResource().then(
+                        _.bind(this._fetchResourceSuccess, this),
+                        _.bind(this._fetchResourceError, this));
+
+                } else {
+                    this._setObjState("error", {code: ERR.MISSING_DATASOURCES});
+                    this._setStatus("error");
+                }
+                break;
+            case "layer" :
+                //TODO
+                break;
+            default :
+                this._setObjState("error", {code: ERR.UNKNOWN_RESOURCE_TYPE});
+                this._setStatus("error")
+        }
+    };
+
+    Box.prototype._fetchResource = function () {
+        log.info("Fetching FENIX resource");
+
+        this.setStatus("loading");
+
+        var queryParams = C.d3pQueryParameters || CD.d3pQueryParameters;
+
+        return Bridge.getResource({
+            body: [],
+            uid: this._getObjState("uid"),
+            version: this._getObjState("version"),
+            params: $.extend(true, {}, queryParams, {perPage: 1, page: 1})
+        });
+    };
+
+    Box.prototype._fetchResourceError = function () {
+        log.info("Impossible to fetch resource");
+
+        this._setObjState("error", {code: ERR.FETCH_RESOURCE});
+
+        this._setStatus("error");
+    };
+
+    Box.prototype._fetchResourceSuccess = function (resource) {
+        log.info("fetch resource success");
+
+        this._updateModel(resource);
+
+        this._checkModelSize();
+
+    };
+
+
+    Box.prototype._checkModelSize = function () {
+
+        var status = this._getModelStatus();
+
+        switch (status.toLowerCase()){
+            case  "ready" :
+                this._reactToModelStatus("to_load");
+                break;
+            default:
+                this._reactToModelStatus(status);
+        }
+
     };
 
     Box.prototype._renderBox = function () {
@@ -522,7 +621,7 @@ define([
 
     Box.prototype._preloadTabSourcesSuccess = function () {
 
-        this._checkModelStatus();
+        this._reactToModelStatus();
     };
 
     Box.prototype._renderBoxFaces = function () {
@@ -542,7 +641,7 @@ define([
 
     };
 
-    // load resource
+    // Load resource
     Box.prototype._validateQuery = function () {
 
         this._hideFilterError();
@@ -666,11 +765,10 @@ define([
 
     };
 
-    Box.prototype._createQuery = function () {
+    Box.prototype._createQuery = function (payload) {
 
         var self = this,
             filter = [],
-            payload = this._getBackFilterValues(),
             filterStep,
             groupStep;
 
@@ -681,6 +779,7 @@ define([
         }
 
         filterStep = createFilterStep(payload);
+
         groupStep = createGroupStep(payload);
 
         if (filterStep) {
@@ -716,10 +815,10 @@ define([
                     }).sort();
 
             if (Object.getOwnPropertyNames(rowValues).length > 0) {
-                step.parameters.filter = rowValues;
+                step.parameters.rows = rowValues;
                 hasValues = true;
             } else {
-                log.warn("Filter.filter not included");
+                log.warn("Filter.rows not included");
             }
 
             //If they are equals it means i want to include all columns so no filter is needed
@@ -1072,8 +1171,6 @@ define([
 
         this._hideFilterError();
 
-        //TODO check which tab render
-
         this._createProcessSteps();
 
         this._renderProcessSteps();
@@ -1130,23 +1227,22 @@ define([
         });
 
         this.processSteps.push({
-            tab: "filter",
             id: "filter",
-            values: values.rows,
+            tab: "filter",
+            values: filterConfiguration.values,
+            config: filterConfiguration.config,
             template: filterConfiguration.template,
             onReady: filterConfiguration.onReady,
-            common: filterConfiguration.common,
-            config: filterConfiguration.config,
             labels: {
                 title: i18nLabels["step_filter"]
             }
         });
 
         this.processSteps.push({
-            tab: "filter",
             id: "aggregations",
+            tab: "filter",
+            values: aggregationConfiguration.values,
             config: aggregationConfiguration.filter,
-            values: values.aggregations,
             template: aggregationConfiguration.template,
             labels: {
                 title: i18nLabels["step_aggregations"]
@@ -1154,11 +1250,11 @@ define([
         });
 
         this.processSteps.push({
-            tab: "filter",
             id: "map",
+            tab: "filter",
+            values: mapConfiguration.values,
             config: mapConfiguration.filter,
             template: mapConfiguration.template,
-            values: values.layers,
             onReady: mapConfiguration.onReady,
             labels: {
                 title: i18nLabels["step_map"]
@@ -1169,17 +1265,18 @@ define([
 
     Box.prototype._createBackTabConfiguration = function (tab) {
 
-        var configuration;
+        var configuration,
+            values = this._getObjState("back.values") || {};
 
         switch (tab.toLowerCase()) {
             case 'aggregations':
-                configuration = this._createBackAggregationTabConfiguration();
+                configuration = this._createBackAggregationTabConfiguration(values[tab]);
                 break;
             case 'filter':
-                configuration = this._createBackFilterTabConfiguration();
+                configuration = this._createBackFilterTabConfiguration(values[tab]);
                 break;
             case 'map':
-                configuration = this._createBackMapTabConfiguration();
+                configuration = this._createBackMapTabConfiguration(values[tab]);
                 break;
             default :
                 configuration = {};
@@ -1188,7 +1285,7 @@ define([
         return configuration;
     };
 
-    Box.prototype._createBackFilterTabConfiguration = function () {
+    Box.prototype._createBackFilterTabConfiguration = function (values) {
 
         var forbiddenIds = ["value"];
 
@@ -1209,6 +1306,8 @@ define([
         });
 
         return {
+
+            values: values,
 
             config: config,
 
@@ -1241,9 +1340,11 @@ define([
         };
     };
 
-    Box.prototype._createBackMapTabConfiguration = function () {
+    Box.prototype._createBackMapTabConfiguration = function (values) {
 
         return {
+
+            values: values,
 
             filter: {
                 layers: {
@@ -1288,11 +1389,13 @@ define([
         };
     };
 
-    Box.prototype._createBackAggregationTabConfiguration = function () {
+    Box.prototype._createBackAggregationTabConfiguration = function (values) {
 
         var source = [] = this._getSourceForAggregationTabConfiguration();
 
         return {
+
+            values: values,
 
             filter: {
                 aggregations: {
@@ -1358,6 +1461,7 @@ define([
             list = this.processSteps;
 
         _.each(list, _.bind(function (step, index) {
+
             var template = Handlebars.compile($(Template).find("[data-role='step-" + step.tab + "']")[0].outerHTML),
                 $html = $(template($.extend(true, {}, step, i18nLabels, this._getObjState("model"))));
 
@@ -1385,7 +1489,6 @@ define([
                 box: this,
                 model: $.extend(true, {}, this._getObjState("model")),
                 config: step.config,
-                common: step.common,
                 values: step.values || {},
                 id: "step-" + step.id,
                 labels: step.labels,
@@ -1478,10 +1581,10 @@ define([
             sync = {},
             source = [],
             values = this._getBackFilterValues(),
-            filterIsInitialized = !!Utils.getNestedProperty("filter.values", values),
             aggregationsValues = Utils.getNestedProperty("aggregations.values.aggregations", values) || [],
             enabledColumns = Utils.getNestedProperty("filter.values", values) || {},
             enabledColumnsIds = Object.keys(enabledColumns),
+            filterIsInitialized = !!enabledColumns,
             resourceColumns = Utils.getNestedProperty("metadata.dsd.columns", this._getObjState("model")) || [],
             resourceColumnsIds = _.map(resourceColumns, function (col) {
                 return col.id;
@@ -1545,6 +1648,8 @@ define([
 
     Box.prototype._bindEventListeners = function () {
 
+        var self = this;
+
         amplify.subscribe(this._getEventTopic("remove"), this, this._onRemoveEvent);
 
         amplify.subscribe(this._getEventTopic("resize"), this, this._onResizeEvent);
@@ -1569,17 +1674,34 @@ define([
             e.preventDefault();
         });
 
+        this.$el.find(s.OTHER_CONTENT).find("[data-action]").each(function () {
+
+            var $this = $(this),
+                action = $this.data("action"),
+                event = self._getEventTopic(action);
+
+            $this.on("click", {event: event, box: self}, function (e) {
+                e.preventDefault();
+
+                log.info("Raise box event: " + e.data.event);
+
+                amplify.publish(event, {target: this, box: e.data.box, state: self.getState()});
+
+            });
+        });
+
     };
 
     Box.prototype._onRemoveEvent = function (payload) {
         log.info("Listen to event: " + this._getEventTopic("remove"));
-        log.trace(payload);
+        log.info(payload);
 
         var r = confirm(i18nLabels.confirm_remove),
             state = $.extend(true, {}, this.getState());
 
         if (r == true) {
             amplify.publish(EVT['remove'], this);
+
             this._dispose();
 
             this._trigger("remove", state);
@@ -1591,12 +1713,12 @@ define([
 
     Box.prototype._onResizeEvent = function (payload) {
         log.info("Listen to event: " + this._getEventTopic("resize"));
-        log.trace(payload);
+        log.info(payload);
 
         if (payload.target && $(payload.target).data("size")) {
 
             var size = $(payload.target).data("size");
-            log.trace("Size: " + size);
+            log.info("Size: " + size);
 
             this._setSize(size);
         }
@@ -1609,7 +1731,7 @@ define([
 
     Box.prototype._onCloneEvent = function (payload) {
         log.info("Listen to event: " + this._getEventTopic("clone"));
-        log.trace(payload);
+        log.info(payload);
 
         //Exclude id for publish events
         amplify.publish(this._getEventTopic("clone", true), $.extend(true, {}, this.getState()))
@@ -1617,7 +1739,7 @@ define([
 
     Box.prototype._onFlipEvent = function (payload) {
         log.info("Listen to event: " + this._getEventTopic("flip"));
-        log.trace(payload);
+        log.info(payload);
 
         if (this._getObjState('face') !== "back") {
             this._flip("back");
@@ -1625,20 +1747,20 @@ define([
             this._flip("front");
         }
 
-        log.trace("Set box face to: " + this._getObjState('face'));
+        log.info("Set box face to: " + this._getObjState('face'));
 
     };
 
     Box.prototype._onMetadataEvent = function (payload) {
         log.info("Listen to event: " + this._getEventTopic("metadata"));
-        log.trace(payload);
+        log.info(payload);
 
         this.$modal.modal('show');
     };
 
     Box.prototype._onMinimizeEvent = function (payload) {
         log.info("Listen to event: " + this._getEventTopic("minimize"));
-        log.trace(payload);
+        log.info(payload);
 
         var state = $.extend(true, {}, this.getState());
 
@@ -1652,7 +1774,7 @@ define([
 
     Box.prototype._onTabEvent = function (payload) {
         log.info("Listen to event: " + this._getEventTopic("tab"));
-        log.trace(payload);
+        log.info(payload);
 
         var opts = {};
         opts.type = $(payload.target).data("type");
@@ -1679,7 +1801,7 @@ define([
 
     Box.prototype._onQueryEvent = function (payload) {
         log.info("Listen to event: " + this._getEventTopic("query"));
-        log.trace(payload);
+        log.info(payload);
 
         var valid = this._validateQuery();
 
@@ -1689,7 +1811,11 @@ define([
 
             this._enableFlip();
 
-            var process = this._createQuery();
+            var values = this._getBackFilterValues();
+
+            this._setObjState("back.values", $.extend(true, {}, values));
+
+            var process = this._createQuery(values);
 
             log.info("D3P process", process);
 
@@ -1706,13 +1832,13 @@ define([
 
     Box.prototype._onDownloadMetadataEvent = function (payload) {
         log.info("Listen to event: " + this._getEventTopic("download-metadata"));
-        log.trace(payload);
+        log.info(payload);
 
     };
 
     Box.prototype._onFilterEvent = function (payload) {
         log.info("Listen to event: " + this._getEventTopic("filter"));
-        log.trace(payload);
+        log.info(payload);
 
         this._forceFilterResource();
     };
@@ -1787,7 +1913,7 @@ define([
         _.each(this.back_tab_instances, _.bind(function (Instance, key) {
 
             if ($.isFunction(Instance.getValues)) {
-                payload[key] = Instance.getValues();
+                payload[key] = Instance.getValues(null);
             }
 
         }, this));
@@ -1925,15 +2051,21 @@ define([
 
     Box.prototype._dispose = function () {
 
-        this.un_bindEventListeners();
+        this._unbindEventListeners();
 
-        this._disposeFrontFace();
-
-        this._disposeBackFace();
+        this._disposeBoxFaces();
 
         this.$el.remove();
 
         delete this;
+
+    };
+
+    Box.prototype._disposeBoxFaces = function () {
+
+        this._disposeFrontFace();
+
+        this._disposeBackFace();
 
     };
 
@@ -1971,11 +2103,13 @@ define([
 
         this.$el.find(s.BACK_FACE).find("[data-action]").off();
 
+        this.$processSteps.empty();
+
         this.backFaceIsRendered = false;
 
     };
 
-    Box.prototype.un_bindEventListeners = function () {
+    Box.prototype._unbindEventListeners = function () {
 
         amplify.unsubscribe(this._getEventTopic("remove"), this._onRemoveEvent);
 
@@ -2000,6 +2134,8 @@ define([
         this.$el.find("[data-action]").off();
 
         this.$el.find(s.RIGHT_MENU).off();
+
+        this.$el.find(s.OTHER_CONTENT).find("[data-action]").off();
 
     };
 

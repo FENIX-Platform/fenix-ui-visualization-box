@@ -6,7 +6,7 @@ define(function () {
     return {
 
         status : "loading",
-        tab : "chart",
+        tab : "table",
         size : "large",
         face : "front", // back || front
         faces : ["front", "back"],
@@ -58,7 +58,9 @@ define(function () {
         },
 
         sync_tabs_on_toolbar_change : false,
-        render_visualization_components : true
+        render_visualization_components : true,
+
+        max_data_size : 99999
 
     };
 });

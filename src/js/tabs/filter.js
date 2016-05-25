@@ -36,10 +36,12 @@ define([
             box: obj.box,
             model: obj.model,
             id: obj.id,
-            onReady : obj.onReady
+            onReady : obj.onReady,
+            values: obj.values
         });
 
         this.channels = {};
+
         this.state = {};
 
         return this;
@@ -327,7 +329,8 @@ define([
             items: this._createFilterConfiguration(),
             el: this.$el.find(s.CONTAINER),
             template: this.template,
-            common :  this.common
+            common :  this.common,
+            values : this.values
         });
         
     };
