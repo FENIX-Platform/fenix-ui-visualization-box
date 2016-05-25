@@ -310,12 +310,12 @@ define([
         return Utils.getNestedProperty(path, this.getState());
     };
 
-    Box.prototype._reactToModelStatus = function ( status ) {
+    Box.prototype._reactToModelStatus = function (s) {
 
         //reset error
         this._setObjState("error", null);
 
-        var status = status || this._getModelStatus();
+        var status = s || this._getModelStatus();
 
         switch (status) {
             case 'ready' :
@@ -564,12 +564,11 @@ define([
 
     };
 
-
     Box.prototype._checkModelSize = function () {
 
         var status = this._getModelStatus();
 
-        switch (status.toLowerCase()){
+        switch (status.toLowerCase()) {
             case  "ready" :
                 this._reactToModelStatus("to_load");
                 break;
@@ -1266,17 +1265,18 @@ define([
     Box.prototype._createBackTabConfiguration = function (tab) {
 
         var configuration,
-            values = this._getObjState("back.values") || {};
+            filterValues = this._getObjState("back.filter") || {},
+            mapValues = this._getObjState("back.map") || {};
 
         switch (tab.toLowerCase()) {
             case 'aggregations':
-                configuration = this._createBackAggregationTabConfiguration(values[tab]);
+                configuration = this._createBackAggregationTabConfiguration(filterValues[tab]);
                 break;
             case 'filter':
-                configuration = this._createBackFilterTabConfiguration(values[tab]);
+                configuration = this._createBackFilterTabConfiguration(filterValues[tab]);
                 break;
             case 'map':
-                configuration = this._createBackMapTabConfiguration(values[tab]);
+                configuration = this._createBackMapTabConfiguration(mapValues[tab]);
                 break;
             default :
                 configuration = {};
@@ -1811,23 +1811,45 @@ define([
 
             this._enableFlip();
 
-            var values = this._getBackFilterValues();
+            var filterValues = this._getBackFilterValues();
 
-            this._setObjState("back.values", $.extend(true, {}, values));
+            //if filter values have changed
+            if (filterValues !== this._getObjState("back.filter")) {
 
-            var process = this._createQuery(values);
+                this._setObjState("back.filter", $.extend(true, {}, filterValues));
 
-            log.info("D3P process", process);
+                var process = this._createQuery(filterValues);
 
-            this._loadResource(process)
-                .then(
-                    _.bind(this._onLoadResourceSuccess, this),
-                    _.bind(this._onLoadResourceError, this));
+                log.info("D3P process", process);
+
+                this._loadResource(process)
+                    .then(
+                        _.bind(this._onLoadResourceSuccess, this),
+                        _.bind(this._onLoadResourceError, this));
+
+            } else {
+                log.warn("Abort resource filter because values have not changed");
+            }
+
+            var mapValues = this._getBackMapValues();
+            //if map values have changed
+            if (mapValues !== this._getObjState("back.map")) {
+                this._setObjState("back.map", $.extend(true, {}, mapValues));
+
+                this._updateMap();
+
+            } else {
+                log.warn("Abort map update because values have not changed");
+            }
 
         } else {
             this._printFilterError(valid);
         }
 
+    };
+
+    Box.prototype._updateMap = function () {
+        console.log("ok")
     };
 
     Box.prototype._onDownloadMetadataEvent = function (payload) {
@@ -1908,15 +1930,20 @@ define([
 
     Box.prototype._getBackFilterValues = function () {
 
-        var payload = {};
+        var payload = {
+            filter: this.back_tab_instances["filter"].getValues(null),
+            aggregations: this.back_tab_instances["aggregations"].getValues(null)
+        };
 
-        _.each(this.back_tab_instances, _.bind(function (Instance, key) {
+        return $.extend(true, {}, payload);
 
-            if ($.isFunction(Instance.getValues)) {
-                payload[key] = Instance.getValues(null);
-            }
+    };
 
-        }, this));
+    Box.prototype._getBackMapValues = function () {
+
+        var payload = {
+            map: this.back_tab_instances["map"].getValues(null)
+        };
 
         return $.extend(true, {}, payload);
 
