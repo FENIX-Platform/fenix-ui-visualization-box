@@ -8,8 +8,7 @@ define([
 
     'use strict';
 
-    return $.extend(true, {}, {
-
+    return {
         map_boundaries: {
             selector : {
                 id : "input",
@@ -17,7 +16,6 @@ define([
                 source : [ { value : true, label :"Show Map Boundaries"}]
             }
         },
-
         map_labels: {
             selector : {
                 id : "input",
@@ -25,8 +23,8 @@ define([
                 source : [ { value : true, label :"Show Map Labels"}]
             }
         },
-
-        /*"maptoolbar": {
+        /* //TODO
+        "map_layers": {
 
             selector: {
                 id: "sortable",
@@ -53,6 +51,6 @@ define([
             }
         }//*/
 
-    }, Shared)
+    };
 
 });

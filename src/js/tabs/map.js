@@ -350,7 +350,7 @@ define([
 
         this._trigger("filter", this.toolbar.getValues());
 
-        this._renderMap();
+        //this._renderMap();
     };
 
     MapTab.prototype._renderComponents = function () {
@@ -358,7 +358,7 @@ define([
         this._renderToolbar();
 
         //Map will be create when filter is 'ready'
-        this._renderMap();
+        //this._renderMap();
 
         //init toolbar position
         var position = this.initial.toolbarPosition || C.toolbarPosition || CD.toolbarPosition;
