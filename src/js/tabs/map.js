@@ -306,22 +306,31 @@ define([
                         "cartodb": {
                             title_en: "CartoDB light",
                             url: 'http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png',
-                            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
                             subdomains: 'abcd',
                             maxZoom: 19
                         },
                         "esri_grayscale": {
                             url: "http://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}",
                             title_en: "Esri WorldGrayCanvas",
-                            attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
                             maxZoom: 16
+                        },
+                        "world_imagery": {
+                            url: "http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+                            title_en: "World Imagery"
                         }
                     }
                 }
-            }).on('ready', function(e) {
-                console.log('VBOX map creator on event',self.model)
-                self.map.addLayer( self.model );
-            })
+            });
+
+        //self.map.addLayer( self.model );
+
+        self.map.fenixMap.addLayer( new FM.layer({
+            layers: 'fenix:gaul0_line_3857',
+            layertitle: 'Country Boundaries',
+            urlWMS: 'http://fenixapps.fao.org/geoserver',
+            opacity: '0.8',
+            lang: 'EN'
+        }) );    
     };
 
     MapTab.prototype._createFilterConfiguration = function () {
@@ -346,16 +355,11 @@ define([
     MapTab.prototype._onToolbarChangeEvent = function () {
 
         this._trigger("filter", this.toolbar.getValues());
-
-        //this._renderMap();
     };
 
     MapTab.prototype._renderComponents = function () {
 
         this._renderToolbar();
-
-        //Map will be create when filter is 'ready'
-        //this._renderMap();
 
         //init toolbar position
         var position = this.initial.toolbarPosition || C.toolbarPosition || CD.toolbarPosition;
