@@ -559,7 +559,9 @@ define([
             errors = [],
             aggregations = Utils.getNestedProperty("aggregations.values.aggregations", values) || [],
             columns = Utils.getNestedProperty("filter.values", values) || {},
-            columnsKey = Object.keys(columns) || [];
+            columnsKey = Object.keys(columns) || [],
+            valueDimension = _.findWhere(resourceColumns, {subject: "value"}),
+            valueId = valueDimension.id;
 
         var sum = _.where(aggregations, {parent: 'sum'}).map(function (item) {
                 return item.value;
@@ -614,9 +616,9 @@ define([
         });
 
         //no 'value' on group by
-        if (_.contains(group, 'value')) {
+        if (_.contains(group, valueId)) {
 
-            var valueInGroupBy = _.findWhere(aggregations, {value: 'value'});
+            var valueInGroupBy = _.findWhere(aggregations, {value: valueId});
 
             errors.push({
                 code: ERR.VALUE_IN_GROUP_BY,
@@ -636,7 +638,7 @@ define([
         if (groupLength > 0) {
 
             var isValueInAggregationRules =
-                _.contains(sum, "value") || _.contains(avg, "value") || _.contains(first, "value") || _.contains(last, "value");
+                _.contains(sum, valueId) || _.contains(avg, valueId) || _.contains(first, valueId) || _.contains(last, valueId);
 
             if (!isValueInAggregationRules) {
                 errors.push({
@@ -647,7 +649,7 @@ define([
 
         //no exclude key dimensions
         var excludedColumns = _.difference(resourceKeyColumns, columnsKey);
-        if (excludedColumns.length > 0) {
+        if (columnsKey.length > 0 && excludedColumns.length > 0) {
 
             var labels = _.map(excludedColumns, _.bind(function (dim) {
                 return _.findWhere(resourceColumns, {id: dim}).title[this.lang]
@@ -1453,24 +1455,27 @@ define([
 
         if (aggregationInstance && filterInstance) {
 
-            filterInstance.on("change", _.bind(function (payload) {
-
-                var valid = this._validateQuery();
-
-                if (valid !== true) {
-                    this._printFilterError(valid);
-                    return;
-                }
-
-                this._syncBackTabs();
-
-            }, this));
+            filterInstance.on("change", _.bind(this._onBackFilterChangeEvent, this));
+            aggregationInstance.on("change", _.bind(this._onBackFilterChangeEvent, this));
         }
+    };
+
+    Box.prototype._onBackFilterChangeEvent = function () {
+        var valid = this._validateQuery();
+
+        if (valid !== true) {
+            this._printFilterError(valid);
+            return;
+        }
+
+        this._syncBackTabs();
+
     };
 
     Box.prototype._getBackSyncModel = function () {
 
-        var sync = {},
+        var self = this,
+            sync = {},
             source = [],
             values = this._getBackFilterValues(),
             filterIsInitialized = !!Utils.getNestedProperty("filter.values", values),
@@ -1481,7 +1486,8 @@ define([
             resourceColumnsIds = _.map(resourceColumns, function (col) {
                 return col.id;
             }),
-            disabledColumnsIds = _.without.apply(_, [resourceColumnsIds].concat(enabledColumnsIds));
+            disabledColumnsIds = _.without.apply(_, [resourceColumnsIds].concat(enabledColumnsIds)),
+            valueDimension = _.findWhere(resourceColumns, {subject: "value"});
 
         if (filterIsInitialized === true) {
 
@@ -1489,17 +1495,7 @@ define([
 
                 if (!_.contains(disabledColumnsIds, id)) {
 
-                    var item = _.findWhere(aggregationsValues, {value: id});
-
-                    if (!item) {
-                        source.push({
-                            value: id,
-                            parent: "dimensions",
-                            label: _.findWhere(resourceColumns, {id: id}).title[this.lang]
-                        })
-                    } else {
-                        source.push(item);
-                    }
+                    addToSource(id)
                 }
 
             }, this));
@@ -1510,12 +1506,29 @@ define([
             source = this._getSourceForAggregationTabConfiguration();
         }
 
+        //add value dimension
+        addToSource(valueDimension.id);
+
         if (source.length > 0) {
             Utils.assign(sync, "values.aggregations", source);
         }
 
         return sync;
 
+        function addToSource(id) {
+
+            var item = _.findWhere(aggregationsValues, {value: id});
+
+            if (!item) {
+                source.push({
+                    value: id,
+                    parent: "dimensions",
+                    label: _.findWhere(resourceColumns, {id: id}).title[self.lang]
+                })
+            } else {
+                source.push(item);
+            }
+        }
     };
 
     Box.prototype._syncBackTabs = function () {
@@ -1679,6 +1692,10 @@ define([
             var process = this._createQuery();
 
             log.info("D3P process", process);
+
+            console.log(process);
+
+            return;
 
             this._loadResource(process)
                 .then(
