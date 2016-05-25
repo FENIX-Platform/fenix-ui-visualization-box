@@ -1693,10 +1693,6 @@ define([
 
             log.info("D3P process", process);
 
-            console.log(process);
-
-            return;
-
             this._loadResource(process)
                 .then(
                     _.bind(this._onLoadResourceSuccess, this),
