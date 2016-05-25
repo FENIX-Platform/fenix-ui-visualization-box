@@ -329,10 +329,7 @@ define([
         var initialConfiguration = $.extend(true, {}, Utils.mergeConfigurations(ToolbarModel, this.syncModel || {})),
             configurationFromFenixTool = BoxUtils.getMapToolbarConfig(this.model);
 
-        var configuration = $.extend(true, {}, initialConfiguration, configurationFromFenixTool);
-
-        return configuration;
-
+        return _.extend({}, initialConfiguration, configurationFromFenixTool);
     };
 
     MapTab.prototype._renderToolbar = function () {
@@ -341,7 +338,7 @@ define([
         this.toolbar = new Filter({
             items: this._createFilterConfiguration(),
             el: this.$el.find(s.TOOLBAR)
-        });
+        });//*/
 
         this.toolbar.on("ready", _.bind(this._renderMap, this))
     };
