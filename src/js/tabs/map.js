@@ -100,7 +100,7 @@ define([
 
         this._dispose();
 
-        log.info("Tab disposed successfully");
+        log.info("Map disposed successfully");
     };
 
     /**
@@ -175,7 +175,7 @@ define([
 
         if (this.initialized !== true) {
 
-            log.info("Table table shown for the first time");
+            log.info("Map MAP shown for the first time");
 
             this._attach();
 
@@ -188,7 +188,7 @@ define([
             this.initialized = true;
 
         } else {
-            log.info("Tab chart shown again");
+            log.info("Tab MAP shown again");
         }
 
         if (this.toSync === true) {
@@ -288,8 +288,10 @@ define([
         }
         
         var $elMap = this.$el.find("#map_" + this.id);
+
+        //MAP NEED FIX HEIGHT
         $elMap.height(400);
-        
+
         this.map = new MapCreator({
                 el: $elMap,
                 fenix_ui_map: {
@@ -322,17 +324,6 @@ define([
             })
     };
 
-    MapTab.prototype._renderToolbar = function () {
-        log.info("Table tab render toolbar");
-
-        this.toolbar = new Filter({
-            items: this._createFilterConfiguration(),
-            el: this.$el.find(s.TOOLBAR)
-        });
-
-        this.toolbar.on("ready", _.bind(this._renderMap, this))
-    };
-
     MapTab.prototype._createFilterConfiguration = function () {
 
         var initialConfiguration = $.extend(true, {}, Utils.mergeConfigurations(ToolbarModel, this.syncModel || {})),
@@ -344,6 +335,17 @@ define([
 
     };
 
+    MapTab.prototype._renderToolbar = function () {
+        log.info("Map tab render toolbar");
+
+        this.toolbar = new Filter({
+            items: this._createFilterConfiguration(),
+            el: this.$el.find(s.TOOLBAR)
+        });
+
+        this.toolbar.on("ready", _.bind(this._renderMap, this))
+    };
+
     MapTab.prototype._onToolbarChangeEvent = function () {
 
         this._trigger("filter", this.toolbar.getValues());
@@ -353,7 +355,7 @@ define([
 
     MapTab.prototype._renderComponents = function () {
 
-        //this._renderToolbar();
+        this._renderToolbar();
 
         //Map will be create when filter is 'ready'
         this._renderMap();

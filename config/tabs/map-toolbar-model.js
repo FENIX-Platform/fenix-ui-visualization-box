@@ -12,7 +12,7 @@ define([
 
         map_boundaries: {
             selector : {
-                id : "mapboundaries",
+                id : "input",
                 type : "checkbox",
                 source : [ { value : true, label :"Show Map Boundaries"}]
             }
@@ -20,7 +20,7 @@ define([
 
         map_labels: {
             selector : {
-                id : "maplabels",
+                id : "input",
                 type : "checkbox",
                 source : [ { value : true, label :"Show Map Labels"}]
             }
