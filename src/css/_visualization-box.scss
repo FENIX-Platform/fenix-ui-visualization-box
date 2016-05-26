@@ -12,7 +12,7 @@ $cmd-right-width: 192px;
 
 .fx-box {
   height: $box-height;
-  border: 1px solid $back-and-border-color;
+  //border: 1px solid $back-and-border-color;
 
 
   [data-content] {
@@ -26,6 +26,7 @@ $cmd-right-width: 192px;
 
     }
 
+
   }
 
   .front-content, .back-content{
@@ -33,6 +34,10 @@ $cmd-right-width: 192px;
 
   }
 
+
+  [data-content="error"], [data-content="loading"], [data-content="empty"],  [data-content="huge"]{
+    border: 1px solid $back-and-border-color;
+  }
 
 
 
@@ -269,6 +274,7 @@ $cmd-right-width: 192px;
   position: absolute;
   top: 0;
   left: 0;
+  border: 1px solid $back-and-border-color;
 }
 
 
@@ -283,9 +289,10 @@ $cmd-right-width: 192px;
 }
 
 
-.visualization-item-content{
+.visualization-item-content-wrapper{
   position: relative;
   z-index: 0;
+  height: 100%;
 }
 
 .visualization-item-toolbar{
@@ -293,6 +300,9 @@ $cmd-right-width: 192px;
   //z-index: 1;
 }
 
+.visualization-item-content{
+  height: 100%;
+}
 
 [data-role="toolbar"] {
   z-index: 1;
@@ -302,6 +312,7 @@ $cmd-right-width: 192px;
 
 [data-section] {
   position : relative;
+  height: 100%;
 
 }
 
@@ -319,6 +330,16 @@ $cmd-right-width: 192px;
 
 [data-role="back-content"]{
   height:100%;
+}
+
+.back-toolbar{
+  position: relative;
+  z-index: 1;
+}
+
+.back-content{
+  position: relative;
+  z-index: 0;
 }
 
 .process-details{
@@ -426,9 +447,9 @@ $cmd-right-width: 192px;
 
   .step-title{
     font-weight: normal;
-    margin: 2px 0;
-    margin-left: 23px;
-    color: white;
+    margin: 0;
+    margin-left: 25px;
+    color: $fenix-text;
   }
 
   .step-icon{
@@ -437,17 +458,17 @@ $cmd-right-width: 192px;
     position: absolute;
     height: 100%;
     width: 29px;
-    background-color: #333;
+    background-color: $fx-cool-blue;
     top: 0;
     left: 0;
     color: white;
 
 
     &:before{
-      font-size: 20px;
+      font-size: 16px;
       position: relative;
-      top: 3px;
-      left: 5px;
+      top: 4px;
+      left: 7px;
     }
 
   }
@@ -475,14 +496,33 @@ $cmd-right-width: 192px;
 
 }
 
-[data-resourcerepresentationtype].step-container{
-  background-color: #fd433c;
-
-
-  .step-icon{
-    background-color: #b02f2a;
-  }
-}
+//[data-tab="metadata"].step-container{
+//  background-color: #fd433c;
+//
+//
+//  .step-icon{
+//    background-color: #b02f2a;
+//  }
+//}
+//
+//[data-tab="filter"].step-container, [data-tab="aggregations"].step-container{
+//  background-color: #747ab6;
+//
+//  .step-icon{
+//    background-color: #5c6190;
+//  }
+//}
+//
+//
+//
+//[data-tab="map"].step-container{
+//  background-color: #74a2b6;
+//
+//
+//  .step-icon{
+//    background-color: #5c8190;
+//  }
+//}
 
 
 
@@ -495,3 +535,39 @@ $cmd-right-width: 192px;
 
 
 
+/*********************
+  Shadows
+**********************/
+
+.z-depth-0 {
+  box-shadow: none !important;
+}
+
+.z-depth-1, .btn, .btn-floating, .card-panel, .card, .dropdown-content, .dropdown-menu {
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+}
+
+.z-depth-1-half, .btn:hover, .btn-floating:hover {
+  box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
+}
+
+.z-depth-2 {
+  box-shadow: 0 8px 17px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.z-depth-3 {
+  box-shadow: 0 12px 15px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
+}
+
+.z-depth-4 {
+  box-shadow: 0 16px 28px 0 rgba(0, 0, 0, 0.22), 0 25px 55px 0 rgba(0, 0, 0, 0.21);
+}
+
+.z-depth-5 {
+  box-shadow: 0 27px 24px 0 rgba(0, 0, 0, 0.2), 0 40px 77px 0 rgba(0, 0, 0, 0.22);
+}
+
+.hoverable:hover {
+  transition: box-shadow .25s;
+  box-shadow: 0 8px 17px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
