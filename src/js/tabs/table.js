@@ -22,7 +22,7 @@ define([
 
     var s = {
         TOOLBAR: "[data-role='toolbar']",
-        FILTER_BTN: "[data-role='toolbar'] [data-role='filter-btn']"
+        FILTER_BTN: "[data-role='filter-btn']"
     };
 
     function TableTab(obj) {
@@ -208,7 +208,6 @@ define([
 
         var template = Handlebars.compile(tabTemplate),
             html = template(this);
-
         this.$el.html(html);
     };
 
@@ -217,6 +216,7 @@ define([
         this.$toolbar = this.$el.find(s.TOOLBAR);
 
         this.$toolbarBtn = this.$el.find(s.FILTER_BTN);
+
 
     };
 
@@ -263,10 +263,12 @@ define([
     TableTab.prototype._slideToolbar = function (direction) {
 
         if (direction !== "up") {
-            this.$toolbar.show();
+            this.$toolbar.addClass('in');
+            this.$toolbarBtn.addClass('in');
             this.toolbarPosition = "down";
         } else {
-            this.$toolbar.hide();
+            this.$toolbar.removeClass('in');
+            this.$toolbarBtn.removeClass('in');
             this.toolbarPosition = "up";
         }
 
@@ -346,7 +348,8 @@ define([
         var position = this.initial.toolbarPosition || C.toolbarPosition || CD.toolbarPosition;
         if (position === 'up') {
             this.toolbarPosition = 'up';
-            this.$toolbar.hide();
+            //this.$toolbar.hide();
+            //this.$toolbar.hide();
         } else {
             this.toolbarPosition = 'down';
         }

@@ -27,7 +27,7 @@ define([
 
     var defaultOptions = {}, s = {
         TOOLBAR: "[data-role='toolbar']",
-        TOOLBAR_BTN: "[data-role='toolbar'] [data-role='filter-btn']"
+        TOOLBAR_BTN: "[data-role='filter-btn']"
     };
 
     function MapTab(obj) {
@@ -259,10 +259,12 @@ define([
     MapTab.prototype._slideToolbar = function (direction) {
 
         if (direction !== "up") {
-            this.$toolbar.show();
+            this.$toolbar.addClass('in');
+            this.$toolbarBtn.addClass('in');
             this.toolbarPosition = "down";
         } else {
-            this.$toolbar.hide();
+            this.$toolbar.removeClass('in');
+            this.$toolbarBtn.removeClass('in');
             this.toolbarPosition = "up";
         }
 
@@ -360,7 +362,7 @@ define([
         var position = this.initial.toolbarPosition || C.toolbarPosition || CD.toolbarPosition;
         if (position === 'up') {
             this.toolbarPosition = 'up';
-            this.$toolbar.hide();
+            //this.$toolbar.hide();
         } else {
             this.toolbarPosition = 'down';
         }
