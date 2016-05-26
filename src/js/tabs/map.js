@@ -300,24 +300,29 @@ define([
                     },
                     guiController: {
                         container: this.$el.find(s.TOOLBAR),
-                        wmsLoader: false                        
+                        wmsLoader: false                 
                     },
                     baselayers: {
-                        "cartodb": {
+                        cartodb: {
                             title_en: "CartoDB light",
                             url: 'http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png',
                             subdomains: 'abcd',
                             maxZoom: 19
                         },
-                        "esri_grayscale": {
+                        esri_grayscale: {
                             url: "http://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}",
                             title_en: "Esri WorldGrayCanvas",
                             maxZoom: 16
                         },
-                        "world_imagery": {
+                        world_imagery: {
                             url: "http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
                             title_en: "World Imagery"
                         }
+                    },
+                    legendOptions: {
+                        //fontColor: '0x006600',
+                        //fontSize: '20',
+                        bgColor: '0xFFFFFF'
                     }
                 }
             });
