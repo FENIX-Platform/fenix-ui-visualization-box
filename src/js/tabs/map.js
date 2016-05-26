@@ -289,9 +289,6 @@ define([
         
         var $elMap = this.$el.find("#map_" + this.id);
 
-        //MAP NEED FIX HEIGHT
-        $elMap.height(400);
-
         this.map = new MapCreator({
                 el: $elMap,
                 model: self.model,
