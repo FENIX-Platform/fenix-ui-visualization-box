@@ -31,7 +31,8 @@ define([
         empty_model = {data: []},
         error_model = {},
         valid_model = JSON.parse(Model),
-        boxes = [];
+        boxes = [],
+        environment = "develop";
 
     function Test() {
 
@@ -47,11 +48,9 @@ define([
 
     Test.prototype._render = function () {
 
-        this._renderLargeBox();
+        this._renderClone();
 
         return;
-
-        this._renderClone();
 
         this._renderLargeBox();
 
@@ -91,8 +90,8 @@ define([
 
         var box = this.createBox({
                 el: s.CLONE,
-                //uid: "adam_country_indicators"
-                model : valid_model
+                environment : environment,
+                uid: "UNECA_Education",
             });
 
         log.trace("Rendering clone box: end");
@@ -103,33 +102,8 @@ define([
 
         log.trace("Rendering large box: start");
 
-        /*
-         UNECA_Education
-         UNECA_Population
-         UNECA_Health
-         UNECA_BalanceOfPayments
-         UNECA_Debt
-         UNECA_MiningProduction4
-         UNECA_Infrastructure
-         UNECA_AgricultureProduction3
-         ILO_Labour
-         Uneca_PopulationNew
-         UNECA_Labour
-         UNECA_MonetaryStatistics
-         UNECA_Inflation
-         UNECA_Poverty
-         UNECA_FinancialFlows
-         UNECA_Tourism
-         UNECA_PublicFinance
-         UNECA_GDP
-         UNECA_GDP_NC
-         UNECA_ExpenditureGDPCostant
-         UNECA_ExpenditureGDPCurrent
-         UNECA_GDP_USD
-         * */
-
         var box = this.createBox({
-            environment : "distribution",
+            environment : environment,
             el: s.LARGE,
             //model: valid_model,
             uid: "UNECA_Education",

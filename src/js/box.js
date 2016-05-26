@@ -1284,7 +1284,6 @@ define([
         var resourceType = this._getObjState("resourceRepresentationType");
 
         switch (tab.toLowerCase()) {
-
             case "metadata" :
                 return true;
             case "filter" :
@@ -1295,7 +1294,6 @@ define([
                 return this._getObjState("tabs.map.suitable");
             default :
                 return false;
-
         }
     };
 
