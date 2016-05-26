@@ -330,7 +330,8 @@ define([
             el: this.$el.find(s.CONTAINER),
             template: this.template,
             common :  this.common,
-            values : this.values
+            values : this.values,
+            environment : this.initial.environment
         });
         
     };

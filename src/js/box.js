@@ -231,6 +231,10 @@ define([
         this.front_tab_instances = {};
         this.back_tab_instances = {};
 
+        this.bridge = new Bridge({
+            environment: this._getObjState("environment")
+        })
+
     };
 
     Box.prototype._initObj = function () {
@@ -276,6 +280,7 @@ define([
         //tabs
         this._setObjState("tabStates", this.initial.tabStates || {});
         this._setObjState("tabOpts", this.initial.tabOpts);
+        this._setObjState("tab", this.initial.tab);
 
         //flip side
         this._setObjState("face", this.initial.face || C.face || CD.face);
@@ -283,7 +288,7 @@ define([
 
         //resource process steps
         this._setObjState("model", this.initial.model);
-        this._setObjState("version", this.initial.version);
+        this._setObjState("version", this.initial.version ? this.initial.version : undefined);
         this._setObjState("values", this.initial.values);
         this._setObjState("process", this.initial.process);
         this._setObjState("uid", this.initial.uid || Utils.getNestedProperty("metadata.uid", this._getObjState("model")));
@@ -378,7 +383,7 @@ define([
                 return 'empty';
             }
 
-            if ( model.size > this._getObjState("max_size")) {
+            if (model.size > this._getObjState("max_size")) {
                 return 'huge';
             }
 
@@ -410,7 +415,7 @@ define([
         var queryParams = C.d3pQueryParameters || CD.d3pQueryParameters,
             process = _.union(Array.isArray(p) ? p : [], this._getObjState("process"));
 
-        return Bridge.getResource({
+        return this.bridge.getResource({
             body: process,
             uid: this._getObjState("uid"),
             version: this._getObjState("version"),
@@ -476,7 +481,7 @@ define([
 
         var queryParams = C.d3pQueryParameters || CD.d3pQueryParameters;
 
-        return Bridge.getMetadata({
+        return this.bridge.getMetadata({
             uid: this._getObjState("uid"),
             version: this._getObjState("version"),
             params: $.extend(queryParams, {dsd: true, full: true})
@@ -541,7 +546,7 @@ define([
 
         var queryParams = C.d3pQueryParameters || CD.d3pQueryParameters;
 
-        return Bridge.getResource({
+        return this.bridge.getResource({
             body: [],
             uid: this._getObjState("uid"),
             version: this._getObjState("version"),
@@ -934,6 +939,8 @@ define([
 
         this._checkSuitableTabs();
 
+        this._showDefaultFrontTab();
+
         //render metadata modal
         this.metadataModal = new MetadataViewer();
 
@@ -1056,7 +1063,8 @@ define([
                 box: this,
                 lang: this.lang,
                 model: $.extend(true, {}, this._getObjState("model")),
-                id: tab + "_" + this.id
+                id: tab + "_" + this.id,
+                environment: this._getObjState("environment")
             }),
             instance = new Tab(config);
 
@@ -1126,13 +1134,11 @@ define([
 
         this._syncFrontTabs();
 
-        this._showDefaultFrontTab();
-
     };
 
     Box.prototype._showDefaultFrontTab = function () {
 
-        var tab = this.initial.tab || this.tab || C.tab || CD.tab;
+        var tab = this._getObjState("tab") || C.tab || CD.tab;
 
         this._showFrontTab(tab);
     };
@@ -1524,7 +1530,8 @@ define([
                 id: "step-" + step.id,
                 labels: step.labels,
                 template: step.template,
-                onReady: step.onReady
+                onReady: step.onReady,
+                environment: this.environment
             });
 
             if (typeof step.onReady === 'function') {
@@ -1845,7 +1852,7 @@ define([
             var filterValues = this._getBackFilterValues();
 
             //if filter values have changed
-            if (filterValues !== this._getObjState("back.filter")) {
+            if (!_.isEqual(filterValues, this._getObjState("back.filter"))) {
 
                 this._setObjState("back.filter", $.extend(true, {}, filterValues));
 
@@ -1863,8 +1870,10 @@ define([
             }
 
             var mapValues = this._getBackMapValues();
+
             //if map values have changed
-            if (mapValues !== this._getObjState("back.map")) {
+            if (!_.isEqual(mapValues, this._getObjState("back.map"))) {
+
                 this._setObjState("back.map", $.extend(true, {}, mapValues));
 
                 this._updateMap();
@@ -1887,9 +1896,6 @@ define([
         }
 
         var MapTabInstance = this.front_tab_instances["map"];
-        console.log(MapTabInstance)
-
-        console.log("add layer here from map tab instance here")
 
     };
 

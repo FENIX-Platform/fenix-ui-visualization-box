@@ -309,7 +309,8 @@ define([
 
         this.toolbar = new Filter({
             items: this._createFilterConfiguration(),
-            el: this.$el.find(s.TOOLBAR)
+            el: this.$el.find(s.TOOLBAR),
+            environment : this.initial.environment
         });
 
         this.toolbar.on("ready", _.bind(this._renderChart, this))
