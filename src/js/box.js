@@ -1637,40 +1637,35 @@ define([
             resourceColumnsIds = _.map(resourceColumns, function (col) {
                 return col.id;
             }),
-            disabledColumnsIds = _.without.apply(_, [resourceColumnsIds].concat(enabledColumnsIds));
+            disabledColumnsIds = _.without.apply(_, [resourceColumnsIds].concat(enabledColumnsIds)),
+            valueDimension = _.findWhere(resourceColumns, {subject: "value"});
 
         if (filterIsInitialized === true) {
 
             _.each(aggregationsValues, _.bind(function ( item ) {
 
-                if (!_.contains(disabledColumnsIds, item.value)) {
-
+                if (!_.contains(disabledColumnsIds, item.value) || valueDimension.id===item.value) {
                     addToSource(item.value);
                 }
 
             }, this));
 
-
-            console.log("-------------------------- RES----------------")
-
             _.each(resourceColumnsIds, _.bind(function (id) {
 
-                console.log(id, _.contains(disabledColumnsIds, id), _.findWhere(source, {value: id}))
-
                 if (!_.contains(disabledColumnsIds, id) && !_.findWhere(source, {value: id})) {
-
                     addToSource(id)
                 }
 
             }, this));
-
-            console.log("-------------------------- RES")
 
         } else {
 
             // if filter is not initialized get default source
             source = this._getSourceForAggregationTabConfiguration();
         }
+
+        //add value dimension
+        addToSource(valueDimension.id);
 
         if (source.length > 0) {
             Utils.assign(sync, "values.aggregations", source);
