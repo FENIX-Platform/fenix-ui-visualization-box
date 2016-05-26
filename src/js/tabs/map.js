@@ -294,6 +294,7 @@ define([
 
         this.map = new MapCreator({
                 el: $elMap,
+                model: self.model,
                 fenix_ui_map: {
                     plugins: {
                         fullscreen: false
@@ -326,8 +327,6 @@ define([
                     }
                 }
             });
-
-        //self.map.addLayer( self.model );
 
         self.map.fenixMap.addLayer( new FM.layer({
             layers: 'fenix:gaul0_line_3857',
