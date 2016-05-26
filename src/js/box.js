@@ -300,6 +300,9 @@ define([
         //data validation
         this._setObjState("max_size", this.initial.max_data_size || C.max_data_size || CD.max_data_size);
 
+        // back filter values
+        this._setObjState("back_filter", this.initial.back_filter);
+        this._setObjState("back_map", this.initial.back_map);
 
     };
 
@@ -508,13 +511,12 @@ define([
     Box.prototype._checkResourceType = function () {
         log.info("Check Resource type");
 
+        this._getModelInfo();
+
         var model = this._getObjState("model"),
-            rt = Utils.getNestedProperty("metadata.meContent.resourceRepresentationType", model) || "",
-            resourceType = rt.toLowerCase();
+            resourceType = this._getObjState("resourceRepresentationType");
 
         log.info("Resource type is: " + resourceType);
-
-        this._setObjState("resourceRepresentationType", resourceType);
 
         switch (resourceType) {
             case "dataset" :
@@ -585,8 +587,20 @@ define([
 
     };
 
+    Box.prototype._getModelInfo = function () {
+
+        var model = this._getObjState("model"),
+            rt = Utils.getNestedProperty("metadata.meContent.resourceRepresentationType", model) || "",
+            resourceType = rt.toLowerCase();
+        log.info("Resource type is: " + resourceType);
+
+        this._setObjState("resourceRepresentationType", resourceType);
+    };
+
     Box.prototype._renderBox = function () {
         log.info("Render box start:");
+
+        this._getModelInfo();
 
         this._renderBoxFaces();
     };
@@ -1218,8 +1232,7 @@ define([
 
     Box.prototype._createProcessSteps = function () {
 
-        var values = this._getObjState("values") || {},
-            filterConfiguration = this._createBackTabConfiguration("filter"),
+        var filterConfiguration = this._createBackTabConfiguration("filter"),
             aggregationConfiguration = this._createBackTabConfiguration("aggregations"),
             mapConfiguration = this._createBackTabConfiguration("map");
 
@@ -1264,7 +1277,6 @@ define([
         }
 
         if (this._stepControlAccess("map")) {
-
             this.processSteps.push({
                 id: "map",
                 tab: "filter",
@@ -1300,8 +1312,8 @@ define([
     Box.prototype._createBackTabConfiguration = function (tab) {
 
         var configuration,
-            filterValues = this._getObjState("back.filter") || {},
-            mapValues = this._getObjState("back.map") || {};
+            filterValues = this._getObjState("back_filter") || {},
+            mapValues = this._getObjState("back_map") || {};
 
         switch (tab.toLowerCase()) {
             case 'aggregations':
@@ -1625,28 +1637,40 @@ define([
             resourceColumnsIds = _.map(resourceColumns, function (col) {
                 return col.id;
             }),
-            disabledColumnsIds = _.without.apply(_, [resourceColumnsIds].concat(enabledColumnsIds)),
-            valueDimension = _.findWhere(resourceColumns, {subject: "value"});
+            disabledColumnsIds = _.without.apply(_, [resourceColumnsIds].concat(enabledColumnsIds));
 
         if (filterIsInitialized === true) {
 
+            _.each(aggregationsValues, _.bind(function ( item ) {
+
+                if (!_.contains(disabledColumnsIds, item.value)) {
+
+                    addToSource(item.value);
+                }
+
+            }, this));
+
+
+            console.log("-------------------------- RES----------------")
+
             _.each(resourceColumnsIds, _.bind(function (id) {
 
-                if (!_.contains(disabledColumnsIds, id)) {
+                console.log(id, _.contains(disabledColumnsIds, id), _.findWhere(source, {value: id}))
+
+                if (!_.contains(disabledColumnsIds, id) && !_.findWhere(source, {value: id})) {
 
                     addToSource(id)
                 }
 
             }, this));
 
+            console.log("-------------------------- RES")
+
         } else {
 
             // if filter is not initialized get default source
             source = this._getSourceForAggregationTabConfiguration();
         }
-
-        //add value dimension
-        addToSource(valueDimension.id);
 
         if (source.length > 0) {
             Utils.assign(sync, "values.aggregations", source);
@@ -1656,7 +1680,13 @@ define([
 
         function addToSource(id) {
 
-            var item = _.findWhere(aggregationsValues, {value: id});
+            var item = _.findWhere(aggregationsValues, {value: id}),
+                inSource = _.findWhere(source, {value: id});
+
+            if (!!inSource || !id) {
+                log.trace("Not include dimension because already present: " + id);
+                return;
+            }
 
             if (!item) {
                 source.push({
@@ -1850,9 +1880,9 @@ define([
             var filterValues = this._getBackFilterValues();
 
             //if filter values have changed
-            if (!_.isEqual(filterValues, this._getObjState("back.filter"))) {
+            if (!_.isEqual(filterValues, this._getObjState("back_filter"))) {
 
-                this._setObjState("back.filter", $.extend(true, {}, filterValues));
+                this._setObjState("back_filter", $.extend(true, {}, filterValues));
 
                 var process = this._createQuery(filterValues);
 
@@ -1870,9 +1900,9 @@ define([
             var mapValues = this._getBackMapValues();
 
             //if map values have changed
-            if (!_.isEqual(mapValues, this._getObjState("back.map"))) {
+            if (!_.isEqual(mapValues, this._getObjState("back_map"))) {
 
-                this._setObjState("back.map", $.extend(true, {}, mapValues));
+                this._setObjState("back_map", $.extend(true, {}, mapValues));
 
                 this._updateMap();
 

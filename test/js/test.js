@@ -50,9 +50,9 @@ define([
 
         this._renderClone();
 
-        return;
-
         this._renderLargeBox();
+
+        return;
 
         this._renderMediumBoxes();
 
