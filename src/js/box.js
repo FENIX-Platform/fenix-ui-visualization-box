@@ -378,7 +378,7 @@ define([
                 return 'empty';
             }
 
-            if (Array.isArray(model.data) && model.data.length > this._getObjState("max_size")) {
+            if ( model.size > this._getObjState("max_size")) {
                 return 'huge';
             }
 
@@ -504,14 +504,16 @@ define([
         log.info("Check Resource type");
 
         var model = this._getObjState("model"),
-            resourceType = Utils.getNestedProperty("metadata.meContent.resourceRepresentationType", model) || "";
+            rt = Utils.getNestedProperty("metadata.meContent.resourceRepresentationType", model) || "",
+            resourceType = rt.toLowerCase();
 
         log.info("Resource type is: " + resourceType);
 
-        switch (resourceType.toLowerCase()) {
+        this._setObjState("resourceRepresentationType", resourceType);
+
+        switch (resourceType) {
             case "dataset" :
                 var datasources = Utils.getNestedProperty("metadata.dsd.datasources", model);
-
                 if (Array.isArray(datasources) && datasources.length > 0) {
 
                     this._fetchResource().then(
@@ -641,6 +643,7 @@ define([
     };
 
     // Load resource
+
     Box.prototype._validateQuery = function () {
 
         this._hideFilterError();
@@ -1216,50 +1219,78 @@ define([
 
         this.processSteps = [];
 
-        this.processSteps.push({
-            tab: "metadata",
-            id: "metadata",
-            model: $.extend(true, {}, this._getObjState("model")),
-            labels: {
-                title: i18nLabels["step_metadata"]
-            }
-        });
+        if (this._stepControlAccess("metadata")) {
+            this.processSteps.push({
+                tab: "metadata",
+                id: "metadata",
+                model: $.extend(true, {}, this._getObjState("model")),
+                labels: {
+                    title: i18nLabels["step_metadata"]
+                }
+            });
+        }
 
-        this.processSteps.push({
-            id: "filter",
-            tab: "filter",
-            values: filterConfiguration.values,
-            config: filterConfiguration.config,
-            template: filterConfiguration.template,
-            onReady: filterConfiguration.onReady,
-            labels: {
-                title: i18nLabels["step_filter"]
-            }
-        });
+        if (this._stepControlAccess("filter")) {
+            this.processSteps.push({
+                id: "filter",
+                tab: "filter",
+                values: filterConfiguration.values,
+                config: filterConfiguration.config,
+                template: filterConfiguration.template,
+                onReady: filterConfiguration.onReady,
+                labels: {
+                    title: i18nLabels["step_filter"]
+                }
+            });
+        }
 
-        this.processSteps.push({
-            id: "aggregations",
-            tab: "filter",
-            values: aggregationConfiguration.values,
-            config: aggregationConfiguration.filter,
-            template: aggregationConfiguration.template,
-            labels: {
-                title: i18nLabels["step_aggregations"]
-            }
-        });
+        if (this._stepControlAccess("aggregations")) {
+            this.processSteps.push({
+                id: "aggregations",
+                tab: "filter",
+                values: aggregationConfiguration.values,
+                config: aggregationConfiguration.filter,
+                template: aggregationConfiguration.template,
+                labels: {
+                    title: i18nLabels["step_aggregations"]
+                }
+            });
+        }
 
-        this.processSteps.push({
-            id: "map",
-            tab: "filter",
-            values: mapConfiguration.values,
-            config: mapConfiguration.filter,
-            template: mapConfiguration.template,
-            onReady: mapConfiguration.onReady,
-            labels: {
-                title: i18nLabels["step_map"]
-            }
-        });
+        if (this._stepControlAccess("map")) {
 
+            this.processSteps.push({
+                id: "map",
+                tab: "filter",
+                values: mapConfiguration.values,
+                config: mapConfiguration.filter,
+                template: mapConfiguration.template,
+                onReady: mapConfiguration.onReady,
+                labels: {
+                    title: i18nLabels["step_map"]
+                }
+            });
+        }
+    };
+
+    Box.prototype._stepControlAccess = function (tab) {
+
+        var resourceType = this._getObjState("resourceRepresentationType");
+
+        switch (tab.toLowerCase()) {
+
+            case "metadata" :
+                return true;
+            case "filter" :
+                return resourceType === 'dataset';
+            case "aggregations" :
+                return resourceType === 'dataset';
+            case "map" :
+                return this._getObjState("tabs.map.suitable");
+            default :
+                return false;
+
+        }
     };
 
     Box.prototype._createBackTabConfiguration = function (tab) {
@@ -1584,7 +1615,7 @@ define([
             aggregationsValues = Utils.getNestedProperty("aggregations.values.aggregations", values) || [],
             enabledColumns = Utils.getNestedProperty("filter.values", values) || {},
             enabledColumnsIds = Object.keys(enabledColumns),
-            filterIsInitialized = !!enabledColumns,
+            filterIsInitialized = !$.isEmptyObject(enabledColumns),
             resourceColumns = Utils.getNestedProperty("metadata.dsd.columns", this._getObjState("model")) || [],
             resourceColumnsIds = _.map(resourceColumns, function (col) {
                 return col.id;
@@ -1849,7 +1880,17 @@ define([
     };
 
     Box.prototype._updateMap = function () {
-        console.log("ok")
+
+        if (this._getObjState("tabs.map.suitable") !== true) {
+            log.warn("Abort map update because map table is not suitable for current resource");
+            return;
+        }
+
+        var MapTabInstance = this.front_tab_instances["map"];
+        console.log(MapTabInstance)
+
+        console.log("add layer here from map tab instance here")
+
     };
 
     Box.prototype._onDownloadMetadataEvent = function (payload) {
@@ -1931,8 +1972,8 @@ define([
     Box.prototype._getBackFilterValues = function () {
 
         var payload = {
-            filter: this.back_tab_instances["filter"].getValues(null),
-            aggregations: this.back_tab_instances["aggregations"].getValues(null)
+            filter: this.back_tab_instances["filter"] ? this.back_tab_instances["filter"].getValues(null) : null,
+            aggregations: this.back_tab_instances["aggregations"] ? this.back_tab_instances["aggregations"].getValues(null) : null
         };
 
         return $.extend(true, {}, payload);
@@ -1942,7 +1983,7 @@ define([
     Box.prototype._getBackMapValues = function () {
 
         var payload = {
-            map: this.back_tab_instances["map"].getValues(null)
+            map: this.back_tab_instances["map"] ? this.back_tab_instances["map"].getValues(null) : null
         };
 
         return $.extend(true, {}, payload);

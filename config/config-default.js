@@ -34,13 +34,13 @@ define(function () {
             }
         },
         tabs: {
-            //'blank': {type: 'simple', callback: 'once', tabOpts : {}},
-            'table': {type: 'simple', callback: 'once', tabOpts : {}},
-            'metadata': {type: 'simple', callback: 'once', tabOpts : {}},
-            'filter': {type: 'simple', callback: 'once', tabOpts : {}},
-            'map': {type: 'simple', callback: 'always', tabOpts : {}},
-            'chart': {type: 'simple', callback: 'always', tabOpts : {type : "line"}},
-            'download': {type: 'simple', callback: 'always', tabOpts : {}}
+            //'blank': {type: 'simple', tabOpts : {}},
+            'table': {type: 'simple', tabOpts : {}},
+            'metadata': {type: 'simple', tabOpts : {}},
+            'filter': {type: 'simple', tabOpts : {}},
+            'map': {type: 'simple', tabOpts : {}},
+            'chart': {type: 'simple', tabOpts : {type : "line"}},
+            'download': {type: 'simple', tabOpts : {}}
         },
 
         flippedClassName : "flipped",
@@ -58,9 +58,10 @@ define(function () {
         },
 
         sync_tabs_on_toolbar_change : false,
+
         render_visualization_components : true,
 
-        max_data_size : 99999
+        max_data_size : 9999
 
     };
 });
