@@ -460,6 +460,7 @@ $cmd-right-width: 192px;
 
   .sidebar-content {
     background-color: white;
+    border: 1px solid $back-and-border-color;
     height: calc(100% - 30px);
     width: calc(100% - 30px);
     position: absolute;

@@ -6347,6 +6347,7 @@ input[type="radio"]:disabled + label {
   position: absolute; }
   [data-role='back-sidebar'] .sidebar-content {
     background-color: white;
+    border: 1px solid #e0e0e0;
     height: calc(100% - 30px);
     width: calc(100% - 30px);
     position: absolute;
