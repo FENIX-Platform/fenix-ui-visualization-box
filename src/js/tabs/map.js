@@ -331,7 +331,7 @@ define([
             urlWMS: 'http://fenixapps.fao.org/geoserver',
             opacity: '0.8',
             lang: 'EN'
-        }) );        
+        }) );
         this.map.fenixMap.addLayer( new FM.layer({
             layers: 'fenix:gaul0_line_3857',
             layertitle: 'LAYER TEST 2',
