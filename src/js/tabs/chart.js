@@ -173,7 +173,7 @@ define([
 
     ChartTab.prototype._show = function (opts) {
 
-        //TODO opts contain the chart type
+        this.type = opts.type;
 
         if (this.initialized !== true) {
 
@@ -191,14 +191,18 @@ define([
 
         } else {
             log.info("Tab chart shown again");
-        }
 
-        if (this.toSync === true) {
-            log.info("Sync tab. State:" + JSON.stringify(this.syncState));
+            if (this.toSync === true) {
+                log.info("Sync tab. State:" + JSON.stringify(this.syncState));
 
-            if (this.syncState.hasOwnProperty("toolbar") && this.toolbar) {
-                this.toolbar.setValues(this.syncState.toolbar, true);
-                this._renderChart();
+                if (this.syncState.hasOwnProperty("toolbar") && this.toolbar) {
+                    this.toolbar.setValues(this.syncState.toolbar, true);
+                    this.type = opts.type;
+                    this._renderChart();
+
+                } else {
+                    this._updateChart()
+                }
             }
         }
 
@@ -299,10 +303,29 @@ define([
             return;
         }
 
-        this.chart = new ChartCreator($.extend(true, {}, {
+        this.chart = new ChartCreator($.extend(true, {}, configuration, {
             model: this.model,
-            el: "#chart_" + this.id
-        }, configuration));
+            el: "#chart_" + this.id,
+            type : this.type
+        }));
+
+    };
+
+    ChartTab.prototype._updateChart = function () {
+
+        var toolbarValues = this.toolbar.getValues(),
+            configuration = BoxUtils.getChartCreatorConfiguration(toolbarValues);
+
+        if (C.render_visualization_components === false || CD.render_visualization_components === false) {
+            log.warn("Render Visualization component blocked by configuration");
+            return;
+        }
+
+        this.chart.update($.extend(true, {}, configuration, {
+            model: this.model,
+            el: "#chart_" + this.id,
+            type : this.type
+        }));
 
     };
 

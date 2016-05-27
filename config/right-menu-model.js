@@ -95,17 +95,6 @@ define(function () {
             "parent_id": "-1",
             "id": "8"
         },
-        {
-            "label": "Blank",
-            "url": "#",
-            "parent_id": "8",
-            "id": "blank",
-            "a_attrs": {
-                "data-action": "tab",
-                "data-tab": "blank",
-                "class": "hidden"
-            }
-        },
         //Chart
         {
             "label": "Chart",
@@ -119,25 +108,58 @@ define(function () {
             }
         },
         {
-            "label": "Pie chart",
+            "label": "Line",
             "url": "#",
             "parent_id": "9",
             "id": "9-1",
             "a_attrs": {
                 "data-action": "tab",
                 "data-tab": "chart",
-                "data-type": "pie"
+                "data-type": "line"
             }
         },
         {
-            "label": "Time series",
+            "label": "Column",
             "url": "#",
             "parent_id": "9",
             "id": "9-2",
             "a_attrs": {
                 "data-action": "tab",
                 "data-tab": "chart",
-                "data-type": "timeseries"
+                "data-type": "column"
+            }
+        },
+        {
+            "label": "Column stacked",
+            "url": "#",
+            "parent_id": "9",
+            "id": "9-2",
+            "a_attrs": {
+                "data-action": "tab",
+                "data-tab": "chart",
+                "data-type": "column_stacked"
+            }
+        },
+        {
+            "label": "Area",
+            "url": "#",
+            "parent_id": "9",
+            "id": "9-2",
+            "a_attrs": {
+                "data-action": "tab",
+                "data-tab": "chart",
+                "data-type": "area"
+            }
+        },
+        {
+            "label": "Pie",
+            "url": "#",
+            "parent_id": "9",
+            "id": "9-2",
+            "a_attrs": {
+                "data-action": "tab",
+                "data-tab": "chart",
+                "data-type": "pie"
             }
         },
         //Map
@@ -161,30 +183,7 @@ define(function () {
             "a_attrs": {
                 "data-action": "tab",
                 "data-tab": "table",
-                "data-type": "standard",
                 "class": "hidden"
-            }
-        },
-        {
-            "label": "Standard",
-            "url": "#",
-            "parent_id": "11",
-            "id": "11-1",
-            "a_attrs": {
-                "data-action": "tab",
-                "data-tab": "table",
-                "data-type": "standard",
-            }
-        },
-        {
-            "label": "Pivot",
-            "url": "#",
-            "parent_id": "11",
-            "id": "11-2",
-            "a_attrs": {
-                "data-action": "tab",
-                "data-tab": "table",
-                "data-type": "standard"
             }
         }
     ];
