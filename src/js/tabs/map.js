@@ -373,6 +373,7 @@ define([
             console.log('addLayersByFilter', layerName, layerTitle);
             
             var l = new FM.layer({
+                urlWMS: "http://fenix.fao.org/demo/fenix/geoserver/wms",
                 layers: layerName,
                 layertitle: 'EarthStat Layer: '+layerTitle,
                 opacity: '0.8',
