@@ -316,9 +316,10 @@ define([
                         subdomains: 'abcd',
                         maxZoom: 19
                     },
-                    esri_grayscale: {
-                        url: "http://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}",
-                        title_en: "Esri WorldGrayCanvas",
+                    osm: {
+                        //url: "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                        url: "http://{s}.tiles.wmflabs.org/osm-no-labels/{z}/{x}/{y}.png",
+                        title_en: "Openstreetmap",
                         maxZoom: 16
                     },
                     world_imagery: {
@@ -450,7 +451,7 @@ define([
             mu: mu, measurementunit: mu,
             layertype: 'JOIN',
             jointype: 'shaded',
-            openlegend: true,
+            openlegend: false,
             defaultgfi: true,
             colorramp: 'Reds',
             lang: 'en',
