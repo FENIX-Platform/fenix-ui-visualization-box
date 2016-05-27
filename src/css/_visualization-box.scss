@@ -1,47 +1,42 @@
 /* Visualization Box Style */
 
-$box-height: 450px; // 430px content + 23px toolbar height + 1px border between vb-toolbar and content (the border affects the dimensions because of the nature of the h6 title inside)
-$back-and-border-color: #e0e0e0; // $fenix-light-gray
-$box-content-height: 424px; // 450px minus the 23px vb-toolbar
+$box-height: 450px;
+// 430px content + 23px toolbar height + 1px border between vb-toolbar and content (the border affects the dimensions because of the nature of the h6 title inside)
+$back-and-border-color: #e0e0e0;
+// $fenix-light-gray
+$box-content-height: 424px;
+// 450px minus the 23px vb-toolbar
 $detail-height: 350px;
 $sidebar-process-container-height: 360px;
 $toolbar-font-size: 11px;
 $cmd-left-width: 85px;
 $cmd-right-width: 192px;
 
-
-
-
 .fx-box {
   height: $box-height;
   //border: 1px solid $back-and-border-color;
-
 
   [data-content] {
     display: none;
     height: $box-height;
     position: relative;
 
-    .loading{
+    .loading {
       position: absolute;
       top: 45%;
 
     }
 
-
   }
 
-  .front-content, .back-content{
+  .front-content, .back-content {
     height: $box-content-height;
     overflow: hidden;
   }
 
-
-  [data-content="error"], [data-content="loading"], [data-content="empty"],  [data-content="huge"]{
+  [data-content="error"], [data-content="loading"], [data-content="empty"], [data-content="huge"] {
     border: 1px solid $back-and-border-color;
   }
-
-
 
   /* Hovered */
 
@@ -50,26 +45,22 @@ $cmd-right-width: 192px;
     margin-right: $cmd-right-width;
   }
 
-  .toolbar-cmd-left, .toolbar-cmd-right{
-    opacity:1;
+  .toolbar-cmd-left, .toolbar-cmd-right {
+    opacity: 1;
     pointer-events: auto;
   }
 
-
-
   @media screen and (min-width: $screen-sm) {
 
-    &{
+    & {
 
-      .front-toolbar{
+      .front-toolbar {
 
-
-        .toolbar-cmd-left, .toolbar-cmd-right{
-          opacity:0;
+        .toolbar-cmd-left, .toolbar-cmd-right {
+          opacity: 0;
           pointer-events: none;
           @include animate(0.3s, 0.2s);
         }
-
 
         .box-title {
           margin-left: 15px;
@@ -79,22 +70,14 @@ $cmd-right-width: 192px;
 
       }
 
-
-
-
-
-
-
     }
 
+    &:hover {
 
+      .front-toolbar {
 
-    &:hover{
-
-      .front-toolbar{
-
-        .toolbar-cmd-left, .toolbar-cmd-right{
-          opacity:1;
+        .toolbar-cmd-left, .toolbar-cmd-right {
+          opacity: 1;
           pointer-events: auto;
         }
 
@@ -105,13 +88,7 @@ $cmd-right-width: 192px;
 
       }
 
-
-
-
     }
-
-
-
 
   }
 
@@ -121,12 +98,6 @@ $cmd-right-width: 192px;
   @media screen and (min-width: $screen-lg) {
 
   }
-
-
-
-
-
-
 
   //show only the status only correspondent tab content
   $statuses: "ready" "error" "loading" "empty" "huge";
@@ -141,7 +112,6 @@ $cmd-right-width: 192px;
       }
     }
   }
-
 
   [data-content="ready"] {
 
@@ -165,25 +135,23 @@ $cmd-right-width: 192px;
   }
 }
 
-
-.vb-toolbar{
+.vb-toolbar {
 
   background-color: white;
   border-bottom: 1px solid $back-and-border-color;
 
-  .meta-btn{
-    margin-top:2px ;
+  .meta-btn {
+    margin-top: 2px;
   }
 
-
-  .toolbar-cmd-left{
+  .toolbar-cmd-left {
     width: $cmd-left-width;
     position: absolute;
     top: 0;
     left: 0;
   }
 
-  .toolbar-cmd-right{
+  .toolbar-cmd-right {
     width: $cmd-right-width;
     position: absolute;
     top: 0;
@@ -191,17 +159,16 @@ $cmd-right-width: 192px;
     text-align: right;
     font-size: 0; /* Avoid space between elements with display inline */
 
-    button{
+    button {
       float: none; /* Avoid 1px bug on the right in md resolution */
       margin-left: 0 !important; /* Avoid 1px bug of the bootstrap's btn-group */
       display: inline-block;
 
-
-      &[data-action="flip"]{
+      &[data-action="flip"] {
         background-color: $back-and-border-color;
       }
 
-      &:last-child{
+      &:last-child {
         margin-right: 0; /* Remove margin from the last child of btn-group */
       }
 
@@ -209,50 +176,41 @@ $cmd-right-width: 192px;
 
   }
 
-
-
-  button{
+  button {
     border: 0;
-    background-color: transparent ;
+    background-color: transparent;
     font-size: 16px;
     padding: 1px 10px 0 10px;
     @include fx-no-border-radius;
 
-
-
-    &.active, &:active{
-
+    &.active, &:active {
 
     }
 
-    &.focus, &:focus{
+    &.focus, &:focus {
 
     }
 
-
-    &[disabled]{
-      background-color: transparent ;
+    &[disabled] {
+      background-color: transparent;
       border: 0;
       opacity: 1;
 
-      span{
+      span {
         opacity: 0.35;
       }
 
     }
 
-    &:hover{
+    &:hover {
       border: 0;
       border-color: transparent;
       background-color: $back-and-border-color;
       color: $fx-cool-blue;
 
-
     }
 
-    
   }
-
 
   .box-title {
     color: $fx-cool-blue;
@@ -261,12 +219,7 @@ $cmd-right-width: 192px;
 
   }
 
-
 }
-
-
-
-
 
 /*Flip effect */
 /* entire container, keeps perspective */
@@ -274,11 +227,11 @@ $cmd-right-width: 192px;
   perspective: 1000;
   height: $box-height;
 }
+
 /* flip the pane when hovered*/
 .flip-container.flipped .flipper {
   transform: rotateY(180deg);
 }
-
 
 /* flip speed goes here */
 .flipper {
@@ -299,8 +252,6 @@ $cmd-right-width: 192px;
   border: 1px solid $back-and-border-color;
 }
 
-
-
 /* FRONT pane, placed above back */
 .front {
   z-index: 2;
@@ -310,69 +261,56 @@ $cmd-right-width: 192px;
   //border: 1px solid $back-and-border-color;
 }
 
-
-.tab-item-content-wrapper{
+.tab-item-content-wrapper {
   position: relative;
   z-index: 0;
   height: 100%;
 
-
-
 }
 
-.visualization-item-toolbar{
+.visualization-item-toolbar {
   //position: relative;
   //z-index: 1;
 }
 
-.tab-item-content{
+.tab-item-content {
   height: 100%;
 
-
-  &[id^="table"], &[id^="chart"]{
+  &[id^="table"], &[id^="chart"] {
     padding: 40px 15px 15px 15px;
   }
 
-
-
 }
 
-
-
 [data-section] {
-  position : relative;
+  position: relative;
   height: 100%;
 
 }
 
-
-
-
-
 /* Z-index fix */
 
-.front-toolbar, .back-toolbar{
+.front-toolbar, .back-toolbar {
   position: relative;
   z-index: 1;
 }
 
-.back-toolbar{
+.back-toolbar {
   /* COOL BACK TOOLBAR EFFECT */
   opacity: 0.5;
   @include fx-transfor-me(rotateY(180deg));
   pointer-events: none;
 
-  *{
+  * {
     pointer-events: none !important;
   }
 
 }
 
-.front-content, .back-content{
+.front-content, .back-content {
   position: relative;
   z-index: 0;
 }
-
 
 /* BACK, initially hidden pane */
 .back {
@@ -381,36 +319,62 @@ $cmd-right-width: 192px;
   //border: 1px solid $back-and-border-color;
 }
 
-[data-role="back-content"]{
-  height:100%;
+[data-role="back-content"] {
+  height: 100%;
 }
 
-.back-toolbar{
+.back-toolbar {
   position: relative;
   z-index: 1;
 }
 
-.back-content{
+.back-content {
   position: relative;
   z-index: 0;
 }
 
-.process-details{
+.process-details {
   height: $detail-height;
   overflow-x: hidden;
   overflow-y: auto;
   background-color: white;
-  padding: 0 15px;
+  //padding: 0 15px;
+
+  [data-tab="metadata"]{
+    padding: 0 15px;
+  }
+
+  [data-tab="filter"]{
+
+
+    .swiper-wrapper{
+      //width: calc(100% - 30px);
+      //height: calc(100% - 50px);
+      //margin-left: 15px;
+      //margin-top: 15px;
+    }
+
+  }
+
+  [data-tab="aggregations"]{
+    padding: 0 15px;
+  }
+
+  [data-tab="map"]{
+    padding: 0 15px;
+  }
+
 }
 
-.show-back-sidebar{
+
+.show-back-sidebar {
   position: absolute;
   z-index: 2;
   top: 15px;
   left: 15px;
 }
 
-.sidebar-title{
+.sidebar-title {
   color: $fenix-secondary-text;
   padding: 0 15px;
   border-bottom: 1px solid $back-and-border-color;
@@ -418,21 +382,64 @@ $cmd-right-width: 192px;
 }
 
 
-.filter-slide{
-  width: 100%;
-  height: $detail-height;
-  padding: 0 10px ;
 
-  @media screen and (max-width: $screen-xs) {
+/* Filter Swiper */
+
+.filter-slide {
+
+  padding: 15px;
+  border: 1px solid transparent;
+  @include animate();
+
+
+  [data-selector]{
+
+    .btn-group.controller{
+      opacity: 1; //Restore the enable button opacity
+    }
+
+  }
+
+  @media screen and (min-width: $screen-xs) {
     width: 50%;
+  }
+
+  &.swiper-slide-active{
+
+    background-color: rgba($fx-cool-blue, 0.05);
+    border-color: rgba($fx-cool-blue, 0.2);
+
   }
 
 
 }
 
-.back-right-content{
+.swiper-button-prev {
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2027%2044'%3E%3Cpath%20d%3D'M0%2C22L22%2C0l2.1%2C2.1L4.2%2C22l19.9%2C19.9L22%2C44L0%2C22L0%2C22L0%2C22z'%20fill%3D'#{$fx-cool-blue}'%2F%3E%3C%2Fsvg%3E");
+  left: 0;
+  right: auto;
+  background-size: 20px 30px;
+}
+
+.swiper-button-next {
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2027%2044'%3E%3Cpath%20d%3D'M27%2C22L27%2C22L5%2C44l-2.1-2.1L22.8%2C22L2.9%2C2.1L5%2C0L27%2C22L27%2C22z'%20fill%3D'#{$fx-cool-blue}'%2F%3E%3C%2Fsvg%3E");
+  right: 2px;
+  left: auto;
+  background-size: 20px 30px;
+}
+
+
+
+.swiper-pagination-bullet-active{
+  background: $fx-cool-blue;
+}
+
+
+.back-right-content {
   height: 100%;
   padding-top: 15px;
+  position: relative;
+  z-index: 0;
 }
 
 .swiper-container {
@@ -441,7 +448,7 @@ $cmd-right-width: 192px;
 }
 
 .back-row {
-  position : relative;
+  position: relative;
   height: 100%;
 }
 
@@ -450,15 +457,16 @@ $cmd-right-width: 192px;
   height: 100%;
   position: absolute;
 
-  .sidebar-content{
+
+  .sidebar-content {
     background-color: white;
     height: calc(100% - 30px);
     width: calc(100% - 30px);
-    position : absolute;
+    position: absolute;
     top: 15px;
     left: 15px;
 
-    .process-steps-container{
+    .process-steps-container {
       padding: 5px 15px;
       position: absolute;
       bottom: 0;
@@ -470,26 +478,22 @@ $cmd-right-width: 192px;
 
   }
 
-
-
   @media screen and (max-width: $screen-xs) {
 
   }
 
   @media screen and (min-width: $screen-sm) {
-    position : absolute;
+    position: absolute;
   }
 
   @media screen and (min-width: $screen-md) {
-    position : relative;
+    position: relative;
 
   }
 
   @media screen and (min-width: $screen-lg) {
-    position : relative;
+    position: relative;
   }
-
-
 
 }
 
@@ -500,22 +504,21 @@ $cmd-right-width: 192px;
   //}
 }
 
-
-.step-container{
+.step-container {
   padding: 5px 10px;
   margin: 7px 0;
   cursor: pointer;
   background-color: $back-and-border-color;
   position: relative;
 
-  .step-title{
+  .step-title {
     font-weight: normal;
     margin: 0;
     margin-left: 25px;
     color: $fenix-text;
   }
 
-  .step-icon{
+  .step-icon {
 
     display: inline-block;
     position: absolute;
@@ -526,8 +529,7 @@ $cmd-right-width: 192px;
     left: 0;
     color: white;
 
-
-    &:before{
+    &:before {
       font-size: 16px;
       position: relative;
       top: 4px;
@@ -536,9 +538,9 @@ $cmd-right-width: 192px;
 
   }
 
-  &.active{
+  &.active {
 
-    &:before{
+    &:before {
       content: '';
       position: absolute;
       right: 0;
@@ -554,8 +556,6 @@ $cmd-right-width: 192px;
       _filter: progid:DXImageTransform.Microsoft.Chroma(color='#000000');
     }
   }
-
-
 
 }
 
@@ -587,10 +587,6 @@ $cmd-right-width: 192px;
 //  }
 //}
 
-
-
-
-
 /*********************
   Shadows
 **********************/
@@ -599,7 +595,7 @@ $cmd-right-width: 192px;
   box-shadow: none !important;
 }
 
-.z-depth-1,  .btn-floating{
+.z-depth-1, .btn-floating {
   box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
 }
 
@@ -646,36 +642,31 @@ $cmd-right-width: 192px;
   margin: 10px;
 }
 
-
-
-
-
 [data-role="toolbar"] {
   height: $box-content-height;
   overflow-y: scroll;
   overflow-x: hidden;
   z-index: 1;
-  position : absolute;
+  position: absolute;
   background-color: white;
   padding-top: 60px; // to keep the button visible
   top: 0;
   left: -570px;
   @include animate();
 
-  &.in{
+  &.in {
     left: 0;
   }
 
 }
 
-
-.btn-fx-toolbar, .btn-fx-toolbar-confirm{
+.btn-fx-toolbar, .btn-fx-toolbar-confirm {
 
   position: absolute;
   top: 0;
   left: 0;
 
-  span[class^="icojam_"]{
+  span[class^="icojam_"] {
 
     color: white;
     font-size: 20px;
@@ -686,62 +677,54 @@ $cmd-right-width: 192px;
 
 }
 
-.btn-fx-toolbar-confirm{
+.btn-fx-toolbar-confirm {
   left: 50px;
   background-color: white;
   opacity: 0;
   pointer-events: none;
 
-
-  &.in{
+  &.in {
     opacity: 1;
     pointer-events: auto;
   }
 
-  span[class^="icojam_"]{
+  span[class^="icojam_"] {
     color: $fenix-text;
   }
 
 }
 
-
-
-
 /* OLAP */
 $olap-headers-color: #f4f4f4;
 $olap-drag: #bbbbbb;
 
-.tab-item-content{
+.tab-item-content {
 
-  .gt-viewport{
+  .gt-viewport {
     font-family: "Lucida Console", Monaco, monospace !important;
     font-size: 12px !important;
     color: $fenix-text !important;
   }
 
-
-
 }
 
-.gt-hd-row td .gt-inner{
+.gt-hd-row td .gt-inner {
   padding-top: 5px;
   padding-bottom: 5px;
 }
 
-.gt-inner{
- padding-top: 5px;
- padding-bottom: 5px;
+.gt-inner {
+  padding-top: 5px;
+  padding-bottom: 5px;
 }
 
-.gt-row-selected td{
+.gt-row-selected td {
   background-color: $fx-main-color-lighter;
 
 }
 
-
-
-.gt-head-wrap{
-  td{
+.gt-head-wrap {
+  td {
     background-color: $olap-headers-color !important;
   }
 }
@@ -750,23 +733,22 @@ $olap-drag: #bbbbbb;
 
 .gt-freeze-div[id*="bodyDiv"] {
 
-  td{
+  td {
     background-color: $olap-headers-color !important;
   }
 
 }
 
-
 /* Freezed Header */
 
-.gt-hd-split{
+.gt-hd-split {
   background-color: transparent !important;
   border-right: 1px solid #bbbbbb !important;
   padding-left: 5px !important;
   position: relative;
   overflow: visible;
 
-  &:before{
+  &:before {
     content: '';
     display: block;
     height: 100%;
@@ -780,31 +762,27 @@ $olap-drag: #bbbbbb;
 
 }
 
-
 .gt-freeze-div[id*="headDiv"] {
 
-  table{
-    border-bottom: 1px solid  #d6d6d6 !important; /* Suspicious */
+  table {
+    border-bottom: 1px solid #d6d6d6 !important; /* Suspicious */
   }
 
-  td{
+  td {
     background-color: $olap-headers-color !important;
   }
 
 }
 
-
-
-
-.gt-row-over td{
+.gt-row-over td {
   border-bottom-color: $fx-cool-blue;
 }
 
-.gt-table{
+.gt-table {
   //display: none;
 }
 
-.gt-row-even{
+.gt-row-even {
   background-color: white;
 }
 
@@ -820,12 +798,12 @@ $olap-drag: #bbbbbb;
   background-color: transparent;
 }
 
-.gt-image-button div, .gt-image-button button{
+.gt-image-button div, .gt-image-button button {
   position: relative;
   top: 3px;
 }
 
-.gt-toolbar-text{
+.gt-toolbar-text {
   margin-left: 3px;
 }
 

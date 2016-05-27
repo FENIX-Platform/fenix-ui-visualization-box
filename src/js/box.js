@@ -1390,6 +1390,8 @@ define([
                     prevButton: this.$el.find(s.ROWS_SWIPER).find('.swiper-button-prev'),
 
                     slidesPerView: 'auto',
+                    centeredSlides: true,
+                    //spaceBetween: 30,
                     freeMode: true,
                     simulateTouch: false
 
