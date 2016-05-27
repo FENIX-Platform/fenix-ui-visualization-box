@@ -33,7 +33,13 @@ define([
     function MapTab(obj) {
 
         //$.extend(true, this, defaultOptions, o);
-        $.extend(true, this, {initial: obj, $el: $(obj.$el), box: obj.box, model: obj.model, id: obj.id});
+        $.extend(true, this, {
+            initial: obj,
+            $el: $(obj.$el),
+            box: obj.box,
+            model: obj.model,
+            id: obj.id
+        });
 
         this.channels = {};
         this.state = {};
@@ -286,12 +292,15 @@ define([
             return;
         }
         
-        var $elMap = this.$el.find("#map_" + this.id);
+        var $elMap = this.$el.find("#map_" + this.id),
+            lang = this.lang ? this.lang.toUpperCase() : "EN";
 
         this.map = new MapCreator({
             el: $elMap,
             model: self.model,
+            lang: lang,
             fenix_ui_map: {
+                lang: lang,
                 plugins: {
                     fullscreen: false,
                     scalecontrol:'bottomleft'
