@@ -1347,7 +1347,14 @@ define([
                 }).filter(function (col) {
                     return !col.id.endsWith("_" + self.lang.toUpperCase());
                 }),
-            config = Utils.createConfiguration({model: this._getObjState("model")});
+            config = Utils.createConfiguration({
+                model: this._getObjState("model"),
+                common : {
+                    selector : {
+                        hideSummary : true
+                    }
+                }
+            });
 
         _.each(config, function (item, key) {
 
@@ -1445,7 +1452,7 @@ define([
 
     Box.prototype._createBackAggregationTabConfiguration = function (values) {
 
-        var source = [] = this._getSourceForAggregationTabConfiguration();
+        var source = this._getSourceForAggregationTabConfiguration();
 
         return {
 
