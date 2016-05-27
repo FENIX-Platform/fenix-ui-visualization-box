@@ -134,7 +134,7 @@ define([
 
     MapTab.prototype.update = function ( obj ) {
 
-       alert("Update")
+       console.log("Update map",obj)
     };
 
     /* END - API */
@@ -241,9 +241,6 @@ define([
         });
 
         this.$toolbarBtn.on("click", _.bind(this._onToolbarBtnClick, this));
-
-        //this.toolbar.on('change', _.bind(this._onToolbarChangeEvent, this));
-
     };
 
     MapTab.prototype._onToolbarEvent = function (payload) {
@@ -340,18 +337,30 @@ define([
     MapTab.prototype._renderToolbar = function () {
         log.info("Map tab render toolbar");
 
+        var self = this;
+
         this.toolbar = new Filter({
             items: this._createFilterConfiguration(),
             el: this.$el.find(s.TOOLBAR),
             environment : this.initial.environment
         });//*/
 
-        this.toolbar.on("ready", _.bind(this._renderMap, this))
-    };
+        this.toolbar.on("ready", _.bind(this._renderMap, this));
 
-    MapTab.prototype._onToolbarChangeEvent = function () {
+        this.toolbar.on('change', function(e) {
+            var o = self.toolbar.getValues();
+            if(o.values) {
+                if(o.values['map_boundaries'][0])
+                    self.map.fenixMap.boundariesShow();
+                else
+                    self.map.fenixMap.boundariesHide();
 
-        this._trigger("filter", this.toolbar.getValues());
+                if(o.values['map_labels'][0])
+                    self.map.fenixMap.labelsShow();
+                else
+                    self.map.fenixMap.labelsHide();
+            }
+        });
     };
 
     MapTab.prototype._renderComponents = function () {
@@ -391,9 +400,8 @@ define([
 
     MapTab.prototype._dispose = function () {
 
-        if (this.ready === true) {
-            this._unbindEventListeners();
-        }
+        this._unbindEventListeners();
+        
     };
 
     MapTab.prototype._getEventTopic = function (evt) {
