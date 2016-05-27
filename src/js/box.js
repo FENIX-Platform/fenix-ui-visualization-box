@@ -58,7 +58,7 @@ define([
         SIDEBAR: "[data-role='back-sidebar']",
         FRONT_FACE: "[data-face='front']",
         BACK_FACE: "[data-face='back']",
-        OTHER_CONTENT: "[data-content='empty'], [data-content='error'], [data-content='huge']"
+        OTHER_CONTENT: "[data-content='empty'], [data-content='error'], [data-content='huge'], [data-role='modal']"
     };
 
     /* API */
@@ -964,7 +964,7 @@ define([
 
         this.metadataModal.render({
             model: Utils.getNestedProperty("metadata", this._getObjState('model')),
-            lang: this.lang.toUpperCase() || "EN",
+            lang: this.lang.toUpperCase(),
             el: this.$el.find(s.MODAL_METADATA_CONTAINER)
         });
 
