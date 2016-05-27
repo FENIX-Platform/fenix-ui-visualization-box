@@ -399,6 +399,8 @@ $cmd-right-width: 192px;
   height: $detail-height;
   overflow-x: hidden;
   overflow-y: auto;
+  background-color: white;
+  padding: 0 15px;
 }
 
 .show-back-sidebar{
@@ -417,7 +419,9 @@ $cmd-right-width: 192px;
 
 
 .filter-slide{
-  width: 250px !important;
+  //width: 250px !important;
+
+  padding: 0 10px ;
 }
 
 .back-right-content{
@@ -698,12 +702,18 @@ $cmd-right-width: 192px;
 
 
 /* OLAP */
+$olap-headers-color: #f4f4f4;
+$olap-drag: #bbbbbb;
 
-.tab-item-content[id^="table_"]{
+.tab-item-content{
 
-  font-family: "Lucida Console", Monaco, monospace;
-  font-size: 12px ;
-  color: $fenix-text ;
+  .gt-viewport{
+    font-family: "Lucida Console", Monaco, monospace !important;
+    font-size: 12px !important;
+    color: $fenix-text !important;
+  }
+
+
 
 }
 
@@ -718,18 +728,70 @@ $cmd-right-width: 192px;
 }
 
 .gt-row-selected td{
-  background-color: $fx-main-color-light;
+  background-color: $fx-main-color-lighter;
 
 }
+
+
+
+.gt-head-wrap{
+  td{
+    background-color: $olap-headers-color !important;
+  }
+}
+
+/* Freezed Rows */
 
 .gt-freeze-div[id*="bodyDiv"] {
 
   td{
-    background-color: $fx-main-color-lighter !important;
+    background-color: $olap-headers-color !important;
   }
 
+}
 
-  //background-color: $fx-main-color-lighter;
+
+/* Freezed Header */
+
+.gt-hd-split{
+  background-color: transparent !important;
+  border-right: 1px solid #bbbbbb !important;
+  padding-left: 5px !important;
+  position: relative;
+  overflow: visible;
+
+  &:before{
+    content: '';
+    display: block;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 3px;
+
+    width: 1px;
+    border-right: 1px solid #bbbbbb;
+  }
+
+}
+
+
+.gt-freeze-div[id*="headDiv"] {
+
+  table{
+    border-bottom: 1px solid  #d6d6d6 !important; /* Suspicious */
+  }
+
+  td{
+    background-color: $olap-headers-color !important;
+  }
+
+}
+
+
+
+
+.gt-row-over td{
+  border-bottom-color: $fx-cool-blue;
 }
 
 .gt-table{
@@ -737,8 +799,30 @@ $cmd-right-width: 192px;
 }
 
 .gt-row-even{
-  background-color: #f9f9f9;
+  background-color: white;
 }
+
+/* Toolbar */
+
+.gt-toolbar-box {
+  padding-top: 5px;
+  height: 30px;
+}
+
+.gt-button-split {
+  width: 15px;
+  background-color: transparent;
+}
+
+.gt-image-button div, .gt-image-button button{
+  position: relative;
+  top: 3px;
+}
+
+.gt-toolbar-text{
+  margin-left: 3px;
+}
+
 
 
 

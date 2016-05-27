@@ -6273,7 +6273,9 @@ input[type="radio"]:disabled + label {
 .process-details {
   height: 350px;
   overflow-x: hidden;
-  overflow-y: auto; }
+  overflow-y: auto;
+  background-color: white;
+  padding: 0 15px; }
 
 .show-back-sidebar {
   position: absolute;
@@ -6288,7 +6290,7 @@ input[type="radio"]:disabled + label {
   padding-bottom: 10px; }
 
 .filter-slide {
-  width: 250px !important; }
+  padding: 0 10px; }
 
 .back-right-content {
   height: 100%;
@@ -6459,10 +6461,10 @@ input[type="radio"]:disabled + label {
     color: #333; }
 
 /* OLAP */
-.tab-item-content[id^="table_"] {
-  font-family: "Lucida Console", Monaco, monospace;
-  font-size: 12px;
-  color: #333; }
+.tab-item-content .gt-viewport {
+  font-family: "Lucida Console", Monaco, monospace !important;
+  font-size: 12px !important;
+  color: #333 !important; }
 
 .gt-hd-row td .gt-inner {
   padding-top: 5px;
@@ -6473,12 +6475,58 @@ input[type="radio"]:disabled + label {
   padding-bottom: 5px; }
 
 .gt-row-selected td {
-  background-color: #ffcccc; }
+  background-color: #ffe6e6; }
 
+.gt-head-wrap td {
+  background-color: #f4f4f4 !important; }
+
+/* Freezed Rows */
 .gt-freeze-div[id*="bodyDiv"] td {
-  background-color: #ffe6e6 !important; }
+  background-color: #f4f4f4 !important; }
+
+/* Freezed Header */
+.gt-hd-split {
+  background-color: transparent !important;
+  border-right: 1px solid #bbbbbb !important;
+  padding-left: 5px !important;
+  position: relative;
+  overflow: visible; }
+  .gt-hd-split:before {
+    content: '';
+    display: block;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 3px;
+    width: 1px;
+    border-right: 1px solid #bbbbbb; }
+
+.gt-freeze-div[id*="headDiv"] table {
+  border-bottom: 1px solid  #d6d6d6 !important;
+  /* Suspicious */ }
+.gt-freeze-div[id*="headDiv"] td {
+  background-color: #f4f4f4 !important; }
+
+.gt-row-over td {
+  border-bottom-color: red; }
 
 .gt-row-even {
-  background-color: #f9f9f9; }
+  background-color: white; }
+
+/* Toolbar */
+.gt-toolbar-box {
+  padding-top: 5px;
+  height: 30px; }
+
+.gt-button-split {
+  width: 15px;
+  background-color: transparent; }
+
+.gt-image-button div, .gt-image-button button {
+  position: relative;
+  top: 3px; }
+
+.gt-toolbar-text {
+  margin-left: 3px; }
 
 /*# sourceMappingURL=test.css.map */
