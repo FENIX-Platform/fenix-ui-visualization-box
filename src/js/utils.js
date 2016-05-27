@@ -53,7 +53,7 @@ define([
 
     Utils.prototype.getMapCreatorConfiguration = function (values) {
 
-        return {};
+        return this.fenixTool.toTableConfig(values);
     };
 
     return new Utils();
