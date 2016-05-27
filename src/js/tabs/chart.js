@@ -15,10 +15,9 @@ define([
     "fx-v-b/config/tabs/chart-toolbar-model",
     "handlebars",
     'fx-chart/start',
-    "fx-common/pivotator/functions",
+    "i18n!fx-v-b/nls/box",
     "amplify"
-], function ($, log, _, C, CD, ERR, EVT, BoxUtils, Utils, tabTemplate, Filter, ToolbarModel, Handlebars, 
-    ChartCreator, myFunc) {
+], function ($, log, _, C, CD, ERR, EVT, BoxUtils, Utils, tabTemplate, Filter, ToolbarModel, Handlebars, ChartCreator, i18nLabels) {
 
     'use strict';
 
@@ -306,7 +305,7 @@ define([
         this.chart = new ChartCreator($.extend(true, {}, configuration, {
             model: this.model,
             el: "#chart_" + this.id,
-            type : this.type
+            type: this.type
         }));
 
     };
@@ -324,7 +323,7 @@ define([
         this.chart.update($.extend(true, {}, configuration, {
             model: this.model,
             el: "#chart_" + this.id,
-            type : this.type
+            type: this.type
         }));
 
     };
@@ -335,7 +334,7 @@ define([
         this.toolbar = new Filter({
             items: this._createFilterConfiguration(),
             el: this.$el.find(s.TOOLBAR),
-            environment : this.initial.environment
+            environment: this.initial.environment
         });
 
         this.toolbar.on("ready", _.bind(this._renderChart, this))
@@ -345,7 +344,11 @@ define([
     ChartTab.prototype._createFilterConfiguration = function () {
 
         var initialConfiguration = $.extend(true, {}, Utils.mergeConfigurations(ToolbarModel, this.syncModel || {})),
-            configurationFromFenixTool = BoxUtils.getChartToolbarConfig(this.model);
+            configurationFromFenixTool = BoxUtils.getChartToolbarConfig(this.model, {
+                rowLabel: i18nLabels.series,
+                columnsLabel: i18nLabels.xAxis,
+                valuesLabel: i18nLabels.yAxis
+            });
 
         var configuration = $.extend(true, {}, initialConfiguration, configurationFromFenixTool);
 

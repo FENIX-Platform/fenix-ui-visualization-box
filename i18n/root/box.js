@@ -33,7 +33,11 @@ define(function () {
         step_metadata : "Metadata",
         step_filter: "Filter",
         step_aggregations : "Aggregations",
-        step_map : "Earthstat Layer Collection"
+        step_map : "Earthstat Layer Collection",
+
+        series : "Series",
+        xAxis : "X Axis",
+        yAxis : "Y Axis"
 
     }
 });

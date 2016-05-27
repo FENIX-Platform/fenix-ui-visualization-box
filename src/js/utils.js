@@ -20,23 +20,23 @@ define([
 
     //Toolbar configurations
 
-    Utils.prototype._getToolbarConfig = function (Model) {
+    Utils.prototype._getToolbarConfig = function (Model, opts) {
 
-        return this.fenixTool.toFilter(Model);
+        return this.fenixTool.toFilter(Model, opts);
     };
 
-    Utils.prototype.getTableToolbarConfig = function (Model) {
+    Utils.prototype.getTableToolbarConfig = function (Model, opts) {
 
-        return this._getToolbarConfig(Model);
+        return this._getToolbarConfig(Model, opts);
     };
 
-    Utils.prototype.getChartToolbarConfig = function (Model) {
-        return this._getToolbarConfig(Model);
+    Utils.prototype.getChartToolbarConfig = function (Model, opts) {
+        return this._getToolbarConfig(Model, opts);
     };
 
-    Utils.prototype.getMapToolbarConfig = function (Model) {
+    Utils.prototype.getMapToolbarConfig = function (Model, opts) {
 
-        return this._getToolbarConfig(Model);
+        return this._getToolbarConfig(Model, opts);
     };
 
     //Creators configurations
