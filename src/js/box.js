@@ -1338,11 +1338,14 @@ define([
 
     Box.prototype._createBackFilterTabConfiguration = function (values) {
 
-        var forbiddenIds = ["value"];
+        var self = this,
+            forbiddenIds = ["value"];
 
         var columns = Utils.getNestedProperty("metadata.dsd.columns", this._getObjState("model"))
                 .filter(function (col) {
                     return !_.contains(forbiddenIds, col.id.toLowerCase());
+                }).filter(function (col) {
+                    return !col.id.endsWith("_" + self.lang.toUpperCase());
                 }),
             config = Utils.createConfiguration({model: this._getObjState("model")});
 
@@ -1646,9 +1649,9 @@ define([
 
         if (filterIsInitialized === true) {
 
-            _.each(aggregationsValues, _.bind(function ( item ) {
+            _.each(aggregationsValues, _.bind(function (item) {
 
-                if (!_.contains(disabledColumnsIds, item.value) || valueDimension.id===item.value) {
+                if (!_.contains(disabledColumnsIds, item.value) || valueDimension.id === item.value) {
                     addToSource(item.value);
                 }
 
@@ -1757,7 +1760,7 @@ define([
 
         //download events
         this.report.on("complete", function () {
-           //TODO add feedback
+            //TODO add feedback
         })
 
     };
@@ -1961,7 +1964,7 @@ define([
 
         var target = $(payload.target).attr("data-target") || "";
 
-        switch (target.toLocaleLowerCase()){
+        switch (target.toLocaleLowerCase()) {
             case "data":
                 log.info("Data download");
                 this._downloadData();
@@ -2021,9 +2024,9 @@ define([
             },
             output: {
                 config: {
-                    template : template,
+                    template: template,
                     lang: this.lang.toUpperCase(),
-                    fileName: fileName.replace(/[^a-z0-9]/gi, '_') +'.pdf'
+                    fileName: fileName.replace(/[^a-z0-9]/gi, '_') + '.pdf'
                 }
             }
         };
