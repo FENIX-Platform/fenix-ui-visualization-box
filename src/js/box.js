@@ -606,6 +606,8 @@ define([
 
         this._getModelInfo();
 
+        this._showMenuItem("download");
+
         this._renderBoxFaces();
     };
 
@@ -1890,15 +1892,16 @@ define([
 
         if (valid === true) {
 
-            this._disposeFrontFace();
-
             this._enableFlip();
 
             var filterValues = this._getBackFilterValues(),
+                filterIsEmpty = (_.isEmpty(Utils.getNestedProperty("filter.values", filterValues)) && _.isEmpty(Utils.getNestedProperty("aggregations.values", filterValues))),
                 hasFilterValues = false;
 
+        //TODO check that every array is empty
+
             //if filter values have changed
-            if (!_.isEqual(filterValues, this._getObjState("back_filter"))) {
+            if (!filterIsEmpty && !_.isEqual(filterValues, this._getObjState("back_filter"))) {
 
                 this._setObjState("back_filter", $.extend(true, {}, filterValues));
 
@@ -1918,10 +1921,13 @@ define([
             }
 
             var mapValues = this._getBackMapValues(),
+                mapIsEmpty = _.isEmpty(Utils.getNestedProperty("map.values", mapValues)),
                 hasMapValues = false;
 
+            //TODO check that every array is empty
+
             //if map values have changed
-            if (!_.isEqual(mapValues, this._getObjState("back_map"))) {
+            if (!mapIsEmpty && !_.isEqual(mapValues, this._getObjState("back_map"))) {
 
                 hasMapValues = true;
 
@@ -1936,17 +1942,17 @@ define([
                     this._flip("front");
                 }
 
-
             } else {
                 log.warn("Abort map update because values have not changed");
             }
 
-            //if nothing has changed flid to front
+            //if nothing has changed flip to front
             if (!hasMapValues && !hasMapValues) {
 
-                this.setStatus("ready");
-
                 this._flip("front");
+            } else {
+
+                this._disposeFrontFace();
             }
 
         } else {
