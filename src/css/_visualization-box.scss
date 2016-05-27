@@ -419,9 +419,15 @@ $cmd-right-width: 192px;
 
 
 .filter-slide{
-  //width: 250px !important;
-
+  width: 100%;
+  height: $detail-height;
   padding: 0 10px ;
+
+  @media screen and (max-width: $screen-xs) {
+    width: 50%;
+  }
+
+
 }
 
 .back-right-content{
@@ -429,7 +435,7 @@ $cmd-right-width: 192px;
   padding-top: 15px;
 }
 
-.swiper-container, .swiper-slide {
+.swiper-container {
   width: 100%;
   height: $detail-height;
 }

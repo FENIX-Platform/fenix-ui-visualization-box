@@ -1383,12 +1383,13 @@ define([
 
                     // If we need pagination
                     pagination: this.$el.find(s.ROWS_SWIPER).find('.swiper-pagination'),
+                    paginationClickable: true,
 
                     // Navigation arrows
                     nextButton: this.$el.find(s.ROWS_SWIPER).find('.swiper-button-next'),
                     prevButton: this.$el.find(s.ROWS_SWIPER).find('.swiper-button-prev'),
 
-                    //slidesPerView: 3.5,
+                    slidesPerView: 'auto',
                     freeMode: true,
                     simulateTouch: false
 

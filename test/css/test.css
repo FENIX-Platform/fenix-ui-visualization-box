@@ -6290,13 +6290,18 @@ input[type="radio"]:disabled + label {
   padding-bottom: 10px; }
 
 .filter-slide {
+  width: 100%;
+  height: 350px;
   padding: 0 10px; }
+  @media screen and (max-width: 480px) {
+    .filter-slide {
+      width: 50%; } }
 
 .back-right-content {
   height: 100%;
   padding-top: 15px; }
 
-.swiper-container, .swiper-slide {
+.swiper-container {
   width: 100%;
   height: 350px; }
 
