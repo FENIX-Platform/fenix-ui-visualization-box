@@ -8,8 +8,9 @@ define([
     "fx-v-b/config/config-default",
     "fx-v-b/config/errors",
     "fx-v-b/config/events",
-    "fx-common/pivotator/fenixtool"
-], function ($, log, _, C, CD, ERR, EVT, FenixTool) {
+    "fx-common/pivotator/fenixtool",
+    "i18n!fx-v-b/nls/box"
+], function ($, log, _, C, CD, ERR, EVT, FenixTool, i18nLabels) {
 
     'use strict';
 
@@ -30,8 +31,12 @@ define([
         return this._getToolbarConfig(Model, opts);
     };
 
-    Utils.prototype.getChartToolbarConfig = function (Model, opts) {
-        return this._getToolbarConfig(Model, opts);
+    Utils.prototype.getChartToolbarConfig = function (Model) {
+        return this._getToolbarConfig(Model,  {
+            rowLabel: i18nLabels.series,
+            columnsLabel: i18nLabels.xAxis,
+            valuesLabel: i18nLabels.yAxis
+        });
     };
 
     Utils.prototype.getMapToolbarConfig = function (Model, opts) {

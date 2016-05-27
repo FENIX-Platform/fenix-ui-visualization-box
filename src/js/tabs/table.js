@@ -130,6 +130,7 @@ define([
     /* END - API */
 
     TableTab.prototype._trigger = function (channel) {
+
         if (!this.channels[channel]) {
             return false;
         }
@@ -196,7 +197,9 @@ define([
             log.info("Sync tab. State:" + JSON.stringify(this.syncState));
 
             if (this.syncState.hasOwnProperty("toolbar") && this.toolbar) {
+
                 this.toolbar.setValues(this.syncState.toolbar, true);
+
                 this._renderTable();
             }
         }
@@ -289,7 +292,6 @@ define([
         var toolbarValues = this.toolbar.getValues(),
             configuration = BoxUtils.getTableCreatorConfiguration(toolbarValues);
 
-
         if (C.render_visualization_components === false || CD.render_visualization_components === false) {
             log.warn("Render Visualization component blocked by configuration");
             return;
@@ -307,7 +309,7 @@ define([
         this.toolbar = new Filter({
             items: this._createFilterConfiguration(ToolbarModel),
             el: this.$el.find(s.TOOLBAR),
-            environment : this.initial.environment
+            environment: this.initial.environment
         });
 
         this.toolbar.on("ready", _.bind(this._renderTable, this))
@@ -316,12 +318,11 @@ define([
 
     TableTab.prototype._createFilterConfiguration = function () {
 
-        var initialConfiguration = $.extend(true, {}, Utils.mergeConfigurations(ToolbarModel, this.syncModel || {})),
-            configurationFromFenixTool = BoxUtils.getTableToolbarConfig(this.model);
+        var configurationFromFenixTool = BoxUtils.getChartToolbarConfig(this.model),
+            configuration = $.extend(true, {}, ToolbarModel, configurationFromFenixTool),
+            result = $.extend(true, {}, Utils.mergeConfigurations(configuration, this.syncState.toolbar || {}));
 
-        var configuration = $.extend(true, {}, initialConfiguration, configurationFromFenixTool);
-
-        return configuration;
+        return result;
 
     };
 

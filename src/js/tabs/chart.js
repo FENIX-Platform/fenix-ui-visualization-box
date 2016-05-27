@@ -15,9 +15,8 @@ define([
     "fx-v-b/config/tabs/chart-toolbar-model",
     "handlebars",
     'fx-chart/start',
-    "i18n!fx-v-b/nls/box",
     "amplify"
-], function ($, log, _, C, CD, ERR, EVT, BoxUtils, Utils, tabTemplate, Filter, ToolbarModel, Handlebars, ChartCreator, i18nLabels) {
+], function ($, log, _, C, CD, ERR, EVT, BoxUtils, Utils, tabTemplate, Filter, ToolbarModel, Handlebars, ChartCreator) {
 
     'use strict';
 
@@ -343,16 +342,11 @@ define([
 
     ChartTab.prototype._createFilterConfiguration = function () {
 
-        var initialConfiguration = $.extend(true, {}, Utils.mergeConfigurations(ToolbarModel, this.syncModel || {})),
-            configurationFromFenixTool = BoxUtils.getChartToolbarConfig(this.model, {
-                rowLabel: i18nLabels.series,
-                columnsLabel: i18nLabels.xAxis,
-                valuesLabel: i18nLabels.yAxis
-            });
-
-        var configuration = $.extend(true, {}, initialConfiguration, configurationFromFenixTool);
-
-        return configuration;
+        var configurationFromFenixTool = BoxUtils.getChartToolbarConfig(this.model),
+            configuration = $.extend(true, {}, ToolbarModel, configurationFromFenixTool),
+            result = $.extend(true, {}, Utils.mergeConfigurations(configuration, this.syncState.toolbar || {}));
+        
+        return result;
 
     };
 
