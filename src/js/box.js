@@ -1960,10 +1960,14 @@ define([
             return;
         }
 
-        var MapTabInstance = this.front_tab_instances["map"];
+        var MapTabInstance = this.front_tab_instances['map'];
 
-        console.log(this._getObjState("back_map"))
+        console.log('_UPDATEMAP',this.front_tab_instances)
+        //MapTabInstance.map.update( this._getObjState("back_map") );
 
+        var filterValues = this._getObjState("back_map")['map']
+
+        this.front_tab_instances['map'].addLayersByFilter( filterValues );
     };
 
     Box.prototype._onDownloadEvent = function (payload) {

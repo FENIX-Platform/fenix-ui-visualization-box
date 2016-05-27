@@ -140,7 +140,7 @@ define([
 
     MapTab.prototype.update = function ( obj ) {
 
-       console.log("Update map",obj)
+       console.log("UPDATE MAP SETTINGS",obj)
     };
 
     /* END - API */
@@ -336,8 +336,48 @@ define([
         });
         //FOR TESTING TOOLBAR DRAGDROP
         
-        this.map.fenixMap.addLayer( this._getTestLayer() );
+        //this.map.fenixMap.addLayer( this._getTestLayer() );
+
+        window.MapCreator = this;
     };
+
+    MapTab.prototype.addLayersByFilter = function(filter) {
+        
+        console.log('addLayersByFilter', filter);
+
+        var filter = {
+            "valid": true,
+            "labels": {
+                "layers": { 
+                    "earthstat:abacaarea_3857":"Abaca",
+                    "earthstat:agave_area_3857":"Agave"
+                }
+            },
+            "values": {
+                "layers": [
+                    "earthstat:abacaarea_3857",
+                    "earthstat:agave_area_3857"
+                ]
+            }
+        };//*/
+
+        for(var i in filter.values.layers) {
+            var layerName = filter.values.layers[i];
+                layerTitle = filter.labels.layers[layerName];
+
+            console.log('addLayersByFilter', layerName, layerTitle);
+            
+            var l = new FM.layer({
+                layers: layerName,
+                layertitle: 'EarthStat Layer: '+layerTitle,
+                opacity: '0.8',
+                layertype: 'WMS'
+            });
+
+            console.log(l)
+            this.map.fenixMap.addLayer( l );
+        }
+    },
 
     MapTab.prototype._createFilterConfiguration = function () {
 
@@ -394,7 +434,7 @@ define([
 
     MapTab.prototype._unbindEventListeners = function () {
 
-        this.$toolbarBtn.off();
+        //this.$toolbarBtn.off();
         this.$el.find("[data-action]").off();
 
         amplify.unsubscribe(this._getEventTopic("toolbar"), this._onToolbarEvent);
