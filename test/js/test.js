@@ -48,11 +48,11 @@ define([
 
     Test.prototype._render = function () {
 
-        this._renderClone();
-
         this._renderLargeBox();
 
         return;
+
+        this._renderClone();
 
         this._renderMediumBoxes();
 
@@ -113,7 +113,7 @@ define([
             //hideMenu: true,
             //hideMetadataButton: true,
             //hideRemoveButton: true,
-            //hideResizeButton: true,
+            //hideDownloadButton: true,
             //hideCloneButton: true,
             //hideFlipButton: true,
             //hideMinimizeButton: true,

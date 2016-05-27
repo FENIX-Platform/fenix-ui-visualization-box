@@ -4,26 +4,31 @@ define(function () {
     'use strict';
 
     return [
-        //Metadata
-        {
-            "label": "Metadata",
-            "url": "#",
-            "parent_id": "-1",
-            "id": "0",
-            "a_attrs": {
-                "data-action": "tab",
-                "data-tab": "metadata"
-            }
-        },
         //Download
         {
             "label": "Download",
             "url": "#",
             "parent_id": "-1",
-            "id": "1",
+            "id": "1"
+        },
+        {
+            "label": "Resource",
+            "url": "#",
+            "parent_id": "1",
+            "id": "11",
             "a_attrs": {
-                "data-action": "tab",
-                "data-tab": "download"
+                "data-action": "download",
+                "data-target": "data"
+            }
+        },
+        {
+            "label": "Metadata",
+            "url": "#",
+            "parent_id": "1",
+            "id": "12",
+            "a_attrs": {
+                "data-action": "download",
+                "data-target": "metadata"
             }
         },
         //Layout

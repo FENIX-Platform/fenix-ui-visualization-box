@@ -17,13 +17,14 @@ define([
     "fx-v-b/config/right-menu-model",
     "i18n!fx-v-b/nls/box",
     "fx-common/bridge",
+    "fx-reports/start",
 
     "fx-v-b/config/tabs/map-earthstat-layers",
 
     "swiper",
     "amplify",
     "bootstrap"
-], function (log, require, $, _, _str, Handlebars, C, CD, ERR, EVT, Utils, MetadataViewer, Template, JsonMenu, RightMenuModel, i18nLabels, Bridge,
+], function (log, require, $, _, _str, Handlebars, C, CD, ERR, EVT, Utils, MetadataViewer, Template, JsonMenu, RightMenuModel, i18nLabels, Bridge, Report,
              //DEMO DATA: waiting for data from the D3S
              mapEarthstatLayers,
              Swiper) {
@@ -80,7 +81,7 @@ define([
 
         if (valid === true) {
 
-            this.initState();
+            this._initState();
 
             this._initVariables();
 
@@ -233,8 +234,11 @@ define([
 
         this.bridge = new Bridge({
             environment: this._getObjState("environment")
-        })
+        });
 
+        this.report = new Report({
+            environment: this._getObjState("environment")
+        });
     };
 
     Box.prototype._initObj = function () {
@@ -265,14 +269,14 @@ define([
 
     };
 
-    Box.prototype.initState = function () {
+    Box.prototype._initState = function () {
 
         //template options
         this._setObjState("hideToolbar", !!this.initial.hideToolbar);
         this._setObjState("hideMenu", !!this.initial.hideMenu);
         this._setObjState("hideMetadataButton", !!this.initial.hideMetadataButton);
         this._setObjState("hideRemoveButton", !!this.initial.hideRemoveButton);
-        this._setObjState("hideResizeButton", !!this.initial.hideResizeButton);
+        this._setObjState("hideDownloadButton", !!this.initial.hideDownloadButton);
         this._setObjState("hideCloneButton", !!this.initial.hideCloneButton);
         this._setObjState("hideFlipButton", !!this.initial.hideFlipButton);
         this._setObjState("hideMinimizeButton", !!this.initial.hideMinimizeButton);
@@ -959,7 +963,7 @@ define([
         this.metadataModal = new MetadataViewer();
 
         this.metadataModal.render({
-            model: this._getObjState('model').metadata,
+            model: Utils.getNestedProperty("metadata", this._getObjState('model')),
             lang: this.lang.toUpperCase() || "EN",
             el: this.$el.find(s.MODAL_METADATA_CONTAINER)
         });
@@ -1729,7 +1733,7 @@ define([
 
         amplify.subscribe(this._getEventTopic("filter"), this, this._onFilterEvent);
 
-        amplify.subscribe(this._getEventTopic("download-metadata"), this, this._onDownloadMetadataEvent);
+        amplify.subscribe(this._getEventTopic("download"), this, this._onDownloadEvent);
 
         this.$el.find(s.RIGHT_MENU).on('click', "a", function (e) {
             e.preventDefault();
@@ -1750,6 +1754,11 @@ define([
 
             });
         });
+
+        //download events
+        this.report.on("complete", function () {
+           //TODO add feedback
+        })
 
     };
 
@@ -1872,12 +1881,15 @@ define([
 
             this._enableFlip();
 
-            var filterValues = this._getBackFilterValues();
+            var filterValues = this._getBackFilterValues(),
+                hasFilterValues = false;
 
             //if filter values have changed
             if (!_.isEqual(filterValues, this._getObjState("back_filter"))) {
 
                 this._setObjState("back_filter", $.extend(true, {}, filterValues));
+
+                hasFilterValues = true;
 
                 var process = this._createQuery(filterValues);
 
@@ -1892,17 +1904,36 @@ define([
                 log.warn("Abort resource filter because values have not changed");
             }
 
-            var mapValues = this._getBackMapValues();
+            var mapValues = this._getBackMapValues(),
+                hasMapValues = false;
 
             //if map values have changed
             if (!_.isEqual(mapValues, this._getObjState("back_map"))) {
+
+                hasMapValues = true;
 
                 this._setObjState("back_map", $.extend(true, {}, mapValues));
 
                 this._updateMap();
 
+                if (!hasFilterValues) {
+
+                    this.setStatus("ready");
+
+                    this._flip("front");
+                }
+
+
             } else {
                 log.warn("Abort map update because values have not changed");
+            }
+
+            //if nothing has changed flid to front
+            if (!hasMapValues && !hasMapValues) {
+
+                this.setStatus("ready");
+
+                this._flip("front");
             }
 
         } else {
@@ -1920,12 +1951,92 @@ define([
 
         var MapTabInstance = this.front_tab_instances["map"];
 
+        console.log(this._getObjState("back_map"))
+
     };
 
-    Box.prototype._onDownloadMetadataEvent = function (payload) {
-        log.info("Listen to event: " + this._getEventTopic("download-metadata"));
+    Box.prototype._onDownloadEvent = function (payload) {
+        log.info("Listen to event: " + this._getEventTopic("download"));
         log.info(payload);
 
+        var target = $(payload.target).attr("data-target") || "";
+
+        switch (target.toLocaleLowerCase()){
+            case "data":
+                log.info("Data download");
+                this._downloadData();
+                break;
+            case "metadata":
+                log.info("Metadata download");
+                this._downloadMetadata();
+                break;
+            default :
+                log.warn("Unknown download target");
+
+        }
+    };
+
+    Box.prototype._downloadData = function () {
+
+        var payload = {
+            resource: this._getObjState("model"),
+            input: {
+                config: {}
+            },
+            output: {
+                config: {
+                    lang: this.lang.toUpperCase()
+                }
+            }
+        };
+
+        log.info("Configure FENIX export: tableExport");
+
+        this.report.init('tableExport');
+
+        log.info(payload);
+
+        this.report.exportData({
+            config: payload
+        });
+    };
+
+    Box.prototype._downloadMetadata = function () {
+
+        var model = this._getObjState("model"),
+            title = Utils.getNestedProperty("metadata.title", model) || {},
+            fileName = title[this.lang] ? title[this.lang] : "fenix_export",
+            contextSystem = Utils.getNestedProperty("metadata.dsd.contextSystem", model),
+            template = contextSystem === 'uneca' ? contextSystem : 'fao';
+
+        var payload = {
+            resource: {
+                metadata: {
+                    uid: Utils.getNestedProperty("metadata.uid", model)
+                },
+                data: []
+            },
+            input: {
+                config: {}
+            },
+            output: {
+                config: {
+                    template : template,
+                    lang: this.lang.toUpperCase(),
+                    fileName: fileName.replace(/[^a-z0-9]/gi, '_') +'.pdf'
+                }
+            }
+        };
+
+        log.info("Configure FENIX export: metadataExport");
+
+        this.report.init('metadataExport');
+
+        log.info(payload);
+
+        this.report.exportData({
+            config: payload
+        });
     };
 
     Box.prototype._onFilterEvent = function (payload) {
@@ -2226,7 +2337,7 @@ define([
 
         amplify.unsubscribe(this._getEventTopic("filter"), this._onFilterEvent);
 
-        amplify.unsubscribe(this._getEventTopic("download-metadata"), this._onDownloadMetadataEvent);
+        amplify.unsubscribe(this._getEventTopic("download"), this._onDownloadEvent);
 
         this.$el.find("[data-action]").off();
 

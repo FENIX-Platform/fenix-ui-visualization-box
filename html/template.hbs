@@ -42,8 +42,8 @@
                                             <span class="icojam_options_1"></span>
                                         </button>
                                     {{/unless}}
-                                    {{#unless hideResizeButton}}
-                                        <button data-action="resize" data-size="2" class="btn btn-default"
+                                    {{#unless hideDownloadButton}}
+                                        <button data-action="download" data-target="data" class="btn btn-default"
                                                 type="button">
                                             <span class="icojam_swap_horizontal_1"></span>
                                         </button>
@@ -170,8 +170,7 @@
                                         <div class="col-xs-12">
                                             <div class="btn-group pull-right back-btns">
 
-                                                <button type="button" data-action="flip" class="btn btn-default"
-                                                        disabled>Cancel
+                                                <button type="button" data-action="flip" class="btn btn-default">{{cancel_button}}
                                                 </button>
                                                 <button type="button" data-action="query" class="btn btn-primary"
                                                         disabled>{{submit_button}}</button>

@@ -10,6 +10,7 @@ define(function () {
         reset_button : "Reset",
         add_button : "Add",
         remove_button : "Remove",
+        cancel_button : "Cancel",
 
         back_current_resource : "Resources",
         no_number_datatype : "Impossible to aggregate for [{{ dimensions }}] because the data type is not number",
