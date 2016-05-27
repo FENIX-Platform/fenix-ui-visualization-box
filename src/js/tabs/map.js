@@ -289,41 +289,56 @@ define([
         var $elMap = this.$el.find("#map_" + this.id);
 
         this.map = new MapCreator({
-                el: $elMap,
-                model: self.model,
-                fenix_ui_map: {
-                    plugins: {
-                        fullscreen: false,
-                        scalecontrol:'bottomleft'
+            el: $elMap,
+            model: self.model,
+            fenix_ui_map: {
+                plugins: {
+                    fullscreen: false,
+                    scalecontrol:'bottomleft'
+                },
+                guiController: {
+                    container: this.$el.find(s.TOOLBAR),
+                    wmsLoader: false                 
+                },
+                baselayers: {
+                    cartodb: {
+                        title_en: "CartoDB light",
+                        url: 'http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png',
+                        subdomains: 'abcd',
+                        maxZoom: 19
                     },
-                    guiController: {
-                        container: this.$el.find(s.TOOLBAR),
-                        wmsLoader: false                 
+                    esri_grayscale: {
+                        url: "http://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}",
+                        title_en: "Esri WorldGrayCanvas",
+                        maxZoom: 16
                     },
-                    baselayers: {
-                        cartodb: {
-                            title_en: "CartoDB light",
-                            url: 'http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png',
-                            subdomains: 'abcd',
-                            maxZoom: 19
-                        },
-                        esri_grayscale: {
-                            url: "http://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}",
-                            title_en: "Esri WorldGrayCanvas",
-                            maxZoom: 16
-                        },
-                        world_imagery: {
-                            url: "http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-                            title_en: "World Imagery"
-                        }
-                    },
-                    legendOptions: {
-                        //fontColor: '0x006600',
-                        //fontSize: '20',
-                        bgColor: '0xFFFFFF'
+                    world_imagery: {
+                        url: "http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+                        title_en: "World Imagery"
                     }
+                },
+                legendOptions: {
+                    //fontColor: '0x006600',
+                    //fontSize: '20',
+                    bgColor: '0xFFFFFF'
                 }
-            });
+            }
+        });
+        //FOR TESTING TOOLBAR DRAGDROP
+        this.map.fenixMap.addLayer( new FM.layer({
+            layers: 'fenix:gaul0_line_3857',
+            layertitle: 'LAYER TEST 1',
+            urlWMS: 'http://fenixapps.fao.org/geoserver',
+            opacity: '0.8',
+            lang: 'EN'
+        }) );        
+        this.map.fenixMap.addLayer( new FM.layer({
+            layers: 'fenix:gaul0_line_3857',
+            layertitle: 'LAYER TEST 2',
+            urlWMS: 'http://fenixapps.fao.org/geoserver',
+            opacity: '0.8',
+            lang: 'EN'
+        }) );
     };
 
     MapTab.prototype._createFilterConfiguration = function () {
@@ -343,13 +358,13 @@ define([
             items: this._createFilterConfiguration(),
             el: this.$el.find(s.TOOLBAR),
             environment : this.initial.environment
-        });//*/
+        });
 
-        this.toolbar.on("ready", _.bind(this._renderMap, this));
-
+        this.toolbar.on('ready', _.bind(this._renderMap, this));
         this.toolbar.on('change', function(e) {
             var o = self.toolbar.getValues();
-            if(o.values) {
+            if(o.values)
+            {
                 if(o.values['map_boundaries'][0])
                     self.map.fenixMap.boundariesShow();
                 else
