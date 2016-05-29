@@ -420,7 +420,9 @@ define([
         this.setStatus("loading");
 
         var queryParams = C.d3pQueryParameters || CD.d3pQueryParameters,
-            process = _.union(Array.isArray(p) ? p : [], this._getObjState("process"));
+            process = Array.isArray(p) ? p : [];
+
+        this._setObjState("process", process.slice(0));
 
         return this.bridge.getResource({
             body: process,
@@ -596,6 +598,7 @@ define([
         var model = this._getObjState("model"),
             rt = Utils.getNestedProperty("metadata.meContent.resourceRepresentationType", model) || "",
             resourceType = rt.toLowerCase();
+
         log.info("Resource type is: " + resourceType);
 
         this._setObjState("resourceRepresentationType", resourceType);
@@ -605,8 +608,6 @@ define([
         log.info("Render box start:");
 
         this._getModelInfo();
-
-        this._showMenuItem("download");
 
         this._renderBoxFaces();
     };
@@ -669,12 +670,11 @@ define([
 
     // Load resource
 
-    Box.prototype._validateQuery = function () {
+    Box.prototype._validateValues = function (values) {
 
         this._hideFilterError();
 
-        var values = $.extend(true, {}, this._getBackFilterValues()) || {},
-            valid = true,
+        var valid = true,
             model = this._getObjState("model"),
             resourceColumns = Utils.getNestedProperty("metadata.dsd.columns", model) || [],
             resourceKeyColumns = Utils.cleanArray(resourceColumns.map(function (c) {
@@ -799,12 +799,6 @@ define([
             filterStep,
             groupStep;
 
-        this._setObjState("values", $.extend(true, {}, payload));
-
-        if (this.back_tab_instances.hasOwnProperty("filter") && $.isFunction(this.back_tab_instances["filter"].getValues)) {
-            payload["filter"] = this.back_tab_instances["filter"].getValues("fenix");
-        }
-
         filterStep = createFilterStep(payload);
 
         groupStep = createGroupStep(payload);
@@ -821,25 +815,22 @@ define([
 
         function createFilterStep(payload) {
 
-            if (!payload.filter) {
-                return;
-            }
-
             var step = {
                     name: "filter",
                     parameters: {}
                 },
                 hasValues = false,
-                columns = [],
-                rowValues = payload.filter,
-            //columnsValues = payload.columns.values,
-                columnsSet = Utils.getNestedProperty("metadata.dsd.columns", self._getObjState("model"))
+                columns = Object.keys(Utils.getNestedProperty('filter.values', payload) || {}),
+                rowValues = payload.rows || {},
+                resourceColumns = Utils.getNestedProperty("metadata.dsd.columns", self._getObjState("model")),
+                columnsSet = resourceColumns
                     .filter(function (c) {
                         return !c.id.endsWith("_" + self.lang.toUpperCase());
                     })
                     .map(function (c) {
                         return c.id;
-                    }).sort();
+                    }).sort(),
+              valueDimension = _.findWhere(resourceColumns, {subject: "value"});
 
             if (Object.getOwnPropertyNames(rowValues).length > 0) {
                 step.parameters.rows = rowValues;
@@ -848,10 +839,14 @@ define([
                 log.warn("Filter.rows not included");
             }
 
+            if (columns.length > 0 && !_.contains(columns, valueDimension.id)) {
+                columns.push(valueDimension.id);
+            }
+
             //If they are equals it means i want to include all columns so no filter is needed
             columns = columns.sort();
 
-            if (!_.isEqual(columnsSet, columns) && columns.length > 0) {
+            if (columns.length > 0 && !_.isEqual(columnsSet, columns) ) {
                 step.parameters.columns = columns;
                 hasValues = true;
             } else {
@@ -958,6 +953,8 @@ define([
         this.frontFaceIsRendered = true;
 
         this._checkSuitableTabs();
+
+        this._showMenuItem("download");
 
         this._showDefaultFrontTab();
 
@@ -1103,7 +1100,6 @@ define([
     Box.prototype._getTabInstance = function (tab, face) {
 
         return face === 'back' ? this.back_tab_instances[tab] : this.front_tab_instances[tab];
-        //return this._getObjState("tabs." + tab + ".instance")
     };
 
     Box.prototype._getTabContainer = function (tab) {
@@ -1344,16 +1340,16 @@ define([
             forbiddenIds = ["value"];
 
         var columns = Utils.getNestedProperty("metadata.dsd.columns", this._getObjState("model"))
-                .filter(function (col) {
-                    return !_.contains(forbiddenIds, col.id.toLowerCase());
-                }).filter(function (col) {
+            .filter(function (col) {
+                return !_.contains(forbiddenIds, col.id.toLowerCase());
+            }).filter(function (col) {
                     return !col.id.endsWith("_" + self.lang.toUpperCase());
                 }),
             config = Utils.createConfiguration({
                 model: this._getObjState("model"),
-                common : {
-                    selector : {
-                        hideSummary : true
+                common: {
+                    selector: {
+                        hideSummary: true
                     }
                 }
             });
@@ -1626,12 +1622,15 @@ define([
         if (aggregationInstance && filterInstance) {
 
             filterInstance.on("change", _.bind(this._onBackFilterChangeEvent, this));
+
             aggregationInstance.on("change", _.bind(this._onBackFilterChangeEvent, this));
         }
     };
 
     Box.prototype._onBackFilterChangeEvent = function () {
-        var valid = this._validateQuery();
+
+        var values = this._getBackFilterValues(),
+            valid = this._validateValues(values);
 
         if (valid !== true) {
             this._printFilterError(valid);
@@ -1648,9 +1647,17 @@ define([
             sync = {},
             source = [],
             values = this._getBackFilterValues(),
+            columns = Utils.getNestedProperty("metadata.dsd.columns", self._getObjState("model")),
+            columnsSet = columns
+                .filter(function (c) {
+                    return !c.id.endsWith("_" + self.lang.toUpperCase());
+                })
+                .map(function (c) {
+                    return c.id;
+                }).sort(),
             aggregationsValues = Utils.getNestedProperty("aggregations.values.aggregations", values) || [],
             enabledColumns = Utils.getNestedProperty("filter.values", values) || {},
-            enabledColumnsIds = Object.keys(enabledColumns),
+            enabledColumnsIds = Object.keys(enabledColumns).length > 0 ? Object.keys(enabledColumns) : columnsSet,
             filterIsInitialized = !$.isEmptyObject(enabledColumns),
             resourceColumns = Utils.getNestedProperty("metadata.dsd.columns", this._getObjState("model")) || [],
             resourceColumnsIds = _.map(resourceColumns, function (col) {
@@ -1659,7 +1666,7 @@ define([
             disabledColumnsIds = _.without.apply(_, [resourceColumnsIds].concat(enabledColumnsIds)),
             valueDimension = _.findWhere(resourceColumns, {subject: "value"});
 
-        if (filterIsInitialized === true) {
+        if (filterIsInitialized === true || aggregationsValues.length > 0) {
 
             _.each(aggregationsValues, _.bind(function (item) {
 
@@ -1888,26 +1895,28 @@ define([
         log.info("Listen to event: " + this._getEventTopic("query"));
         log.info(payload);
 
-        var valid = this._validateQuery();
+        var filterValues = this._getBackFilterValues(),
+            valid = this._validateValues(filterValues),
+            hasFilterValues = false,
+            mapValues = this._getBackMapValues(),
+            mapIsEmpty = everyPropertyIsEmptyArray(Utils.getNestedProperty("map.values", mapValues)),
+            hasMapValues = false;
 
         if (valid === true) {
 
             this._enableFlip();
 
-            var filterValues = this._getBackFilterValues(),
-                filterIsEmpty = (_.isEmpty(Utils.getNestedProperty("filter.values", filterValues)) && _.isEmpty(Utils.getNestedProperty("aggregations.values", filterValues))),
-                hasFilterValues = false;
+            //check filter values
 
-        //TODO check that every array is empty
+            var process = this._createQuery(filterValues);
 
-            //if filter values have changed
-            if (!filterIsEmpty && !_.isEqual(filterValues, this._getObjState("back_filter"))) {
-
-                this._setObjState("back_filter", $.extend(true, {}, filterValues));
+            if (!_.isEqual(process, this._getObjState("process"))) {
 
                 hasFilterValues = true;
 
-                var process = this._createQuery(filterValues);
+                this._setObjState("back_filter", $.extend(true, {}, filterValues));
+
+                this._setObjState("process", process.slice(0));
 
                 log.info("D3P process", process);
 
@@ -1917,16 +1926,12 @@ define([
                         _.bind(this._onLoadResourceError, this));
 
             } else {
-                log.warn("Abort resource filter because values have not changed");
+                log.warn("Abort resource filter because process have not changed");
             }
 
-            var mapValues = this._getBackMapValues(),
-                mapIsEmpty = _.isEmpty(Utils.getNestedProperty("map.values", mapValues)),
-                hasMapValues = false;
 
-            //TODO check that every array is empty
+            //Check map values
 
-            //if map values have changed
             if (!mapIsEmpty && !_.isEqual(mapValues, this._getObjState("back_map"))) {
 
                 hasMapValues = true;
@@ -1935,28 +1940,30 @@ define([
 
                 this._updateMap();
 
-                if (!hasFilterValues) {
-
-                    this.setStatus("ready");
-
-                    this._flip("front");
-                }
-
             } else {
                 log.warn("Abort map update because values have not changed");
             }
 
-            //if nothing has changed flip to front
-            if (!hasMapValues && !hasMapValues) {
+            this.setStatus("ready");
 
-                this._flip("front");
-            } else {
-
-                this._disposeFrontFace();
-            }
+            this._flip("front");
 
         } else {
             this._printFilterError(valid);
+        }
+
+        function everyPropertyIsEmptyArray(obj) {
+            var valid = true;
+
+            _.each(obj, function (key) {
+
+                if (!Array.isArray(key) || key.length > 0) {
+                    valid = false;
+                }
+
+            });
+
+            return valid;
         }
 
     };
@@ -1968,14 +1975,12 @@ define([
             return;
         }
 
-        var MapTabInstance = this.front_tab_instances['map'];
+        var mapValues = this._getObjState("back_map").map;
 
-        console.log('_UPDATEMAP',this.front_tab_instances)
-        //MapTabInstance.map.update( this._getObjState("back_map") );
+        this._setObjState("sync.map", mapValues);
 
-        var filterValues = this._getObjState("back_map")['map']
+        this._syncFrontTabs();
 
-        this.front_tab_instances['map'].addLayersByFilter( filterValues );
     };
 
     Box.prototype._onDownloadEvent = function (payload) {
@@ -2134,9 +2139,15 @@ define([
 
     Box.prototype._getBackFilterValues = function () {
 
+        var prevValues = this._getObjState('back_filter') || {},
+            filterValues = this.back_tab_instances["filter"] ? this.back_tab_instances["filter"].getValues(null) : null,
+            aggregationValues = this.back_tab_instances["aggregations"] ? this.back_tab_instances["aggregations"].getValues(null) : null,
+            rowValues = this.back_tab_instances["filter"] ? this.back_tab_instances["filter"].getValues('fenix') : null;
+
         var payload = {
-            filter: this.back_tab_instances["filter"] ? this.back_tab_instances["filter"].getValues(null) : null,
-            aggregations: this.back_tab_instances["aggregations"] ? this.back_tab_instances["aggregations"].getValues(null) : null
+            filter: !_.isEmpty(filterValues) ? filterValues : prevValues.filter,
+            aggregations: !_.isEmpty(aggregationValues) ? aggregationValues : prevValues.aggregations,
+            rows : !_.isEmpty(rowValues) ? rowValues : prevValues.rows
         };
 
         return $.extend(true, {}, payload);
@@ -2145,8 +2156,11 @@ define([
 
     Box.prototype._getBackMapValues = function () {
 
+        var prevValues = this._getObjState('back_map') || {},
+            mapValues = this.back_tab_instances["map"] ? this.back_tab_instances["map"].getValues(null) : null;
+
         var payload = {
-            map: this.back_tab_instances["map"] ? this.back_tab_instances["map"].getValues(null) : null
+            map: !_.isEmpty(mapValues) ? mapValues : prevValues
         };
 
         return $.extend(true, {}, payload);

@@ -181,7 +181,7 @@ define([
 
         if (this.initialized !== true) {
 
-            log.info("Map MAP shown for the first time");
+            log.info("Map map shown for the first time");
 
             this._attach();
 
@@ -194,7 +194,7 @@ define([
             this.initialized = true;
 
         } else {
-            log.info("Tab MAP shown again");
+            log.info("Tab Map shown again");
         }
 
         if (this.toSync === true) {
@@ -202,6 +202,11 @@ define([
 
             if (this.syncState.hasOwnProperty("toolbar") && this.toolbar) {
                 this.toolbar.setValues(this.syncState.toolbar, true);
+            }
+
+            if (this.syncState.hasOwnProperty("map")) {
+                //TODO add layer to map
+               console.log(this.syncState.map)
             }
 
         }

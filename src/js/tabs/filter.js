@@ -107,7 +107,7 @@ define([
 
         this._dispose();
 
-        log.info("Tab disposed successfully");
+        log.info("Filter tab disposed successfully");
 
     };
 

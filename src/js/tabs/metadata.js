@@ -96,7 +96,7 @@ define([
 
         this._dispose();
 
-        log.info("Tab disposed successfully");
+        log.info("Metadata tab disposed successfully");
 
     };
 

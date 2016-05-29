@@ -94,7 +94,7 @@ define([
 
         this._dispose();
 
-        log.info("Tab disposed successfully");
+        log.info("Table tab disposed successfully");
 
     };
 
@@ -318,7 +318,7 @@ define([
 
     TableTab.prototype._createFilterConfiguration = function () {
 
-        var configurationFromFenixTool = BoxUtils.getChartToolbarConfig(this.model),
+        var configurationFromFenixTool = BoxUtils.getTableToolbarConfig(this.model),
             configuration = $.extend(true, {}, ToolbarModel, configurationFromFenixTool),
             result = $.extend(true, {}, Utils.mergeConfigurations(configuration, this.syncState.toolbar || {}));
 
