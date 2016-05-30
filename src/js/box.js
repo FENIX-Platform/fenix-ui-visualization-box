@@ -43,8 +43,6 @@ define([
         PROCESS_STEPS: "[data-role='process-steps']",
         PROCESS_DETAILS: "[data-role='process-details']",
         BACK_CONTENT: "[data-role='back-content']",
-        MODAL: "[data-role='modal']",
-        MODAL_METADATA_CONTAINER: "[data-role='modal'] [data-role='metadata-container']",
         BOX_TITLE: "[data-role='box-title']",
         QUERY_BUTTON: "[data-action='query']",
         ERROR_TEXT: "[data-role='error-text']",
@@ -58,7 +56,7 @@ define([
         SIDEBAR: "[data-role='back-sidebar']",
         FRONT_FACE: "[data-face='front']",
         BACK_FACE: "[data-face='back']",
-        OTHER_CONTENT: "[data-content='empty'], [data-content='error'], [data-content='huge'], [data-role='modal']"
+        OTHER_CONTENT: "[data-content='empty'], [data-content='error'], [data-content='huge']"
     };
 
     /* API */
@@ -263,9 +261,6 @@ define([
         //step process list
         this.$processSteps = this.$el.find(s.PROCESS_STEPS);
         this.$processStepDetails = this.$el.find(s.PROCESS_DETAILS);
-
-        //modal
-        this.$modal = this.$el.find(s.MODAL);
 
         this.$boxTitle = this.$el.find(s.BOX_TITLE);
 
@@ -959,15 +954,6 @@ define([
         this._showMenuItem("download");
 
         this._showDefaultFrontTab();
-
-        //render metadata modal
-        this.metadataModal = new MetadataViewer();
-
-        this.metadataModal.render({
-            model: Utils.getNestedProperty("metadata", this._getObjState('model')),
-            lang: this.lang.toUpperCase(),
-            el: this.$el.find(s.MODAL_METADATA_CONTAINER)
-        });
 
         this._bindFrontFaceEventListeners();
 
@@ -1934,7 +1920,6 @@ define([
                 log.warn("Abort resource filter because process have not changed");
             }
 
-
             //Check map values
 
             if (!mapIsEmpty && !_.isEqual(mapValues, this._getObjState("back_map"))) {
@@ -2214,7 +2199,7 @@ define([
             return Instance[obj.method](obj.opt1, obj.opt2);
 
         } else {
-            log.error(name + " tab does not implement the mandatory " + method + "() fn");
+            log.error(obj.tab + " tab does not implement the " + obj.method + "() fn");
         }
 
     };
@@ -2271,10 +2256,23 @@ define([
         this.$el.find(s.BOX).attr("data-size", this._getObjState("size"));
 
         var state = $.extend(true, {}, this.getState());
-        
+
         amplify.publish(EVT["resize"], this);
 
         this._trigger("resize", state);
+
+        //keep after trigger for now
+        this._redrawTabs();
+
+    };
+
+    Box.prototype._redrawTabs = function () {
+
+        var tab = this._getObjState("tab");
+
+        this._callTabInstanceMethod({ tab : tab,  method: "redraw"});
+
+        this._syncFrontTabs();
 
     };
 
@@ -2329,10 +2327,6 @@ define([
             this._callTabInstanceMethod({tab: tab, method: "dispose"});
 
         }, this));
-
-        if (this.metadataModal && $.isFunction(this.metadataModal.dispose)) {
-            this.metadataModal.dispose();
-        }
 
         this.$el.find(s.FRONT_FACE).find("[data-action]").off();
 

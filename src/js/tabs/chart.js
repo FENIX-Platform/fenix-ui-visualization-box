@@ -126,6 +126,20 @@ define([
         return this;
     };
 
+    /**
+     * Force redrawing
+     * @return {Object} filter instance
+     */
+    ChartTab.prototype.redraw = function () {
+
+        if (this.chart && $.isFunction(this.chart.redraw)){
+            this.chart.redraw();
+        } else {
+            log.warn("Abort redraw");
+        }
+
+    };
+
     /* END - API */
 
     ChartTab.prototype._trigger = function (channel) {

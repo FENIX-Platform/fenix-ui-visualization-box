@@ -1,5 +1,5 @@
 <div>
-        <div data-role="box" class="fx-box" data-status="{{ status }}" data-size="{{ size }}" >
+    <div data-role="box" class="fx-box" data-status="{{ status }}" data-size="{{ size }}">
 
         <div data-content="ready" data-tab="{{ default_tab }}">
 
@@ -157,10 +157,12 @@
                                     </div>
                                 </div>
                                 <!--<button data-action="show-back-sidebar" class="btn btn-default visible-sm visible-xs show-back-sidebar" type="button">-->
-                                    <!--SIDEBAR-->
+                                <!--SIDEBAR-->
                                 <!--</button>-->
 
-                                <button data-action="show-back-sidebar" class="btn btn-floating btn-fx-toolbar visible-sm visible-xs show-back-sidebar" type="button"><span class="icojam_grid_32"></span></button>
+                                <button data-action="show-back-sidebar"
+                                        class="btn btn-floating btn-fx-toolbar visible-sm visible-xs show-back-sidebar"
+                                        type="button"><span class="icojam_grid_32"></span></button>
 
                                 <div class="col-md-8 col-xs-12 back-right-content">
 
@@ -171,7 +173,8 @@
                                         <div class="col-xs-12">
                                             <div class="btn-group pull-right back-btns">
 
-                                                <button type="button" data-action="flip" class="btn btn-default">{{cancel_button}}
+                                                <button type="button" data-action="flip"
+                                                        class="btn btn-default">{{cancel_button}}
                                                 </button>
                                                 <button type="button" data-action="query" class="btn btn-primary"
                                                         disabled>{{submit_button}}</button>
@@ -196,11 +199,11 @@
 
             <div data-role="error-text"></div>
 
-<!--            <div data-role="error-button">
-                <button data-action="filter" class="btn btn-default" type="button">
-                    <span class="glyphicon glyphicon-filter" aria-hidden="true"></span>
-                </button>
-            </div>-->
+            <!--            <div data-role="error-button">
+                            <button data-action="filter" class="btn btn-default" type="button">
+                                <span class="glyphicon glyphicon-filter" aria-hidden="true"></span>
+                            </button>
+                        </div>-->
 
         </div>
 
@@ -215,34 +218,17 @@
             </button>
         </div>
 
-            <div data-content="huge" class="text-center">
-                TOO BIG
-                <button data-action="filter" class="btn btn-default" type="button">
-                    <span class="glyphicon glyphicon-filter" aria-hidden="true"></span>
-                </button>
-            </div>
-
-        <!-- Modal -->
-        <div class="modal fade" data-role="modal" tabindex="-1" role="dialog">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title"><button data-action="download" data-target="metadata" class="btn btn-floating" type="button"><span class="icojam_download_2"></span></button>
-                            FENIX metadata</h4>
-                    </div>
-                    <div class="modal-body">
-
-                        <div data-role="metadata-container"></div>
-                    </div>
-                </div>
-            </div>
+        <div data-content="huge" class="text-center">
+            TOO BIG
+            <button data-action="filter" class="btn btn-default" type="button">
+                <span class="glyphicon glyphicon-filter" aria-hidden="true"></span>
+            </button>
         </div>
 
     </div>
 
-    <li data-role="step-metadata" class="step-container" data-tab="{{ id }}" data-resourceRepresentationType="{{ metadata.meContent.resourceRepresentationType}}">
+    <li data-role="step-metadata" class="step-container" data-tab="{{ id }}"
+        data-resourceRepresentationType="{{ metadata.meContent.resourceRepresentationType}}">
         <span class="step-icon icojam_box"></span>
         <h6 class="truncate step-title">{{ i18n metadata.title}}</h6>
 
