@@ -55,8 +55,6 @@ define([
     MapTab.prototype.init = function () {
 
         log.info("Map initialized successfully");
-
-        this._filterLayers = {};
     };
 
     /**
@@ -223,9 +221,6 @@ define([
             }
 
             if (this.syncState.hasOwnProperty("map")) {
-                //TODO add layer to map
-
-                
                 this.addLayersByFilter(this.syncState.map);
             }
 
@@ -375,6 +370,7 @@ define([
         //this.map.fenixMap.addLayer( this._getTestLayer() );
 
         window.MapCreator = this;
+        this._filterLayers= {};
     };
 
     MapTab.prototype.addLayersByFilter = function(filter) {
@@ -401,7 +397,7 @@ define([
             var layerName = filter.values.layers[i];
                 layerTitle = filter.labels.layers[layerName];
 
-            console.log('addLayersByFilter', layerName, layerTitle);
+            //console.log('addLayersByFilter', layerName, layerTitle);
 
             if(this._filterLayers && !this._filterLayers.hasOwnProperty(layerName) )
             {
@@ -413,7 +409,7 @@ define([
                     layertype: 'WMS'
                 });
                 
-                console.log(this._filterLayers[layerName]);
+                //console.log(this._filterLayers[layerName]);
 
                 this.map.fenixMap.addLayer( this._filterLayers[layerName] );
             }
