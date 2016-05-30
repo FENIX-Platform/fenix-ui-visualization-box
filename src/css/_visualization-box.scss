@@ -276,7 +276,7 @@ $cmd-right-width: 192px;
 .tab-item-content {
   height: 100%;
 
-  &[id^="table"], &[id^="chart"] {
+  &[id^="table"], &[id^="chart"], &[id^="metadata"] {
     padding: 40px 15px 15px 15px;
   }
 
@@ -406,8 +406,10 @@ $cmd-right-width: 192px;
 
   &.swiper-slide-active{
 
-    background-color: rgba($fx-cool-blue, 0.05);
-    border-color: rgba($fx-cool-blue, 0.2);
+    /* Stylize the active filter */
+
+    //background-color: rgba($fx-cool-blue, 0.05);
+    //border-color: rgba($fx-cool-blue, 0.2);
 
   }
 

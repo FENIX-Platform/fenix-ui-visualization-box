@@ -1073,6 +1073,8 @@ define([
 
     Box.prototype._createTabInstance = function (tab) {
 
+        console.log(tab + "_" + this.id)
+
         var state = this._getObjState("tabStates." + tab) || {},
             registry = this.tabRegistry,
         //Note that for sync call the argument of require() is not an array but a string
