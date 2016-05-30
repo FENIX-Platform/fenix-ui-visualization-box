@@ -387,9 +387,12 @@ define([
 
     MapTab.prototype._createFilterConfiguration = function () {
 
-        var configurationFromFenixTool = BoxUtils.getChartToolbarConfig(this.model),
+        var configurationFromFenixTool = BoxUtils.getMapToolbarConfig(this.model),
             configuration = $.extend(true, {}, ToolbarModel, configurationFromFenixTool),
             result = $.extend(true, {}, Utils.mergeConfigurations(configuration, this.syncState.toolbar || {}));
+            
+        delete result.aggregator_value;
+        delete result.dimension_sort;
 
         return result;
     };
