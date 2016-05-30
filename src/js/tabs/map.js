@@ -220,7 +220,9 @@ define([
 
             if (this.syncState.hasOwnProperty("map")) {
                 //TODO add layer to map
-               console.log(this.syncState.map)
+
+               console.log('MAP _show',this.syncState.map)
+
             }
 
         }
@@ -273,6 +275,18 @@ define([
         log.trace(payload);
 
         var direction = this.toolbarPosition !== "up" ? "up" : "down";
+
+
+        var map = this.map.leafletMap,
+            pxCen = map.latLngToContainerPoint(map.getCenter())
+            newpxCen = pxCen;
+            
+        if(direction==='down')
+            newpxCen.x -= 200;
+        else if(direction==='up')
+            newpxCen.x += 200;
+        
+        map.panTo(map.containerPointToLatLng(newpxCen));
 
         this._slideToolbar(direction)
 
