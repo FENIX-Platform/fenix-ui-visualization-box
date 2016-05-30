@@ -133,6 +133,8 @@ define([
     MapTab.prototype.sync = function (state) {
         log.info("Sync tab. State:" + JSON.stringify(state));
 
+console.log('MapTab.prototype.sync',state);
+
         this.syncState = state;
 
         this.toSync = true;
@@ -228,9 +230,6 @@ define([
             }
 
         }
-
-        console.log('MAP _show', this.syncState.map)
-
         return this;
     };
 
@@ -382,7 +381,7 @@ define([
         
         console.log('addLayersByFilter', filter);
 
-        var filter = {
+        /*var filter = {
             "valid": true,
             "labels": {
                 "layers": { 
@@ -404,7 +403,7 @@ define([
 
             console.log('addLayersByFilter', layerName, layerTitle);
 
-            if(!this._filterLayers[layerName])
+            if(this._filterLayers && !this._filterLayers.hasOwnProperty(layerName) )
             {
                 this._filterLayers[layerName] = new FM.layer({
                     urlWMS: "http://fenix.fao.org/demo/fenix/geoserver/wms",

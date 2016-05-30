@@ -18,7 +18,7 @@ define([
 
     //for map tab
     "fx-v-b/config/tabs/map-earthstat-layers",
-        
+
     "i18n!fx-v-b/nls/box",
     "fx-common/bridge",
     "fx-reports/start",
@@ -2077,6 +2077,8 @@ define([
             this.$el.find(s.FLIP_CONTAINER).addClass(C.flippedClassName || CD.flippedClassName);
         } else {
             this.$el.find(s.FLIP_CONTAINER).removeClass(C.flippedClassName || CD.flippedClassName);
+            var currentTab = this._getObjState('tab');
+            this._showFrontTab(currentTab);
         }
 
         this._setObjState('face', face);
