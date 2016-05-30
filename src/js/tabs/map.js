@@ -143,6 +143,20 @@ define([
        console.log("UPDATE MAP SETTINGS",obj)
     };
 
+    /**
+     * Force redrawing
+     * @return {Object} filter instance
+     */
+    MapTab.prototype.redraw = function () {
+
+        if (this.map){
+            this.map.invalidateSize();
+        } else {
+            log.warn("Abort redraw");
+        }
+
+    };
+
     /* END - API */
 
     MapTab.prototype._trigger = function (channel) {
