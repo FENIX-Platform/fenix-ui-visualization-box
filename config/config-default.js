@@ -40,7 +40,7 @@ define(function () {
             'filter': {type: 'simple', tabOpts : {}},
             'map': {type: 'simple', tabOpts : {}},
             'chart': {type: 'simple', tabOpts : {type : "line"}},
-            //'download': {type: 'simple', tabOpts : {}}
+            'download': {type: 'simple', tabOpts : {}}
         },
 
         flippedClassName : "flipped",

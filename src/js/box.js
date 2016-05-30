@@ -1388,9 +1388,9 @@ define([
                     prevButton: this.$el.find(s.ROWS_SWIPER).find('.swiper-button-prev'),
 
                     slidesPerView: 'auto',
-                    centeredSlides: true,
+                    //centeredSlides: true,
                     //spaceBetween: 30,
-                    freeMode: true,
+                    //freeMode: true,
                     simulateTouch: false
 
                     // And if we need scrollbar
@@ -1847,7 +1847,8 @@ define([
         log.info("Listen to event: " + this._getEventTopic("metadata"));
         log.info(payload);
 
-        this.$modal.modal('show');
+        this.showTab('metadata');
+        //this.$modal.modal('show');
     };
 
     Box.prototype._onMinimizeEvent = function (payload) {
