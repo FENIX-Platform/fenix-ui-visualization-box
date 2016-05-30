@@ -15,19 +15,22 @@ define([
     "text!fx-v-b/html/template.hbs",
     "fx-common/json-menu",
     "fx-v-b/config/right-menu-model",
+
+    //for map tab
+    "fx-v-b/config/tabs/map-earthstat-layers",
+        
     "i18n!fx-v-b/nls/box",
     "fx-common/bridge",
     "fx-reports/start",
-
-    "fx-v-b/config/tabs/map-earthstat-layers",
-
     "swiper",
     "amplify",
     "bootstrap"
-], function (log, require, $, _, _str, Handlebars, C, CD, ERR, EVT, Utils, MetadataViewer, Template, JsonMenu, RightMenuModel, i18nLabels, Bridge, Report,
-             //DEMO DATA: waiting for data from the D3S
-             mapEarthstatLayers,
-             Swiper) {
+], function (log, require, $, _, _str, Handlebars, C, CD, ERR, EVT, 
+    Utils, MetadataViewer, Template, JsonMenu, RightMenuModel, 
+    
+    mapEarthstatLayers,
+
+    i18nLabels, Bridge, Report, Swiper) {
 
     'use strict';
 

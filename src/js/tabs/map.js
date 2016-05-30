@@ -55,6 +55,8 @@ define([
     MapTab.prototype.init = function () {
 
         log.info("Map initialized successfully");
+
+        this._filterLayers = {};
     };
 
     /**
@@ -221,11 +223,13 @@ define([
             if (this.syncState.hasOwnProperty("map")) {
                 //TODO add layer to map
 
-               console.log('MAP _show',this.syncState.map)
-
+                
+                this.addLayersByFilter(this.syncState.map);
             }
 
         }
+
+        console.log('MAP _show', this.syncState.map)
 
         return this;
     };
@@ -399,17 +403,22 @@ define([
                 layerTitle = filter.labels.layers[layerName];
 
             console.log('addLayersByFilter', layerName, layerTitle);
-            
-            var l = new FM.layer({
-                urlWMS: "http://fenix.fao.org/demo/fenix/geoserver/wms",
-                layers: layerName,
-                layertitle: 'EarthStat Layer: '+layerTitle,
-                opacity: '0.8',
-                layertype: 'WMS'
-            });
 
-            console.log(l)
-            this.map.fenixMap.addLayer( l );
+            if(!this._filterLayers[layerName])
+            {
+                this._filterLayers[layerName] = new FM.layer({
+                    urlWMS: "http://fenix.fao.org/demo/fenix/geoserver/wms",
+                    layers: layerName,
+                    layertitle: 'EarthStat Layer: '+layerTitle,
+                    opacity: '0.8',
+                    layertype: 'WMS'
+                });
+                
+                console.log(this._filterLayers[layerName]);
+
+                this.map.fenixMap.addLayer( this._filterLayers[layerName] );
+            }
+            
         }
     },
 
