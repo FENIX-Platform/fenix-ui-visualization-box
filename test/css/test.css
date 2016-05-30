@@ -6228,8 +6228,12 @@ input[type="radio"]:disabled + label {
 
 .tab-item-content {
   height: 100%; }
-  .tab-item-content[id^="table"], .tab-item-content[id^="chart"], .tab-item-content[id^="chart"] {
+  .tab-item-content[id^="table"], .tab-item-content[id^="chart"] {
     padding: 40px 15px 15px 15px; }
+  .tab-item-content[id^="metadata"] {
+    padding: 0 15px;
+    overflow-y: scroll;
+    overflow-x: hidden; }
 
 [data-section] {
   position: relative;
