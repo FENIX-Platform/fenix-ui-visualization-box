@@ -212,6 +212,8 @@ define([
 
             this.id = "fx-v-b-" + window.fx_vis_box_id;
 
+            this._setObjState("id", this.id);
+
             log.warn("Impossible to find id. Set auto id to: " + this.id);
         }
 
