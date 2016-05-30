@@ -1073,8 +1073,6 @@ define([
 
     Box.prototype._createTabInstance = function (tab) {
 
-        console.log(tab + "_" + this.id)
-
         var state = this._getObjState("tabStates." + tab) || {},
             registry = this.tabRegistry,
         //Note that for sync call the argument of require() is not an array but a string
@@ -1556,7 +1554,7 @@ define([
                 model: $.extend(true, {}, this._getObjState("model")),
                 config: step.config,
                 values: step.values || {},
-                id: "step-" + step.id,
+                id: step.tab + "_" + step.id,
                 labels: step.labels,
                 template: step.template,
                 onReady: step.onReady,

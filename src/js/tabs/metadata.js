@@ -20,8 +20,6 @@ define([
     function MetadataTab(obj) {
 
         $.extend(true, this, {initial: obj, $el: $(obj.$el), box: obj.box, model: obj.model, id: obj.id});
-        console.log(obj)
-        console.log(this.id)
 
         this.channels = {};
         this.state = {};
@@ -43,10 +41,6 @@ define([
      * Mandatory method
      */
     MetadataTab.prototype.show = function (state) {
-
-        console.log(this.id)
-        console.log(state)
-
 
         var valid = this._validateInput();
 
@@ -203,8 +197,6 @@ define([
         var template = Handlebars.compile(tabTemplate),
             html = template(this);
 
-        console.log(html)
-
         this.$el.html(html);
     };
 
@@ -222,15 +214,10 @@ define([
 
         this.metadataViewer = new MetadataViewer();
 
-        console.log(this.id)
-        console.log(this.$el.find('#metadata' + this.id).length)
-
-        return;
-
         this.metadataViewer.render({
             model: this.model.metadata ,
             lang: 'en',
-            el: this.$el.find('#metadata' + this.id)
+            el: this.$el.find('#metadata_' + this.id)
         });
 
     };
