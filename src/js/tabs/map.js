@@ -133,7 +133,7 @@ define([
     MapTab.prototype.sync = function (state) {
         log.info("Sync tab. State:" + JSON.stringify(state));
 
-console.log('MapTab.prototype.sync',state);
+    //console.log('MapTab.prototype.sync',state);
 
         this.syncState = state;
 
