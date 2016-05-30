@@ -832,7 +832,7 @@ define([
                     .map(function (c) {
                         return c.id;
                     }).sort(),
-              valueDimension = _.findWhere(resourceColumns, {subject: "value"});
+                valueDimension = _.findWhere(resourceColumns, {subject: "value"});
 
             if (Object.getOwnPropertyNames(rowValues).length > 0) {
                 step.parameters.rows = rowValues;
@@ -848,7 +848,7 @@ define([
             //If they are equals it means i want to include all columns so no filter is needed
             columns = columns.sort();
 
-            if (columns.length > 0 && !_.isEqual(columnsSet, columns) ) {
+            if (columns.length > 0 && !_.isEqual(columnsSet, columns)) {
                 step.parameters.columns = columns;
                 hasValues = true;
             } else {
@@ -1344,9 +1344,9 @@ define([
             forbiddenIds = ["value"];
 
         var columns = Utils.getNestedProperty("metadata.dsd.columns", this._getObjState("model"))
-            .filter(function (col) {
-                return !_.contains(forbiddenIds, col.id.toLowerCase());
-            }).filter(function (col) {
+                .filter(function (col) {
+                    return !_.contains(forbiddenIds, col.id.toLowerCase());
+                }).filter(function (col) {
                     return !col.id.endsWith("_" + self.lang.toUpperCase());
                 }),
             config = Utils.createConfiguration({
@@ -1811,26 +1811,35 @@ define([
         log.info("Listen to event: " + this._getEventTopic("resize"));
         log.info(payload);
 
+        var size;
+
         if (payload.target && $(payload.target).data("size")) {
 
-            var size = $(payload.target).data("size");
+            size = $(payload.target).data("size");
             log.info("Size: " + size);
 
             this._setSize(size);
+
+            var state = $.extend(true, {}, this.getState());
+
         }
 
         //Exclude id for publish events
-        amplify.publish(this._getEventTopic("resize", true), $.extend(true, {}, this.getState()));
+        amplify.publish(this._getEventTopic("resize", true), state);
 
-        this._trigger("resize");
+        this._trigger("resize", state);
     };
 
     Box.prototype._onCloneEvent = function (payload) {
         log.info("Listen to event: " + this._getEventTopic("clone"));
         log.info(payload);
 
+        var state = $.extend(true, {}, this.getState());
+
         //Exclude id for publish events
-        amplify.publish(this._getEventTopic("clone", true), $.extend(true, {}, this.getState()))
+        amplify.publish(this._getEventTopic("clone", true), state);
+
+        this._trigger("clone", state);
     };
 
     Box.prototype._onFlipEvent = function (payload) {
@@ -1852,7 +1861,6 @@ define([
         log.info(payload);
 
         this.showTab('metadata');
-        //this.$modal.modal('show');
     };
 
     Box.prototype._onMinimizeEvent = function (payload) {
@@ -2152,7 +2160,7 @@ define([
         var payload = {
             filter: !_.isEmpty(filterValues) ? filterValues : prevValues.filter,
             aggregations: !_.isEmpty(aggregationValues) ? aggregationValues : prevValues.aggregations,
-            rows : !_.isEmpty(rowValues) ? rowValues : prevValues.rows
+            rows: !_.isEmpty(rowValues) ? rowValues : prevValues.rows
         };
 
         return $.extend(true, {}, payload);

@@ -37,63 +37,6 @@ define(function () {
                 "data-target": "metadata"
             }
         },
-        //Layout
-        {
-            label: "Widget layout",
-            url: "#",
-            parent_id: "-1",
-            id: "2"
-        },
-        {
-            label: "1/2 - 1/2",
-            url: "#",
-            parent_id: "2",
-            id: "3",
-            a_attrs: {
-                "data-action": "resize",
-                "data-size": "1"
-            }
-        },
-        {
-            label: "2/2 - 1/2",
-            url: "#",
-            parent_id: "2",
-            id: "4",
-            a_attrs: {
-                "data-action": "resize",
-                "data-size": "3"
-            }
-        },
-        {
-            label: "1/2 - 2/2",
-            url: "#",
-            parent_id: "2",
-            id: "5",
-            a_attrs: {
-                "data-action": "resize",
-                "data-size": "4"
-            }
-        },
-        {
-            label: "2/2 - 2/2",
-            url: "#",
-            parent_id: "2",
-            id: "6",
-            a_attrs: {
-                "data-action": "resize",
-                "data-size": "7"
-            }
-        },
-        {
-            label: "Fullscreen",
-            url: "#",
-            parent_id: "2",
-            id: "7",
-            a_attrs: {
-                "data-action": "resize",
-                "data-size": "full"
-            }
-        },
         //Visualize as
         {
             label: "Visualize as",
@@ -199,6 +142,33 @@ define(function () {
                 "data-id" : "table",
                 "class": "hidden"
             }
-        }
+        },
+        //Layout
+        {
+            label: "Set size",
+            url: "#",
+            parent_id: "-1",
+            id: "22"
+        },
+        {
+            label: "Full",
+            url: "#",
+            parent_id: "22",
+            id: "3",
+            a_attrs: {
+                "data-action": "resize",
+                "data-size": "full"
+            }
+        },
+        {
+            label: "Half",
+            url: "#",
+            parent_id: "22",
+            id: "4",
+            a_attrs: {
+                "data-action": "resize",
+                "data-size": "half"
+            }
+        },
     ];
 });
