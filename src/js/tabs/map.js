@@ -361,8 +361,8 @@ define([
                     }
                 },
                 legendOptions: {
-                    //fontColor: '0x006600',
-                    //fontSize: '20',
+                    fontColor: '0x000000',
+                    fontSize: '12',
                     bgColor: '0xFFFFFF'
                 }
             }
