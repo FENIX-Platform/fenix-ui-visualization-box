@@ -259,7 +259,17 @@ $cmd-right-width: 192px;
   transform: rotateY(0deg);
   background-color: white;
   //border: 1px solid $back-and-border-color;
+
+
+  .tab-item-content[id^="metadata"] {
+    padding:0 15px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+  }
+
 }
+
+
 
 .tab-item-content-wrapper {
   position: relative;
@@ -281,13 +291,18 @@ $cmd-right-width: 192px;
   }
 
 
-  &[id^="metadata"] {
-    padding:0 15px;
-    overflow-y: scroll;
-    overflow-x: hidden;
-  }
+  //&[id^="metadata"] {
+  //  padding:0 15px;
+  //  overflow-y: scroll;
+  //  overflow-x: hidden;
+  //}
+
+
 
 }
+
+
+
 
 [data-section] {
   position: relative;
@@ -820,6 +835,15 @@ $olap-drag: #bbbbbb;
 
 /* Map Tab */
 
+
+[data-section="map"]{
+
+  .btn-fx-toolbar-confirm{
+    display: none;
+
+  }
+
+}
 
 .fm-icon-close{
   display: none;

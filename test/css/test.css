@@ -6221,6 +6221,10 @@ input[type="radio"]:disabled + label {
   /* for firefox 31 */
   transform: rotateY(0deg);
   background-color: white; }
+  .front .tab-item-content[id^="metadata"] {
+    padding: 0 15px;
+    overflow-y: scroll;
+    overflow-x: hidden; }
 
 .tab-item-content-wrapper {
   position: relative;
@@ -6231,10 +6235,6 @@ input[type="radio"]:disabled + label {
   height: 100%; }
   .tab-item-content[id^="table"], .tab-item-content[id^="chart"] {
     padding: 40px 15px 15px 15px; }
-  .tab-item-content[id^="metadata"] {
-    padding: 0 15px;
-    overflow-y: scroll;
-    overflow-x: hidden; }
 
 [data-section] {
   position: relative;
@@ -6572,6 +6572,9 @@ input[type="radio"]:disabled + label {
   margin-left: 3px; }
 
 /* Map Tab */
+[data-section="map"] .btn-fx-toolbar-confirm {
+  display: none; }
+
 .fm-icon-close {
   display: none; }
 
