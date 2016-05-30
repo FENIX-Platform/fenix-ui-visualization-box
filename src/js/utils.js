@@ -41,7 +41,7 @@ define([
 
     Utils.prototype.getMapToolbarConfig = function (Model, opts) {
 
-        return this._getToolbarConfig(Model, opts);
+        return {};
     };
 
     //Creators configurations
