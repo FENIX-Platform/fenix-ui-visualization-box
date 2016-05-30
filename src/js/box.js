@@ -1818,14 +1818,8 @@ define([
 
             this._setSize(size);
 
-            var state = $.extend(true, {}, this.getState());
-
         }
 
-        //Exclude id for publish events
-        amplify.publish(this._getEventTopic("resize", true), state);
-
-        this._trigger("resize", state);
     };
 
     Box.prototype._onCloneEvent = function (payload) {
@@ -2272,12 +2266,12 @@ define([
             return;
         }
 
-        var state = $.extend(true, {}, this.getState());
-
         this._setObjState("size", size);
 
         this.$el.find(s.BOX).attr("data-size", this._getObjState("size"));
 
+        var state = $.extend(true, {}, this.getState());
+        
         amplify.publish(EVT["resize"], this);
 
         this._trigger("resize", state);

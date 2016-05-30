@@ -7,7 +7,7 @@ define(function () {
 
         status : "loading",
         tab : "table",
-        size : "large",
+        size : "full",
         face : "front", // back || front
         faces : ["front", "back"],
         tabRegistry: {
