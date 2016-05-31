@@ -538,8 +538,8 @@ define([
                     this._setStatus("error");
                 }
                 break;
-            case "layer" :
-                    
+            case "geographic" :
+
                 var dsd = Utils.getNestedProperty("metadata.dsd", model);
                 
                 var layers = dsd['workspace']+':'+dsd['layerName'];
