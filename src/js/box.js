@@ -527,7 +527,7 @@ define([
         switch (resourceType) {
             case "dataset" :
                 var datasources = Utils.getNestedProperty("metadata.dsd.datasources", model);
-                if (Array.isArray(datasources) && datasources.length > 0) {
+                if (_.isArray(datasources) && datasources.length > 0) {
 
                     this._fetchResource().then(
                         _.bind(this._fetchResourceSuccess, this),
@@ -539,7 +539,13 @@ define([
                 }
                 break;
             case "layer" :
-                //TODO
+                    
+                var dsd = Utils.getNestedProperty("metadata.dsd", model);
+                
+                var layers = dsd['workspace']+':'+dsd['layerName'];
+
+                console.log('resourceType: LAYER, layers:', layers);
+
                 break;
             default :
                 this._setObjState("error", {code: ERR.UNKNOWN_RESOURCE_TYPE});
