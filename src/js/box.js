@@ -531,22 +531,32 @@ define([
 
                     this._fetchResource().then(
                         _.bind(this._fetchResourceSuccess, this),
-                        _.bind(this._fetchResourceError, this));
+                        _.bind(this._fetchResourceError, this)
+                    );
 
                 } else {
                     this._setObjState("error", {code: ERR.MISSING_DATASOURCES});
                     this._setStatus("error");
                 }
                 break;
+
             case "geographic" :
 
                 var dsd = Utils.getNestedProperty("metadata.dsd", model);
-                
+
                 var layers = dsd['workspace']+':'+dsd['layerName'];
 
                 console.log('resourceType: LAYER, layers:', layers);
+                
+                this._fetchResourceSuccess
+                //this._setObjState('tab','map');
+                //this._showFrontTab("map");
+                //this.setStatus("ready");
+                this._renderBox();
+                //this._renderBoxFaces();
 
                 break;
+
             default :
                 this._setObjState("error", {code: ERR.UNKNOWN_RESOURCE_TYPE});
                 this._setStatus("error")
@@ -998,7 +1008,7 @@ define([
 
         //check if it is a valid tab
         if (!tabs[tab]) {
-            log.error("Error on show tab content: " + tab);
+            log.error("Error on show tab content: ", tab);
 
             this._setObjState("error", {code: ERR.MISSING_TAB});
 
