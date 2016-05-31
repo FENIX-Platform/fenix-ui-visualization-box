@@ -61,7 +61,7 @@ define(function () {
 
         render_visualization_components : true,
 
-        max_data_size : 9999
+        max_data_size : 7200
 
     };
 });

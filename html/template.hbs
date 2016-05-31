@@ -197,6 +197,12 @@
 
         <div data-content="error" class="text-center">
 
+            {{#unless hideRemoveButton}}
+                <button data-action="remove" class="btn btn-default" type="button">
+                    <span class="icojam_button_delete_1"></span>
+                </button>
+            {{/unless}}
+
             <div data-role="error-text"></div>
 
             <!--            <div data-role="error-button">
@@ -212,6 +218,11 @@
         </div>
 
         <div data-content="empty" class="text-center">
+            {{#unless hideRemoveButton}}
+                <button data-action="remove" class="btn btn-default" type="button">
+                    <span class="icojam_button_delete_1"></span>
+                </button>
+            {{/unless}}
             Empty
             <button data-action="filter" class="btn btn-default" type="button">
                 <span class="glyphicon glyphicon-filter" aria-hidden="true"></span>
