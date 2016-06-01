@@ -88,7 +88,9 @@ define([
 
         var isSuitable = this._isSuitable();
 
-        log.info("Map tab: is tab suitable? " + isSuitable);
+        //log.info("Map tab: is tab suitable? " + isSuitable);
+
+        console.log('MAP ISSUITABLE',this)
 
         if (isSuitable === true) {
             return true;
@@ -326,45 +328,54 @@ define([
         var $elMap = this.$el.find("#map_" + this.id),
             lang = this.lang ? this.lang.toUpperCase() : "EN";
 
-        this.map = new MapCreator({
-            el: $elMap,
-            model: self.model,
-            lang: lang,
-            fenix_ui_map: {
+            var MapCreatorOPTS = {
+                el: $elMap,
                 lang: lang,
-                plugins: {
-                    fullscreen: false,
-                    scalecontrol:'bottomleft'
-                },
-                guiController: {
-                    container: this.$el.find(s.TOOLBAR),
-                    wmsLoader: false                 
-                },
-                baselayers: {
-                    cartodb: {
-                        title_en: "CartoDB light",
-                        url: 'http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png',
-                        subdomains: 'abcd',
-                        maxZoom: 19
+                fenix_ui_map: {
+                    lang: lang,
+                    plugins: {
+                        fullscreen: false,
+                        scalecontrol:'bottomleft'
                     },
-                    osm: {
-                        //url: "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                        url: "http://{s}.tiles.wmflabs.org/osm-no-labels/{z}/{x}/{y}.png",
-                        title_en: "Openstreetmap",
-                        maxZoom: 16
+                    guiController: {
+                        container: this.$el.find(s.TOOLBAR),
+                        wmsLoader: false                 
                     },
-                    world_imagery: {
-                        url: "http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-                        title_en: "World Imagery"
+                    baselayers: {
+                        cartodb: {
+                            title_en: "CartoDB light",
+                            url: 'http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png',
+                            subdomains: 'abcd',
+                            maxZoom: 19
+                        },
+                        osm: {
+                            //url: "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                            url: "http://{s}.tiles.wmflabs.org/osm-no-labels/{z}/{x}/{y}.png",
+                            title_en: "Openstreetmap",
+                            maxZoom: 16
+                        },
+                        world_imagery: {
+                            url: "http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+                            title_en: "World Imagery"
+                        }
+                    },
+                    legendOptions: {
+                        fontColor: '0x000000',
+                        fontSize: '12',
+                        bgColor: '0xFFFFFF'
                     }
-                },
-                legendOptions: {
-                    fontColor: '0x000000',
-                    fontSize: '12',
-                    bgColor: '0xFFFFFF'
                 }
-            }
-        });
+            };
+
+
+console.log('MAP _renderMap', self.model)
+
+        if(self.model)
+            MapCreatorOPTS.model = self.model;
+        else
+            MapCreatorOPTS.uid = '';//
+
+        this.map = new MapCreator(MapCreatorOPTS);
         //FOR TESTING TOOLBAR DRAGDROP
         
         //this.map.fenixMap.addLayer( this._getTestLayer() );
@@ -485,7 +496,13 @@ define([
         var valid = true,
             errors = [];
 
-        //errors.push({code: ERR.MISSING_CONTAINER});
+        var resourceType = Utils.getNestedProperty("metadata.meContent.resourceRepresentationType", this.model);
+
+console.log('MAP _isSuitable', resourceType);
+
+        if (resourceType !== "dataset" && resourceType !== "geographic") {
+            errors.push({code: ERR.INCOMPATIBLE_RESOURCE_TYPE});
+        }
 
         return errors.length > 0 ? errors : valid;
     };

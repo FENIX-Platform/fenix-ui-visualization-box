@@ -563,6 +563,7 @@ define([
                 break;
 
             case "geographic" :
+console.log('_checkResourceType', this._getObjState("model"))
 
                 this._reactToModelStatus();
                 break;
