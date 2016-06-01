@@ -787,6 +787,8 @@ $olap-drag: #bbbbbb;
 
 }
 
+
+
 .gt-freeze-div[id*="headDiv"] {
 
   table {
@@ -810,6 +812,23 @@ $olap-drag: #bbbbbb;
 .gt-row-even {
   background-color: white;
 }
+
+
+
+/* Hide selectors */
+
+[data-section="table"]{
+
+  [data-role="toolbar"]{
+
+    [data-group="hidden"], [data-group="aggregations"], [data-group="values"], [data-selector="aggregator_value"]{
+      display: none !important;
+    }
+
+  }
+
+}
+
 
 /* Toolbar */
 

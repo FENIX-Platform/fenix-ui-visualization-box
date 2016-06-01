@@ -6554,6 +6554,10 @@ input[type="radio"]:disabled + label {
 .gt-row-even {
   background-color: white; }
 
+/* Hide selectors */
+[data-section="table"] [data-role="toolbar"] [data-group="hidden"], [data-section="table"] [data-role="toolbar"] [data-group="aggregations"], [data-section="table"] [data-role="toolbar"] [data-group="values"], [data-section="table"] [data-role="toolbar"] [data-selector="aggregator_value"] {
+  display: none !important; }
+
 /* Toolbar */
 .gt-toolbar-box {
   padding-top: 5px;
