@@ -92,7 +92,7 @@ define([
         var box = this.createBox({
                 el: s.CLONE,
                 environment : environment,
-                uid: "UNECA_Education",
+                uid: "UNECA_Education"
             });
 
         log.trace("Rendering clone box: end");

@@ -326,7 +326,7 @@ define([
     Box.prototype._reactToModelStatus = function (s) {
 
         log.info("React to model status: ");
-        log.info(s)
+        log.info(s);
 
         //reset error
         this._setObjState("error", null);
@@ -334,7 +334,7 @@ define([
         var status = s || this._getModelStatus();
 
         log.info("Status found: ");
-        log.info(status)
+        log.info(status);
 
         switch (status) {
             case 'ready' :
@@ -446,7 +446,7 @@ define([
 
         this._setObjState("process", process.slice(0));
 
-        return this.bridge.getResource({
+        return this.bridge.getProcessedResource({
             body: process,
             uid: this._getObjState("uid"),
             version: this._getObjState("version"),
@@ -469,6 +469,8 @@ define([
 
         this._updateModel(resource);
 
+        this._getModelInfo();
+
         this.setStatus("ready");
 
         this._flip("front");
@@ -486,10 +488,8 @@ define([
             newSize = Utils.getNestedProperty("size", resource);
 
         //if metadata exists updated only dsd
-        if (model.metadata) {
+        if (newDsd) {
             Utils.assign(model, "metadata.dsd", newDsd);
-        } else {
-            Utils.assign(model, "metadata", newMetadata);
         }
 
         if (Array.isArray(newData)) {
@@ -531,7 +531,7 @@ define([
         log.info("Load resource metadata success");
         log.info(metadata);
 
-        this._updateModel({metadata: metadata});
+        this._setObjState("model", {metadata: metadata});
 
         this._checkResourceType();
 
@@ -578,13 +578,11 @@ define([
 
         this.setStatus("loading");
 
-        var queryParams = C.d3pQueryParameters || CD.d3pQueryParameters;
-
         return this.bridge.getResource({
             body: [],
             uid: this._getObjState("uid"),
             version: this._getObjState("version"),
-            params: $.extend(true, {}, queryParams, {perPage: 1, page: 1})
+            params: $.extend(true, {}, {perPage: 1})
         });
     };
 

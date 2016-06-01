@@ -297,10 +297,12 @@ define([
             return;
         }
 
-        this.table = new Olap($.extend(true, {}, {
+        var config = $.extend(true, {}, {
             model: this.model,
             el: "#table_" + this.id
-        }, configuration));
+        }, configuration);
+
+        this.table = new Olap(config);
     };
 
     TableTab.prototype._renderToolbar = function () {
