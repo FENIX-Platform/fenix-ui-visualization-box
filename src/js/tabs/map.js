@@ -365,13 +365,18 @@ define([
                 }
             };
 
+        var resType = Utils.getNestedProperty("metadata.meContent.resourceRepresentationType", self.model);
 
-//console.log('MAP _renderMap', self.model)
-
-        if(self.model)
+        if(resType==='dataset') {
             MapCreatorOPTS.model = self.model;
-        else
-            MapCreatorOPTS.uid = '';//
+        }
+        else if(resType==='geographic') {
+
+            var layerName = Utils.getNestedProperty("metadata.dsd.layerName", self.model),
+                workspace = Utils.getNestedProperty("metadata.dsd.workspace", self.model);
+            
+            MapCreatorOPTS.uid = workspace+':'+layerName;
+        }
 
         this.map = new MapCreator(MapCreatorOPTS);
         //FOR TESTING TOOLBAR DRAGDROP
@@ -496,7 +501,7 @@ define([
 
         var resourceType = Utils.getNestedProperty("metadata.meContent.resourceRepresentationType", this.model);
 
-//console.log('MAP _isSuitable', resourceType);
+console.log('MAP _isSuitable', resourceType);
 
         if (resourceType !== "dataset" && resourceType !== "geographic") {
             errors.push({code: ERR.INCOMPATIBLE_RESOURCE_TYPE});
