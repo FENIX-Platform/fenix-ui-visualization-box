@@ -144,10 +144,6 @@ define([
      */
     Box.prototype.setStatus = function (status) {
 
-        //TODO check if status != current status
-
-        console.log(status)
-
         this._setStatus(status);
     };
 
@@ -1055,8 +1051,6 @@ define([
         this._setObjState("tabOpts", opts);
 
         //hide all tabs and show the selected one
-        //this.$el.find(s.CONTENT_READY).find("[data-section]").hide();
-        //this.$el.find(s.CONTENT_READY).find("[data-section='" + tab + "']").show();
         this.$el.find(s.CONTENT_READY).attr("data-tab", this._getObjState("tab"));
 
         this._showTabContent();
@@ -2027,6 +2021,9 @@ define([
 
         this._syncFrontTabs();
 
+        var currentTab = this._getObjState('tab');
+        this._showFrontTab(currentTab);
+
     };
 
     Box.prototype._onDownloadEvent = function (payload) {
@@ -2130,8 +2127,6 @@ define([
             this.$el.find(s.FLIP_CONTAINER).addClass(C.flippedClassName || CD.flippedClassName);
         } else {
             this.$el.find(s.FLIP_CONTAINER).removeClass(C.flippedClassName || CD.flippedClassName);
-            var currentTab = this._getObjState('tab');
-            this._showFrontTab(currentTab);
         }
 
         this._setObjState('face', face);

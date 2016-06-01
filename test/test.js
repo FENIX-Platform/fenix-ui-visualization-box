@@ -130,7 +130,7 @@ require([
     ], function (log, Test) {
 
         //trace, debug, info, warn, error, silent
-        log.setLevel('warn');
+        log.setLevel('error');
 
         log.warn("~~~~~ FENIX Visualization Box: test");
         log.info("===== Start testing:...");
