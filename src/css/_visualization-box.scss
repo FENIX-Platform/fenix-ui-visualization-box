@@ -817,7 +817,7 @@ $olap-drag: #bbbbbb;
 
 /* Hide selectors */
 
-[data-section="table"]{
+[data-section="table"], [data-section="chart"]{
 
   [data-role="toolbar"]{
 
