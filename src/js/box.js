@@ -146,6 +146,8 @@ define([
 
         //TODO check if status != current status
 
+        console.log(status)
+
         this._setStatus(status);
     };
 
@@ -339,7 +341,6 @@ define([
 
         switch (status) {
             case 'ready' :
-                this.setStatus("ready");
                 this._renderBox();
                 break;
             case 'empty' :
@@ -352,7 +353,6 @@ define([
                 this.setStatus("loading");
                 break;
             case 'to_load' :
-                this.setStatus("loading");
                 this._loadResource()
                     .then(
                         _.bind(this._onLoadResourceSuccess, this),
@@ -1969,8 +1969,6 @@ define([
 
                 log.info("D3P process", process);
 
-                this.setStatus("loading");
-
                 this._loadResource(process)
                     .then(
                         _.bind(this._onLoadResourceSuccess, this),
@@ -1993,8 +1991,6 @@ define([
             } else {
                 log.warn("Abort map update because values have not changed");
             }
-
-            this.setStatus("ready");
 
             this._flip("front");
 
