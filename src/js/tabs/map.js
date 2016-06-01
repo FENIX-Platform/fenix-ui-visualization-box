@@ -90,7 +90,7 @@ define([
 
         //log.info("Map tab: is tab suitable? " + isSuitable);
 
-        console.log('MAP ISSUITABLE',this)
+        //console.log('MAP ISSUITABLE',this)
 
         if (isSuitable === true) {
             return true;
@@ -132,8 +132,6 @@ define([
      */
     MapTab.prototype.sync = function (state) {
         log.info("Sync tab. State:" + JSON.stringify(state));
-
-    //console.log('MapTab.prototype.sync',state);
 
         this.syncState = state;
 
@@ -368,7 +366,7 @@ define([
             };
 
 
-console.log('MAP _renderMap', self.model)
+//console.log('MAP _renderMap', self.model)
 
         if(self.model)
             MapCreatorOPTS.model = self.model;
@@ -386,7 +384,7 @@ console.log('MAP _renderMap', self.model)
 
     MapTab.prototype.addLayersByFilter = function(filter) {
         
-        console.log('addLayersByFilter', filter);
+        //console.log('addLayersByFilter', filter);
 
         /*var filter = {
             "valid": true,
@@ -498,7 +496,7 @@ console.log('MAP _renderMap', self.model)
 
         var resourceType = Utils.getNestedProperty("metadata.meContent.resourceRepresentationType", this.model);
 
-console.log('MAP _isSuitable', resourceType);
+//console.log('MAP _isSuitable', resourceType);
 
         if (resourceType !== "dataset" && resourceType !== "geographic") {
             errors.push({code: ERR.INCOMPATIBLE_RESOURCE_TYPE});

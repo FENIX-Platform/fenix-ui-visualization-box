@@ -483,12 +483,14 @@ define([
 
         var model = this._getObjState("model") || {},
             newMetadata = Utils.getNestedProperty("metadata", resource),
-            newDsd = Utils.getNestedProperty("dsd", newMetadata),
+            newDsd = Utils.getNestedProperty("dsd", newMetadata) || {},
             newData = Utils.getNestedProperty("data", resource),
             newSize = Utils.getNestedProperty("size", resource);
 
+        var dsdWithoutRid = _.without(Object.keys(newDsd), "rid");
+
         //if metadata exists updated only dsd
-        if (newDsd) {
+        if (dsdWithoutRid.length > 0) {
             Utils.assign(model, "metadata.dsd", newDsd);
         }
 
@@ -566,8 +568,8 @@ define([
 console.log('_checkResourceType', this._getObjState("model"))
 
                 this._reactToModelStatus();
-                break;
 
+                break;
             default :
                 this._setObjState("error", {code: ERR.UNKNOWN_RESOURCE_TYPE});
                 this._setStatus("error")
@@ -1375,7 +1377,8 @@ console.log('_checkResourceType', this._getObjState("model"))
         var self = this,
             forbiddenIds = ["value"];
 
-        var columns = Utils.getNestedProperty("metadata.dsd.columns", this._getObjState("model"))
+        var cols = Utils.getNestedProperty("metadata.dsd.columns", this._getObjState("model")) || [],
+            columns = cols
                 .filter(function (col) {
                     return !_.contains(forbiddenIds, col.id.toLowerCase());
                 }).filter(function (col) {
@@ -1683,7 +1686,7 @@ console.log('_checkResourceType', this._getObjState("model"))
             sync = {},
             source = [],
             values = this._getBackFilterValues(),
-            columns = Utils.getNestedProperty("metadata.dsd.columns", self._getObjState("model")),
+            columns = Utils.getNestedProperty("metadata.dsd.columns", self._getObjState("model")) || [],
             columnsSet = columns
                 .filter(function (c) {
                     return !c.id.endsWith("_" + self.lang.toUpperCase());
@@ -1700,7 +1703,7 @@ console.log('_checkResourceType', this._getObjState("model"))
                 return col.id;
             }),
             disabledColumnsIds = _.without.apply(_, [resourceColumnsIds].concat(enabledColumnsIds)),
-            valueDimension = _.findWhere(resourceColumns, {subject: "value"});
+            valueDimension = _.findWhere(resourceColumns, {subject: "value"}) || {};
 
         if (filterIsInitialized === true || aggregationsValues.length > 0) {
 
