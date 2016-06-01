@@ -302,13 +302,17 @@ define([
 
     DownloadTab.prototype._isSuitable = function () {
 
+
         var valid = true,
             errors = [];
 
-        //errors.push({code: ERR.MISSING_CONTAINER});
+        var resourceType = Utils.getNestedProperty("metadata.meContent.resourceRepresentationType", this.model);
+
+        if (resourceType !== "dataset") {
+            errors.push({code: ERR.INCOMPATIBLE_RESOURCE_TYPE});
+        }
 
         return errors.length > 0 ? errors : valid;
-
     };
 
     DownloadTab.prototype._dispose = function () {

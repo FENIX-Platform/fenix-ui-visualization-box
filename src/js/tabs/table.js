@@ -373,7 +373,11 @@ define([
         var valid = true,
             errors = [];
 
-        //errors.push({code: ERR.MISSING_CONTAINER});
+        var resourceType = Utils.getNestedProperty("metadata.meContent.resourceRepresentationType", this.model);
+
+        if (resourceType !== "dataset") {
+            errors.push({code: ERR.INCOMPATIBLE_RESOURCE_TYPE});
+        }
 
         return errors.length > 0 ? errors : valid;
     };
