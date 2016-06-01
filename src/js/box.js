@@ -304,6 +304,7 @@ define([
 
         //data validation
         this._setObjState("max_size", this.initial.max_data_size || C.max_data_size || CD.max_data_size);
+        this._setObjState("min_size", this.initial.min_data_size || C.min_data_size || CD.min_data_size);
 
         // back filter values
         this._setObjState("back_filter", this.initial.back_filter);
@@ -402,7 +403,7 @@ define([
                     return 'to_filter';
                 }
 
-                if (Array.isArray(model.data) && model.data.length === 0) {
+                if (Array.isArray(model.data) && model.data.length <= this._getObjState("min_size")) {
                     return 'empty';
                 }
 
@@ -413,9 +414,7 @@ define([
                 if (Array.isArray(model.data) && model.data.length > 0) {
                     return 'ready';
                 }
-              
             }
-
         }
 
         if (resourceType === 'geographic') {
@@ -565,7 +564,6 @@ define([
                 break;
 
             case "geographic" :
-console.log('_checkResourceType', this._getObjState("model"))
 
                 this._reactToModelStatus();
 
@@ -1092,6 +1090,7 @@ console.log('_checkResourceType', this._getObjState("model"))
     Box.prototype._createTabInstance = function (tab) {
 
         var state = this._getObjState("tabStates." + tab) || {},
+            model = $.extend(true, {}, this._getObjState("model")),
             registry = this.tabRegistry,
         //Note that for sync call the argument of require() is not an array but a string
             Tab = require(registry[tab].path),
@@ -1099,11 +1098,13 @@ console.log('_checkResourceType', this._getObjState("model"))
                 $el: this._getTabContainer(tab),
                 box: this,
                 lang: this.lang,
-                model: $.extend(true, {}, this._getObjState("model")),
+                model: model,
                 id: tab + "_" + this.id,
                 environment: this._getObjState("environment")
             }),
-            instance = new Tab(config);
+            instance;
+
+        instance = new Tab(config);
 
         //Subscribe to tab events
         instance.on('filter', _.bind(this._onTabToolbarChangeEvent, this));
@@ -1274,17 +1275,23 @@ console.log('_checkResourceType', this._getObjState("model"))
 
         var filterConfiguration = this._createBackTabConfiguration("filter"),
             aggregationConfiguration = this._createBackTabConfiguration("aggregations"),
-            mapConfiguration = this._createBackTabConfiguration("map");
+            mapConfiguration = this._createBackTabConfiguration("map"),
+            model =  $.extend(true, {}, this._getObjState("model"));
 
         this.processSteps = [];
 
         if (this._stepControlAccess("metadata")) {
+
+            var title = Utils.getNestedProperty("metadata.title", model) || {},
+                uid = Utils.getNestedProperty("metadata.uid", model),
+                label = title[this.lang] ? title[this.lang] : uid;
+
             this.processSteps.push({
                 tab: "metadata",
                 id: "metadata",
-                model: $.extend(true, {}, this._getObjState("model")),
+                model:model,
                 labels: {
-                    title: i18nLabels["step_metadata"]
+                    title: label
                 }
             });
         }
@@ -1961,6 +1968,8 @@ console.log('_checkResourceType', this._getObjState("model"))
                 this._setObjState("process", process.slice(0));
 
                 log.info("D3P process", process);
+
+                this.setStatus("loading");
 
                 this._loadResource(process)
                     .then(
