@@ -21,7 +21,9 @@ define(function () {
         MISSING_GROUP_BY : "missing_group_by",
         MISSING_VALUE_IN_AGGREGATION_RULES : "missing_value_in_aggregation_rules",
         GROUP_BY_CONTAINS_NO_KEY : "group_by_contains_no_key",
-        EXCLUDE_KEY_DIMENSION: "exclude_key_dimension"
+        EXCLUDE_KEY_DIMENSION: "exclude_key_dimension",
+
+        INCOMPATIBLE_RESOURCE_TYPE : "incompatible_resource_type"
         
 
     };
