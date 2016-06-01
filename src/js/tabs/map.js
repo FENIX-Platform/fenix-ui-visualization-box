@@ -501,7 +501,7 @@ define([
 
         var resourceType = Utils.getNestedProperty("metadata.meContent.resourceRepresentationType", this.model);
 
-console.log('MAP _isSuitable', resourceType);
+//console.log('MAP _isSuitable', resourceType);
 
         if (resourceType !== "dataset" && resourceType !== "geographic") {
             errors.push({code: ERR.INCOMPATIBLE_RESOURCE_TYPE});

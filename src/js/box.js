@@ -561,6 +561,8 @@ define([
 
             case "geographic" :
 
+                this.setStatus("ready");
+
                 this._reactToModelStatus();
 
                 break;
