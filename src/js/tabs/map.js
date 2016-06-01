@@ -328,7 +328,7 @@ define([
 
         this.map = new MapCreator({
             el: $elMap,
-            model: self._getObjState("model"),
+            model: self.model,
             lang: lang,
             fenix_ui_map: {
                 lang: lang,

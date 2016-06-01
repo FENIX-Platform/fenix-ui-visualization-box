@@ -5,7 +5,7 @@ define(function () {
 
     return {
 
-        confirm_remove : "Are you sure?",
+        confirm_remove : "Remove resource?",
         submit_button : "Submit",
         reset_button : "Reset",
         add_button : "Add",

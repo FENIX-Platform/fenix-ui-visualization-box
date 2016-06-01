@@ -104,10 +104,11 @@ define([
 
             this.valid = false;
 
+            log.error("Impossible to create visualization box");
+            log.error(valid);
+
             this._setObjState("error", valid);
 
-            log.error("Impossible to create visualization box");
-            log.error(valid)
         }
     }
 
@@ -324,10 +325,16 @@ define([
 
     Box.prototype._reactToModelStatus = function (s) {
 
+        log.info("React to model status: ");
+        log.info(s)
+
         //reset error
         this._setObjState("error", null);
 
         var status = s || this._getModelStatus();
+
+        log.info("Status found: ");
+        log.info(status)
 
         switch (status) {
             case 'ready' :
@@ -370,45 +377,60 @@ define([
         var uid = this._getObjState("uid"),
             process = this._getObjState("process"),
             version = this._getObjState("version"),
-            model = this._getObjState("model");
+            model = this._getObjState("model"),
+            metadata = this._getObjState("model.metadata"),
+            resourceType = this._getObjState("resourceRepresentationType");
 
-        if (model) {
-
-            if (typeof model !== 'object') {
-                return 'error';
-            }
-
-            if (model.size === 0) {
-                return 'empty';
-            }
-
-            if (!Array.isArray(model.data)) {
-                return 'to_filter';
-            }
-
-            if (Array.isArray(model.data) && model.data.length === 0) {
-                return 'empty';
-            }
-
-            if (model.size > this._getObjState("max_size")) {
-                return 'huge';
-            }
-
-            if (Array.isArray(model.data) && model.data.length > 0) {
-                return 'ready';
-            }
-
-            return 'error';
-        }
-
-        if (uid) {
-
-            if (process) {
-                return 'to_load';
-            }
+        if (_.isEmpty(metadata)) {
 
             return 'missing_metadata';
         }
+
+        if (resourceType === 'dataset') {
+
+            if (model) {
+
+                if (typeof model !== 'object') {
+                    return 'error';
+                }
+
+                if (model.size === 0) {
+                    return 'empty';
+                }
+
+                if (!Array.isArray(model.data)) {
+                    return 'to_filter';
+                }
+
+                if (Array.isArray(model.data) && model.data.length === 0) {
+                    return 'empty';
+                }
+
+                if (model.size > this._getObjState("max_size")) {
+                    return 'huge';
+                }
+
+                if (Array.isArray(model.data) && model.data.length > 0) {
+                    return 'ready';
+                }
+              
+            }
+
+        }
+
+        if (resourceType === 'geographic') {
+
+            var dsd = this._getObjState("model.metadata.dsd"),
+                workspace =  dsd.workspace,
+                layerName =  dsd.layerName;
+
+            if (workspace && layerName) {
+                return 'ready'
+            }
+
+        }
+
+        this._setObjState("error", {code: ERR.RESOURCE_STATUS});
 
         return 'error';
 
@@ -505,10 +527,11 @@ define([
         this._setStatus("error");
     };
 
-    Box.prototype._loadResourceMetadataSuccess = function (resource) {
+    Box.prototype._loadResourceMetadataSuccess = function (metadata) {
         log.info("Load resource metadata success");
+        log.info(metadata);
 
-        this._updateModel({metadata: resource});
+        this._updateModel({metadata: metadata});
 
         this._checkResourceType();
 
@@ -519,14 +542,13 @@ define([
 
         this._getModelInfo();
 
-        var model = this._getObjState("model"),
-            resourceType = this._getObjState("resourceRepresentationType");
+        var resourceType = this._getObjState("resourceRepresentationType");
 
         log.info("Resource type is: " + resourceType);
 
         switch (resourceType) {
             case "dataset" :
-                var datasources = Utils.getNestedProperty("metadata.dsd.datasources", model);
+                var datasources = Utils.getNestedProperty("metadata.dsd.datasources", this._getObjState("model"));
                 if (_.isArray(datasources) && datasources.length > 0) {
 
                     this._fetchResource().then(
@@ -542,21 +564,7 @@ define([
 
             case "geographic" :
 
-                var dsd = Utils.getNestedProperty("metadata.dsd", model);
-                
-                this._reactToModelStatus(s);
-
-                var layers = dsd['workspace']+':'+dsd['layerName'];
-
-                console.log('resourceType: LAYER, layers:', layers);
-                
-                this._fetchResourceSuccess
-                //this._setObjState('tab','map');
-                //this._showFrontTab("map");
-                //this.setStatus("ready");
-                this._renderBox();
-                //this._renderBoxFaces();
-
+                this._reactToModelStatus();
                 break;
 
             default :
@@ -613,8 +621,7 @@ define([
 
     Box.prototype._getModelInfo = function () {
 
-        var model = this._getObjState("model"),
-            rt = Utils.getNestedProperty("metadata.meContent.resourceRepresentationType", model) || "",
+        var rt = this._getObjState("model.metadata.meContent.resourceRepresentationType") || "",
             resourceType = rt.toLowerCase();
 
         log.info("Resource type is: " + resourceType);
@@ -658,6 +665,9 @@ define([
             }
 
         }, this));
+
+        log.info("Tab paths found: ");
+        log.info(paths);
 
         //Async load of plugin js source
         require(paths, _.bind(this._preloadTabSourcesSuccess, this));
@@ -1163,7 +1173,25 @@ define([
 
     Box.prototype._showDefaultFrontTab = function () {
 
-        var tab = this._getObjState("tab") || C.tab || CD.tab;
+        var tab = this._getObjState("tab") || C.tab || CD.tab,
+            defaultTabIsSuitable = this._getObjState("tabs." + tab + ".suitable");
+
+        if (defaultTabIsSuitable !== true) {
+             log.warn("Default tab is not suitable. Find first suitable tab to show");
+
+            var tabsKeys = Object.keys(this.tabs),
+                found = false;
+
+            _.each(tabsKeys, _.bind(function (t) {
+
+                if (!found === this._getObjState("tabs." + t + ".suitable") === true) {
+
+                    tab = t;
+                }
+
+            }, this));
+
+        }
 
         this._showFrontTab(tab);
     };
