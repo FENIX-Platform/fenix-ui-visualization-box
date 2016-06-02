@@ -197,13 +197,21 @@
 
         <div data-content="error" class="text-center">
 
-            {{#unless hideRemoveButton}}
-                <button data-action="remove" class="btn btn-default" type="button">
-                    <span class="icojam_button_delete_1"></span>
-                </button>
-            {{/unless}}
 
-            <div data-role="error-text"></div>
+            <div class="content-message text-center">
+                <div class="content-message-img error-img"></div>
+                <h2>An error occurred</h2>
+                <p>You can remove the AVB, please use the button below</p>
+
+                {{#unless hideRemoveButton}}
+                    <button data-action="remove" class="btn btn-floating btn-fx-status-btn" type="button">
+                        <span class="icojam_minus"></span>
+                    </button>
+                {{/unless}}
+
+
+            </div>
+
 
             <!--            <div data-role="error-button">
                             <button data-action="filter" class="btn btn-default" type="button">
@@ -218,22 +226,49 @@
         </div>
 
         <div data-content="empty" class="text-center">
-            {{#unless hideRemoveButton}}
-                <button data-action="remove" class="btn btn-default" type="button">
-                    <span class="icojam_button_delete_1"></span>
+
+            <div class="content-message text-center">
+                <div class="content-message-img empty-img"></div>
+                <h2>The result is empty</h2>
+                <p>You can remove the AVB or redo the filtering, please use the button below</p>
+
+                <!--<button data-action="remove" class="btn btn-floating btn-fx-status-btn" type="button">-->
+                    <!--<span class="icojam_button_delete_1"></span>-->
+                <!--</button>-->
+
+                <button data-action="filter" class="btn btn-floating btn-fx-status-btn" type="button">
+                    <span class="icojam_filter"></span>
                 </button>
-            {{/unless}}
-            Empty
-            <button data-action="filter" class="btn btn-default" type="button">
-                <span class="glyphicon glyphicon-filter" aria-hidden="true"></span>
-            </button>
+                {{#unless hideRemoveButton}}
+                    <button data-action="remove" class="btn btn-floating btn-fx-status-btn" type="button">
+                        <span class="icojam_minus"></span>
+                    </button>
+
+                {{/unless}}
+
+            </div>
+
+
         </div>
 
         <div data-content="huge" class="text-center">
-            TOO BIG
-            <button data-action="filter" class="btn btn-default" type="button">
-                <span class="glyphicon glyphicon-filter" aria-hidden="true"></span>
-            </button>
+
+
+            <div class="content-message text-center">
+                <div class="content-message-img huge-img"></div>
+                <h2>The result is too big for the visualization</h2>
+                <p>You can redo the filtering, please use the button below</p>
+
+
+                <button data-action="filter" class="btn btn-floating btn-fx-status-btn" type="button">
+                    <span class="icojam_filter"></span>
+                </button>
+
+
+            </div>
+
+
+
         </div>
 
     </div>

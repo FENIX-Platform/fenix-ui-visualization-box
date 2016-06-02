@@ -6273,6 +6273,10 @@ input[type="radio"]:disabled + label {
 .back-content {
   position: relative;
   z-index: 0; }
+  .back-content .alert {
+    position: absolute;
+    width: calc(100% - 30px);
+    z-index: 2; }
 
 .process-details {
   height: 350px;
@@ -6309,11 +6313,12 @@ input[type="radio"]:disabled + label {
   transition: all 0.3s ease 0s; }
   .filter-slide [data-selector] .btn-group.controller {
     opacity: 1; }
-  @media screen and (min-width: 480px) {
-    .filter-slide {
-      width: 50%; } }
   .filter-slide.swiper-slide-active {
     /* Stylize the active filter */ }
+
+@media screen and (min-width: 480px) {
+  .fx-grid-item[data-size="full"] .filter-slide {
+    width: 50%; } }
 
 .swiper-button-prev {
   background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2027%2044'%3E%3Cpath%20d%3D'M0%2C22L22%2C0l2.1%2C2.1L4.2%2C22l19.9%2C19.9L22%2C44L0%2C22L0%2C22L0%2C22z'%20fill%3D'#0076ff'%2F%3E%3C%2Fsvg%3E");
@@ -6631,5 +6636,27 @@ input[type="radio"]:disabled + label {
     top: -14px !important; }
   .fm-controller-box-item .ui-widget-header {
     background-color: #0076ff; }
+
+.btn-fx-status-btn span[class^="icojam_"] {
+  color: white;
+  font-size: 20px;
+  position: relative;
+  top: 3px; }
+
+.content-message {
+  margin-top: 80px; }
+
+.content-message-img {
+  width: 140px;
+  height: 129px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  margin: 25px auto; }
+  .content-message-img.empty-img {
+    background-image: url("../../../fenix-ui-common//css/img/mascot-empty-gray.svg"); }
+  .content-message-img.error-img {
+    background-image: url("../../../fenix-ui-common//css/img/mascot-error-gray.svg"); }
+  .content-message-img.huge-img {
+    background-image: url("../../../fenix-ui-common//css/img/mascot-huge-gray.svg"); }
 
 /*# sourceMappingURL=test.css.map */
