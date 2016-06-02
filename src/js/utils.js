@@ -52,7 +52,6 @@ define([
     };
 
     Utils.prototype.getTableCreatorConfiguration = function (values) {
-
         return this.fenixTool.toTableConfig(values);
     };
 
