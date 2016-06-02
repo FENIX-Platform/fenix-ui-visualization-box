@@ -982,7 +982,13 @@ define([
 
         this._checkSuitableTabs();
 
-        this._showMenuItem("download");
+        //TODO enforce logic
+        //check is resource type is dataset
+        if (this._getObjState("resourceRepresentationType") === 'dataset') {
+            this._showMenuItem("download");
+        } else {
+            log.warn("Download menu item not show because resource is not 'dataset'");
+        }
 
         this._showDefaultFrontTab();
 
@@ -2034,6 +2040,11 @@ define([
     Box.prototype._onDownloadEvent = function (payload) {
         log.info("Listen to event: " + this._getEventTopic("download"));
         log.info(payload);
+
+        if (this._getObjState("resourceRepresentationType") !== 'dataset') {
+            log.warn("Abort download because resource is not 'dataset'");
+            return;
+        }
 
         var target = $(payload.target).attr("data-target") || "";
 
