@@ -54,7 +54,8 @@ define(function () {
 
         //Load resource
         d3pQueryParameters : {
-            language : "EN"
+            language : "EN",
+            dsd : true
         },
 
         sync_tabs_on_toolbar_change : false,

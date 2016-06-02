@@ -25,12 +25,10 @@ define([
     "swiper",
     "amplify",
     "bootstrap"
-], function (log, require, $, _, _str, Handlebars, C, CD, ERR, EVT, 
-    Utils, MetadataViewer, Template, JsonMenu, RightMenuModel, 
-    
-    mapEarthstatLayers,
-
-    i18nLabels, Bridge, Report, Swiper) {
+], function (log, require, $, _, _str, Handlebars, C, CD, ERR, EVT,
+             Utils, MetadataViewer, Template, JsonMenu, RightMenuModel,
+             mapEarthstatLayers,
+             i18nLabels, Bridge, Report, Swiper) {
 
     'use strict';
 
@@ -417,8 +415,8 @@ define([
         if (resourceType === 'geographic') {
 
             var dsd = this._getObjState("model.metadata.dsd"),
-                workspace =  dsd.workspace,
-                layerName =  dsd.layerName;
+                workspace = dsd.workspace,
+                layerName = dsd.layerName;
 
             if (workspace && layerName) {
                 return 'ready'
@@ -484,6 +482,7 @@ define([
             newSize = Utils.getNestedProperty("size", resource);
 
         var dsdWithoutRid = _.without(Object.keys(newDsd), "rid");
+
 
         //if metadata exists updated only dsd
         if (dsdWithoutRid.length > 0) {
@@ -1184,7 +1183,7 @@ define([
             defaultTabIsSuitable = this._getObjState("tabs." + tab + ".suitable");
 
         if (defaultTabIsSuitable !== true) {
-             log.warn("Default tab is not suitable. Find first suitable tab to show");
+            log.warn("Default tab is not suitable. Find first suitable tab to show");
 
             var tabsKeys = Object.keys(this.tabs),
                 found = false;
@@ -1281,7 +1280,7 @@ define([
         var filterConfiguration = this._createBackTabConfiguration("filter"),
             aggregationConfiguration = this._createBackTabConfiguration("aggregations"),
             mapConfiguration = this._createBackTabConfiguration("map"),
-            model =  $.extend(true, {}, this._getObjState("model"));
+            model = $.extend(true, {}, this._getObjState("model"));
 
         this.processSteps = [];
 
@@ -1294,7 +1293,7 @@ define([
             this.processSteps.push({
                 tab: "metadata",
                 id: "metadata",
-                model:model,
+                model: model,
                 labels: {
                     title: label
                 }
@@ -1401,19 +1400,12 @@ define([
                 common: {
                     selector: {
                         hideSummary: true
+                    },
+                    template: {
+                        hideSwitch: true
                     }
                 }
             });
-
-        _.each(config, function (item, key) {
-
-            config[key] = $.extend(true, {}, item, {
-                template: {
-                    hideSwitch: false
-                }
-            });
-
-        });
 
         return {
 
@@ -2339,7 +2331,7 @@ define([
 
         var tab = this._getObjState("tab");
 
-        this._callTabInstanceMethod({ tab : tab,  method: "redraw"});
+        this._callTabInstanceMethod({tab: tab, method: "redraw"});
 
         this._syncFrontTabs();
 
