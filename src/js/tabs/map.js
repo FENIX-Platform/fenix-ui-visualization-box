@@ -332,7 +332,7 @@ define([
                 fenix_ui_map: {
                     lang: lang,
                     plugins: {
-                        fullscreen: false,
+                        fullscreen: true,
                         scalecontrol:'bottomleft'
                     },
                     guiController: {
