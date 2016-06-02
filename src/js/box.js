@@ -293,7 +293,7 @@ define([
         this._setObjState("model", this.initial.model);
         this._setObjState("version", this.initial.version ? this.initial.version : undefined);
         this._setObjState("values", this.initial.values);
-        this._setObjState("process", this.initial.process);
+        this._setObjState("process", this.initial.process || []);
         this._setObjState("uid", this.initial.uid || Utils.getNestedProperty("metadata.uid", this._getObjState("model")));
 
         this._setObjState("size", this.initial.size || C.size || CD.size);
@@ -714,7 +714,7 @@ define([
             aggregations = Utils.getNestedProperty("aggregations.values.aggregations", values) || [],
             columns = Utils.getNestedProperty("filter.values", values) || {},
             columnsKey = Object.keys(columns) || [],
-            valueDimension = _.findWhere(resourceColumns, {subject: "value"}),
+            valueDimension = _.findWhere(resourceColumns, {subject: "value"}) || {},
             valueId = valueDimension.id;
 
         var sum = _.where(aggregations, {parent: 'sum'}).map(function (item) {
@@ -850,7 +850,7 @@ define([
                 hasValues = false,
                 columns = Object.keys(Utils.getNestedProperty('filter.values', payload) || {}),
                 rowValues = payload.rows || {},
-                resourceColumns = Utils.getNestedProperty("metadata.dsd.columns", self._getObjState("model")),
+                resourceColumns = Utils.getNestedProperty("metadata.dsd.columns", self._getObjState("model")) || [],
                 columnsSet = resourceColumns
                     .filter(function (c) {
                         return !c.id.endsWith("_" + self.lang.toUpperCase());
@@ -1956,7 +1956,7 @@ define([
 
             //check filter values
 
-            var process = this._createQuery(filterValues);
+            var process = this._createQuery(filterValues) || [];
 
             if (!_.isEqual(process, this._getObjState("process"))) {
 
