@@ -51,22 +51,6 @@ define(function () {
 
             "className" : "testDec"
 
-        },
-        show : {
-
-            selector : {
-                id : "input",
-                type : "checkbox",
-                source : [
-                    { value : "unit", label : "Unit"},
-                    { value : "flag", label : "Flag"},
-                    { value : "code", label : "Code"}
-                ]
-            },
-
-            template : {
-                title : "Show"
-            }
         }
 
     }

@@ -8,6 +8,20 @@ define([
 
         'use strict';
 
-        return $.extend(true, {}, Shared)
+        return $.extend(true, {}, Shared,{show : {
+
+            selector : {
+                id : "input",
+                type : "checkbox",
+                source : [
+                   
+                    { value : "code", label : "Code"}
+                ]
+            },
+
+            template : {
+                title : "Show"
+            }
+        }})
 
     });
