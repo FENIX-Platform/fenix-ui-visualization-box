@@ -48,11 +48,11 @@ define([
 
     Test.prototype._render = function () {
 
-        this._renderLargeBox();
+        this._renderClone();
 
         return;
 
-        this._renderClone();
+        this._renderLargeBox();
 
         this._renderMediumBoxes();
 

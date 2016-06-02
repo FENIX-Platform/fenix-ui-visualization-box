@@ -337,6 +337,7 @@ define([
 
         switch (status) {
             case 'ready' :
+                this._getModelInfo();
                 this._renderBox();
                 break;
             case 'empty' :
@@ -629,7 +630,7 @@ define([
     Box.prototype._renderBox = function () {
         log.info("Render box start:");
 
-        this._getModelInfo();
+        this._setStatus("ready");
 
         this._renderBoxFaces();
     };
@@ -672,6 +673,8 @@ define([
     };
 
     Box.prototype._preloadTabSourcesSuccess = function () {
+
+        this._getModelInfo();
 
         this._reactToModelStatus();
     };
