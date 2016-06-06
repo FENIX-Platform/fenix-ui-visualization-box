@@ -63,7 +63,10 @@ define(function () {
         render_visualization_components : true,
 
         max_data_size : 7200,
-        min_data_size : 0
+
+        min_data_size : 0,
+
+        cache : true
 
     };
 });

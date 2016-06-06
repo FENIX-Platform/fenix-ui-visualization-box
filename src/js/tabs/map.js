@@ -44,6 +44,8 @@ define([
         this.channels = {};
         this.state = {};
 
+        this.cache = this.initial.cache;
+
         return this;
     }
 
@@ -448,6 +450,7 @@ define([
         this.toolbar = new Filter({
             items: this._createFilterConfiguration(),
             el: this.$el.find(s.TOOLBAR),
+            cache : this.cache,
             environment : this.initial.environment
         });
 

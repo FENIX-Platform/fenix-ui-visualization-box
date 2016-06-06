@@ -233,11 +233,13 @@ define([
         this.back_tab_instances = {};
 
         this.bridge = new Bridge({
-            environment: this._getObjState("environment")
+            environment: this._getObjState("environment"),
+            cache : this.cache
         });
 
         this.report = new Report({
-            environment: this._getObjState("environment")
+            environment: this._getObjState("environment"),
+            cache : this.cache
         });
     };
 
@@ -301,10 +303,12 @@ define([
         //data validation
         this._setObjState("max_size", this.initial.max_data_size || C.max_data_size || CD.max_data_size);
         this._setObjState("min_size", this.initial.min_data_size || C.min_data_size || CD.min_data_size);
+        this._setObjState("cache", this.initial.cache );
 
         // back filter values
         this._setObjState("back_filter", this.initial.back_filter);
         this._setObjState("back_map", this.initial.back_map);
+
 
     };
 
@@ -1104,7 +1108,8 @@ define([
                 lang: this.lang,
                 model: model,
                 id: tab + "_" + this.id,
-                environment: this._getObjState("environment")
+                environment: this._getObjState("environment"),
+                cache :  this._getObjState("cache")
             }),
             instance;
 
@@ -1172,7 +1177,6 @@ define([
             }
 
         }, this));
-
         this._syncFrontTabs();
 
     };
@@ -1592,6 +1596,7 @@ define([
             var Instance = new Tab({
                 $el: $el,
                 box: this,
+                cache :  this._getObjState("cache"),
                 model: $.extend(true, {}, this._getObjState("model")),
                 config: step.config,
                 values: step.values || {},

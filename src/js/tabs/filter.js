@@ -44,6 +44,8 @@ define([
 
         this.state = {};
 
+        this.cache = this.initial.cache;
+
         return this;
     }
 
@@ -328,6 +330,7 @@ define([
         this.filter = new Filter({
             items: this._createFilterConfiguration(),
             el: this.$el.find(s.CONTAINER),
+            cache : this.cache,
             template: this.template,
             common :  this.common,
             values : this.values,

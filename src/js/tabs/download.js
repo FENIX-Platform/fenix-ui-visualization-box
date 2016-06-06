@@ -29,7 +29,9 @@ define([
         this.channels = {};
         this.state = {};
 
-        this.report = new Report();
+        this.report = new Report({
+            cache : this.initial.cache
+        });
 
         return this;
     }

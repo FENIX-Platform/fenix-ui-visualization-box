@@ -31,6 +31,9 @@ define([
 
         this.channels = {};
         this.state = {};
+
+        this.cache = this.initial.cache;
+
         return this;
     }
 
@@ -99,7 +102,7 @@ define([
 
     /**
      * pub/sub
-     * @return {Object} filter instance
+     * @return {Object} chart tab instance
      */
     ChartTab.prototype.on = function (channel, fn) {
 
@@ -114,7 +117,7 @@ define([
     /**
      * Sync tab to passed state
      * @param {Object} state
-     * @return {Object} filter instance
+     * @return {Object} chart tab instance
      */
     ChartTab.prototype.sync = function (state) {
         log.info("Sync tab. State:" + JSON.stringify(state));
@@ -128,7 +131,7 @@ define([
 
     /**
      * Force redrawing
-     * @return {Object} filter instance
+     * @return {Object} chart tab instance
      */
     ChartTab.prototype.redraw = function () {
 
@@ -346,6 +349,7 @@ define([
 
         this.toolbar = new Filter({
             items: this._createFilterConfiguration(),
+            cache : this.cache,
             el: this.$el.find(s.TOOLBAR),
             environment: this.initial.environment
         });

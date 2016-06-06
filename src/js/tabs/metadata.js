@@ -24,6 +24,8 @@ define([
         this.channels = {};
         this.state = {};
 
+        this.cache = this.initial.cache;
+
         return this;
     }
 
@@ -216,6 +218,7 @@ define([
 
         this.metadataViewer.render({
             model: this.model.metadata ,
+            cache : this.cache,
             lang: 'en',
             el: this.$el.find('#metadata_' + this.id)
         });
