@@ -234,12 +234,12 @@ define([
 
         this.bridge = new Bridge({
             environment: this._getObjState("environment"),
-            cache : this.cache
+            cache : this._getObjState("cache")
         });
 
         this.report = new Report({
             environment: this._getObjState("environment"),
-            cache : this.cache
+            cache : this._getObjState("cache")
         });
     };
 
