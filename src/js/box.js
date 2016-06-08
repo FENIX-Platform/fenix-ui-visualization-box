@@ -234,12 +234,12 @@ define([
 
         this.bridge = new Bridge({
             environment: this._getObjState("environment"),
-            cache : this._getObjState("cache")
+            cache: this._getObjState("cache")
         });
 
         this.report = new Report({
             environment: this._getObjState("environment"),
-            cache : this._getObjState("cache")
+            cache: this._getObjState("cache")
         });
     };
 
@@ -303,7 +303,7 @@ define([
         //data validation
         this._setObjState("max_size", this.initial.max_data_size || C.max_data_size || CD.max_data_size);
         this._setObjState("min_size", this.initial.min_data_size || C.min_data_size || CD.min_data_size);
-        this._setObjState("cache", this.initial.cache );
+        this._setObjState("cache", this.initial.cache);
 
         // back filter values
         this._setObjState("back_filter", this.initial.back_filter);
@@ -1109,7 +1109,7 @@ define([
                 model: model,
                 id: tab + "_" + this.id,
                 environment: this._getObjState("environment"),
-                cache :  this._getObjState("cache")
+                cache: this._getObjState("cache")
             }),
             instance;
 
@@ -1390,13 +1390,18 @@ define([
     Box.prototype._createBackFilterTabConfiguration = function (values) {
 
         var self = this,
-            forbiddenIds = ["value"];
+            forbiddenIds = ["value"],
+            forbiddenSubjects = ["value"];
 
-        var cols = Utils.getNestedProperty("metadata.dsd.columns", this._getObjState("model")) || [],
+        var columnsFromDsd = Utils.getNestedProperty("metadata.dsd.columns", this._getObjState("model")) || [],
+            cols = columnsFromDsd.filter(function (col) {
+                return !_.contains(forbiddenSubjects, col.subject);
+            }),
             columns = cols
                 .filter(function (col) {
                     return !_.contains(forbiddenIds, col.id.toLowerCase());
-                }).filter(function (col) {
+                })
+                .filter(function (col) {
                     return !col.id.endsWith("_" + self.lang.toUpperCase());
                 }),
             config = Utils.createConfiguration({
@@ -1596,7 +1601,7 @@ define([
             var Instance = new Tab({
                 $el: $el,
                 box: this,
-                cache :  this._getObjState("cache"),
+                cache: this._getObjState("cache"),
                 model: $.extend(true, {}, this._getObjState("model")),
                 config: step.config,
                 values: step.values || {},
