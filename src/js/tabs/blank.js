@@ -5,7 +5,6 @@ define([
     "loglevel",
     "underscore",
     "fx-v-b/config/config",
-    "fx-v-b/config/config-default",
     "fx-v-b/config/errors",
     "fx-v-b/config/events",
     'fx-common/utils',
@@ -14,7 +13,7 @@ define([
     "fx-v-b/config/tabs/blank-toolbar-model",
     "handlebars",
     "amplify"
-], function ($, log, _, C, CD, ERR, EVT, Utils, tabTemplate, Filter, ToolbarModel, Handlebars) {
+], function ($, log, _, C, ERR, EVT, Utils, tabTemplate, Filter, ToolbarModel, Handlebars) {
 
     'use strict';
 
@@ -25,7 +24,7 @@ define([
 
     function BlankTab(obj) {
 
-        $.extend(true, this, {initial: obj, $el: $(obj.$el), box: obj.box, model: obj.model, id: obj.id});
+        $.extend(true, this, {initial: obj, $el: $(obj.el), box: obj.box, model: obj.model, id: obj.id});
 
         this.channels = {};
         this.state = {};
@@ -236,7 +235,7 @@ define([
 
         //Toolbar events
 
-        if (C.sync_tabs_on_toolbar_change === true || CD.sync_tabs_on_toolbar_change === true) {
+        if (C.syncTabsOnToolbarChange === true ) {
             this.toolbar.on('change', _.bind(this._onToolbarChangeEvent, this));
         }
     };
@@ -290,7 +289,7 @@ define([
         this._renderToolbar();
 
         //init toolbar position
-        this._slideToolbar(this.initial.toolbarPosition || C.toolbarPosition || CD.toolbarPosition);
+        this._slideToolbar(this.initial.toolbarPosition || C.toolbarPosition );
 
         //render creator
     };

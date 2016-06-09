@@ -5,7 +5,6 @@ define([
     "loglevel",
     "underscore",
     "fx-v-b/config/config",
-    "fx-v-b/config/config-default",
     "fx-v-b/config/errors",
     "fx-v-b/config/events",
     'fx-common/utils',
@@ -14,7 +13,7 @@ define([
     "i18n!fx-v-b/nls/box",
     "handlebars",
     "amplify"
-], function ($, log, _, C, CD, ERR, EVT, Utils, tabTemplate, Filter, i18nLabels, Handlebars) {
+], function ($, log, _, C, ERR, EVT, Utils, tabTemplate, Filter, i18nLabels, Handlebars) {
 
     'use strict';
 
@@ -32,7 +31,7 @@ define([
 
         $.extend(true, this, defaultOptions, {
             initial: obj,
-            $el: $(obj.$el),
+            $el: $(obj.el),
             box: obj.box,
             model: obj.model,
             id: obj.id,

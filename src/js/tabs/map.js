@@ -6,7 +6,6 @@ define([
     "underscore",
     "handlebars",
     "fx-v-b/config/config",
-    "fx-v-b/config/config-default",
     "fx-v-b/config/errors",
     "fx-v-b/config/events",
     "fx-v-b/js/utils",
@@ -18,24 +17,23 @@ define([
     "fx-m-c/start",
     "amplify"
 ], function ($, log, _, Handlebars,
-    C, CD, ERR, EVT,
+    C, ERR, EVT,
     BoxUtils, Utils,
     mapTemplate, Filter,
     ToolbarModel,
     myFunc,
     MapCreator) {
 
-    var defaultOptions = {}, s = {
+    var s = {
         TOOLBAR: "[data-role='toolbar']",
         TOOLBAR_BTN: "[data-role='filter-btn']"
     };
 
     function MapTab(obj) {
 
-        //$.extend(true, this, defaultOptions, o);
         $.extend(true, this, {
             initial: obj,
-            $el: $(obj.$el),
+            $el: $(obj.el),
             box: obj.box,
             model: obj.model,
             id: obj.id
@@ -320,7 +318,7 @@ define([
         //var toolbarValues = this.toolbar.getValues(),
         //    configuration = BoxUtils.getMapCreatorConfiguration(toolbarValues);
 
-        if (C.render_visualization_components === false || CD.render_visualization_components === false) {
+        if (C.renderVisualizationComponents === false ) {
             log.warn("Render Visualization component blocked by configuration");
             return;
         }
@@ -477,7 +475,7 @@ define([
         this._renderToolbar();
 
         //init toolbar position
-        var position = this.initial.toolbarPosition || C.toolbarPosition || CD.toolbarPosition;
+        var position = this.initial.toolbarPosition || C.toolbarPosition;
         if (position === 'up') {
             this.toolbarPosition = 'up';
             //this.$toolbar.hide();

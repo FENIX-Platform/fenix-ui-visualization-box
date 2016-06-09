@@ -7,7 +7,6 @@ define([
     "underscoreString",
     "handlebars",
     "fx-v-b/config/config",
-    "fx-v-b/config/config-default",
     "fx-v-b/config/errors",
     "fx-v-b/config/events",
     "fx-common/utils",
@@ -15,17 +14,14 @@ define([
     "text!fx-v-b/html/template.hbs",
     "fx-common/json-menu",
     "fx-v-b/config/right-menu-model",
-
-    //for map tab
-    "fx-v-b/config/tabs/map-earthstat-layers",
-
+    "fx-v-b/config/tabs/map-earthstat-layers", //for map backtab
     "i18n!fx-v-b/nls/box",
     "fx-common/bridge",
     "fx-reports/start",
     "swiper",
     "amplify",
     "bootstrap"
-], function (log, require, $, _, _str, Handlebars, C, CD, ERR, EVT,
+], function (log, require, $, _, _str, Handlebars, C, ERR, EVT,
              Utils, MetadataViewer, Template, JsonMenu, RightMenuModel,
              mapEarthstatLayers,
              i18nLabels, Bridge, Report, Swiper) {
@@ -74,7 +70,7 @@ define([
         this._registerHandlebarsHelpers();
 
         //Extend instance with obj and $el
-        $.extend(true, this, C, CD, {initial: obj || {}, $el: $(obj.el)});
+        $.extend(true, this, C, {initial: obj || {}, $el: $(obj.el)});
 
         var valid = this._validateInput();
 
@@ -286,8 +282,8 @@ define([
         this._setObjState("tab", this.initial.tab);
 
         //flip side
-        this._setObjState("face", this.initial.face || C.face || CD.face);
-        this._setObjState("faces", this.initial.faces || C.faces || CD.faces);
+        this._setObjState("face", this.initial.face || C.face);
+        this._setObjState("faces", this.initial.faces || C.faces);
 
         //resource process steps
         this._setObjState("model", this.initial.model);
@@ -296,19 +292,20 @@ define([
         this._setObjState("process", this.initial.process || []);
         this._setObjState("uid", this.initial.uid || Utils.getNestedProperty("metadata.uid", this._getObjState("model")));
 
-        this._setObjState("size", this.initial.size || C.size || CD.size);
-        this._setObjState("status", this.initial.status || C.status || CD.status);
+        this._setObjState("size", this.initial.size || C.size);
+        this._setObjState("status", this.initial.status || C.status );
         this._setObjState("environment", this.initial.environment);
 
         //data validation
-        this._setObjState("max_size", this.initial.max_data_size || C.max_data_size || CD.max_data_size);
-        this._setObjState("min_size", this.initial.min_data_size || C.min_data_size || CD.min_data_size);
-        this._setObjState("cache", this.initial.cache);
+        this._setObjState("max_size", this.initial.maxDataSize || C.maxDataSize);
+        this._setObjState("min_size", this.initial.minDataSize || C.minDataSize);
+        this._setObjState("cache", typeof this.initial.cache === "boolean" ? this.initial.cache : C.cache);
 
         // back filter values
-        this._setObjState("back_filter", this.initial.back_filter);
-        this._setObjState("back_map", this.initial.back_map);
+        this._setObjState("backFilter", this.initial.backFilter);
+        this._setObjState("backMap", this.initial.backMap);
 
+        this._setObjState("d3pQueryParameters", this.initial.d3pQueryParameters || C.d3pQueryParameters);
 
     };
 
@@ -439,7 +436,7 @@ define([
 
         this.setStatus("loading");
 
-        var queryParams = C.d3pQueryParameters || CD.d3pQueryParameters,
+        var queryParams = this._getObjState("d3pQueryParameters"),
             process = Array.isArray(p) ? p : [];
 
         this._setObjState("process", process.slice(0));
@@ -511,7 +508,7 @@ define([
 
         this.setStatus("loading");
 
-        var queryParams = C.d3pQueryParameters || CD.d3pQueryParameters;
+        var queryParams = this._getObjState("d3pQueryParameters");
 
         return this.bridge.getMetadata({
             uid: this._getObjState("uid"),
@@ -1103,7 +1100,7 @@ define([
         //Note that for sync call the argument of require() is not an array but a string
             Tab = require(registry[tab].path),
             config = $.extend(true, {}, state, {
-                $el: this._getTabContainer(tab),
+                el: this._getTabContainer(tab),
                 box: this,
                 lang: this.lang,
                 model: model,
@@ -1183,7 +1180,7 @@ define([
 
     Box.prototype._showDefaultFrontTab = function () {
 
-        var tab = this._getObjState("tab") || C.tab || CD.tab,
+        var tab = this._getObjState("tab") || C.tab,
             defaultTabIsSuitable = this._getObjState("tabs." + tab + ".suitable");
 
         if (defaultTabIsSuitable !== true) {
@@ -1367,8 +1364,8 @@ define([
     Box.prototype._createBackTabConfiguration = function (tab) {
 
         var configuration,
-            filterValues = this._getObjState("back_filter") || {},
-            mapValues = this._getObjState("back_map") || {};
+            filterValues = this._getObjState("backFilter") || {},
+            mapValues = this._getObjState("backMap") || {};
 
         switch (tab.toLowerCase()) {
             case 'aggregations':
@@ -1599,7 +1596,7 @@ define([
 
             //render tab
             var Instance = new Tab({
-                $el: $el,
+                el: $el,
                 box: this,
                 cache: this._getObjState("cache"),
                 model: $.extend(true, {}, this._getObjState("model")),
@@ -1970,7 +1967,7 @@ define([
 
                 hasFilterValues = true;
 
-                this._setObjState("back_filter", $.extend(true, {}, filterValues));
+                this._setObjState("backFilter", $.extend(true, {}, filterValues));
 
                 this._setObjState("process", process.slice(0));
 
@@ -1987,11 +1984,11 @@ define([
 
             //Check map values
 
-            if (!mapIsEmpty && !_.isEqual(mapValues, this._getObjState("back_map"))) {
+            if (!mapIsEmpty && !_.isEqual(mapValues, this._getObjState("backMap"))) {
 
                 hasMapValues = true;
 
-                this._setObjState("back_map", $.extend(true, {}, mapValues));
+                this._setObjState("backMap", $.extend(true, {}, mapValues));
 
                 this._updateMap();
 
@@ -2028,7 +2025,7 @@ define([
             return;
         }
 
-        var mapValues = this._getObjState("back_map").map;
+        var mapValues = this._getObjState("backMap").map;
 
         this._setObjState("sync.map", mapValues);
 
@@ -2142,9 +2139,9 @@ define([
         var face = side || "front";
 
         if (face !== "front") {
-            this.$el.find(s.FLIP_CONTAINER).addClass(C.flippedClassName || CD.flippedClassName);
+            this.$el.find(s.FLIP_CONTAINER).addClass(C.flippedClassName);
         } else {
-            this.$el.find(s.FLIP_CONTAINER).removeClass(C.flippedClassName || CD.flippedClassName);
+            this.$el.find(s.FLIP_CONTAINER).removeClass(C.flippedClassName);
         }
 
         this._setObjState('face', face);
@@ -2200,7 +2197,7 @@ define([
 
     Box.prototype._getBackFilterValues = function () {
 
-        var prevValues = this._getObjState('back_filter') || {},
+        var prevValues = this._getObjState('backFilter') || {},
             filterValues = this.back_tab_instances["filter"] ? this.back_tab_instances["filter"].getValues(null) : null,
             aggregationValues = this.back_tab_instances["aggregations"] ? this.back_tab_instances["aggregations"].getValues(null) : null,
             rowValues = this.back_tab_instances["filter"] ? this.back_tab_instances["filter"].getValues('fenix') : null;
@@ -2217,7 +2214,7 @@ define([
 
     Box.prototype._getBackMapValues = function () {
 
-        var prevValues = this._getObjState('back_map') || {},
+        var prevValues = this._getObjState('backMap') || {},
             mapValues = this.back_tab_instances["map"] ? this.back_tab_instances["map"].getValues(null) : null;
 
         var payload = {

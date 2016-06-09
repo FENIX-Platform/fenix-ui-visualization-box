@@ -5,12 +5,11 @@ define([
     "loglevel",
     "underscore",
     "fx-v-b/config/config",
-    "fx-v-b/config/config-default",
     "fx-v-b/config/errors",
     "fx-v-b/config/events",
     "fx-common/pivotator/fenixtool",
     "i18n!fx-v-b/nls/box"
-], function ($, log, _, C, CD, ERR, EVT, FenixTool, i18nLabels) {
+], function ($, log, _, C, ERR, EVT, FenixTool, i18nLabels) {
 
     'use strict';
 

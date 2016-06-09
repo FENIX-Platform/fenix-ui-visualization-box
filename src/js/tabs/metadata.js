@@ -5,7 +5,6 @@ define([
     "loglevel",
     "underscore",
     "fx-v-b/config/config",
-    "fx-v-b/config/config-default",
     "fx-v-b/config/errors",
     "fx-v-b/config/events",
     'fx-common/utils',
@@ -13,13 +12,13 @@ define([
     'fx-md-v/start',
     "handlebars",
     "amplify"
-], function ($, log, _, C, CD, ERR, EVT, Utils, tabTemplate, MetadataViewer, Handlebars) {
+], function ($, log, _, C, ERR, EVT, Utils, tabTemplate, MetadataViewer, Handlebars) {
 
     'use strict';
 
     function MetadataTab(obj) {
 
-        $.extend(true, this, {initial: obj, $el: $(obj.$el), box: obj.box, model: obj.model, id: obj.id});
+        $.extend(true, this, {initial: obj, $el: $(obj.el), box: obj.box, model: obj.model, id: obj.id});
 
         this.channels = {};
         this.state = {};

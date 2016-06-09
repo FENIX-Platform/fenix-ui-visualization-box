@@ -5,7 +5,6 @@ define([
     "loglevel",
     "underscore",
     "fx-v-b/config/config",
-    "fx-v-b/config/config-default",
     "fx-v-b/config/errors",
     "fx-v-b/config/events",
     "fx-v-b/js/utils",
@@ -16,7 +15,7 @@ define([
     "handlebars",
     'fx-chart/start',
     "amplify"
-], function ($, log, _, C, CD, ERR, EVT, BoxUtils, Utils, tabTemplate, Filter, ToolbarModel, Handlebars, ChartCreator) {
+], function ($, log, _, C, ERR, EVT, BoxUtils, Utils, tabTemplate, Filter, ToolbarModel, Handlebars, ChartCreator) {
 
     'use strict';
 
@@ -27,7 +26,7 @@ define([
 
     function ChartTab(obj) {
 
-        $.extend(true, this, {initial: obj, $el: $(obj.$el), box: obj.box, model: obj.model, id: obj.id});
+        $.extend(true, this, {initial: obj, $el: $(obj.el), box: obj.box, model: obj.model, id: obj.id});
 
         this.channels = {};
         this.state = {};
@@ -266,7 +265,7 @@ define([
         this.$toolbarBtn.on("click", _.bind(this._onToolbarBtnClick, this));
 
         //Toolbar events
-        if (C.sync_tabs_on_toolbar_change === true || CD.sync_tabs_on_toolbar_change === true) {
+        if (C.syncTabsOnToolbarChange === true) {
             this.toolbar.on('change', _.bind(this._onToolbarChangeEvent, this));
         } else {
             log.warn("Tab sync is disabled by configuration")
@@ -313,7 +312,7 @@ define([
         var toolbarValues = this.toolbar.getValues(),
             configuration = BoxUtils.getChartCreatorConfiguration(toolbarValues);
 
-        if (C.render_visualization_components === false || CD.render_visualization_components === false) {
+        if (C.renderVisualizationComponents === false ) {
             log.warn("Render Visualization component blocked by configuration");
             return;
         }
@@ -331,7 +330,7 @@ define([
         var toolbarValues = this.toolbar.getValues(),
             configuration = BoxUtils.getChartCreatorConfiguration(toolbarValues);
 
-        if (C.render_visualization_components === false || CD.render_visualization_components === false) {
+        if (C.renderVisualizationComponents === false) {
             log.warn("Render Visualization component blocked by configuration");
             return;
         }
@@ -389,7 +388,7 @@ define([
         //Chart will be create when filter is 'ready'
 
         //init toolbar position
-        var position = this.initial.toolbarPosition || C.toolbarPosition || CD.toolbarPosition;
+        var position = this.initial.toolbarPosition || C.toolbarPosition ;
         if (position === 'up') {
             this.toolbarPosition = 'up';
             //this.$toolbar.hide();
