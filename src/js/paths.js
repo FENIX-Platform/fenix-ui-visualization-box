@@ -8,7 +8,7 @@ define(function () {
             'fx-v-b/html': '../../html',
             'fx-v-b/js': './',
             'fx-v-b/config' :  '../../config',
-            'fx-v-b/nls' :  '../../i18n',
+            'fx-v-b/nls' :  '../../nls',
 
             //3rd party libs
             jquery: '{FENIX_CDN}/js/jquery/2.1.1/jquery.min',
