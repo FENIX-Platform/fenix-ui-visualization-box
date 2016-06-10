@@ -106,18 +106,16 @@ define([
 
     /**
      * pub/sub
-     * @return {Object} filter instance
+     * @return {Object} component instance
      */
-    DownloadTab.prototype.on = function (channel, fn) {
-
+    DownloadTab.prototype.on = function (channel, fn, context) {
+        var _context = context || this;
         if (!this.channels[channel]) {
             this.channels[channel] = [];
         }
-        this.channels[channel].push({context: this, callback: fn});
-
+        this.channels[channel].push({context: _context, callback: fn});
         return this;
     };
-
     /**
      * Sync tab to passed state
      * @param {Object} state
