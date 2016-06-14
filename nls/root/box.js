@@ -37,7 +37,17 @@ define(function () {
 
         series : "Series",
         xAxis : "X Axis",
-        yAxis : "Y Axis"
+        yAxis : "Y Axis",
+
+        tooltip_right_menu : "Settings",
+        tooltip_remove_button : "Close resource",
+        tooltip_resize_button : "Resize resource",
+        tooltip_clone_button : "Clone resource",
+        tooltip_flip_button : "Resource filtering",
+        tooltip_metadata_button : "Visualize metadata",
+        tooltip_minimize_button : "Minimize resource",
+        tooltip_download_button : "Download resource",
+        tooltip_toolbar_button : "Visualization options"
 
     }
 });

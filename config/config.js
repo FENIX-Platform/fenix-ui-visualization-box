@@ -34,13 +34,13 @@ define(function () {
             }
         },
         tabs: {
-            //'blank': {type: 'simple', tabOpts : {}},
-            'table': {type: 'simple', tabOpts : {}},
-            'metadata': {type: 'simple', tabOpts : {}},
-            'filter': {type: 'simple', tabOpts : {}},
-            'map': {type: 'simple', tabOpts : {}},
-            'chart': {type: 'simple', tabOpts : {type : "line"}},
-            'download': {type: 'simple', tabOpts : {}}
+            //'blank': {tabOpts : {}},
+            'table': {tabOpts : {}},
+            'metadata': {tabOpts : {}},
+            'filter': {tabOpts : {}},
+            'map': {tabOpts : {}},
+            'chart': {tabOpts : {type : "line"}},
+            'download': { tabOpts : {}}
         },
 
         flippedClassName : "flipped",

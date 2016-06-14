@@ -270,6 +270,8 @@ define([
             log.warn("Tab sync is disabled by configuration")
         }
 
+        this.$el.find('[data-toggle="tooltip"]').tooltip();
+
     };
 
     ChartTab.prototype._onToolbarEvent = function (payload) {

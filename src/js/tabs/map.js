@@ -265,6 +265,9 @@ define([
         });
 
         this.$toolbarBtn.on("click", _.bind(this._onToolbarBtnClick, this));
+
+        this.$el.find('[data-toggle="tooltip"]').tooltip();
+
     };
 
     MapTab.prototype._onToolbarEvent = function (payload) {

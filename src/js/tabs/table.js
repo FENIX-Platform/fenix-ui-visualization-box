@@ -251,6 +251,8 @@ define([
             this.toolbar.on('change', _.bind(this._onToolbarChangeEvent, this));
         }
 
+        this.$el.find('[data-toggle="tooltip"]').tooltip();
+
     };
 
     TableTab.prototype._onToolbarEvent = function (payload) {

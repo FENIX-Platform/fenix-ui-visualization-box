@@ -682,6 +682,8 @@ define([
 
     Box.prototype._renderBoxFaces = function () {
 
+        log.info("Render box faces");
+
         this._renderFrontFace();
 
         this._renderBackFace();
@@ -1017,6 +1019,9 @@ define([
             });
         });
 
+        //init tooltip
+        this.$el.find(s.FRONT_FACE).find('[data-toggle="tooltip"]').tooltip();
+
     };
 
     Box.prototype._showFrontTab = function (tab, opts) {
@@ -1274,6 +1279,9 @@ define([
 
             });
         });
+
+        //init tooltip
+        this.$el.find(s.BACK_FACE).find('[data-toggle="tooltip"]').tooltip();
 
     };
 
@@ -1756,7 +1764,7 @@ define([
                 inSource = _.findWhere(source, {value: id});
 
             if (!!inSource || !id) {
-                log.trace("Not include dimension because already present: " + id);
+                log.info("Not include dimension because already present: " + id);
                 return;
             }
 
@@ -1866,9 +1874,7 @@ define([
             log.info("Size: " + size);
 
             this._setSize(size);
-
         }
-
     };
 
     Box.prototype._onCloneEvent = function (payload) {
@@ -2401,6 +2407,8 @@ define([
 
         this.frontFaceIsRendered = false;
 
+        //this.$el.find(s.FRONT_FACE).find('[data-toggle="tooltip"]').tooltip().tooltip('destroy');
+
     };
 
     Box.prototype._disposeBackFace = function () {
@@ -2419,6 +2427,8 @@ define([
         this.$processSteps.empty();
 
         this.backFaceIsRendered = false;
+
+        //this.$el.find(s.BACK_FACE).find('[data-toggle="tooltip"]').tooltip().tooltip('destroy');
 
     };
 
@@ -2449,6 +2459,8 @@ define([
         this.$el.find(s.RIGHT_MENU).off();
 
         this.$el.find(s.OTHER_CONTENT).find("[data-action]").off();
+
+
 
     };
 
