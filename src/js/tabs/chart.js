@@ -12,10 +12,11 @@ define([
     "text!fx-v-b/html/tabs/chart.hbs",
     'fx-filter/start',
     "fx-v-b/config/tabs/chart-toolbar-model",
+    "i18n!fx-v-b/nls/box",
     "handlebars",
     'fx-chart/start',
     "amplify"
-], function ($, log, _, C, ERR, EVT, BoxUtils, Utils, tabTemplate, Filter, ToolbarModel, Handlebars, ChartCreator) {
+], function ($, log, _, C, ERR, EVT, BoxUtils, Utils, tabTemplate, Filter, ToolbarModel, i18nLabels, Handlebars, ChartCreator) {
 
     'use strict';
 
@@ -226,7 +227,7 @@ define([
     ChartTab.prototype._attach = function () {
 
         var template = Handlebars.compile(tabTemplate),
-            html = template(this);
+            html = template($.extend(true, {}, this, i18nLabels));
 
         this.$el.html(html);
     };
@@ -269,8 +270,6 @@ define([
         } else {
             log.warn("Tab sync is disabled by configuration")
         }
-
-        this.$el.find('[data-toggle="tooltip"]').tooltip();
 
     };
 

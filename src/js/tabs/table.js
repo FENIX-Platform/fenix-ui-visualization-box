@@ -12,10 +12,11 @@ define([
     "text!fx-v-b/html/tabs/table.hbs",
     'fx-filter/start',
     "fx-v-b/config/tabs/table-toolbar-model",
+    "i18n!fx-v-b/nls/box",
     "handlebars",
     'fx-olap/start',
     "amplify"
-], function ($, log, _, C, ERR, EVT, BoxUtils, Utils, tabTemplate, Filter, ToolbarModel, Handlebars, Olap) {
+], function ($, log, _, C, ERR, EVT, BoxUtils, Utils, tabTemplate, Filter, ToolbarModel, i18nLabels, Handlebars, Olap) {
 
     'use strict';
 
@@ -210,7 +211,7 @@ define([
     TableTab.prototype._attach = function () {
 
         var template = Handlebars.compile(tabTemplate),
-            html = template(this);
+            html = template($.extend(true, {}, this, i18nLabels));
         this.$el.html(html);
     };
 

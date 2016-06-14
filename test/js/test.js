@@ -32,7 +32,7 @@ define([
         error_model = {},
         valid_model = JSON.parse(Model),
         boxes = [],
-        environment = "production"; //"develop"
+        environment = "develop"; //"develop"
 
     function Test() {
 

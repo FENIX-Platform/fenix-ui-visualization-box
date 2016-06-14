@@ -380,7 +380,6 @@ define([
             resourceType = this._getObjState("resourceRepresentationType");
 
         if (_.isEmpty(metadata)) {
-
             return 'missing_metadata';
         }
 
@@ -392,7 +391,7 @@ define([
                     return 'error';
                 }
 
-                if (model.size === 0) {
+                if (!model.size || model.size === 0) {
                     return 'empty';
                 }
 
@@ -1019,8 +1018,6 @@ define([
             });
         });
 
-        //init tooltip
-        this.$el.find(s.FRONT_FACE).find('[data-toggle="tooltip"]').tooltip();
 
     };
 
@@ -1279,9 +1276,6 @@ define([
 
             });
         });
-
-        //init tooltip
-        this.$el.find(s.BACK_FACE).find('[data-toggle="tooltip"]').tooltip();
 
     };
 
@@ -2407,8 +2401,6 @@ define([
 
         this.frontFaceIsRendered = false;
 
-        //this.$el.find(s.FRONT_FACE).find('[data-toggle="tooltip"]').tooltip().tooltip('destroy');
-
     };
 
     Box.prototype._disposeBackFace = function () {
@@ -2427,8 +2419,6 @@ define([
         this.$processSteps.empty();
 
         this.backFaceIsRendered = false;
-
-        //this.$el.find(s.BACK_FACE).find('[data-toggle="tooltip"]').tooltip().tooltip('destroy');
 
     };
 

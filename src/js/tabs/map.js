@@ -13,7 +13,7 @@ define([
     "text!fx-v-b/html/tabs/map.hbs",
     "fx-filter/start",
     "fx-v-b/config/tabs/map-toolbar-model",
-    "fx-common/pivotator/functions",
+    "i18n!fx-v-b/nls/box",
     "fx-m-c/start",
     "amplify"
 ], function ($, log, _, Handlebars,
@@ -21,7 +21,7 @@ define([
     BoxUtils, Utils,
     mapTemplate, Filter,
     ToolbarModel,
-    myFunc,
+    i18nLabels,
     MapCreator) {
 
     var s = {
@@ -230,7 +230,7 @@ define([
     MapTab.prototype._attach = function () {
 
         var template = Handlebars.compile(mapTemplate),
-            html = template(this);
+            html = template($.extend(true, {}, this, i18nLabels));
 
         this.$el.html(html);
     };
@@ -266,8 +266,6 @@ define([
 
         this.$toolbarBtn.on("click", _.bind(this._onToolbarBtnClick, this));
 
-        this.$el.find('[data-toggle="tooltip"]').tooltip();
-
     };
 
     MapTab.prototype._onToolbarEvent = function (payload) {
@@ -278,7 +276,7 @@ define([
 
 
         var map = this.map.leafletMap,
-            pxCen = map.latLngToContainerPoint(map.getCenter())
+            pxCen = map.latLngToContainerPoint(map.getCenter()),
             newpxCen = pxCen;
             
         if(direction==='down')
