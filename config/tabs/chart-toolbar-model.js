@@ -2,7 +2,7 @@
 
 define([
         'jquery',
-        "fx-v-b/config/tabs/shared-toolbar-model"
+        "fx-box/config/tabs/shared-toolbar-model"
     ],
     function ($, Shared) {
 

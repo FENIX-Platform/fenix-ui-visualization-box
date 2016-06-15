@@ -12,25 +12,25 @@ define(function () {
         faces : ["front", "back"],
         tabRegistry: {
             'blank': {
-                path: 'fx-v-b/js/tabs/blank'
+                path: 'fx-box/js/tabs/blank'
             },
             'table': {
-                path: 'fx-v-b/js/tabs/table'
+                path: 'fx-box/js/tabs/table'
             },
             'map': {
-                path: 'fx-v-b/js/tabs/map'
+                path: 'fx-box/js/tabs/map'
             },
             'chart': {
-                path:'fx-v-b/js/tabs/chart'
+                path:'fx-box/js/tabs/chart'
             },
             'metadata': {
-                path:'fx-v-b/js/tabs/metadata'
+                path:'fx-box/js/tabs/metadata'
             },
             'filter': {
-                path:'fx-v-b/js/tabs/filter'
+                path:'fx-box/js/tabs/filter'
             },
             'download': {
-                path:'fx-v-b/js/tabs/download'
+                path:'fx-box/js/tabs/download'
             }
         },
         tabs: {

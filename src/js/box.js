@@ -6,16 +6,16 @@ define([
     "underscore",
     "underscoreString",
     "handlebars",
-    "fx-v-b/config/config",
-    "fx-v-b/config/errors",
-    "fx-v-b/config/events",
+    "fx-box/config/config",
+    "fx-box/config/errors",
+    "fx-box/config/events",
     "fx-common/utils",
     "fx-md-v/start",
-    "text!fx-v-b/html/template.hbs",
+    "text!fx-box/html/template.hbs",
     "fx-common/json-menu",
-    "fx-v-b/config/right-menu-model",
-    "fx-v-b/config/tabs/map-earthstat-layers", //for map backtab
-    "i18n!fx-v-b/nls/box",
+    "fx-box/config/right-menu-model",
+    "fx-box/config/tabs/map-earthstat-layers", //for map backtab
+    "i18n!fx-box/nls/box",
     "fx-common/bridge",
     "fx-reports/start",
     "swiper",
@@ -205,7 +205,7 @@ define([
 
             window.fx_vis_box_id >= 0 ? window.fx_vis_box_id++ : window.fx_vis_box_id = 0;
 
-            this.id = "fx-v-b-" + window.fx_vis_box_id;
+            this.id = "fx-box-" + window.fx_vis_box_id;
 
             this._setObjState("id", this.id);
 

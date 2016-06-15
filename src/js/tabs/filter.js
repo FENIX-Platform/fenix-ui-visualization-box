@@ -4,13 +4,13 @@ define([
     "jquery",
     "loglevel",
     "underscore",
-    "fx-v-b/config/config",
-    "fx-v-b/config/errors",
-    "fx-v-b/config/events",
+    "fx-box/config/config",
+    "fx-box/config/errors",
+    "fx-box/config/events",
     'fx-common/utils',
-    "text!fx-v-b/html/tabs/filter.hbs",
+    "text!fx-box/html/tabs/filter.hbs",
     'fx-filter/start',
-    "i18n!fx-v-b/nls/box",
+    "i18n!fx-box/nls/box",
     "handlebars",
     "amplify"
 ], function ($, log, _, C, ERR, EVT, Utils, tabTemplate, Filter, i18nLabels, Handlebars) {

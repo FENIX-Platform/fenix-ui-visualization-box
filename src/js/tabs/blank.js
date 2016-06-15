@@ -4,13 +4,13 @@ define([
     "jquery",
     "loglevel",
     "underscore",
-    "fx-v-b/config/config",
-    "fx-v-b/config/errors",
-    "fx-v-b/config/events",
+    "fx-box/config/config",
+    "fx-box/config/errors",
+    "fx-box/config/events",
     'fx-common/utils',
-    "text!fx-v-b/html/tabs/blank.hbs",
+    "text!fx-box/html/tabs/blank.hbs",
     'fx-filter/start',
-    "fx-v-b/config/tabs/blank-toolbar-model",
+    "fx-box/config/tabs/blank-toolbar-model",
     "handlebars",
     "amplify"
 ], function ($, log, _, C, ERR, EVT, Utils, tabTemplate, Filter, ToolbarModel, Handlebars) {

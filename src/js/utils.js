@@ -4,11 +4,11 @@ define([
     "jquery",
     "loglevel",
     "underscore",
-    "fx-v-b/config/config",
-    "fx-v-b/config/errors",
-    "fx-v-b/config/events",
+    "fx-box/config/config",
+    "fx-box/config/errors",
+    "fx-box/config/events",
     "fx-common/pivotator/fenixtool",
-    "i18n!fx-v-b/nls/box"
+    "i18n!fx-box/nls/box"
 ], function ($, log, _, C, ERR, EVT, FenixTool, i18nLabels) {
 
     'use strict';

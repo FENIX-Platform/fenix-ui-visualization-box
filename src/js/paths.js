@@ -4,11 +4,11 @@ define(function () {
     var config = {
 
         paths: {
-            'fx-v-b/start': './box',
-            'fx-v-b/html': '../../html',
-            'fx-v-b/js': './',
-            'fx-v-b/config' :  '../../config',
-            'fx-v-b/nls' :  '../../nls',
+            'fx-box/start': './box',
+            'fx-box/html': '../../html',
+            'fx-box/js': './',
+            'fx-box/config' :  '../../config',
+            'fx-box/nls' :  '../../nls',
 
             //3rd party libs
             jquery: '{FENIX_CDN}/js/jquery/2.1.1/jquery.min',

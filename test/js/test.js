@@ -2,8 +2,8 @@ define([
     'loglevel',
     'jquery',
     'underscore',
-    'fx-v-b/start',
-    'fx-v-b/config/events',
+    'fx-box/start',
+    'fx-box/config/events',
     'text!test/json/uneca_population.json'
 ], function (log, $, _, Box, EVT, Model) {
 
