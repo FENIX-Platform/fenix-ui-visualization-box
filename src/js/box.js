@@ -22,7 +22,7 @@ define([
     "amplify",
     "bootstrap"
 ], function (log, require, $, _, _str, Handlebars, C, ERR, EVT,
-             Utils, MetadataViewer, Template, JsonMenu, RightMenuModel,
+             Utils, MetadataViewer, Template, JsonMenu, menuModel,
              mapEarthstatLayers,
              i18nLabels, Bridge, Report, Swiper) {
 
@@ -307,6 +307,10 @@ define([
         this._setObjState("backMap", this.initial.backMap);
 
         this._setObjState("d3pQueryParameters", this.initial.d3pQueryParameters || C.d3pQueryParameters);
+
+        this._setObjState("menuModel", this.initial.menu || menuModel);
+
+        this._setObjState("title", this.initial.title || this._getModelTitle);
 
     };
 
@@ -691,10 +695,19 @@ define([
 
     Box.prototype._updateBoxTitle = function () {
 
-        var title = Utils.getNestedProperty("metadata.title", this._getObjState("model")) || {},
-            uid = Utils.getNestedProperty("metadata.uid", this._getObjState("model"));
+        var extractTitleFn = this._getObjState("title"),
+            title = typeof extractTitleFn === 'function' ? extractTitleFn.call(this, this._getObjState("model")) : extractTitleFn;
 
-        this.$boxTitle.html(title[this.lang] || uid);
+        this.$boxTitle.html(title);
+
+    };
+
+    Box.prototype._getModelTitle = function (model) {
+
+        var title = Utils.getNestedProperty("metadata.title", model),
+            uid = Utils.getNestedProperty("metadata.uid", model);
+
+        return title[this.lang] || uid;
 
     };
 
@@ -2234,7 +2247,7 @@ define([
 
             this.rightMenu = new JsonMenu({
                 el: this.$el.find(s.RIGHT_MENU),
-                model: RightMenuModel
+                model:  this._getObjState("menuModel")
             });
 
         } else {

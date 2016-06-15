@@ -66,11 +66,19 @@ var box = new Box(options);
       </tr>
       
         <tr>
-              <td>faces</td>
-              <td>Array of string</td>
-              <td>["front", "back"]</td>
-              <td>["front"]</td>
-              <td>Box faces to render</td>
+              <td>menu</td>
+              <td>Array of object</td>
+              <td>-</td>
+              <td>[
+                  {
+                      label: "Test",
+                      url: "",
+                      parent_id: "root",
+                      id: "test"
+  
+                  }
+              ]</td>
+              <td>Top left menu configuration</td>
             </tr>
   
         <tr>
@@ -153,8 +161,79 @@ var box = new Box(options);
           <td>5000</td>
           <td>Max number of record allowed </td>
         </tr>
-      
-       
+        
+        <tr>
+          <td>hideToolbar</td>
+          <td>boolean</td>
+          <td>false</td>
+          <td>true</td>
+          <td>Hide tab toolbar</td>
+        </tr>
+        
+         <tr>
+          <td>hideMenu</td>
+          <td>boolean</td>
+          <td>false</td>
+          <td>true</td>
+          <td>Hide top left menu</td>
+        </tr>
+    
+         <tr>
+          <td>hideMetadataButton</td>
+          <td>boolean</td>
+          <td>false</td>
+          <td>true</td>
+          <td>Hide metadata button</td>
+        </tr>
+        
+        <tr>
+          <td>hideRemoveButton</td>
+          <td>boolean</td>
+          <td>false</td>
+          <td>true</td>
+          <td>Hide remove button</td>
+        </tr>
+        
+        <tr>
+          <td>hideDownloadButton</td>
+          <td>boolean</td>
+          <td>false</td>
+          <td>true</td>
+          <td>Hide download button</td>
+        </tr>
+        
+        <tr>
+          <td>hideCloneButton</td>
+          <td>boolean</td>
+          <td>false</td>
+          <td>true</td>
+          <td>Hide clone button</td>
+        </tr>
+        
+        <tr>
+          <td>hideFlipButton</td>
+          <td>boolean</td>
+          <td>false</td>
+          <td>true</td>
+          <td>Hide flip button</td>
+        </tr>
+        
+        <tr>
+          <td>hideMinimizeButton</td>
+          <td>boolean</td>
+          <td>false</td>
+          <td>true</td>
+          <td>Hide minimize button</td>
+        </tr>
+        
+         <tr>
+          <td>title</td>
+          <td>string/function</td>
+          <td>get i18n metadata title or degrades to uid</td>
+          <td>-</td>
+          <td>String or function to create the box title</td>
+        </tr>
+
   </tbody>
 </table>
 
