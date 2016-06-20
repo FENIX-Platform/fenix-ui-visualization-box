@@ -43,7 +43,7 @@ define([
         BOX_TITLE: "[data-role='box-title']",
         QUERY_BUTTON: "[data-action='query']",
         ERROR_TEXT: "[data-role='error-text']",
-        ERROR_BUTTON: "[data-role='error-BUTTON']",
+        EMPTY_FILTER_BUTTON: "[data-content='empty'] [data-action='filter'], [data-content='error'] [data-action='filter']",
         BACK_FILTER_ERRORS: "[data-role='filter-error']",
         FILTER_AGGREGATION_TEMPLATE: "[data-role='filter-aggregation-template']",
         FILTER_FILTER_TEMPLATE: "[data-role='filter-filter-template']",
@@ -312,6 +312,8 @@ define([
 
         this._setObjState("title", this.initial.title || this._getModelTitle);
 
+        this._setObjState("showFilter", typeof this.initial.showFilter === "boolean" ? this.initial.showFilter : false);
+
     };
 
     Box.prototype._setObjState = function (key, val) {
@@ -439,6 +441,8 @@ define([
         log.info("Loading FENIX resource");
 
         this.setStatus("loading");
+
+        this._setObjState("showFilter", true);
 
         var queryParams = this._getObjState("d3pQueryParameters"),
             process = Array.isArray(p) ? p : [];
@@ -582,6 +586,8 @@ define([
 
         this.setStatus("loading");
 
+        this._setObjState("showFilter", false);
+
         return this.bridge.getResource({
             body: [],
             uid: this._getObjState("uid"),
@@ -641,7 +647,7 @@ define([
 
     Box.prototype._preloadTabSources = function () {
 
-        var registeredTabs = $.extend(true, {}, this.tabRegistry),
+        var registeredTabs = $.extend(true, {}, this.pluginRegistry),
             tabs = this.tabs,
             tabsKeys = Object.keys(tabs),
             paths = [];
@@ -1112,7 +1118,7 @@ define([
 
         var state = this._getObjState("tabStates." + tab) || {},
             model = $.extend(true, {}, this._getObjState("model")),
-            registry = this.tabRegistry,
+            registry = this.pluginRegistry,
         //Note that for sync call the argument of require() is not an array but a string
             Tab = require(registry[tab].path),
             config = $.extend(true, {}, state, {
@@ -1160,7 +1166,7 @@ define([
 
     Box.prototype._checkSuitableTabs = function () {
 
-        var registeredTabs = this.tabRegistry,
+        var registeredTabs = this.pluginRegistry,
             tabsKeys = Object.keys(this.tabs);
 
         _.each(tabsKeys, _.bind(function (tab) {
@@ -1596,7 +1602,7 @@ define([
 
             this.$processSteps.append($html);
 
-            var registry = this.tabRegistry,
+            var registry = this.pluginRegistry,
                 Tab = require(registry[step.tab].path);
 
             //Add details container
@@ -2314,10 +2320,19 @@ define([
 
                 //hide/show filter button
                 if (error.filter === true) {
-                    this.$el.find(s.ERROR_BUTTON).show();
+                    this.$el.find(s.EMPTY_FILTER_BUTTON).show();
                 } else {
-                    this.$el.find(s.ERROR_BUTTON).hide();
+                    this.$el.find(s.EMPTY_FILTER_BUTTON).hide();
                 }
+
+                break;
+            case "empty" :
+
+                var $filterBtn = this.$el.find(s.EMPTY_FILTER_BUTTON);
+
+                this._getObjState("showFilter") ?
+                    $filterBtn.show():
+                    $filterBtn.hide();
 
                 break;
         }

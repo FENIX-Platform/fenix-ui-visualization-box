@@ -10,7 +10,7 @@ define(function () {
         size : "full",
         face : "front", // back || front
         faces : ["front", "back"],
-        tabRegistry: {
+        pluginRegistry: {
             'blank': {
                 path: 'fx-box/js/tabs/blank'
             },

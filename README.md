@@ -82,7 +82,7 @@ var box = new Box(options);
             </tr>
   
         <tr>
-            <td>tabRegistry</td>
+            <td>pluginRegistry</td>
             <td>object</td>
             <td>{
                               'blank': {
