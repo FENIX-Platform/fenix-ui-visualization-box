@@ -16,7 +16,7 @@ define([
             DESTROY: "#box-container-destroy",
             DESTROY_BTN: "#btn-destroy",
             STATUS: "#box-container-status",
-            STATuS_BTNS: "#status-btns [data-status]",
+            STATUS_BTNS: "#status-btns [data-status]",
             ASYNC: "#box-container-async",
             ASYNC_BTN: "#btn-async",
             TAB: "#box-container-tabs",
@@ -25,14 +25,14 @@ define([
             FLIP_BTNS: "#flip-btns [data-flip]",
             STATE: "#state-container",
             STATE_BTN: "#state-btn",
-            CLONE : "#box-clone",
-            CLONE_LIST : "#clone-list"
+            CLONE: "#box-clone",
+            CLONE_LIST: "#clone-list"
         },
         empty_model = {data: []},
         error_model = {},
         valid_model = JSON.parse(Model),
         boxes = [],
-        environment = "production"; //"develop"
+        environment = "develop"; //"develop"
 
     function Test() {
 
@@ -75,7 +75,7 @@ define([
         log.trace("Rendering clone box: start");
 
         //add 'Clone' event listeners
-        amplify.subscribe(EVT.clone, _.bind(function ( state ) {
+        amplify.subscribe(EVT.clone, _.bind(function (state) {
 
             log.info("Start cloning");
             log.info(state);
@@ -84,15 +84,17 @@ define([
 
             $(s.CLONE_LIST).prepend($el);
 
-            var clone = this.createBox($.extend(true, state, { el: $el }));
+            var clone = this.createBox($.extend(true, state, {el: $el}));
 
         }, this));
 
         var box = this.createBox({
-                el: s.CLONE,
-                environment : environment,
-                uid: "UNECA_Education"
-            });
+            el: s.CLONE,
+            environment: environment,
+            //uid: "UNECA_Education",
+            uid: "D3S_46514940821210598466444477499038849884",
+
+        });
 
         log.trace("Rendering clone box: end");
 
@@ -103,10 +105,11 @@ define([
         log.trace("Rendering large box: start");
 
         var box = this.createBox({
-            environment : environment,
+            environment: environment,
             el: s.LARGE,
             //model: valid_model,
-            uid: "D3S_46514940821210598466444477499038849884",
+            uid: "UNECA_Education",
+            //uid: "D3S_46514940821210598466444477499038849884",
             //uid: "FAOSTAT_FO",
             //uid: "uneca_rivers_3857",
             //version: null,

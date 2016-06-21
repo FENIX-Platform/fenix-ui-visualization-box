@@ -77,11 +77,12 @@ define([
 
         var isSuitable = this._isSuitable();
 
-        log.info("Table tab: is tab suitable? " + isSuitable);
+        log.info("Table tab: is tab suitable?", isSuitable);
 
         if (isSuitable === true) {
             return true;
         } else {
+            log.error(isSuitable);
             this._setState("errors", isSuitable);
             return false;
         }

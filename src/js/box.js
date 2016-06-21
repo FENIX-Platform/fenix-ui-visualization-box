@@ -457,8 +457,12 @@ define([
         });
     };
 
-    Box.prototype._onLoadResourceError = function () {
-        log.info("Impossible to load resource");
+    Box.prototype._onLoadResourceError = function (e) {
+        log.error("Impossible to load resource");
+
+        log.error(e);
+
+        log.error({code: ERR.LOAD_RESOURCE});
 
         this._setObjState("error", {code: ERR.LOAD_RESOURCE, filter: true});
 
@@ -525,7 +529,9 @@ define([
     };
 
     Box.prototype._loadResourceMetadataError = function () {
-        log.info("Impossible to load resource");
+        log.error("Impossible to load resource");
+
+        log.error({code: ERR.LOAD_METADATA});
 
         this._setObjState("error", {code: ERR.LOAD_METADATA});
 
@@ -562,6 +568,7 @@ define([
                     );
 
                 } else {
+                    log.error({code: ERR.UNKNOWN_RESOURCE_TYPE});
                     this._setObjState("error", {code: ERR.MISSING_DATASOURCES});
                     this._setStatus("error");
                 }
@@ -575,6 +582,7 @@ define([
 
                 break;
             default :
+                log.error({code: ERR.UNKNOWN_RESOURCE_TYPE});
                 this._setObjState("error", {code: ERR.UNKNOWN_RESOURCE_TYPE});
                 this._setStatus("error")
         }
@@ -598,6 +606,7 @@ define([
     Box.prototype._fetchResourceError = function (e) {
         log.error("Impossible to fetch resource");
         log.error(e);
+        log.error({code: ERR.FETCH_RESOURCE});
 
         this._setObjState("error", {code: ERR.FETCH_RESOURCE});
 
@@ -1048,6 +1057,8 @@ define([
         if (!tabs[tab]) {
             log.error("Error on show tab content: ", tab);
 
+            log.error({code: ERR.MISSING_TAB});
+
             this._setObjState("error", {code: ERR.MISSING_TAB});
 
             this._setStatus("error");
@@ -1066,7 +1077,7 @@ define([
         }
 
         if (this._getObjState("tabs." + tab + ".suitable") !== true) {
-            log.warn("Aborting show tab because selected tab is not suitable with current model");
+            log.error("Aborting show tab because selected tab is not suitable with current model");
             //TODO find first suitable tab and then raise error
             return;
         }
@@ -1079,7 +1090,7 @@ define([
         }
 
         this._setObjState("tab", tab);
-        this._setObjState("tabOptions."+tab, opts);
+        this._setObjState("tabOptions." + tab, opts);
 
         //hide all tabs and show the selected one
         this.$el.find(s.CONTENT_READY).attr("data-tab", this._getObjState("tab"));
@@ -1095,15 +1106,13 @@ define([
         if (!tabs[tab]) {
             log.error("Error on show tab content: " + tab);
 
+            log.error({code: ERR.MISSING_TAB});
+
             this._setObjState("error", {code: ERR.MISSING_TAB});
 
             this._setStatus("error");
 
             return;
-        }
-
-        if (tabs[tab].callback === 'once') {
-            log.info("TODO")
         }
 
         this._setObjState("tabs." + tab + ".initialized", true);
@@ -1706,6 +1715,9 @@ define([
         if (valid !== true) {
             this._printFilterError(valid);
             return;
+        } else {
+            log.warn("Invalid back filter values:");
+            log.warn(valid);
         }
 
         this._syncBackTabs();
@@ -2214,7 +2226,7 @@ define([
 
     Box.prototype._getBackFilterValues = function () {
 
-        var prevValues = this.forceModelFilter === true ? {} :this._getObjState('backFilter') || {},
+        var prevValues = this.forceModelFilter === true ? {} : this._getObjState('backFilter') || {},
             filterValues = this.back_tab_instances["filter"] ? this.back_tab_instances["filter"].getValues(null) : null,
             aggregationValues = this.back_tab_instances["aggregations"] ? this.back_tab_instances["aggregations"].getValues(null) : null,
             rowValues = this.back_tab_instances["filter"] ? this.back_tab_instances["filter"].getValues('fenix') : null;

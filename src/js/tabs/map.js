@@ -88,13 +88,12 @@ define([
 
         var isSuitable = this._isSuitable();
 
-        //log.info("Map tab: is tab suitable? " + isSuitable);
-
-        //console.log('MAP ISSUITABLE',this)
+        log.info("Map tab: is tab suitable?", isSuitable);
 
         if (isSuitable === true) {
             return true;
         } else {
+            log.error(isSuitable);
             this._setState("errors", isSuitable);
             return false;
         }
