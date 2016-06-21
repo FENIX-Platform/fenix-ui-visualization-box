@@ -209,7 +209,7 @@ define([
 
             this._setObjState("id", this.id);
 
-            log.warn("Impossible to find id. Set auto id to: " + this.id);
+            log.info("Set box id: " + this.id);
         }
 
         //Check if $el exist
@@ -294,7 +294,7 @@ define([
         this._setObjState("uid", this.initial.uid || Utils.getNestedProperty("metadata.uid", this._getObjState("model")));
 
         this._setObjState("size", this.initial.size || C.size);
-        this._setObjState("status", this.initial.status || C.status );
+        this._setObjState("status", this.initial.status || C.status);
         this._setObjState("environment", this.initial.environment);
 
         //data validation
@@ -368,7 +368,7 @@ define([
                         _.bind(this._loadResourceMetadataError, this));
                 break;
             case "to_filter":
-                this._forceFilterResource();
+                this._forceModelFilter();
                 break;
             default :
                 this.setStatus("error");
@@ -1014,11 +1014,9 @@ define([
 
         this._showDefaultFrontTab();
 
-        this._bindFrontFaceEventListeners();
-
     };
 
-    Box.prototype._bindFrontFaceEventListeners = function () {
+    Box.prototype._bindFrameEventListeners = function () {
 
         var self = this;
 
@@ -1850,9 +1848,10 @@ define([
         });
 
         //download events
-        this.report.on("complete", function () {
-            //TODO add feedback
-        })
+        this.report.on("complete", function () {  /* TODO add feedback*/
+        });
+
+        this._bindFrameEventListeners();
 
     };
 
@@ -1970,22 +1969,18 @@ define([
 
         var filterValues = this._getBackFilterValues(),
             valid = this._validateValues(filterValues),
-            hasFilterValues = false,
             mapValues = this._getBackMapValues(),
-            mapIsEmpty = everyPropertyIsEmptyArray(Utils.getNestedProperty("map.values", mapValues)),
-            hasMapValues = false;
+            mapIsEmpty = everyPropertyIsEmptyArray(Utils.getNestedProperty("map.values", mapValues));
 
         if (valid === true) {
 
             this._enableFlip();
 
-            //check filter values
+            // check filter values
 
             var process = this._createQuery(filterValues) || [];
 
             if (!_.isEqual(process, this._getObjState("process"))) {
-
-                hasFilterValues = true;
 
                 this._setObjState("backFilter", $.extend(true, {}, filterValues));
 
@@ -1998,27 +1993,28 @@ define([
                         _.bind(this._onLoadResourceSuccess, this),
                         _.bind(this._onLoadResourceError, this));
 
-            } else {
+            }
+            else {
                 log.warn("Abort resource filter because process have not changed");
             }
 
-            //Check map values
+            // check map values
 
             if (!mapIsEmpty && !_.isEqual(mapValues, this._getObjState("backMap"))) {
-
-                hasMapValues = true;
 
                 this._setObjState("backMap", $.extend(true, {}, mapValues));
 
                 this._updateMap();
 
-            } else {
+            }
+            else {
                 log.warn("Abort map update because values have not changed");
             }
 
             this._flip("front");
 
-        } else {
+        }
+        else {
             this._printFilterError(valid);
         }
 
@@ -2149,7 +2145,7 @@ define([
         log.info("Listen to event: " + this._getEventTopic("filter"));
         log.info(payload);
 
-        this._forceFilterResource();
+        this._forceModelFilter();
     };
 
     // flip
@@ -2217,7 +2213,7 @@ define([
 
     Box.prototype._getBackFilterValues = function () {
 
-        var prevValues = this._getObjState('backFilter') || {},
+        var prevValues = this.forceModelFilter === true ? {} :this._getObjState('backFilter') || {},
             filterValues = this.back_tab_instances["filter"] ? this.back_tab_instances["filter"].getValues(null) : null,
             aggregationValues = this.back_tab_instances["aggregations"] ? this.back_tab_instances["aggregations"].getValues(null) : null,
             rowValues = this.back_tab_instances["filter"] ? this.back_tab_instances["filter"].getValues('fenix') : null;
@@ -2253,7 +2249,7 @@ define([
 
             this.rightMenu = new JsonMenu({
                 el: this.$el.find(s.RIGHT_MENU),
-                model:  this._getObjState("menuModel")
+                model: this._getObjState("menuModel")
             });
 
         } else {
@@ -2331,7 +2327,7 @@ define([
                 var $filterBtn = this.$el.find(s.EMPTY_FILTER_BUTTON);
 
                 this._getObjState("showFilter") ?
-                    $filterBtn.show():
+                    $filterBtn.show() :
                     $filterBtn.hide();
 
                 break;
@@ -2380,7 +2376,10 @@ define([
         return excludeId === true ? baseEvent : baseEvent + "." + this.id;
     };
 
-    Box.prototype._forceFilterResource = function () {
+    Box.prototype._forceModelFilter = function () {
+
+        log.warn("Force model filter");
+        this.forceModelFilter = true;
 
         this._disableFlip();
 
@@ -2424,8 +2423,6 @@ define([
             this._callTabInstanceMethod({tab: tab, method: "dispose"});
 
         }, this));
-
-        this.$el.find(s.FRONT_FACE).find("[data-action]").off();
 
         this.frontFaceIsRendered = false;
 
@@ -2478,7 +2475,7 @@ define([
 
         this.$el.find(s.OTHER_CONTENT).find("[data-action]").off();
 
-
+        this.$el.find(s.FRONT_FACE).find("[data-action]").off();
 
     };
 
