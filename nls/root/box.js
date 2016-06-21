@@ -47,7 +47,15 @@ define(function () {
         tooltip_metadata_button : "Visualize metadata",
         tooltip_minimize_button : "Minimize resource",
         tooltip_download_button : "Download resource",
-        tooltip_toolbar_button : "Visualization options"
+        tooltip_toolbar_button : "Visualization options",
+
+        //Error content
+        error_content_title : "An error occurred",
+        error_content_text : "You can remove the AVB, please use the button below",
+        empty_content_title : "The result is empty",
+        empty_content_text : "You can remove the AVB or redo the filtering, please use the button below",
+        huge_content_title : "The result is too big for the visualization",
+        huge_content_text : "You can redo the filtering, please use the button below",
 
     }
 });

@@ -492,7 +492,6 @@ define([
 
         var dsdWithoutRid = _.without(Object.keys(newDsd), "rid");
 
-
         //if metadata exists updated only dsd
         if (dsdWithoutRid.length > 0) {
             Utils.assign(model, "metadata.dsd", newDsd);
@@ -550,7 +549,7 @@ define([
 
         var resourceType = this._getObjState("resourceRepresentationType");
 
-        log.info("Resource type is: " + resourceType);
+        log.info("Check resource type: " + resourceType);
 
         switch (resourceType) {
             case "dataset" :
@@ -596,8 +595,9 @@ define([
         });
     };
 
-    Box.prototype._fetchResourceError = function () {
-        log.info("Impossible to fetch resource");
+    Box.prototype._fetchResourceError = function (e) {
+        log.error("Impossible to fetch resource");
+        log.error(e);
 
         this._setObjState("error", {code: ERR.FETCH_RESOURCE});
 
@@ -605,7 +605,7 @@ define([
     };
 
     Box.prototype._fetchResourceSuccess = function (resource) {
-        log.info("fetch resource success");
+        log.info("Fetch resource success");
 
         this._updateModel(resource);
 
@@ -632,7 +632,8 @@ define([
         var rt = this._getObjState("model.metadata.meContent.resourceRepresentationType") || "",
             resourceType = rt.toLowerCase();
 
-        log.info("Resource type is: " + resourceType);
+        log.info("Resource type is: ");
+        log.info(resourceType);
 
         this._setObjState("resourceRepresentationType", resourceType);
     };
@@ -1036,7 +1037,6 @@ define([
 
             });
         });
-
 
     };
 
