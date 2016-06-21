@@ -34,13 +34,13 @@ define(function () {
             }
         },
         tabs: {
-            //'blank': {tabOpts : {}},
-            'table': {tabOpts : {}},
-            'metadata': {tabOpts : {}},
-            'filter': {tabOpts : {}},
-            'map': {tabOpts : {}},
-            'chart': {tabOpts : {type : "line"}},
-            'download': { tabOpts : {}}
+            //'blank': {options : {}},
+            'table': {options : {}},
+            'metadata': {options : {}},
+            'filter': {options : {}},
+            'map': {options : {}},
+            'chart': {options : {type : "line"}},
+            'download': { options : {}}
         },
 
         flippedClassName : "flipped",

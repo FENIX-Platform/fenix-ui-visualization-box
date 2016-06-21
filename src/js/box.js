@@ -279,7 +279,7 @@ define([
 
         //tabs
         this._setObjState("tabStates", this.initial.tabStates || {});
-        this._setObjState("tabOpts", this.initial.tabOpts);
+        this._setObjState("tabOptions", this.initial.tabOptions || {});
         this._setObjState("tab", this.initial.tab);
 
         //flip side
@@ -1038,7 +1038,7 @@ define([
 
     };
 
-    Box.prototype._showFrontTab = function (tab, opts) {
+    Box.prototype._showFrontTab = function (tab, opts, force) {
         log.info('Show tab ' + tab);
         log.info(opts);
 
@@ -1056,11 +1056,11 @@ define([
         }
 
         var currentTab = this._getObjState("tab"),
-            currentOpts = this._getObjState("tabOpts");
+            currentOpts = this._getObjState("tabOptions")[currentTab];
 
         //TODO check if currentTab is undefined
 
-        if (currentTab === tab && _.isEqual(currentOpts, opts)) {
+        if (!force && currentTab === tab && _.isEqual(currentOpts, opts)) {
             log.info("Aborting show tab current tab is equal to selected one");
             return;
         }
@@ -1075,11 +1075,11 @@ define([
 
         //if opts is empty get default options
         if (!opts) {
-            opts = Utils.getNestedProperty("tabOpts", this.tabs[tab])
+            opts = Utils.getNestedProperty("options", this.tabs[tab])
         }
 
         this._setObjState("tab", tab);
-        this._setObjState("tabOpts", opts);
+        this._setObjState("tabOptions."+tab, opts);
 
         //hide all tabs and show the selected one
         this.$el.find(s.CONTENT_READY).attr("data-tab", this._getObjState("tab"));
@@ -1108,7 +1108,7 @@ define([
 
         this._setObjState("tabs." + tab + ".initialized", true);
 
-        this._callTabInstanceMethod({tab: tab, method: "show", opt1: this._getObjState("tabOpts")});
+        this._callTabInstanceMethod({tab: tab, method: "show", opt1: this._getObjState("tabOptions")[tab]});
 
     };
 
@@ -1201,7 +1201,8 @@ define([
     Box.prototype._showDefaultFrontTab = function () {
 
         var tab = this._getObjState("tab") || C.tab,
-            defaultTabIsSuitable = this._getObjState("tabs." + tab + ".suitable");
+            defaultTabIsSuitable = this._getObjState("tabs." + tab + ".suitable"),
+            options = this._getObjState("tabOptions." + tab);
 
         if (defaultTabIsSuitable !== true) {
             log.warn("Default tab is not suitable. Find first suitable tab to show");
@@ -1220,7 +1221,7 @@ define([
 
         }
 
-        this._showFrontTab(tab);
+        this._showFrontTab(tab, options, true);
     };
 
     Box.prototype._syncFrontTabs = function () {
