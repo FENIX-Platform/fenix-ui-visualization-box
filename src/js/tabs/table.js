@@ -296,7 +296,7 @@ define([
         var toolbarValues = this.toolbar.getValues(),
             configuration = BoxUtils.getTableCreatorConfiguration(toolbarValues);
 
-        if (C.renderVisualizationComponents === false ) {
+        if (C.renderVisualizationComponents === false) {
             log.warn("Render Visualization component blocked by configuration");
             return;
         }
@@ -314,7 +314,7 @@ define([
 
         this.toolbar = new Filter({
             items: this._createFilterConfiguration(ToolbarModel),
-            cache : this.cache,
+            cache: this.cache,
             el: this.$el.find(s.TOOLBAR),
             environment: this.initial.environment
         });
@@ -325,9 +325,23 @@ define([
 
     TableTab.prototype._createFilterConfiguration = function () {
 
-        var configurationFromFenixTool = BoxUtils.getTableToolbarConfig(this.model),
-            configuration = $.extend(true, {}, ToolbarModel, configurationFromFenixTool),
-            result = $.extend(true, {}, Utils.mergeConfigurations(configuration, this.syncState.toolbar || {}));
+        log.info("Create toolbar config");
+
+        var configurationFromFenixTool,
+            configuration,
+            result;
+
+        configurationFromFenixTool = BoxUtils.getTableToolbarConfig(this.model);
+
+        log.info(configurationFromFenixTool);
+
+        configuration = $.extend(true, {}, ToolbarModel, configurationFromFenixTool);
+
+        log.info(configuration);
+
+        result = $.extend(true, {}, Utils.mergeConfigurations(configuration, this.syncState.toolbar || {}));
+
+        log.info(result);
 
         return result;
 
