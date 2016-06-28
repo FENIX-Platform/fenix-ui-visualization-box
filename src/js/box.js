@@ -167,8 +167,8 @@ define([
      * @param {String} side
      * @return {null}
      */
-    Box.prototype.flip = function (side) {
-        return this._flip(side);
+    Box.prototype.flip = function (face) {
+        return this._flip(face);
     };
 
     /**
@@ -2163,9 +2163,9 @@ define([
 
     // flip
 
-    Box.prototype._flip = function (side) {
+    Box.prototype._flip = function (f) {
 
-        var face = side || "front";
+        var face = f || "front";
 
         if (face !== "front") {
             this.$el.find(s.FLIP_CONTAINER).addClass(C.flippedClassName);
@@ -2413,6 +2413,8 @@ define([
         this._disposeBoxFaces();
 
         this.$el.remove();
+        
+        this._trigger("dispose");
 
         delete this;
 
