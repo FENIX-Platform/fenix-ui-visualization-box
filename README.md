@@ -40,7 +40,7 @@ Check `fx-box/config/config.js` to have a look of the default configuration.
          <td>string</td>
          <td>"loading"</td>
          <td>"ready"</td>
-         <td>Box status: "ready" "error" "loading" "empty" "huge"</td>
+         <td>Initial box status</td>
       </tr>
       <tr>
          <td>size</td>
@@ -132,18 +132,9 @@ Check `fx-box/config/config.js` to have a look of the default configuration.
          <td>Toolbar start position</td>
       </tr>
       <tr>
-         <td>toolbarPosition</td>
-         <td>string</td>
-         <td>"up"</td>
-         <td>"down"</td>
-         <td>Toolbar start position</td>
-      </tr>
-      </tr>
-      <tr>
-         <td>d3pQueryParameters</td>
+         <td>loadResourceServiceQueryParams</td>
          <td>object</td>
          <td>{
-            language : "EN",
             dsd : true
             }
          </td>
@@ -151,7 +142,7 @@ Check `fx-box/config/config.js` to have a look of the default configuration.
          <td>D3P compatible string parameters</td>
       </tr>
       <tr>
-         <td>       maxDataSize</td>
+         <td>maxDataSize</td>
          <td>number</td>
          <td>7200</td>
          <td>5000</td>
@@ -227,7 +218,7 @@ Check `fx-box/config/config.js` to have a look of the default configuration.
 
 ```javascript
 //This is an example
-box.reset();
+box.on("clone", function (state) {...});
 ```
 
 - `box.render()` : used to pass asynchronously the box model
@@ -254,3 +245,26 @@ box.reset();
 - `loading` : when the AVB is retrieving the required resource or is waiting for async model
 - `empty` : when AVB model is empty
 - `huge` : when AVB model is too big to be displayed
+
+# Available tab plugin
+
+The following are the default available tabs. The plugin registry can be extended with the `pluginRegistry` configuration. 
+In order to choose a specific tab use the `tabs`'s `id` configuration.
+
+## Chart tab
+This tab is used to show charts. It wraps the FENIX chart creator.
+
+## Download tab
+This tab is used to allow the user to configure the download options.
+
+## Filter tab
+This tab used to show filters and selectors. It wr aps the FENIX filter.
+
+## Map tab
+This tab is used to show maps. It wraps the FENIX map creator.
+
+## Metadata tab
+This tab is used to display the metadata information of the current AVB's resource. It wraps the FENIX metadata viewer.
+
+## Table tab
+This tab is used to show tables. It wraps the FENIX table creator.

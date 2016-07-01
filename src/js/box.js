@@ -164,7 +164,7 @@ define([
 
     /**
      * Flip the visualization box
-     * @param {String} side
+     * @param {String} face
      * @return {null}
      */
     Box.prototype.flip = function (face) {
@@ -298,15 +298,19 @@ define([
         this._setObjState("environment", this.initial.environment);
 
         //data validation
-        this._setObjState("max_size", this.initial.maxDataSize || C.maxDataSize);
-        this._setObjState("min_size", this.initial.minDataSize || C.minDataSize);
+        this._setObjState("maxDataSize", this.initial.maxDataSize || C.maxDataSize);
+        this._setObjState("minDataSize", this.initial.minDataSize || C.minDataSize);
         this._setObjState("cache", typeof this.initial.cache === "boolean" ? this.initial.cache : C.cache);
 
         // back filter values
         this._setObjState("backFilter", this.initial.backFilter);
         this._setObjState("backMap", this.initial.backMap);
 
-        this._setObjState("d3pQueryParameters", this.initial.d3pQueryParameters || C.d3pQueryParameters);
+        var loadResourceServiceQueryParams = $.extend(true, this.initial.loadResourceServiceQueryParams || C.loadResourceServiceQueryParams, {
+            language : this.lang
+        });
+
+        this._setObjState("loadResourceServiceQueryParams", loadResourceServiceQueryParams);
 
         this._setObjState("menuModel", this.initial.menu || menuModel);
 
@@ -405,11 +409,11 @@ define([
                     return 'to_filter';
                 }
 
-                if (Array.isArray(model.data) && model.data.length <= this._getObjState("min_size")) {
+                if (Array.isArray(model.data) && model.data.length <= this._getObjState("minDataSize")) {
                     return 'empty';
                 }
 
-                if (model.size > this._getObjState("max_size")) {
+                if (model.size > this._getObjState("maxDataSize")) {
                     return 'huge';
                 }
 
@@ -444,7 +448,7 @@ define([
 
         this._setObjState("showFilter", true);
 
-        var queryParams = this._getObjState("d3pQueryParameters"),
+        var queryParams = this._getObjState("loadResourceServiceQueryParams"),
             process = Array.isArray(p) ? p : [];
 
         this._setObjState("process", process.slice(0));
@@ -519,7 +523,7 @@ define([
 
         this.setStatus("loading");
 
-        var queryParams = this._getObjState("d3pQueryParameters");
+        var queryParams = this._getObjState("loadResourceServiceQueryParams");
 
         return this.bridge.getMetadata({
             uid: this._getObjState("uid"),

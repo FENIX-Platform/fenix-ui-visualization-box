@@ -53,8 +53,7 @@ define(function () {
         toolbarPosition : "up", // up | down
 
         //Load resource
-        d3pQueryParameters : {
-            language : "EN",
+        loadResourceServiceQueryParams : {
             dsd : true
         },
 
