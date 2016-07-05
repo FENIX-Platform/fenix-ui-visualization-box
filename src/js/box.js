@@ -484,8 +484,6 @@ define([
 
         this.setStatus("ready");
 
-        this._flip("front");
-
         this._reactToModelStatus();
 
     };
@@ -2171,10 +2169,13 @@ define([
 
         var face = f || "front";
 
-        if (face !== "front") {
-            this.$el.find(s.FLIP_CONTAINER).addClass(C.flippedClassName);
-        } else {
-            this.$el.find(s.FLIP_CONTAINER).removeClass(C.flippedClassName);
+        switch(face.toLocaleLowerCase()) {
+            case "front" :
+                this.$el.find(s.FLIP_CONTAINER).removeClass(C.flippedClassName);
+                break;
+            case "back" :
+                this.$el.find(s.FLIP_CONTAINER).addClass(C.flippedClassName);
+                break;
         }
 
         this._setObjState('face', face);
