@@ -6,50 +6,51 @@ define(function () {
 
     return {
 
-        format : {
+        format: {
 
-            selector : {
-                id : 'dropdown',
-                source : [
-                    { value : "localstring", label : "Local String"},
-                    { value : "value", label : "Raw Value"}
+            selector: {
+                id: 'dropdown',
+                source: [
+                    {value: "localstring", label: "Local String"},
+                    {value: "value", label: "Raw Value"}
                 ],
-                config : {
-                    maxItems : 1
+                config: {
+                    maxItems: 1
                 },
-                default : ['localstring']
+                default: ['localstring']
             },
 
-            template : {
-                title : "Format"
+            template: {
+                title: "Format"
             }
         },
-  "decimal_digit": {
+
+        "decimals": {
 
             "selector": {
                 "id": "dropdown",
-            
+
                 "source": [
 
-                    {"value": "0","label":0},
-                    {"value": "1","label":1},
-                    {"value": "2","label":2},
-                    {"value": "3","label":3},
-                    {"value": "4","label":4},
-                    {"value": "5","label":5}
+                    {"value": "0", "label": 0},
+                    {"value": "1", "label": 1},
+                    {"value": "2", "label": 2},
+                    {"value": "3", "label": 3},
+                    {"value": "4", "label": 4},
+                    {"value": "5", "label": 5}
                 ],
-                "config" : {
-                    maxItems : 1
+                "config": {
+                    maxItems: 1
                 },
-				default: [2]
+                default: [2]
             },
 
-            "template" : {
-                "title" : "decimals"
+            "template": {
+                "title": "Decimals"
             },
 
 
-            "className" : "testDec"
+            "className": "testDec"
 
         }
 

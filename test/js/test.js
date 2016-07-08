@@ -34,9 +34,7 @@ define([
         boxes = [],
         environment = "develop"; //"develop" || "production"
 
-    function Test() {
-
-    }
+    function Test() { }
 
     Test.prototype.start = function () {
 
@@ -110,7 +108,7 @@ define([
             //model: valid_model,
             //uid: "UNECA_Education",
             uid: "UNECA_Health",
-            face : "back",
+            //face : "back",
             //uid: "D3S_46514940821210598466444477499038849884",
             //uid: "D3S_13768551171199950126430833328416976651",
             //uid: "FAOSTAT_FO",
