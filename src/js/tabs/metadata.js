@@ -213,12 +213,11 @@ define([
 
         log.info("Render metadata viewer");
 
-        this.metadataViewer = new MetadataViewer();
-
-        this.metadataViewer.render({
-            model: this.model.metadata ,
+        this.metadataViewer = new MetadataViewer({
+            model: this.model.metadata,
             cache : this.cache,
-            lang: 'en',
+            environment : this.environment,
+            lang: this.lang,
             el: this.$el.find('#metadata_' + this.id)
         });
 
