@@ -19,7 +19,6 @@ define(function () {
             i18n: "{FENIX_CDN}/js/requirejs/plugins/i18n/2.0.4/i18n",
             text: '{FENIX_CDN}/js/requirejs/plugins/text/2.0.12/text',
             bootstrap : "{FENIX_CDN}/js/bootstrap/3.3.4/js/bootstrap.min",
-            q: '{FENIX_CDN}/js/q/1.1.2/q',
             loglevel: '{FENIX_CDN}/js/loglevel/1.4.0/loglevel',
             swiper : '{FENIX_CDN}/js/swiper/3.3.1/dist/js/swiper.jquery.min'
         },
@@ -30,7 +29,9 @@ define(function () {
             underscore: {
                 exports: '_'
             },
+
             underscoreString: ['underscore'],
+
             amplify : {
                 deps : ['jquery']
             },

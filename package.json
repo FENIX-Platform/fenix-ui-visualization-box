@@ -1,6 +1,6 @@
 {
   "name": "fenix-visualization-box",
-  "version": "0.0.1",
+  "version": "1.0.0-beta.0",
   "description": "FENIX resource visualization box",
   "main": "src/js/start.js",
   "scripts": {
@@ -15,10 +15,20 @@
     "resource",
     "fenix"
   ],
-  "author": "Daniele Salvatore <daniele.salvatore@fao.org> (http://fenix.fao.org/)",
-  "license": "GPL2",
+  "author": "FENIX team (http://fenix.fao.org/)",
+  "license": "GPL-2.0",
   "bugs": {
     "url": "https://github.com/FENIX-Platform/fenix-visualization-box/issues"
   },
-  "homepage": "https://github.com/FENIX-Platform/fenix-visualization-box#readme"
+  "homepage": "https://github.com/FENIX-Platform/fenix-visualization-box#readme",
+  "dependencies": {
+    "amplify": "0.0.11",
+    "bootstrap": "3.3.6",
+    "handlebars": "4.0.5",
+    "jquery": "3.1.0",
+    "loglevel": "1.4.1",
+    "swiper": "3.3.1",
+    "underscore": "1.8.3",
+    "underscore.string": "3.3.4"
+  }
 }

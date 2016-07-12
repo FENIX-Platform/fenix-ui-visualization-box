@@ -1863,7 +1863,7 @@ define([
         });
 
         //download events
-        this.report.on("complete", function () {  /* TODO add feedback*/
+        this.report.on("export.success", function () {  /* TODO add feedback*/
         });
 
         this._bindFrameEventListeners();
@@ -2107,13 +2107,12 @@ define([
             }
         };
 
-        log.info("Configure FENIX export: tableExport");
-
-        this.report.init('tableExport');
+        log.info("Configure FENIX export: table");
 
         log.info(payload);
 
-        this.report.exportData({
+        this.report.export({
+            format : "table",
             config: payload
         });
     };
@@ -2145,13 +2144,12 @@ define([
             }
         };
 
-        log.info("Configure FENIX export: metadataExport");
-
-        this.report.init('metadataExport');
+        log.info("Configure FENIX export: metadata");
 
         log.info(payload);
 
-        this.report.exportData({
+        this.report.export({
+            format : "metadata",
             config: payload
         });
     };

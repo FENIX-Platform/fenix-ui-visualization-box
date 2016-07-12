@@ -247,9 +247,8 @@ define([
             }
         };
 
-        this.report.init('tableExport');
-
-        this.report.exportData({
+        this.report.export({
+            format : "table",
             config: payload
         });
 
@@ -282,9 +281,8 @@ define([
             }
         };
 
-        this.report.init('metadataExport');
-
-        this.report.exportData({
+        this.report.export({
+            format : "metadata",
             config: payload
         });
 
