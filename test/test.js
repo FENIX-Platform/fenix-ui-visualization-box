@@ -21,7 +21,6 @@ require.config({
         mapPaths: pathProjectRoot + 'submodules/fenix-ui-map-creator/src/js/paths',
         tablePaths: pathProjectRoot + 'submodules/fenix-ui-table-creator/src/js/paths',
         filterPaths: pathProjectRoot + 'submodules/fenix-ui-filter/src/js/paths',
-        olapPaths: pathProjectRoot + 'submodules/fenix-ui-olap/src/js/paths',
         reportPaths: pathProjectRoot + 'submodules/fenix-ui-reports/src/js/paths',
         visualizationPaths : pathProjectRoot + 'submodules/fenix-ui-visualization-box/src/js/paths',
         dataEditorPaths : pathProjectRoot + 'submodules/fenix-ui-DataEditor/js/paths',
@@ -39,17 +38,15 @@ require([
     "commonPaths",
     "visualizationPaths",
     "filterPaths",
-    "olapPaths",
     "metadataViewerPaths",
     "chartPaths",
     "mapPaths",
     "reportPaths",
-    "fenixMap"
-], function (Compiler, Common, Box, Filter, Olap, MetadataViewer, ChartCreator, MapCreator, Report, Map ) {
+    "fenixMap",
+    "tablePaths"
+], function (Compiler, Common, Box, Filter, MetadataViewer, ChartCreator, MapCreator, Report, Map, TableCreator ) {
 
     'use strict';
-
-
 
     var submodules_path = projectRoot + '../../submodules/';
 
@@ -62,9 +59,6 @@ require([
     var filterConfig = Filter;
     filterConfig.baseUrl = submodules_path + 'fenix-ui-filter/src/js';
 
-    var olapConfig = Olap;
-    olapConfig.baseUrl = submodules_path + 'fenix-ui-olap/src/js';
-	
     var metadataViewerConfig = MetadataViewer;
     metadataViewerConfig.baseUrl = submodules_path + 'fenix-ui-metadata-viewer/src/js';
 
@@ -80,7 +74,10 @@ require([
     var mapConfig = Map;
     mapConfig.baseUrl = submodules_path + 'fenix-ui-map';
 
-    Compiler.resolve([commonConfig, boxConfig, filterConfig, olapConfig, metadataViewerConfig, chartConfig, mapCreatorConfig, reportConfig, mapConfig],
+    var tableCreatorConfig = TableCreator;
+    tableCreatorConfig.baseUrl = submodules_path + 'fenix-ui-table-creator/src/js';
+
+    Compiler.resolve([commonConfig, boxConfig, filterConfig, tableCreatorConfig, metadataViewerConfig, chartConfig, mapCreatorConfig, reportConfig, mapConfig],
         {
             config: {
 

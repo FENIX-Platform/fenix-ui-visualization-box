@@ -14,7 +14,7 @@ define([
     "fx-box/config/tabs/table-toolbar-model",
     "i18n!fx-box/nls/box",
     "handlebars",
-    'fx-olap/start',
+    'fx-table/start',
     "amplify"
 ], function ($, log, _, C, ERR, EVT, BoxUtils, Utils, tabTemplate, Filter, ToolbarModel, i18nLabels, Handlebars, Olap) {
 
