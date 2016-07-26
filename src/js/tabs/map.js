@@ -382,7 +382,7 @@ define([
         
         //this.map.fenixMap.addLayer( this._getTestLayer() );
 
-        window.MapCreator = this;
+        window.MMM = this;
         this._filterLayers= {};
     };
 
