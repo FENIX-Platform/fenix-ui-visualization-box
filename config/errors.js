@@ -14,6 +14,7 @@ define(function () {
         FETCH_RESOURCE: prefix + "fetch_resource",
         MISSING_DATASOURCES: prefix + "missing_datasources",
         UNKNOWN_RESOURCE_TYPE: prefix + "unknown_resource_type",
+        MISSING_GEO_COLUMN: prefix + "missing_geo_column",
 
         //Back filter datatype
         NO_NUMBER_DATATYPE: prefix + "no_number_datatype",

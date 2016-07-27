@@ -507,6 +507,13 @@ define([
             errors.push({code: ERR.INCOMPATIBLE_RESOURCE_TYPE});
         }
 
+        var columns = Utils.getNestedProperty("metadata.dsd.columns", this.model),
+            geoColumn = _.findWhere(columns, {subject: "geo"});
+
+        if (!geoColumn) {
+            errors.push({code: ERR.MISSING_GEO_COLUMN});
+        }
+
         return errors.length > 0 ? errors : valid;
     };
 
