@@ -49,6 +49,8 @@ define(function () {
 
         lang : "EN",
 
+        langFallbackOrder : ["EN", "FR", "ES", "AR", "PR"],
+
         //Tabs
         toolbarPosition : "up", // up | down
 

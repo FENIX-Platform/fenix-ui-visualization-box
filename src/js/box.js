@@ -725,7 +725,32 @@ define([
         var title = Utils.getNestedProperty("metadata.title", model),
             uid = Utils.getNestedProperty("metadata.uid", model);
 
-        return title[this.lang] || uid;
+
+        return this._getI18nLabel(title) || uid;
+
+    };
+
+    Box.prototype._getI18nLabel = function (obj) {
+
+        if (typeof obj !== "object") {
+            return "";
+        }
+
+        var languages = this.langFallbackOrder.slice(0),
+            label = "Missing label";
+
+        languages.unshift(this.lang);
+        languages = _.uniq(languages);
+
+        for (var i = 0; i < languages.length; i++) {
+            label = obj[languages[i]];
+
+            if (label) {
+                break;
+            }
+        }
+
+        return label;
 
     };
 
@@ -1128,12 +1153,13 @@ define([
         var state = this._getObjState("tabStates." + tab) || {},
             model = $.extend(true, {}, this._getObjState("model")),
             registry = this.pluginRegistry,
+            language = this.lang || C.lang,
         //Note that for sync call the argument of require() is not an array but a string
             Tab = require(registry[tab].path),
             config = $.extend(true, {}, state, {
                 el: this._getTabContainer(tab),
                 box: this,
-                lang: this.lang,
+                lang: language,
                 model: model,
                 id: tab + "_" + this.id,
                 environment: this._getObjState("environment"),
