@@ -5,10 +5,10 @@ define(function () {
 
         paths: {
             'fx-box/start': './box',
-            'fx-box/html': '../../html',
+            'fx-box/html': '../html',
             'fx-box/js': './',
-            'fx-box/config' :  '../../config',
-            'fx-box/nls' :  '../../nls',
+            'fx-box/config' :  '../config',
+            'fx-box/nls' :  '../nls',
 
             //3rd party libs
             jquery: '{FENIX_CDN}/js/jquery/2.1.1/jquery.min',
