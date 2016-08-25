@@ -333,7 +333,6 @@ define([
     };
 
     Box.prototype._reactToModelStatus = function (s) {
-
         log.info("React to model status: ");
         log.info(s);
 
