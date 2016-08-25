@@ -307,7 +307,7 @@ define([
         this._setObjState("backMap", this.initial.backMap);
 
         var loadResourceServiceQueryParams = $.extend(true, this.initial.loadResourceServiceQueryParams || C.loadResourceServiceQueryParams, {
-            language : this.lang
+            language: this.lang
         });
 
         this._setObjState("loadResourceServiceQueryParams", loadResourceServiceQueryParams);
@@ -562,12 +562,23 @@ define([
         switch (resourceType) {
             case "dataset" :
                 var datasources = Utils.getNestedProperty("metadata.dsd.datasources", this._getObjState("model"));
+
                 if (_.isArray(datasources) && datasources.length > 0) {
 
-                    this._fetchResource().then(
-                        _.bind(this._fetchResourceSuccess, this),
-                        _.bind(this._fetchResourceError, this)
-                    );
+                    if (this._getObjState("process").length > 0) {
+                        log.info("Process present. Load resource instead of fetch()");
+
+                        this._loadResource(this._getObjState("process"))
+                            .then(
+                                _.bind(this._onLoadResourceSuccess, this),
+                                _.bind(this._onLoadResourceError, this));
+
+                    } else {
+                        this._fetchResource().then(
+                            _.bind(this._fetchResourceSuccess, this),
+                            _.bind(this._fetchResourceError, this)
+                        );
+                    }
 
                 } else {
                     log.error({code: ERR.UNKNOWN_RESOURCE_TYPE});
@@ -1154,7 +1165,7 @@ define([
             model = $.extend(true, {}, this._getObjState("model")),
             registry = this.pluginRegistry,
             language = this.lang || C.lang,
-        //Note that for sync call the argument of require() is not an array but a string
+            //Note that for sync call the argument of require() is not an array but a string
             Tab = require(registry[tab].path),
             config = $.extend(true, {}, state, {
                 el: this._getTabContainer(tab),
@@ -1664,7 +1675,7 @@ define([
                 labels: step.labels,
                 template: step.template,
                 onReady: step.onReady,
-                environment: this.environment
+                environment: this._getObjState("environment")
             });
 
             if (typeof step.onReady === 'function') {
@@ -2138,7 +2149,7 @@ define([
         log.info(payload);
 
         this.report.export({
-            format : "table",
+            format: "table",
             config: payload
         });
     };
@@ -2175,7 +2186,7 @@ define([
         log.info(payload);
 
         this.report.export({
-            format : "metadata",
+            format: "metadata",
             config: payload
         });
     };
@@ -2193,7 +2204,7 @@ define([
 
         var face = f || "front";
 
-        switch(face.toLocaleLowerCase()) {
+        switch (face.toLocaleLowerCase()) {
             case "front" :
                 this.$el.find(s.FLIP_CONTAINER).removeClass(C.flippedClassName);
                 break;
@@ -2442,7 +2453,7 @@ define([
         this._disposeBoxFaces();
 
         this.$el.remove();
-        
+
         this._trigger("dispose");
 
         delete this;

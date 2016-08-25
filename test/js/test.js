@@ -32,7 +32,7 @@ define([
         error_model = {},
         valid_model = JSON.parse(Model),
         boxes = [],
-        environment = "production"; //"develop" || "production"
+        environment = "develop"; //"develop" || "production"
 
     function Test() { }
 
@@ -106,8 +106,8 @@ define([
             environment: environment,
             el: s.LARGE,
             //model: valid_model,
-            //uid: "UNECA_Education",
-            uid: "UNECA_Health",
+            uid: "UNECA_Education",
+            //uid: "UNECA_Health",
             //face : "back",
             //uid: "D3S_46514940821210598466444477499038849884",
             //uid: "D3S_13768551171199950126430833328416976651",
@@ -144,6 +144,54 @@ define([
              },
              {"name": "order", "parameters": {"incomes": "ASC"}}
              ],*/
+
+            //ADAM
+           /* uid: "adam_usd_commitment",
+            process: [
+                {
+                    "name": "filter",
+                    "parameters": {
+                        "rows": {
+                            "year": {
+                                "time": [
+                                    {
+                                        "from": 2000,
+                                        "to": 2014
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "pggroup",
+                    "parameters": {
+                        "by": [
+                            "year"
+                        ],
+                        "aggregations": [
+                            {
+                                "columns": ["value"],
+                                "rule": "SUM"
+                            },
+                            {
+                                "columns": ["unitcode"],
+                                "rule": "pgfirst"
+                            },
+                            {
+                                "columns": ["flowcategory"],
+                                "rule": "pgfirst"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "order",
+                    "parameters": {
+                        "year": "ASC"
+                    }
+                }
+            ]*/
         });
 
         log.trace("Rendering large box: end");
