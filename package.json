@@ -1,6 +1,6 @@
 {
   "name": "fenix-visualization-box",
-  "version": "1.0.0-beta.0",
+  "version": "1.0.0",
   "description": "FENIX resource visualization box",
   "main": "src/js/start.js",
   "scripts": {
