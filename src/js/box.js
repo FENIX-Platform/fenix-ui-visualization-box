@@ -17,7 +17,7 @@ define([
     "fx-common/json-menu",
     "fx-box/config/right-menu-model",
     "fx-box/config/tabs/map-earthstat-layers", //for map backtab
-    "i18n!fx-box/nls/box",
+    "i18n!fx-box/nls/labels",
     "fx-common/bridge",
     "fx-reports/start",
     "swiper",

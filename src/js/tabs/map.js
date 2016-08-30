@@ -16,7 +16,7 @@ define([
     "text!fx-box/html/tabs/map.hbs",
     "fx-filter/start",
     "fx-box/config/tabs/map-toolbar-model",
-    "i18n!fx-box/nls/box",
+    "i18n!fx-box/nls/labels",
     "fx-m-c/start",
     "amplify"
 ], function ($, log, _, Handlebars,

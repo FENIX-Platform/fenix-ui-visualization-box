@@ -21,7 +21,6 @@ require.config({
         mapPaths: pathProjectRoot + 'submodules/fenix-ui-map-creator/src/js/paths',
         tablePaths: pathProjectRoot + 'submodules/fenix-ui-table-creator/src/js/paths',
         filterPaths: pathProjectRoot + 'submodules/fenix-ui-filter/src/js/paths',
-        olapPaths: pathProjectRoot + 'submodules/fenix-ui-olap/src/js/paths',
         reportPaths: pathProjectRoot + 'submodules/fenix-ui-reports/src/js/paths',
         visualizationPaths : pathProjectRoot + 'submodules/fenix-ui-visualization-box/src/js/paths',
         dataEditorPaths : pathProjectRoot + 'submodules/fenix-ui-DataEditor/js/paths',
@@ -39,7 +38,7 @@ require([
     "commonPaths",
     "visualizationPaths",
     "filterPaths",
-    "olapPaths",
+    "tablePaths",
     "metadataViewerPaths",
     "chartPaths",
     "mapPaths",
@@ -62,8 +61,8 @@ require([
     var filterConfig = Filter;
     filterConfig.baseUrl = submodules_path + 'fenix-ui-filter/src/js';
 
-    var olapConfig = Olap;
-    olapConfig.baseUrl = submodules_path + 'fenix-ui-olap/src/js';
+    var tableConfig = Olap;
+    tableConfig.baseUrl = submodules_path + 'fenix-ui-table-creator/src/js';
 	
     var metadataViewerConfig = MetadataViewer;
     metadataViewerConfig.baseUrl = submodules_path + 'fenix-ui-metadata-viewer/src/js';
@@ -80,7 +79,7 @@ require([
     var mapConfig = Map;
     mapConfig.baseUrl = submodules_path + 'fenix-ui-map';
 
-    Compiler.resolve([commonConfig, boxConfig, filterConfig, olapConfig, metadataViewerConfig, chartConfig, mapCreatorConfig, reportConfig, mapConfig],
+    Compiler.resolve([commonConfig, boxConfig, filterConfig, tableConfig, metadataViewerConfig, chartConfig, mapCreatorConfig, reportConfig, mapConfig],
         {
             config: {
 
