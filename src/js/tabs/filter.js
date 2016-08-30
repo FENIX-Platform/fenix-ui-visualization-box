@@ -13,7 +13,7 @@ define([
     'fx-common/utils',
     "text!fx-box/html/tabs/filter.hbs",
     'fx-filter/start',
-    "i18n!fx-box/nls/box",
+    "i18n!fx-box/nls/labels",
     "handlebars",
     "amplify"
 ], function ($, log, _, C, ERR, EVT, Utils, tabTemplate, Filter, i18nLabels, Handlebars) {

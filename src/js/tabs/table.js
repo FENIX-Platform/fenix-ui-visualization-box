@@ -15,7 +15,7 @@ define([
     "text!fx-box/html/tabs/table.hbs",
     'fx-filter/start',
     "fx-box/config/tabs/table-toolbar-model",
-    "i18n!fx-box/nls/box",
+    "i18n!fx-box/nls/labels",
     "handlebars",
     'fx-table/start',
     "amplify"
