@@ -1,31 +1,26 @@
-if (typeof define !== 'function') {
-    var define = require('amdefine')(module);
-}
-
-
 define([
     "jquery",
     "loglevel",
     "underscore",
     "handlebars",
-    "fx-box/config/config",
-    "fx-box/config/errors",
-    "fx-box/config/events",
-    "fx-box/js/utils",
+    "../../config/config",
+    "../../config/errors",
+    "../../config/events",
+    "../../js/utils",
     'fx-common/utils',
-    "text!fx-box/html/tabs/map.hbs",
-    "fx-filter/start",
-    "fx-box/config/tabs/map-toolbar-model",
-    "i18n!fx-box/nls/labels",
-    "fx-m-c/start",
-    "amplify"
+    "../../html/tabs/map.hbs",
+    "fenix-ui-filter",
+    "../../config/tabs/map-toolbar-model",
+    "../../nls/labels",
+    "fenix-ui-map-creator",
+    "amplify-pubsub"
 ], function ($, log, _, Handlebars,
     C, ERR, EVT,
     BoxUtils, Utils,
     mapTemplate, Filter,
     ToolbarModel,
     i18nLabels,
-    MapCreator) {
+    MapCreator, amplify) {
 
     var s = {
         TOOLBAR: "[data-role='toolbar']",

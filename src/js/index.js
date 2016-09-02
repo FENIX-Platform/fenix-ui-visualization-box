@@ -1,32 +1,28 @@
-if (typeof define !== 'function') {
-    var define = require('amdefine')(module);
-}
 define([
     "loglevel",
-    "require",
     "jquery",
     "underscore",
     "underscoreString",
     "handlebars",
-    "fx-box/config/config",
-    "fx-box/config/errors",
-    "fx-box/config/events",
+    "../config/config",
+    "../config/errors",
+    "../config/events",
     "fx-common/utils",
-    "fx-md-v/start",
-    "text!fx-box/html/template.hbs",
-    "fx-common/json-menu",
-    "fx-box/config/right-menu-model",
-    "fx-box/config/tabs/map-earthstat-layers", //for map backtab
-    "i18n!fx-box/nls/labels",
-    "fx-common/bridge",
-    "fx-reports/start",
+    "fenix-ui-metadata-viewer",
+    "../html/template.hbs",
+    "fenix-ui-dropdown",
+    "../config/right-menu-model",
+    "../config/tabs/map-earthstat-layers", //for map backtab
+    "../nls/labels",
+    "fenix-ui-bridge",
+    "fenix-ui-reports",
     "swiper",
-    "amplify",
+    "amplify-pubsub",
     "bootstrap"
-], function (log, require, $, _, _str, Handlebars, C, ERR, EVT,
+], function (log, $, _, _str, Handlebars, C, ERR, EVT,
              Utils, MetadataViewer, Template, JsonMenu, menuModel,
              mapEarthstatLayers,
-             i18nLabels, Bridge, Report, Swiper) {
+             i18nLabels, Bridge, Report, Swiper, amplify) {
 
     'use strict';
 
@@ -56,7 +52,7 @@ define([
         FRONT_FACE: "[data-face='front']",
         BACK_FACE: "[data-face='back']",
         OTHER_CONTENT: "[data-content='empty'], [data-content='error'], [data-content='huge']"
-    };
+    }, pluginFolder = "fx-box/js/tabs/";
 
     /* API */
 
@@ -90,9 +86,13 @@ define([
 
             this._bindEventListeners();
 
-            this._preloadTabSources();
+            this._initTabSources();
 
             this.valid = true;
+
+            this._getModelInfo();
+
+            this._reactToModelStatus();
 
             return this;
 
@@ -669,7 +669,7 @@ define([
         this._renderBoxFaces();
     };
 
-    Box.prototype._preloadTabSources = function () {
+    Box.prototype._initTabSources = function () {
 
         var registeredTabs = $.extend(true, {}, this.pluginRegistry),
             tabs = this.tabs,
@@ -700,17 +700,6 @@ define([
 
         log.info("Tab paths found: ");
         log.info(paths);
-
-        //Async load of plugin js source
-        require(paths, _.bind(this._preloadTabSourcesSuccess, this));
-
-    };
-
-    Box.prototype._preloadTabSourcesSuccess = function () {
-
-        this._getModelInfo();
-
-        this._reactToModelStatus();
     };
 
     Box.prototype._renderBoxFaces = function () {
@@ -1167,7 +1156,7 @@ define([
             registry = this.pluginRegistry,
             language = this.lang || C.lang,
             //Note that for sync call the argument of require() is not an array but a string
-            Tab = require(registry[tab].path),
+            Tab = require(this._getPluginPath(registry[tab].path)),
             config = $.extend(true, {}, state, {
                 el: this._getTabContainer(tab),
                 box: this,
@@ -1651,7 +1640,7 @@ define([
             this.$processSteps.append($html);
 
             var registry = this.pluginRegistry,
-                Tab = require(registry[step.tab].path);
+                Tab = require(this._getPluginPath(registry[step.tab].path));
 
             //Add details container
             var $el = this.$processStepDetails.find("[data-tab='" + step.id + "']");
@@ -2552,6 +2541,11 @@ define([
             return typeof keyword === 'object' ? keyword[lang.toUpperCase()] : "";
         });
 
+    };
+
+    Box.prototype._getPluginPath = function (id) {
+        var registry = this.pluginRegistry;
+        return pluginFolder + registry;
     };
 
     return Box;

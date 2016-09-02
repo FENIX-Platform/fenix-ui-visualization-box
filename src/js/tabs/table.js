@@ -1,25 +1,20 @@
-if (typeof define !== 'function') {
-    var define = require('amdefine')(module);
-}
-
-
 define([
     "jquery",
     "loglevel",
     "underscore",
-    "fx-box/config/config",
-    "fx-box/config/errors",
-    "fx-box/config/events",
-    "fx-box/js/utils",
+    "../../config/config",
+    "../../config/errors",
+    "../../config/events",
+    "../../js/utils",
     'fx-common/utils',
-    "text!fx-box/html/tabs/table.hbs",
-    'fx-filter/start',
-    "fx-box/config/tabs/table-toolbar-model",
-    "i18n!fx-box/nls/labels",
+    "../../html/tabs/table.hbs",
+    'fenix-ui-filter',
+    "../../config/tabs/table-toolbar-model",
+    "../../nls/labels",
     "handlebars",
-    'fx-table/start',
-    "amplify"
-], function ($, log, _, C, ERR, EVT, BoxUtils, Utils, tabTemplate, Filter, ToolbarModel, i18nLabels, Handlebars, Olap) {
+    'fenix-ui-table-creator',
+    "amplify-pubsub"
+], function ($, log, _, C, ERR, EVT, BoxUtils, Utils, tabTemplate, Filter, ToolbarModel, i18nLabels, Handlebars, Olap, amplify) {
 
     'use strict';
 
@@ -215,7 +210,7 @@ define([
     TableTab.prototype._attach = function () {
 
         var template = Handlebars.compile(tabTemplate),
-            html = template($.extend(true, {}, this, i18nLabels));
+            html = template($.extend(true, {}, this, i18nLabels[this.lang.toLowerCase()]));
         this.$el.html(html);
     };
 

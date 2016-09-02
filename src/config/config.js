@@ -1,7 +1,3 @@
-if (typeof define !== 'function') {
-    var define = require('amdefine')(module);
-}
-
 define(function () {
 
     'use strict';
@@ -15,25 +11,25 @@ define(function () {
         faces : ["front", "back"],
         pluginRegistry: {
             'blank': {
-                path: 'fx-box/js/tabs/blank'
+                path: 'blank'
             },
             'table': {
-                path: 'fx-box/js/tabs/table'
+                path: 'table'
             },
             'map': {
-                path: 'fx-box/js/tabs/map'
+                path: 'map'
             },
             'chart': {
-                path:'fx-box/js/tabs/chart'
+                path:'chart'
             },
             'metadata': {
-                path:'fx-box/js/tabs/metadata'
+                path:'metadata'
             },
             'filter': {
-                path:'fx-box/js/tabs/filter'
+                path:'filter'
             },
             'download': {
-                path:'fx-box/js/tabs/download'
+                path:'download'
             }
         },
         tabs: {

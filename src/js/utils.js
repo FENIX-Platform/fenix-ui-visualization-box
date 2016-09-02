@@ -1,17 +1,12 @@
-if (typeof define !== 'function') {
-    var define = require('amdefine')(module);
-}
-
-
 define([
     "jquery",
     "loglevel",
     "underscore",
-    "fx-box/config/config",
-    "fx-box/config/errors",
-    "fx-box/config/events",
-    "fx-common/pivotator/fenixtool",
-    "i18n!fx-box/nls/labels"
+    "../config/config",
+    "../config/errors",
+    "../config/events",
+    "fenix-ui-pivotator-utils",
+    "../nls/labels"
 ], function ($, log, _, C, ERR, EVT, FenixTool, i18nLabels) {
 
     'use strict';

@@ -1,21 +1,15 @@
-if (typeof define !== 'function') {
-    var define = require('amdefine')(module);
-}
-
-
 define([
     "jquery",
     "loglevel",
     "underscore",
-    "fx-box/config/config",
-    "fx-box/config/errors",
-    "fx-box/config/events",
+    "../../config/config",
+    "../../config/errors",
+    "../../config/events",
     'fx-common/utils',
-    "text!fx-box/html/tabs/filter.hbs",
-    'fx-filter/start',
-    "i18n!fx-box/nls/labels",
-    "handlebars",
-    "amplify"
+    "../../html/tabs/filter.hbs",
+    'fenix-ui-filter',
+    "../../nls/labels",
+    "handlebars"
 ], function ($, log, _, C, ERR, EVT, Utils, tabTemplate, Filter, i18nLabels, Handlebars) {
 
     'use strict';
@@ -257,7 +251,7 @@ define([
     FilterTab.prototype._attach = function () {
 
         var template = Handlebars.compile(tabTemplate),
-            m = $.extend(true, {}, defaultOptions.template, this.template, i18nLabels, this.labels),
+            m = $.extend(true, {}, defaultOptions.template, this.template, i18nLabels[this.lang.toLowerCase()], this.labels),
             html = template(m);
 
         this.$el.html(html);

@@ -1,22 +1,17 @@
-if (typeof define !== 'function') {
-    var define = require('amdefine')(module);
-}
-
-
 define([
     "jquery",
     "loglevel",
     "underscore",
-    "fx-box/config/config",
-    "fx-box/config/errors",
-    "fx-box/config/events",
+    "../../config/config",
+    "../../config/errors",
+    "../../config/events",
     'fx-common/utils',
-    "text!fx-box/html/tabs/blank.hbs",
-    'fx-filter/start',
-    "fx-box/config/tabs/blank-toolbar-model",
+    "../../html/tabs/blank.hbs",
+    'fenix-ui-filter',
+    "../../config/tabs/blank-toolbar-model",
     "handlebars",
-    "amplify"
-], function ($, log, _, C, ERR, EVT, Utils, tabTemplate, Filter, ToolbarModel, Handlebars) {
+    "amplify-pubsub"
+], function ($, log, _, C, ERR, EVT, Utils, tabTemplate, Filter, ToolbarModel, Handlebars, amplify) {
 
     'use strict';
 
