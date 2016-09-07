@@ -8,10 +8,10 @@
     "build": "NODE_ENV=production webpack --display-error-details",
     "build:demo": "NODE_ENV=demo webpack --display-error-details",
     "dev": "NODE_ENV=develop webpack-dev-server --display-error-details --progress --color --content-base dev  --inline --hot",
-    "w-test": "SET NODE_ENV=test && karma start ./karma.config.js",
-    "w-build": "SET NODE_ENV=production && webpack --display-error-details",
-    "w-build:demo": "SET NODE_ENV=demo && webpack --display-error-details",
-    "w-dev": "SET NODE_ENV=develop && webpack-dev-server --display-error-details --progress --color --content-base dev  --inline --hot"
+    "w-test": "SET NODE_ENV=test&& karma start ./karma.config.js",
+    "w-build": "SET NODE_ENV=production&& webpack --display-error-details",
+    "w-build:demo": "SET NODE_ENV=demo&& webpack --display-error-details",
+    "w-dev": "SET NODE_ENV=develop&& webpack-dev-server --display-error-details --progress --color --content-base dev  --inline --hot"
   },
   "repository": {
     "type": "git",
@@ -29,11 +29,18 @@
   },
   "homepage": "https://github.com/FENIX-Platform/fenix-ui-visualization-box#readme",
   "dependencies": {
-    "amplify-pubsub": "^0.0.1",
-    "bootstrap": "^3.3.6",
-    "handlebars": "^4.0.5",
+    "amplify-pubsub": "0.0.1",
+    "bootstrap": "^3.3.7",
+    "eonasdan-bootstrap-datetimepicker": "^4.17.42",
+    "fenix-ui-bridge": "^1.0.0-beta.6",
+    "fenix-ui-filter-utils": "^1.0.0-beta.0",
+    "fenix-ui-metadata-viewer": "^3.0.0-beta.0",
+    "fenix-ui-pivotator-utils": "^1.0.0-beta.1",
     "jquery": "^3.1.0",
+    "jstree": "^3.3.2",
     "loglevel": "^1.4.1",
+    "selectize": "^0.12.3",
+    "sortablejs": "^1.4.2",
     "swiper": "^3.3.1",
     "underscore": "^1.8.3",
     "underscore.string": "^3.3.4"

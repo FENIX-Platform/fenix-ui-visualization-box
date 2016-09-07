@@ -7,7 +7,7 @@ define([
     "../config/config",
     "../config/errors",
     "../config/events",
-    "fx-common/utils",
+    "fenix-ui-filter-utils",
     "fenix-ui-metadata-viewer",
     "../html/template.hbs",
     "fenix-ui-dropdown",
@@ -19,6 +19,7 @@ define([
     "swiper",
     "amplify-pubsub",
     "bootstrap"
+
 ], function (log, $, _, _str, Handlebars, C, ERR, EVT,
              Utils, MetadataViewer, Template, JsonMenu, menuModel,
              mapEarthstatLayers,
@@ -293,7 +294,7 @@ define([
         this._setObjState("version", this.initial.version ? this.initial.version : undefined);
         this._setObjState("values", this.initial.values);
         this._setObjState("process", this.initial.process || []);
-        this._setObjState("uid", this.initial.uid || Utils.getNestedProperty("metadata.uid", this._getObjState("model")));
+        this._setObjState("uid", this.initial.uid || this._getNestedProperty("metadata.uid", this._getObjState("model")));
 
         this._setObjState("size", this.initial.size || C.size);
         this._setObjState("status", this.initial.status || C.status);
@@ -324,14 +325,14 @@ define([
 
     Box.prototype._setObjState = function (key, val) {
 
-        Utils.assign(this.state, key, val);
+        this._assign(this.state, key, val);
 
         return val;
     };
 
     Box.prototype._getObjState = function (path) {
 
-        return Utils.getNestedProperty(path, this.getState());
+        return this._getNestedProperty(path, this.getState());
     };
 
     Box.prototype._reactToModelStatus = function (s) {
@@ -492,24 +493,24 @@ define([
     Box.prototype._updateModel = function (resource) {
 
         var model = this._getObjState("model") || {},
-            newMetadata = Utils.getNestedProperty("metadata", resource),
-            newDsd = Utils.getNestedProperty("dsd", newMetadata) || {},
-            newData = Utils.getNestedProperty("data", resource),
-            newSize = Utils.getNestedProperty("size", resource);
+            newMetadata = this._getNestedProperty("metadata", resource),
+            newDsd = this._getNestedProperty("dsd", newMetadata) || {},
+            newData = this._getNestedProperty("data", resource),
+            newSize = this._getNestedProperty("size", resource);
 
         var dsdWithoutRid = _.without(Object.keys(newDsd), "rid");
 
         //if metadata exists updated only dsd
         if (dsdWithoutRid.length > 0) {
-            Utils.assign(model, "metadata.dsd", newDsd);
+            this._assign(model, "metadata.dsd", newDsd);
         }
 
         if (Array.isArray(newData)) {
-            Utils.assign(model, "data", newData);
+            this._assign(model, "data", newData);
         }
 
         if (model.size !== newSize) {
-            Utils.assign(model, "size", newSize);
+            this._assign(model, "size", newSize);
         }
 
         this._setObjState("model", model);
@@ -562,7 +563,7 @@ define([
 
         switch (resourceType) {
             case "dataset" :
-                var datasources = Utils.getNestedProperty("metadata.dsd.datasources", this._getObjState("model"));
+                var datasources = this._getNestedProperty("metadata.dsd.datasources", this._getObjState("model"));
 
                 if (_.isArray(datasources) && datasources.length > 0) {
 
@@ -723,8 +724,8 @@ define([
 
     Box.prototype._getModelTitle = function (model) {
 
-        var title = Utils.getNestedProperty("metadata.title", model),
-            uid = Utils.getNestedProperty("metadata.uid", model);
+        var title = this._getNestedProperty("metadata.title", model),
+            uid = this._getNestedProperty("metadata.uid", model);
 
 
         return this._getI18nLabel(title) || uid;
@@ -763,15 +764,15 @@ define([
 
         var valid = true,
             model = this._getObjState("model"),
-            resourceColumns = Utils.getNestedProperty("metadata.dsd.columns", model) || [],
-            resourceKeyColumns = Utils.cleanArray(resourceColumns.map(function (c) {
+            resourceColumns = this._getNestedProperty("metadata.dsd.columns", model) || [],
+            resourceKeyColumns = this._cleanArray(resourceColumns.map(function (c) {
                 if (c.key === true) {
                     return c.id;
                 }
             })),
             errors = [],
-            aggregations = Utils.getNestedProperty("aggregations.values.aggregations", values) || [],
-            columns = Utils.getNestedProperty("filter.values", values) || {},
+            aggregations = this._getNestedProperty("aggregations.values.aggregations", values) || [],
+            columns = this._getNestedProperty("filter.values", values) || {},
             columnsKey = Object.keys(columns) || [],
             valueDimension = _.findWhere(resourceColumns, {subject: "value"}) || {},
             valueId = valueDimension.id;
@@ -907,9 +908,9 @@ define([
                     parameters: {}
                 },
                 hasValues = false,
-                columns = Object.keys(Utils.getNestedProperty('filter.values', payload) || {}),
+                columns = Object.keys(this._getNestedProperty('filter.values', payload) || {}),
                 rowValues = payload.rows || {},
-                resourceColumns = Utils.getNestedProperty("metadata.dsd.columns", self._getObjState("model")) || [],
+                resourceColumns = this._getNestedProperty("metadata.dsd.columns", self._getObjState("model")) || [],
                 columnsSet = resourceColumns
                     .filter(function (c) {
                         return !c.id.endsWith("_" + self.lang.toUpperCase());
@@ -955,7 +956,7 @@ define([
                     parameters: {}
                 },
                 hasValues = false,
-                values = Utils.getNestedProperty("aggregations.values.aggregations", payload),
+                values = this._getNestedProperty("aggregations.values.aggregations", payload),
                 by = [],
                 sum = [],
                 avg = [],
@@ -985,25 +986,25 @@ define([
 
             });
 
-            sum = Utils.cleanArray(sum).map(function (i) {
+            sum = this._cleanArray(sum).map(function (i) {
                 return {"columns": [i], "rule": "SUM"};
             });
 
-            avg = Utils.cleanArray(avg).map(function (i) {
+            avg = this._cleanArray(avg).map(function (i) {
                 return {"columns": [i], "rule": "AVG"};
             });
 
-            first = Utils.cleanArray(first).map(function (i) {
+            first = this._cleanArray(first).map(function (i) {
                 return {"columns": [i], "rule": "FIRST"};
             });
 
-            last = Utils.cleanArray(last).map(function (i) {
+            last = this._cleanArray(last).map(function (i) {
                 return {"columns": [i], "rule": "LAST"};
             });
 
             //Add group by
             if (by.length > 0) {
-                step.parameters.by = Utils.cleanArray(by);
+                step.parameters.by = this._cleanArray(by);
                 hasValues = true
             }
 
@@ -1114,7 +1115,7 @@ define([
 
         //if opts is empty get default options
         if (!opts) {
-            opts = Utils.getNestedProperty("options", this.tabs[tab])
+            opts = this._getNestedProperty("options", this.tabs[tab])
         }
 
         this._setObjState("tab", tab);
@@ -1346,8 +1347,8 @@ define([
 
         if (this._stepControlAccess("metadata")) {
 
-            var title = Utils.getNestedProperty("metadata.title", model) || {},
-                uid = Utils.getNestedProperty("metadata.uid", model),
+            var title = this._getNestedProperty("metadata.title", model) || {},
+                uid = this._getNestedProperty("metadata.uid", model),
                 label = title[this.lang] ? title[this.lang] : uid;
 
             this.processSteps.push({
@@ -1449,7 +1450,7 @@ define([
             forbiddenIds = ["value"],
             forbiddenSubjects = ["value"];
 
-        var columnsFromDsd = Utils.getNestedProperty("metadata.dsd.columns", this._getObjState("model")) || [],
+        var columnsFromDsd = this._getNestedProperty("metadata.dsd.columns", this._getObjState("model")) || [],
             cols = columnsFromDsd.filter(function (col) {
                 return !_.contains(forbiddenSubjects, col.subject);
             }),
@@ -1596,11 +1597,11 @@ define([
 
         var source = [],
             lang = this.lang,
-            columns = Utils.getNestedProperty("metadata.dsd.columns", this._getObjState("model"));
+            columns = this._getNestedProperty("metadata.dsd.columns", this._getObjState("model"));
 
         _.each(columns, function (c) {
 
-            var title = Utils.getNestedProperty("title", c),
+            var title = this._getNestedProperty("title", c),
                 label;
 
             if (typeof title === 'object' && title[lang]) {
@@ -1759,7 +1760,7 @@ define([
             sync = {},
             source = [],
             values = this._getBackFilterValues(),
-            columns = Utils.getNestedProperty("metadata.dsd.columns", self._getObjState("model")) || [],
+            columns = this._getNestedProperty("metadata.dsd.columns", self._getObjState("model")) || [],
             columnsSet = columns
                 .filter(function (c) {
                     return !c.id.endsWith("_" + self.lang.toUpperCase());
@@ -1767,11 +1768,11 @@ define([
                 .map(function (c) {
                     return c.id;
                 }).sort(),
-            aggregationsValues = Utils.getNestedProperty("aggregations.values.aggregations", values) || [],
-            enabledColumns = Utils.getNestedProperty("filter.values", values) || {},
+            aggregationsValues = this._getNestedProperty("aggregations.values.aggregations", values) || [],
+            enabledColumns = this._getNestedProperty("filter.values", values) || {},
             enabledColumnsIds = Object.keys(enabledColumns).length > 0 ? Object.keys(enabledColumns) : columnsSet,
             filterIsInitialized = !$.isEmptyObject(enabledColumns),
-            resourceColumns = Utils.getNestedProperty("metadata.dsd.columns", this._getObjState("model")) || [],
+            resourceColumns = this._getNestedProperty("metadata.dsd.columns", this._getObjState("model")) || [],
             resourceColumnsIds = _.map(resourceColumns, function (col) {
                 return col.id;
             }),
@@ -1806,7 +1807,7 @@ define([
         addToSource(valueDimension.id);
 
         if (source.length > 0) {
-            Utils.assign(sync, "values.aggregations", source);
+            this._assign(sync, "values.aggregations", source);
         }
 
         return sync;
@@ -2012,7 +2013,7 @@ define([
         var filterValues = this._getBackFilterValues(),
             valid = this._validateValues(filterValues),
             mapValues = this._getBackMapValues(),
-            mapIsEmpty = everyPropertyIsEmptyArray(Utils.getNestedProperty("map.values", mapValues));
+            mapIsEmpty = everyPropertyIsEmptyArray(this._getNestedProperty("map.values", mapValues));
 
         if (valid === true) {
 
@@ -2147,15 +2148,15 @@ define([
     Box.prototype._downloadMetadata = function () {
 
         var model = this._getObjState("model"),
-            title = Utils.getNestedProperty("metadata.title", model) || {},
+            title = this._getNestedProperty("metadata.title", model) || {},
             fileName = title[this.lang] ? title[this.lang] : "fenix_export",
-            contextSystem = Utils.getNestedProperty("metadata.dsd.contextSystem", model),
+            contextSystem = this._getNestedProperty("metadata.dsd.contextSystem", model),
             template = contextSystem === 'uneca' ? contextSystem : 'fao';
 
         var payload = {
             resource: {
                 metadata: {
-                    uid: Utils.getNestedProperty("metadata.uid", model)
+                    uid: this._getNestedProperty("metadata.uid", model)
                 },
                 data: []
             },
@@ -2546,6 +2547,46 @@ define([
     Box.prototype._getPluginPath = function (id) {
         var registry = this.pluginRegistry;
         return pluginFolder + registry;
+    };
+
+    /* COMMONS */
+
+    Box.prototype._assign = function (obj, prop, value) {
+        if (typeof prop === "string")
+            prop = prop.split(".");
+
+        if (prop.length > 1) {
+            var e = prop.shift();
+            this._assign(obj[e] =
+                    Object.prototype.toString.call(obj[e]) === "[object Object]"
+                        ? obj[e]
+                        : {},
+                prop,
+                value);
+        } else {
+            obj[prop[0]] = value;
+        }
+    };
+
+    Box.prototype._getNestedProperty = function (path, obj) {
+
+        var obj = $.extend(true, {}, obj),
+            arr = path.split(".");
+
+        while (arr.length && (obj = obj[arr.shift()]));
+
+        return obj;
+
+    };
+
+    Box.prototype._cleanArray = function (actual) {
+        var newArray = [];
+        for (var i = 0; i < actual.length; i++) {
+            if (actual[i]) {
+                newArray.push(actual[i]);
+            }
+        }
+        return newArray;
     };
 
     return Box;
