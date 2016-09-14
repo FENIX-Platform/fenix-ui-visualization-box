@@ -3,7 +3,8 @@ var distFolderPath = "dist",
     devFolderPath = "dev",
     webpack = require('webpack'),
     ExtractTextPlugin = require("extract-text-webpack-plugin"),
-    HtmlWebpackPlugin = require('html-webpack-plugin'),
+//    HtmlWebpackPlugin = require('html-webpack-plugin'),
+    CleanWebpackPlugin = require('clean-webpack-plugin'),
     packageJson = require("./package.json"),
     Path = require('path'),
     dependencies = Object.keys(packageJson.dependencies);
@@ -21,8 +22,13 @@ module.exports = {
     resolve: {
         root: Path.resolve(__dirname),
         alias: {
+            treegrid: Path.join(__dirname, 'node_modules/jquery-treegrid/js/jquery.treegrid.js'), //error on its `package.json` - see tonic
             jquery: Path.join(__dirname, 'node_modules/jquery/dist/jquery') //neede by eonasdan-bootstrap-datetimepicker
         }
+    },
+
+    node: {
+        fs: "empty"
     },
 
     externals: isProduction(dependencies, undefined),
@@ -30,20 +36,33 @@ module.exports = {
     module: {
         loaders: [
             {test: /\.css$/, loader: ExtractTextPlugin.extract("style-loader", "css-loader")},
+            {test: /\.hbs$/, loader: "handlebars-loader"},
+            {test: /\.json$/, loader: "json-loader"},
             {test: /bootstrap.+\.(jsx|js)$/, loader: 'imports?jQuery=jquery,$=jquery'}]
     },
-
     plugins: clearArray([
+        //new webpack.ProvidePlugin({$: "jquery", jQuery: "jquery"}),
+        isDemo(undefined, new CleanWebpackPlugin([distFolderPath])),
         isProduction(new webpack.optimize.UglifyJsPlugin({
             compress: {warnings: false},
             output: {comments: false}
-        })),
-        new ExtractTextPlugin(packageJson.name + '.min.css'),
-        isDevelop(new HtmlWebpackPlugin({
-            inject: "body",
-            template: devFolderPath + "/index.template.html"
         }))
     ])
+
+    /*
+        plugins: clearArray([
+            isProduction(new webpack.optimize.UglifyJsPlugin({
+                compress: {warnings: false},
+                output: {comments: false}
+            })),
+            new ExtractTextPlugin(packageJson.name + '.min.css'),
+            isDevelop(new HtmlWebpackPlugin({
+                inject: "body",
+                template: devFolderPath + "/index.template.html"
+            }))
+        ])
+
+    */
 };
 
 function getEntry() {

@@ -2,18 +2,18 @@ define([
     "jquery",
     "loglevel",
     "underscore",
-    "fx-box/config/config",
-    "fx-box/config/errors",
-    "fx-box/config/events",
-    "fx-box/js/utils",
-    'fx-common/utils',
-    "text!fx-box/html/tabs/chart.hbs",
-    'fx-filter/start',
-    "fx-box/config/tabs/chart-toolbar-model",
-    "i18n!fx-box/nls/labels",
+    "../../config/config",
+    "../../config/errors",
+    "../../config/events",
+    "../utils",
+    'fenix-ui-filter-utils',
+    "../../html/tabs/chart.hbs",
+    'fenix-ui-filter',
+    "../../config/tabs/chart-toolbar-model",
+    "../../nls/labels",
     "handlebars",
-    'fx-chart/start',
-    "amplify"
+    'fenix-ui-chart-creator',
+    "amplify-pubsub"
 ], function ($, log, _, C, ERR, EVT, BoxUtils, Utils, tabTemplate, Filter, ToolbarModel, i18nLabels, Handlebars, ChartCreator) {
 
     'use strict';

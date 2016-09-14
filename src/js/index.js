@@ -2,7 +2,7 @@ define([
     "loglevel",
     "jquery",
     "underscore",
-    "underscoreString",
+    "underscore.string",
     "handlebars",
     "../config/config",
     "../config/errors",

@@ -7,7 +7,7 @@ define([
     "../../config/errors",
     "../../config/events",
     "../../js/utils",
-    'fx-common/utils',
+    'fenix-ui-filter-utils',
     "../../html/tabs/map.hbs",
     "fenix-ui-filter",
     "../../config/tabs/map-toolbar-model",

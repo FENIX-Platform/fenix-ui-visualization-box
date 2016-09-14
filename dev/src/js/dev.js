@@ -2,9 +2,9 @@ define([
     'loglevel',
     'jquery',
     'underscore',
-    'fx-box/start',
-    'fx-box/config/events',
-    'text!test/json/uneca_population.json'
+    '../../../src/js/index',
+    '../../../src/config/events',
+    '../json/uneca_population.json'
 ], function (log, $, _, Box, EVT, Model) {
 
     'use strict';
@@ -34,9 +34,9 @@ define([
         boxes = [],
         environment = "develop"; //"develop" || "production"
 
-    function Test() { }
+    function Dev() { }
 
-    Test.prototype.start = function () {
+    Dev.prototype.start = function () {
 
         log.trace("Test started");
 
@@ -44,7 +44,7 @@ define([
 
     };
 
-    Test.prototype._render = function () {
+    Dev.prototype._render = function () {
 
         this._renderLargeBox();
 
@@ -68,7 +68,7 @@ define([
 
     };
 
-    Test.prototype._renderClone = function () {
+    Dev.prototype._renderClone = function () {
 
         log.trace("Rendering clone box: start");
 
@@ -98,7 +98,7 @@ define([
 
     };
 
-    Test.prototype._renderLargeBox = function () {
+    Dev.prototype._renderLargeBox = function () {
 
         log.trace("Rendering large box: start");
 
@@ -198,7 +198,7 @@ define([
 
     };
 
-    Test.prototype._renderMediumBoxes = function () {
+    Dev.prototype._renderMediumBoxes = function () {
 
         log.trace("Rendering medium boxes: start");
 
@@ -215,7 +215,7 @@ define([
 
     };
 
-    Test.prototype._renderDestroyBox = function () {
+    Dev.prototype._renderDestroyBox = function () {
 
         log.trace("Rendering destroy box: start");
 
@@ -234,7 +234,7 @@ define([
 
     };
 
-    Test.prototype._renderStatusBox = function () {
+    Dev.prototype._renderStatusBox = function () {
 
         log.trace("Rendering status box: start");
 
@@ -257,7 +257,7 @@ define([
 
     };
 
-    Test.prototype._renderAsyncBox = function () {
+    Dev.prototype._renderAsyncBox = function () {
 
         log.trace("Rendering async box: start");
 
@@ -279,7 +279,7 @@ define([
 
     };
 
-    Test.prototype._renderTabBox = function () {
+    Dev.prototype._renderTabBox = function () {
 
         log.trace("Rendering tab box: start");
 
@@ -302,7 +302,7 @@ define([
 
     };
 
-    Test.prototype._renderFlipBox = function () {
+    Dev.prototype._renderFlipBox = function () {
 
         log.trace("Rendering flip box: start");
 
@@ -325,7 +325,7 @@ define([
 
     };
 
-    Test.prototype._renderStateBox = function () {
+    Dev.prototype._renderStateBox = function () {
 
         log.trace("Rendering state box: start");
 
@@ -346,7 +346,7 @@ define([
 
     };
 
-    Test.prototype.createBox = function (params) {
+    Dev.prototype.createBox = function (params) {
 
         var instance = new Box(params);
 
@@ -355,6 +355,6 @@ define([
         return instance;
     };
 
-    return new Test();
+    return new Dev();
 
 });
