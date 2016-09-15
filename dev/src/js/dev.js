@@ -30,11 +30,14 @@ define([
         },
         empty_model = {data: []},
         error_model = {},
-        valid_model = JSON.parse(Model),
+        valid_model = Model,
         boxes = [],
         environment = "develop"; //"develop" || "production"
 
-    function Dev() { }
+    function Dev() {
+        log.setLevel('trace')
+        this.start();
+    }
 
     Dev.prototype.start = function () {
 

@@ -22,7 +22,7 @@ module.exports = {
     resolve: {
         root: Path.resolve(__dirname),
         alias: {
-            treegrid: Path.join(__dirname, 'node_modules/jquery-treegrid/js/jquery.treegrid.js'), //error on its `package.json` - see tonic
+            handlebars : Path.join(__dirname, 'node_modules/handlebars/dist/handlebars.js'),
             jquery: Path.join(__dirname, 'node_modules/jquery/dist/jquery') //neede by eonasdan-bootstrap-datetimepicker
         }
     },

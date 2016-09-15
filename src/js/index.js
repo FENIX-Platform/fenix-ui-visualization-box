@@ -246,7 +246,7 @@ define([
     Box.prototype._initObj = function () {
 
         //Inject box blank template
-        var template = Handlebars.compile($(Template).find(s.BOX)[0].outerHTML),
+        var template = Handlebars.compile(s.BOX),
             $html = $(template($.extend(true, {}, this.getState(), i18nLabels)));
 
         this.$el.html($html);
@@ -1157,7 +1157,7 @@ define([
             registry = this.pluginRegistry,
             language = this.lang || C.lang,
             //Note that for sync call the argument of require() is not an array but a string
-            Tab = require(this._getPluginPath(registry[tab].path)),
+            Tab = require(this._getPluginPath(registry[tab].path) + ".js"),
             config = $.extend(true, {}, state, {
                 el: this._getTabContainer(tab),
                 box: this,
@@ -1641,7 +1641,7 @@ define([
             this.$processSteps.append($html);
 
             var registry = this.pluginRegistry,
-                Tab = require(this._getPluginPath(registry[step.tab].path));
+                Tab = require(this._getPluginPath(registry[step.tab].path) + ".js");
 
             //Add details container
             var $el = this.$processStepDetails.find("[data-tab='" + step.id + "']");
@@ -2534,7 +2534,7 @@ define([
             var lang;
 
             try {
-                lang = require.s.contexts._.config.i18n.locale;
+                lang = s.contexts._.config.i18n.locale;
             } catch (e) {
                 lang = "EN";
             }
