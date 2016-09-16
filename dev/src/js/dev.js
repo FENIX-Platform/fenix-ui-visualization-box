@@ -43,6 +43,8 @@ define([
 
         log.trace("Test started");
 
+        require('../../../node_modules/fenix-ui-dropdown/dist/fenix-ui-dropdown.min.css');
+
         this._render();
 
     };
@@ -54,19 +56,12 @@ define([
         return;
 
         this._renderClone();
-
         this._renderMediumBoxes();
-
         this._renderDestroyBox();
-
         this._renderStatusBox();
-
         this._renderAsyncBox();
-
         this._renderTabBox();
-
         this._renderFlipBox();
-
         this._renderStateBox();
 
     };

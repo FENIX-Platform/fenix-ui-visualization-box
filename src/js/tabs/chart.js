@@ -11,10 +11,9 @@ define([
     'fenix-ui-filter',
     "../../config/tabs/chart-toolbar-model",
     "../../nls/labels",
-    "handlebars",
     'fenix-ui-chart-creator',
     "amplify-pubsub"
-], function ($, log, _, C, ERR, EVT, BoxUtils, Utils, tabTemplate, Filter, ToolbarModel, i18nLabels, Handlebars, ChartCreator, amplify) {
+], function ($, log, _, C, ERR, EVT, BoxUtils, Utils, tabTemplate, Filter, ToolbarModel, i18nLabels, ChartCreator, amplify) {
 
     'use strict';
 

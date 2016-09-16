@@ -8,9 +8,8 @@ define([
     'fenix-ui-filter-utils',
     "../../html/tabs/filter.hbs",
     'fenix-ui-filter',
-    "../../nls/labels",
-    "handlebars"
-], function ($, log, _, C, ERR, EVT, Utils, tabTemplate, Filter, i18nLabels, Handlebars) {
+    "../../nls/labels"
+], function ($, log, _, C, ERR, EVT, Utils, tabTemplate, Filter, i18nLabels) {
 
     'use strict';
 

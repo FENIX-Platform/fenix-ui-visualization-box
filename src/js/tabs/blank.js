@@ -9,9 +9,8 @@ define([
     "../../html/tabs/blank.hbs",
     'fenix-ui-filter',
     "../../config/tabs/blank-toolbar-model",
-    "handlebars",
     "amplify-pubsub"
-], function ($, log, _, C, ERR, EVT, Utils, tabTemplate, Filter, ToolbarModel, Handlebars, amplify) {
+], function ($, log, _, C, ERR, EVT, Utils, tabTemplate, Filter, ToolbarModel, amplify) {
 
     'use strict';
 

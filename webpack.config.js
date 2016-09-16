@@ -45,8 +45,6 @@ module.exports = {
                 'image-webpack?bypassOnDebug&optimizationLevel=7&interlaced=false'
                 ]
             }]
-
-
     },
     plugins: clearArray([
         //new webpack.ProvidePlugin({$: "jquery", jQuery: "jquery"}),

@@ -2,7 +2,6 @@ define([
     "jquery",
     "loglevel",
     "underscore",
-    "handlebars",
     "../../config/config",
     "../../config/errors",
     "../../config/events",
@@ -14,7 +13,7 @@ define([
     "../../nls/labels",
     "fenix-ui-map-creator",
     "amplify-pubsub"
-], function ($, log, _, Handlebars,
+], function ($, log, _,
     C, ERR, EVT,
     BoxUtils, Utils,
     mapTemplate, Filter,

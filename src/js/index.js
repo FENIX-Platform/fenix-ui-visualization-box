@@ -37,9 +37,9 @@ define([
     'use strict';
 
     var steps = {
-        filter : StepFilterTemplate,
-        map : StepMapTemplate,
-        metadata : StepMetadataTemplate
+        filter: StepFilterTemplate,
+        map: StepMapTemplate,
+        metadata: StepMetadataTemplate
     }, s = {
         BOX: "[data-role='box']",
         CONTENT_READY: "[data-content='ready']",
@@ -261,7 +261,7 @@ define([
     Box.prototype._initObj = function () {
 
         //Inject box blank template
-        var $html = $(Template($.extend(true, {}, this.getState(), i18nLabels)));
+        var $html = $(Template($.extend(true, {}, this.getState(), i18nLabels[this.lang.toLowerCase()])));
 
         this.$el.html($html);
 
@@ -724,6 +724,8 @@ define([
         this._renderFrontFace();
 
         this._renderBackFace();
+
+        this._updateBoxTitle();
 
     };
 
@@ -1307,18 +1309,13 @@ define([
             log.warn("Abort 'front' face rendering. face is already rendered: " + this.backFaceIsRendered + ", confing render face: " + _.contains(faces, 'front'))
             return;
         }
-
         this.backFaceIsRendered = true;
 
         this._hideFilterError();
 
         this._createProcessSteps();
-
         this._renderProcessSteps();
-
         this._bindBackFaceEventListeners();
-
-        this._updateBoxTitle();
 
     };
 
@@ -1351,10 +1348,17 @@ define([
 
     Box.prototype._createProcessSteps = function () {
 
-        var filterConfiguration = this._createBackTabConfiguration("filter"),
-            aggregationConfiguration = this._createBackTabConfiguration("aggregations"),
-            mapConfiguration = this._createBackTabConfiguration("map"),
-            model = $.extend(true, {}, this._getObjState("model"));
+        var filterConfiguration,
+            aggregationConfiguration,
+            mapConfiguration,
+            model;
+
+        filterConfiguration = this._createBackTabConfiguration("filter");
+        aggregationConfiguration = this._createBackTabConfiguration("aggregations");
+
+        mapConfiguration = this._createBackTabConfiguration("map");
+
+        model = $.extend(true, {}, this._getObjState("model"));
 
         this.processSteps = [];
 
@@ -1374,6 +1378,7 @@ define([
             });
         }
 
+
         if (this._stepControlAccess("filter")) {
             this.processSteps.push({
                 id: "filter",
@@ -1383,7 +1388,7 @@ define([
                 template: filterConfiguration.template,
                 onReady: filterConfiguration.onReady,
                 labels: {
-                    title: i18nLabels["step_filter"]
+                    title: i18nLabels[this.lang.toLowerCase()]["step_filter"]
                 }
             });
         }
@@ -1396,7 +1401,7 @@ define([
                 config: aggregationConfiguration.filter,
                 template: aggregationConfiguration.template,
                 labels: {
-                    title: i18nLabels["step_aggregations"]
+                    title: i18nLabels[this.lang.toLowerCase()]["step_aggregations"]
                 }
             });
         }
@@ -1410,7 +1415,7 @@ define([
                 template: mapConfiguration.template,
                 onReady: mapConfiguration.onReady,
                 labels: {
-                    title: i18nLabels["step_map"]
+                    title: i18nLabels[this.lang.toLowerCase()]["step_map"]
                 }
             });
         }
@@ -1474,17 +1479,19 @@ define([
                 .filter(function (col) {
                     return !col.id.endsWith("_" + self.lang.toUpperCase());
                 }),
-            config = Utils.createConfiguration({
-                model: this._getObjState("model"),
-                common: {
-                    selector: {
-                        hideSummary: true
-                    },
-                    template: {
-                        hideSwitch: true
-                    }
+            config;
+
+        config = Utils.createConfiguration({
+            model: this._getObjState("model"),
+            common: {
+                selector: {
+                    hideSummary: true
+                },
+                template: {
+                    hideSwitch: true
                 }
-            });
+            }
+        });
 
         return {
 
@@ -1575,7 +1582,11 @@ define([
 
     Box.prototype._createBackAggregationTabConfiguration = function (values) {
 
+
+        console.log(87)
         var source = this._getSourceForAggregationTabConfiguration();
+
+        console.log(88)
 
         return {
 
@@ -1588,12 +1599,12 @@ define([
                         source: source, // Static data
                         config: {
                             groups: {
-                                dimensions: i18nLabels['aggregations_dimensions'],
-                                group: i18nLabels['aggregations_group'],
-                                sum: i18nLabels['aggregations_sum'],
-                                avg: i18nLabels['aggregations_avg'],
-                                first: i18nLabels['aggregations_first'],
-                                last: i18nLabels['aggregations_last']
+                                dimensions: i18nLabels[this.lang.toLowerCase()]['aggregations_dimensions'],
+                                group: i18nLabels[this.lang.toLowerCase()]['aggregations_group'],
+                                sum: i18nLabels[this.lang.toLowerCase()]['aggregations_sum'],
+                                avg: i18nLabels[this.lang.toLowerCase()]['aggregations_avg'],
+                                first: i18nLabels[this.lang.toLowerCase()]['aggregations_first'],
+                                last: i18nLabels[this.lang.toLowerCase()]['aggregations_last']
                             }
                         }
                     }
@@ -1608,13 +1619,14 @@ define([
 
         //TODO integrate fenixTool
 
-        var source = [],
+        var self = this,
+            source = [],
             lang = this.lang,
             columns = this._getNestedProperty("metadata.dsd.columns", this._getObjState("model"));
 
         _.each(columns, function (c) {
 
-            var title = this._getNestedProperty("title", c),
+            var title = self._getNestedProperty("title", c),
                 label;
 
             if (typeof title === 'object' && title[lang]) {
@@ -1640,23 +1652,22 @@ define([
 
     Box.prototype._renderProcessSteps = function () {
         console.log("_renderProcessSteps");
+        //debugger;
         var self = this,
             readyEventCounter = 0,
             list = this.processSteps;
 
         _.each(list, _.bind(function (step, index) {
 
-            console.log("STEPTAB: " + step.tab);
 
-            var template = Handlebars.compile($(Template).find("[data-role='step-" + step.tab + "']")[0].outerHTML),
-                $html = $(template($.extend(true, {}, step, i18nLabels, this._getObjState("model"))));
+            var $html = $(steps[step.tab]($.extend(true, {}, step, i18nLabels, this._getObjState("model"))));
 
             this._bindStepLabelEventListeners($html, step);
 
             this.$processSteps.append($html);
 
             var registry = this.pluginRegistry,
-                Tab = require(this._getPluginPath(registry[step.tab].path) + ".js");
+                Tab = require(this._getPluginPath(registry[step.tab]) + ".js");
 
             //Add details container
             var $el = this.$processStepDetails.find("[data-tab='" + step.id + "']");
@@ -1676,6 +1687,7 @@ define([
                 cache: this._getObjState("cache"),
                 model: $.extend(true, {}, this._getObjState("model")),
                 config: step.config,
+                lang: this.lang,
                 values: step.values || {},
                 id: step.tab + "_" + step.id,
                 labels: step.labels,
@@ -2345,7 +2357,6 @@ define([
         }
 
 
-
     };
 
     Box.prototype._trigger = function (channel) {
@@ -2372,7 +2383,7 @@ define([
 
                 var error = this._getObjState("error");
 
-                this.$el.find(s.ERROR_TEXT).html(i18nLabels[error.code] ? i18nLabels[error.code] : error.code);
+                this.$el.find(s.ERROR_TEXT).html(i18nLabels[this.lang.toLowerCase()][error.code] ? i18nLabels[this.lang.toLowerCase()][error.code] : error.code);
 
                 //hide/show filter button
                 if (error.filter === true) {

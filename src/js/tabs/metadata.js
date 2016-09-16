@@ -6,9 +6,8 @@ define([
     "../../config/errors",
     "../../config/events",
     "../../html/tabs/metadata.hbs",
-    'fenix-ui-metadata-viewer',
-    "handlebars"
-], function ($, log, _, C, ERR, EVT, tabTemplate, MetadataViewer, Handlebars) {
+    'fenix-ui-metadata-viewer'
+], function ($, log, _, C, ERR, EVT, tabTemplate, MetadataViewer) {
 
     'use strict';
 

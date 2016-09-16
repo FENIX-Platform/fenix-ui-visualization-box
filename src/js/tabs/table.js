@@ -11,10 +11,9 @@ define([
     'fenix-ui-filter',
     "../../config/tabs/table-toolbar-model",
     "../../nls/labels",
-    "handlebars",
     'fenix-ui-table-creator',
     "amplify-pubsub"
-], function ($, log, _, C, ERR, EVT, BoxUtils, Utils, tabTemplate, Filter, ToolbarModel, i18nLabels, Handlebars, Olap, amplify) {
+], function ($, log, _, C, ERR, EVT, BoxUtils, Utils, tabTemplate, Filter, ToolbarModel, i18nLabels, Table, amplify) {
 
     'use strict';
 
@@ -208,10 +207,6 @@ define([
     };
 
     TableTab.prototype._attach = function () {
-        console.log(tabTemplate);
-        console.log(i18nLabels);
-        console.log(this.lang);
-        console.log($.extend(true, {}, this, i18nLabels[this.lang.toLowerCase()]));
         var html = tabTemplate($.extend(true, {}, this, i18nLabels[this.lang.toLowerCase()]));
 
         this.$el.html(html);
@@ -307,7 +302,7 @@ define([
             el: "#table_" + this.id
         }, configuration);
 
-        this.table = new Olap(config);
+        this.table = new Table(config);
     };
 
     TableTab.prototype._renderToolbar = function () {

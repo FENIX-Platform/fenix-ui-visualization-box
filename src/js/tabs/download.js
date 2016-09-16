@@ -6,9 +6,8 @@ define([
     "../../config/errors",
     "../../config/events",
     "../../html/tabs/download.hbs",
-    "fenix-ui-reports",
-    "handlebars"
-], function ($, log, _, C, ERR, EVT, tabTemplate, Report, Handlebars) {
+    "fenix-ui-reports"
+], function ($, log, _, C, ERR, EVT, tabTemplate, Report) {
 
     'use strict';
 
