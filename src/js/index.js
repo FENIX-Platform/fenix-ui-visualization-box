@@ -10,6 +10,12 @@ define([
     "fenix-ui-filter-utils",
     "fenix-ui-metadata-viewer",
     "../html/template.hbs",
+    "../html/filter-filter-template.hbs",
+    "../html/filter-map-template.hbs",
+    "../html/filter-aggregation-template.hbs",
+    "../html/steps/step-filter.hbs",
+    "../html/steps/step-map.hbs",
+    "../html/steps/step-metadata.hbs",
     "fenix-ui-dropdown",
     "../config/right-menu-model",
     "../config/tabs/map-earthstat-layers", //for map backtab
@@ -21,13 +27,20 @@ define([
     "bootstrap"
 
 ], function (log, $, _, _str, Handlebars, C, ERR, EVT,
-             Utils, MetadataViewer, Template, JsonMenu, menuModel,
+             Utils, MetadataViewer,
+             Template, FilterFilterTemplate, FilterMapTemplate, FilterAggregationTemplate,
+             StepFilterTemplate, StepMapTemplate, StepMetadataTemplate,
+             JsonMenu, menuModel,
              mapEarthstatLayers,
              i18nLabels, Bridge, Report, Swiper, amplify) {
 
     'use strict';
 
-    var s = {
+    var steps = {
+        filter : StepFilterTemplate,
+        map : StepMapTemplate,
+        metadata : StepMetadataTemplate
+    }, s = {
         BOX: "[data-role='box']",
         CONTENT_READY: "[data-content='ready']",
         RIGHT_MENU: "[data-role='right-menu']",
@@ -65,6 +78,8 @@ define([
     function Box(obj) {
         log.info("Create box");
         log.info(obj);
+
+        require("../css/fenix-ui-visualization-box.css");
 
         this._registerHandlebarsHelpers();
 
@@ -246,8 +261,7 @@ define([
     Box.prototype._initObj = function () {
 
         //Inject box blank template
-        var template = Handlebars.compile(s.BOX),
-            $html = $(template($.extend(true, {}, this.getState(), i18nLabels)));
+        var $html = $(Template($.extend(true, {}, this.getState(), i18nLabels)));
 
         this.$el.html($html);
 
@@ -1479,7 +1493,7 @@ define([
 
             config: config,
 
-            template: Handlebars.compile($(Template).find(s.FILTER_FILTER_TEMPLATE)[0].outerHTML)({columns: columns}),
+            template: FilterFilterTemplate({columns: columns}),
 
             onReady: _.bind(function () {
 
@@ -1551,7 +1565,7 @@ define([
                 }
             },
 
-            template: Handlebars.compile($(Template).find(s.FILTER_MAP_TEMPLATE)[0].outerHTML)({layers: []}),
+            template: FilterMapTemplate({layers: []}),
 
             onReady: _.bind(function (payload) {
 
@@ -1587,7 +1601,7 @@ define([
                 }
             },
 
-            template: Handlebars.compile($(Template).find(s.FILTER_AGGREGATION_TEMPLATE)[0].outerHTML)(i18nLabels)
+            template: FilterAggregationTemplate(i18nLabels)
         };
     };
 
@@ -1626,12 +1640,14 @@ define([
     };
 
     Box.prototype._renderProcessSteps = function () {
-
+        console.log("_renderProcessSteps");
         var self = this,
             readyEventCounter = 0,
             list = this.processSteps;
 
         _.each(list, _.bind(function (step, index) {
+
+            console.log("STEPTAB: " + step.tab);
 
             var template = Handlebars.compile($(Template).find("[data-role='step-" + step.tab + "']")[0].outerHTML),
                 $html = $(template($.extend(true, {}, step, i18nLabels, this._getObjState("model"))));

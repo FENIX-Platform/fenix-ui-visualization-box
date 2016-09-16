@@ -3,7 +3,7 @@ var distFolderPath = "dist",
     devFolderPath = "dev",
     webpack = require('webpack'),
     ExtractTextPlugin = require("extract-text-webpack-plugin"),
-//    HtmlWebpackPlugin = require('html-webpack-plugin'),
+    HtmlWebpackPlugin = require('html-webpack-plugin'),
     CleanWebpackPlugin = require('clean-webpack-plugin'),
     packageJson = require("./package.json"),
     Path = require('path'),
@@ -42,11 +42,17 @@ module.exports = {
     },
     plugins: clearArray([
         //new webpack.ProvidePlugin({$: "jquery", jQuery: "jquery"}),
+        new ExtractTextPlugin(packageJson.name + '.min.css'),
         isDemo(undefined, new CleanWebpackPlugin([distFolderPath])),
         isProduction(new webpack.optimize.UglifyJsPlugin({
             compress: {warnings: false},
             output: {comments: false}
+        })),
+        isDevelop(new HtmlWebpackPlugin({
+            inject: "body",
+            template: devFolderPath + "/index.template.html"
         }))
+
     ])
 
     /*

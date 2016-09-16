@@ -1,0 +1,24 @@
+<div data-role="filter-filter-template">
+
+    <!-- Slider main container -->
+    <div data-role='filter-rows-swiper' class="swiper-container">
+        <!-- Additional required wrapper -->
+        <div class="swiper-wrapper">
+
+            {{#each columns}}
+                <div class="swiper-slide filter-slide ">
+                    <div data-selector="{{this.id}}"></div>
+                </div>
+            {{/each}}
+
+        </div>
+        <!-- If we need pagination -->
+        <div class="swiper-pagination"></div>
+
+        <!-- If we need navigation buttons -->
+        <div class="swiper-button-prev"></div>
+        <div class="swiper-button-next"></div>
+
+    </div>
+
+</div>

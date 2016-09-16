@@ -14,7 +14,7 @@ define([
     "handlebars",
     'fenix-ui-chart-creator',
     "amplify-pubsub"
-], function ($, log, _, C, ERR, EVT, BoxUtils, Utils, tabTemplate, Filter, ToolbarModel, i18nLabels, Handlebars, ChartCreator) {
+], function ($, log, _, C, ERR, EVT, BoxUtils, Utils, tabTemplate, Filter, ToolbarModel, i18nLabels, Handlebars, ChartCreator, amplify) {
 
     'use strict';
 

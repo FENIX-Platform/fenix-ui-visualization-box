@@ -1,5 +1,3 @@
-<div>
-
     <div data-role="box" class="fx-box" data-status="{{ status }}" data-size="{{ size }}">
 
         <div data-content="ready" data-tab="{{ default_tab }}">
@@ -257,55 +255,3 @@
         </div>
 
     </div>
-
-    <li data-role="step-metadata" class="step-container" data-tab="{{ id }}"
-        data-resourceRepresentationType="{{ metadata.meContent.resourceRepresentationType}}">
-        <span class="step-icon icojam_box"></span>
-        <h6 class="truncate step-title">{{ labels.title }}</h6>
-
-    </li>
-
-    <li data-role="step-filter" class="step-container" data-tab="{{ id }}">
-        <span class="step-icon icojam_filter"></span>
-        <h6 class="truncate step-title">{{ labels.title }}</h6>
-    </li>
-
-    <li data-role="step-map" class="step-container" data-tab="{{ id }}">
-        <span class="step-icon icojam_languages"></span>
-        <h6 class="truncate step-title">{{ labels.title }}</h6>
-    </li>
-
-    <div data-role="filter-aggregation-template">
-
-        <div data-selector="aggregations"></div>
-
-    </div>
-
-    <div data-role="filter-filter-template">
-
-        <!-- Slider main container -->
-        <div data-role='filter-rows-swiper' class="swiper-container">
-            <!-- Additional required wrapper -->
-            <div class="swiper-wrapper">
-
-                {{#each columns}}
-                    <div class="swiper-slide filter-slide ">
-                        <div data-selector="{{this.id}}"></div>
-                    </div>
-                {{/each}}
-
-            </div>
-            <!-- If we need pagination -->
-            <div class="swiper-pagination"></div>
-
-            <!-- If we need navigation buttons -->
-            <div class="swiper-button-prev"></div>
-            <div class="swiper-button-next"></div>
-
-        </div>
-
-    </div>
-
-    <div data-role="filter-map-template"></div>
-
-</div>
