@@ -5,11 +5,10 @@ define([
     "../../config/config",
     "../../config/errors",
     "../../config/events",
-    'fenix-ui-filter-utils',
     "../../html/tabs/metadata.hbs",
     'fenix-ui-metadata-viewer',
     "handlebars"
-], function ($, log, _, C, ERR, EVT, Utils, tabTemplate, MetadataViewer, Handlebars) {
+], function ($, log, _, C, ERR, EVT, tabTemplate, MetadataViewer, Handlebars) {
 
     'use strict';
 
@@ -21,6 +20,7 @@ define([
         this.state = {};
 
         this.cache = this.initial.cache;
+        this.lang = this.initial.lang;
 
         return this;
     }
@@ -192,8 +192,7 @@ define([
 
     MetadataTab.prototype._attach = function () {
 
-        var template = Handlebars.compile(tabTemplate),
-            html = template(this);
+        var html = tabTemplate(this);
 
         this.$el.html(html);
     };
@@ -250,11 +249,28 @@ define([
 
     MetadataTab.prototype._setState = function (key, val) {
 
-        Utils.assign(this.state, key, val);
+        this._assign(this.state, key, val);
 
         this._trigger("state", $.extend(true, {}, this.state));
 
         
+    };
+
+    MetadataTab.prototype._assign = function (obj, prop, value) {
+        if (typeof prop === "string")
+            prop = prop.split(".");
+
+        if (prop.length > 1) {
+            var e = prop.shift();
+            this.assign(obj[e] =
+                    Object.prototype.toString.call(obj[e]) === "[object Object]"
+                        ? obj[e]
+                        : {},
+                prop,
+                value);
+        } else {
+            obj[prop[0]] = value;
+        }
     };
 
     return MetadataTab;

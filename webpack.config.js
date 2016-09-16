@@ -38,7 +38,15 @@ module.exports = {
             {test: /\.css$/, loader: ExtractTextPlugin.extract("style-loader", "css-loader")},
             {test: /\.hbs$/, loader: "handlebars-loader"},
             {test: /\.json$/, loader: "json-loader"},
-            {test: /bootstrap.+\.(jsx|js)$/, loader: 'imports?jQuery=jquery,$=jquery'}]
+            {test: /bootstrap.+\.(jsx|js)$/, loader: 'imports?jQuery=jquery,$=jquery'},
+            {test: /\.(jpe?g|png|gif|svg)$/i,
+                loaders: [
+                'file?hash=sha512&digest=hex&name=[hash].[ext]',
+                'image-webpack?bypassOnDebug&optimizationLevel=7&interlaced=false'
+                ]
+            }]
+
+
     },
     plugins: clearArray([
         //new webpack.ProvidePlugin({$: "jquery", jQuery: "jquery"}),

@@ -66,7 +66,7 @@ define([
         FRONT_FACE: "[data-face='front']",
         BACK_FACE: "[data-face='back']",
         OTHER_CONTENT: "[data-content='empty'], [data-content='error'], [data-content='huge']"
-    }, pluginFolder = "fx-box/js/tabs/";
+    }, pluginFolder = "./tabs/";
 
     /* API */
 
@@ -1171,7 +1171,7 @@ define([
             registry = this.pluginRegistry,
             language = this.lang || C.lang,
             //Note that for sync call the argument of require() is not an array but a string
-            Tab = require(this._getPluginPath(registry[tab].path) + ".js"),
+            Tab = require(this._getPluginPath(registry[tab]) + ".js"),
             config = $.extend(true, {}, state, {
                 el: this._getTabContainer(tab),
                 box: this,
@@ -1184,7 +1184,6 @@ define([
             instance;
 
         instance = new Tab(config);
-
         //Subscribe to tab events
         instance.on('filter', _.bind(this._onTabToolbarChangeEvent, this));
 
@@ -2339,12 +2338,13 @@ define([
         var Instance = this._getTabInstance(obj.tab, obj.face);
 
         if (Instance && $.isFunction(Instance[obj.method])) {
-
             return Instance[obj.method](obj.opt1, obj.opt2);
 
         } else {
             log.error(obj.tab + " tab does not implement the " + obj.method + "() fn");
         }
+
+
 
     };
 
@@ -2561,8 +2561,7 @@ define([
     };
 
     Box.prototype._getPluginPath = function (id) {
-        var registry = this.pluginRegistry;
-        return pluginFolder + registry;
+        return pluginFolder + id.path;
     };
 
     /* COMMONS */

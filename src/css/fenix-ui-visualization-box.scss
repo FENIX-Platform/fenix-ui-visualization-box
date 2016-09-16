@@ -1,3 +1,89 @@
+// IMPORTED FROM OTHER FILES.
+@mixin animate($duration:0.3s, $delay: 0s) {
+  -webkit-transition: all $duration ease $delay;
+  -moz-transition: all $duration ease $delay;
+  -ms-transition: all $duration ease $delay;
+  -o-transition: all $duration ease $delay;
+  transition: all $duration ease $delay;
+}
+@mixin fx-no-border-radius{
+  -moz-border-radius-topleft: 0;
+  -webkit-border-top-left-radius: 0;
+  border-top-left-radius: 0;
+
+  -moz-border-radius-topright: 0;
+  -webkit-border-top-right-radius: 0;
+  border-top-right-radius: 0;
+
+  -moz-border-radius-bottomright: 0;
+  -webkit-border-bottom-right-radius: 0;
+  border-bottom-right-radius:0;
+
+  -moz-border-radius-bottomleft: 0;
+  -webkit-border-bottom-left-radius: 0;
+  border-bottom-left-radius: 0;
+
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  -ms-border-radius: 0;
+  border-radius: 0;
+
+
+}
+@mixin fx-border-radius($radius) {
+  -webkit-border-radius: $radius;
+  -moz-border-radius: $radius;
+  -ms-border-radius: $radius;
+  border-radius: $radius;
+}
+
+
+@mixin fx-transfor-me($value){
+  -ms-transform: $value; // IE 9
+  -webkit-transform: $value; // Chrome, Safari, Opera
+  transform: $value;
+}
+
+@mixin fx-box-shadow($top, $left, $blur, $color, $inset: false) {
+  @if $inset {
+    -webkit-box-shadow:inset $top $left $blur $color;
+    -moz-box-shadow:inset $top $left $blur $color;
+    box-shadow:inset $top $left $blur $color;
+  } @else {
+    -webkit-box-shadow: $top $left $blur $color;
+    -moz-box-shadow: $top $left $blur $color;
+    box-shadow: $top $left $blur $color;
+  }
+}
+
+@mixin fx-noshadow{
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+}
+
+@mixin fx-no-border{
+  border-top: none;
+  border-right: none;
+  border-bottom: none;
+  border-left: none;
+
+  border: none;
+}
+
+
+$fx-cool-blue: #0076ff; /*#0076ff*/
+$screen-sm:                  768px !default;
+$screen-md:                  992px !default;
+$screen-lg:                  1200px !default;
+$screen-xs:                  480px !default;
+$fenix-text: #333;
+$fenix-secondary-text: #999999;
+$fx-main-color-lighter: lighten( $fx-cool-blue, 45%); // Ideal for hovers
+$fenix-hr: #d8d8d8;
+$summary-bg:#efefef;
+$fx-ui-common: '.';
+
 /* Visualization Box Style */
 
 $box-height: 450px;
@@ -997,17 +1083,17 @@ $olap-drag: #bbbbbb;
 
 
   &.empty-img{
-    background-image: url("#{$fx-ui-common}/css/img/mascot-empty-gray.svg");
+    background-image: url("#{$fx-ui-common}/img/mascot-empty-gray.svg");
   }
 
 
   &.error-img{
-    background-image: url("#{$fx-ui-common}/css/img/mascot-error-gray.svg");
+    background-image: url("#{$fx-ui-common}/img/mascot-error-gray.svg");
   }
 
 
   &.huge-img{
-    background-image: url("#{$fx-ui-common}/css/img/mascot-huge-gray.svg");
+    background-image: url("#{$fx-ui-common}/img/mascot-huge-gray.svg");
   }
 
 

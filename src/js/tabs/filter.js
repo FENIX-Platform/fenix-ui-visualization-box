@@ -41,6 +41,7 @@ define([
         this.state = {};
 
         this.cache = this.initial.cache;
+        this.lang = this.initial.lang;
 
         return this;
     }
@@ -250,9 +251,8 @@ define([
 
     FilterTab.prototype._attach = function () {
 
-        var template = Handlebars.compile(tabTemplate),
-            m = $.extend(true, {}, defaultOptions.template, this.template, i18nLabels[this.lang.toLowerCase()], this.labels),
-            html = template(m);
+        var m = $.extend(true, {}, defaultOptions.template, this.template, i18nLabels[this.lang.toLowerCase()], this.labels),
+            html = tabTemplate(m);
 
         this.$el.html(html);
     };
@@ -359,7 +359,7 @@ define([
         var valid = true,
             errors = [];
 
-        var resourceType = Utils.getNestedProperty("metadata.meContent.resourceRepresentationType", this.model);
+        var resourceType = this._getNestedProperty("metadata.meContent.resourceRepresentationType", this.model);
 
         if (resourceType !== "dataset") {
             errors.push({code: ERR.INCOMPATIBLE_RESOURCE_TYPE});
@@ -387,10 +387,39 @@ define([
 
     FilterTab.prototype._setState = function (key, val) {
 
-        Utils.assign(this.state, key, val);
+        this._assign(this.state, key, val);
 
         this._trigger("state", $.extend(true, {}, this.state));
     };
+
+    FilterTab.prototype._assign = function (obj, prop, value) {
+        if (typeof prop === "string")
+            prop = prop.split(".");
+
+        if (prop.length > 1) {
+            var e = prop.shift();
+            this.assign(obj[e] =
+                    Object.prototype.toString.call(obj[e]) === "[object Object]"
+                        ? obj[e]
+                        : {},
+                prop,
+                value);
+        } else {
+            obj[prop[0]] = value;
+        }
+    };
+
+    FilterTab.prototype._getNestedProperty = function (path, obj) {
+
+        var obj = $.extend(true, {}, obj),
+            arr = path.split(".");
+
+        while (arr.length && (obj = obj[arr.shift()]));
+
+        return obj;
+
+    };
+
 
 
     return FilterTab;

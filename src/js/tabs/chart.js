@@ -31,6 +31,7 @@ define([
         this.state = {};
 
         this.cache = this.initial.cache;
+        this.lang = this.initial.lang;
 
         return this;
     }
@@ -225,8 +226,7 @@ define([
 
     ChartTab.prototype._attach = function () {
 
-        var template = Handlebars.compile(tabTemplate),
-            html = template($.extend(true, {}, this, i18nLabels));
+        var html = tabTemplate($.extend(true, {}, this, i18nLabels));
 
         this.$el.html(html);
     };
@@ -410,7 +410,7 @@ define([
         var valid = true,
             errors = [];
 
-        var resourceType = Utils.getNestedProperty("metadata.meContent.resourceRepresentationType", this.model);
+        var resourceType = this._getNestedProperty("metadata.meContent.resourceRepresentationType", this.model);
 
         if (resourceType !== "dataset") {
             errors.push({code: ERR.INCOMPATIBLE_RESOURCE_TYPE});
@@ -438,6 +438,18 @@ define([
         this._trigger("state", $.extend(true, {}, this.state));
 
     };
+
+    ChartTab.prototype._getNestedProperty = function (path, obj) {
+
+        var obj = $.extend(true, {}, obj),
+            arr = path.split(".");
+
+        while (arr.length && (obj = obj[arr.shift()]));
+
+        return obj;
+
+    };
+
 
     return ChartTab;
 

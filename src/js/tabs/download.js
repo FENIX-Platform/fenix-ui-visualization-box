@@ -5,11 +5,10 @@ define([
     "../../config/config",
     "../../config/errors",
     "../../config/events",
-    'fenix-ui-filter-utils',
     "../../html/tabs/download.hbs",
     "fenix-ui-reports",
     "handlebars"
-], function ($, log, _, C, ERR, EVT, Utils, tabTemplate, Report, Handlebars) {
+], function ($, log, _, C, ERR, EVT, tabTemplate, Report, Handlebars) {
 
     'use strict';
 
@@ -28,6 +27,7 @@ define([
         this.report = new Report({
             cache : this.initial.cache
         });
+        this.lang = this.initial.lang;
 
         return this;
     }
@@ -198,8 +198,7 @@ define([
 
     DownloadTab.prototype._attach = function () {
 
-        var template = Handlebars.compile(tabTemplate),
-            html = template(this);
+        var html = tabTemplate(this);
 
         this.$el.html(html);
     };
@@ -301,7 +300,7 @@ define([
         var valid = true,
             errors = [];
 
-        var resourceType = Utils.getNestedProperty("metadata.meContent.resourceRepresentationType", this.model);
+        var resourceType = this._getNestedProperty("metadata.meContent.resourceRepresentationType", this.model);
 
         if (resourceType !== "dataset") {
             errors.push({code: ERR.INCOMPATIBLE_RESOURCE_TYPE});
@@ -329,6 +328,18 @@ define([
 
         this._trigger("state", $.extend(true, {}, this.state));
     };
+
+    DownloadTab.prototype._getNestedProperty = function (path, obj) {
+
+        var obj = $.extend(true, {}, obj),
+            arr = path.split(".");
+
+        while (arr.length && (obj = obj[arr.shift()]));
+
+        return obj;
+
+    };
+
 
     return DownloadTab;
 

@@ -26,6 +26,7 @@ define([
 
         this.channels = {};
         this.state = {};
+        this.lang = this.initial.lang;
 
         return this;
     }
@@ -193,8 +194,7 @@ define([
 
     BlankTab.prototype._attach = function () {
 
-        var template = Handlebars.compile(tabTemplate),
-            html = template(this);
+        var html = tabTemplate(this);
 
         this.$el.html(html);
     };
@@ -345,10 +345,28 @@ define([
 
     BlankTab.prototype._setState = function (key, val) {
 
-        Utils.assign(this.state, key, val);
+        this._assign(this.state, key, val);
 
         this._trigger("state", $.extend(true, {}, this.state));
     };
+
+    BlankTab.prototype._assign = function (obj, prop, value) {
+        if (typeof prop === "string")
+            prop = prop.split(".");
+
+        if (prop.length > 1) {
+            var e = prop.shift();
+            this.assign(obj[e] =
+                    Object.prototype.toString.call(obj[e]) === "[object Object]"
+                        ? obj[e]
+                        : {},
+                prop,
+                value);
+        } else {
+            obj[prop[0]] = value;
+        }
+    };
+
 
     return BlankTab;
 

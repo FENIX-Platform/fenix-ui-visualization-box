@@ -41,6 +41,7 @@ define([
         this.state = {};
 
         this.cache = this.initial.cache;
+        this.lang = this.initial.lang;
 
         return this;
     }
@@ -226,8 +227,7 @@ define([
 
     MapTab.prototype._attach = function () {
 
-        var template = Handlebars.compile(mapTemplate),
-            html = template($.extend(true, {}, this, i18nLabels));
+        var html = mapTemplate($.extend(true, {}, this, i18nLabels));
 
         this.$el.html(html);
     };
@@ -362,15 +362,15 @@ define([
                 }
             };
 
-        var resType = Utils.getNestedProperty("metadata.meContent.resourceRepresentationType", self.model);
+        var resType = this._getNestedProperty("metadata.meContent.resourceRepresentationType", self.model);
 
         if(resType==='dataset') {
             MapCreatorOPTS.model = self.model;
         }
         else if(resType==='geographic') {
 
-            var layerName = Utils.getNestedProperty("metadata.dsd.layerName", self.model),
-                workspace = Utils.getNestedProperty("metadata.dsd.workspace", self.model);
+            var layerName = this._getNestedProperty("metadata.dsd.layerName", self.model),
+                workspace = this._getNestedProperty("metadata.dsd.workspace", self.model);
             
             MapCreatorOPTS.uid = workspace+':'+layerName;
         }
@@ -497,7 +497,7 @@ define([
         var valid = true,
             errors = [];
 
-        var resourceType = Utils.getNestedProperty("metadata.meContent.resourceRepresentationType", this.model);
+        var resourceType = this._getNestedProperty("metadata.meContent.resourceRepresentationType", this.model);
 
 //console.log('MAP _isSuitable', resourceType);
 
@@ -505,7 +505,7 @@ define([
             errors.push({code: ERR.INCOMPATIBLE_RESOURCE_TYPE});
         }
 
-        var columns = Utils.getNestedProperty("metadata.dsd.columns", this.model),
+        var columns = this._getNestedProperty("metadata.dsd.columns", this.model),
             geoColumn = _.findWhere(columns, {subject: "geo"});
 
         if (!geoColumn) {
@@ -528,7 +528,7 @@ define([
 
     MapTab.prototype._setState = function (key, val) {
 
-        Utils.assign(this.state, key, val);
+        this._assign(this.state, key, val);
 
         this._trigger("state", $.extend(true, {}, this.state));
     };
@@ -567,6 +567,35 @@ define([
             }
         });
     };
+
+    MapTab.prototype._assign = function (obj, prop, value) {
+        if (typeof prop === "string")
+            prop = prop.split(".");
+
+        if (prop.length > 1) {
+            var e = prop.shift();
+            this.assign(obj[e] =
+                    Object.prototype.toString.call(obj[e]) === "[object Object]"
+                        ? obj[e]
+                        : {},
+                prop,
+                value);
+        } else {
+            obj[prop[0]] = value;
+        }
+    };
+
+    MapTab.prototype._getNestedProperty = function (path, obj) {
+
+        var obj = $.extend(true, {}, obj),
+            arr = path.split(".");
+
+        while (arr.length && (obj = obj[arr.shift()]));
+
+        return obj;
+
+    };
+
 
     return MapTab;
 

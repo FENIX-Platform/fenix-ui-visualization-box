@@ -31,6 +31,7 @@ define([
         this.state = {};
 
         this.cache = this.initial.cache;
+        this.lang = this.initial.lang;
 
         return this;
     }
@@ -72,7 +73,6 @@ define([
      * Mandatory method
      */
     TableTab.prototype.isSuitable = function () {
-
         var isSuitable = this._isSuitable();
 
         log.info("Table tab: is tab suitable?", isSuitable);
@@ -208,9 +208,12 @@ define([
     };
 
     TableTab.prototype._attach = function () {
+        console.log(tabTemplate);
+        console.log(i18nLabels);
+        console.log(this.lang);
+        console.log($.extend(true, {}, this, i18nLabels[this.lang.toLowerCase()]));
+        var html = tabTemplate($.extend(true, {}, this, i18nLabels[this.lang.toLowerCase()]));
 
-        var template = Handlebars.compile(tabTemplate),
-            html = template($.extend(true, {}, this, i18nLabels[this.lang.toLowerCase()]));
         this.$el.html(html);
     };
 
@@ -390,7 +393,7 @@ define([
         var valid = true,
             errors = [];
 
-        var resourceType = Utils.getNestedProperty("metadata.meContent.resourceRepresentationType", this.model);
+        var resourceType = this._getNestedProperty("metadata.meContent.resourceRepresentationType", this.model);
 
         if (resourceType !== "dataset") {
             errors.push({code: ERR.INCOMPATIBLE_RESOURCE_TYPE});
@@ -413,10 +416,40 @@ define([
 
     TableTab.prototype._setState = function (key, val) {
 
-        Utils.assign(this.state, key, val);
+        this._assign(this.state, key, val);
 
         this._trigger("state", $.extend(true, {}, this.state));
     };
+
+    TableTab.prototype._getNestedProperty = function (path, obj) {
+
+        var obj = $.extend(true, {}, obj),
+            arr = path.split(".");
+
+        while (arr.length && (obj = obj[arr.shift()]));
+
+        return obj;
+
+    };
+
+    TableTab.prototype._assign = function (obj, prop, value) {
+        if (typeof prop === "string")
+            prop = prop.split(".");
+
+        if (prop.length > 1) {
+            var e = prop.shift();
+            this.assign(obj[e] =
+                    Object.prototype.toString.call(obj[e]) === "[object Object]"
+                        ? obj[e]
+                        : {},
+                prop,
+                value);
+        } else {
+            obj[prop[0]] = value;
+        }
+    };
+
+
 
 
     return TableTab;
