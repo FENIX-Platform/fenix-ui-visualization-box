@@ -25,14 +25,9 @@ define([
     "swiper",
     "amplify-pubsub",
     "bootstrap"
-
-], function (log, $, _, _str, Handlebars, C, ERR, EVT,
-             Utils, MetadataViewer,
-             Template, FilterFilterTemplate, FilterMapTemplate, FilterAggregationTemplate,
-             StepFilterTemplate, StepMapTemplate, StepMetadataTemplate,
-             JsonMenu, menuModel,
-             mapEarthstatLayers,
-             i18nLabels, Bridge, Report, Swiper, amplify) {
+], function (log, $, _, _str, Handlebars, C, ERR, EVT, Utils, MetadataViewer, Template, FilterFilterTemplate, FilterMapTemplate,
+             FilterAggregationTemplate, StepFilterTemplate, StepMapTemplate, StepMetadataTemplate, JsonMenu, menuModel,
+             mapEarthstatLayers, i18nLabels, Bridge, Report, Swiper, amplify) {
 
     'use strict';
 
