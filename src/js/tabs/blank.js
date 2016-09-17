@@ -349,24 +349,6 @@ define([
         this._trigger("state", $.extend(true, {}, this.state));
     };
 
-    BlankTab.prototype._assign = function (obj, prop, value) {
-        if (typeof prop === "string")
-            prop = prop.split(".");
-
-        if (prop.length > 1) {
-            var e = prop.shift();
-            this.assign(obj[e] =
-                    Object.prototype.toString.call(obj[e]) === "[object Object]"
-                        ? obj[e]
-                        : {},
-                prop,
-                value);
-        } else {
-            obj[prop[0]] = value;
-        }
-    };
-
-
     return BlankTab;
 
 });

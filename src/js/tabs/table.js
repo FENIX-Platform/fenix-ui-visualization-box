@@ -388,7 +388,7 @@ define([
         var valid = true,
             errors = [];
 
-        var resourceType = this._getNestedProperty("metadata.meContent.resourceRepresentationType", this.model);
+        var resourceType = BoxUtils.getNestedProperty("metadata.meContent.resourceRepresentationType", this.model);
 
         if (resourceType !== "dataset") {
             errors.push({code: ERR.INCOMPATIBLE_RESOURCE_TYPE});
@@ -411,41 +411,10 @@ define([
 
     TableTab.prototype._setState = function (key, val) {
 
-        this._assign(this.state, key, val);
+        BoxUtils.assign(this.state, key, val);
 
         this._trigger("state", $.extend(true, {}, this.state));
     };
-
-    TableTab.prototype._getNestedProperty = function (path, obj) {
-
-        var obj = $.extend(true, {}, obj),
-            arr = path.split(".");
-
-        while (arr.length && (obj = obj[arr.shift()]));
-
-        return obj;
-
-    };
-
-    TableTab.prototype._assign = function (obj, prop, value) {
-        if (typeof prop === "string")
-            prop = prop.split(".");
-
-        if (prop.length > 1) {
-            var e = prop.shift();
-            this.assign(obj[e] =
-                    Object.prototype.toString.call(obj[e]) === "[object Object]"
-                        ? obj[e]
-                        : {},
-                prop,
-                value);
-        } else {
-            obj[prop[0]] = value;
-        }
-    };
-
-
-
 
     return TableTab;
 

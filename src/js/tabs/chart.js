@@ -409,7 +409,7 @@ define([
         var valid = true,
             errors = [];
 
-        var resourceType = this._getNestedProperty("metadata.meContent.resourceRepresentationType", this.model);
+        var resourceType = BoxUtils.getNestedProperty("metadata.meContent.resourceRepresentationType", this.model);
 
         if (resourceType !== "dataset") {
             errors.push({code: ERR.INCOMPATIBLE_RESOURCE_TYPE});

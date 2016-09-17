@@ -38,7 +38,9 @@ define([
 
         this._importThirdPartyCss();
 
-        log.setLevel('trace');
+        console.clear();
+
+        log.setLevel('silent');
         this.start();
     }
 
@@ -363,33 +365,22 @@ define([
         //Bootstrap
         require("bootstrap-loader");
 
-        /*
-        *
-        *     <link rel="stylesheet" href="//fenixrepo.fao.org/cdn/js/bootstrap/3.3.4/css/bootstrap.min.css">
-         <link rel="stylesheet" href="//fenixrepo.fao.org/cdn/js/leaflet/0.7.3/leaflet.css" />
-         <link rel="stylesheet" href="//fenixrepo.fao.org/cdn/js/jquery.powertip/1.2.0/css/jquery.powertip.css" type="text/css" />
-         <link rel="stylesheet" href="//fenixrepo.fao.org/cdn/js/jquery-ui/1.10.3/jquery-ui-1.10.3.custom.min.css" />
-         <link rel="stylesheet" href="//fenixrepo.fao.org/cdn/js/chosen/1.2.0/chosen.min.css" />
-         <link rel="stylesheet" href="//fenixrepo.fao.org/cdn/js/swiper/3.3.1/dist/css/swiper.min.css">
-         <!-- pivot -->
-         <link rel="stylesheet" href="//fenixrepo.fao.org/cdn/js/sigma.grid/2.4/gt_grid_height.css"/>
-         <!-- FENIX filter -->
-         <!-- dropdown selector -->
-         <link rel="stylesheet" href="//fenixrepo.fao.org/cdn/js/selectize/0.12.1/css/selectize.bootstrap3.css" />
-         <!-- tree selector -->
-         <link rel="stylesheet" href='//fenixrepo.fao.org/cdn/js/jstree/3.3.0/dist/themes/default/style.min.css'>
-         <!-- range selector -->
-         <link rel="stylesheet" href='//fenixrepo.fao.org/cdn/js/ion.rangeSlider/2.1.2/css/ion.rangeSlider.css'>
-         <link rel="stylesheet" href='//fenixrepo.fao.org/cdn/js/ion.rangeSlider/2.1.2/css/ion.rangeSlider.skinHTML5.css'>
-         <!-- time selector -->
-         <link rel="stylesheet" href='//fenixrepo.fao.org/cdn/js/bootstrap-datetimepicker/4.17.37/build/css/bootstrap-datetimepicker.min.css'>
-         <link rel="stylesheet" href='//fenixrepo.fao.org/cdn/js/bootstrap-daterangepicker/2.1.19/daterangepicker.css'>
-         <!-- end FENIX filter -->
-         <!-- metadata viewer-->
-         <link rel="stylesheet" href="//fenixrepo.fao.org/cdn/js/jquery-treegrid/0.3.0/css/jquery.treegrid.css">
+        //tree selector
+        require("../../../node_modules/jstree/dist/themes/default/style.min.css");
+        // fenix-ui-filter
+        require("../../../node_modules/fenix-ui-filter/dist/fenix-ui-filter.min.css");
 
-         *
-        * */
+        // fenix-ui-dropdown
+        require("../../../node_modules/fenix-ui-dropdown/dist/fenix-ui-dropdown.min.css");
+
+        // fenix-ui-table-creator
+        require("../../../node_modules/fenix-ui-table-creator/dist/fenix-ui-table-creator.min.css");
+
+        // jquery-grid for fenix-ui-metadata-viewer
+        require("../../../node_modules/jquery-treegrid-webpack/css/jquery.treegrid.css");
+
+        // iDangerous swiper
+        require("../../../node_modules/swiper/dist/css/swiper.min.css");
 
 
     };

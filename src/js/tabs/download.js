@@ -5,9 +5,10 @@ define([
     "../../config/config",
     "../../config/errors",
     "../../config/events",
+    "../utils",
     "../../html/tabs/download.hbs",
     "fenix-ui-reports"
-], function ($, log, _, C, ERR, EVT, tabTemplate, Report) {
+], function ($, log, _, C, ERR, EVT, BoxUtils, tabTemplate, Report) {
 
     'use strict';
 
@@ -299,7 +300,7 @@ define([
         var valid = true,
             errors = [];
 
-        var resourceType = this._getNestedProperty("metadata.meContent.resourceRepresentationType", this.model);
+        var resourceType = BoxUtils.getNestedProperty("metadata.meContent.resourceRepresentationType", this.model);
 
         if (resourceType !== "dataset") {
             errors.push({code: ERR.INCOMPATIBLE_RESOURCE_TYPE});
@@ -327,18 +328,6 @@ define([
 
         this._trigger("state", $.extend(true, {}, this.state));
     };
-
-    DownloadTab.prototype._getNestedProperty = function (path, obj) {
-
-        var obj = $.extend(true, {}, obj),
-            arr = path.split(".");
-
-        while (arr.length && (obj = obj[arr.shift()]));
-
-        return obj;
-
-    };
-
 
     return DownloadTab;
 

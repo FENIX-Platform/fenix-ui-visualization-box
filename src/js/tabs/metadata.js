@@ -5,9 +5,10 @@ define([
     "../../config/config",
     "../../config/errors",
     "../../config/events",
+    "../utils",
     "../../html/tabs/metadata.hbs",
     'fenix-ui-metadata-viewer'
-], function ($, log, _, C, ERR, EVT, tabTemplate, MetadataViewer) {
+], function ($, log, _, C, ERR, EVT, BoxUtils, tabTemplate, MetadataViewer) {
 
     'use strict';
 
@@ -248,28 +249,11 @@ define([
 
     MetadataTab.prototype._setState = function (key, val) {
 
-        this._assign(this.state, key, val);
+        BoxUtils.assign(this.state, key, val);
 
         this._trigger("state", $.extend(true, {}, this.state));
 
         
-    };
-
-    MetadataTab.prototype._assign = function (obj, prop, value) {
-        if (typeof prop === "string")
-            prop = prop.split(".");
-
-        if (prop.length > 1) {
-            var e = prop.shift();
-            this.assign(obj[e] =
-                    Object.prototype.toString.call(obj[e]) === "[object Object]"
-                        ? obj[e]
-                        : {},
-                prop,
-                value);
-        } else {
-            obj[prop[0]] = value;
-        }
     };
 
     return MetadataTab;
