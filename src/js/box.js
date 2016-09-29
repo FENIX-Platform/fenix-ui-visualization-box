@@ -722,6 +722,8 @@ define([
 
         this._renderBackFace();
 
+        this._updateBoxTitle();
+
     };
 
     Box.prototype._updateBoxTitle = function () {
@@ -1316,8 +1318,6 @@ define([
         this._renderProcessSteps();
 
         this._bindBackFaceEventListeners();
-
-        this._updateBoxTitle();
 
     };
 
