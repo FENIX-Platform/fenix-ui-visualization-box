@@ -1,8 +1,3 @@
-if (typeof define !== 'function') {
-    var define = require('amdefine')(module);
-}
-
-
 define([
     "jquery",
     "loglevel",
@@ -234,6 +229,13 @@ define([
             html = template($.extend(true, {}, this, i18nLabels));
 
         this.$el.html(html);
+
+        var initialConfig = this.initial.config || {};
+
+        if (initialConfig.toolbar && initialConfig.toolbar.template) {
+            this.$el.find(s.TOOLBAR).html(initialConfig.toolbar.template);
+        }
+
     };
 
     ChartTab.prototype._initVariables = function () {
@@ -314,7 +316,14 @@ define([
     ChartTab.prototype._renderChart = function () {
 
         var toolbarValues = this.toolbar.getValues(),
-            configuration = BoxUtils.getChartCreatorConfiguration(toolbarValues);
+            initialConfig = this.initial.config || {},
+            configuration;
+
+        if (typeof initialConfig.config === "function") {
+            configuration = initialConfig.config(this.model, toolbarValues)
+        } else {
+            configuration = BoxUtils.getChartCreatorConfiguration(toolbarValues)
+        }
 
         if (C.renderVisualizationComponents === false ) {
             log.warn("Render Visualization component blocked by configuration");
@@ -363,10 +372,24 @@ define([
 
     ChartTab.prototype._createFilterConfiguration = function () {
 
-        var configurationFromFenixTool = BoxUtils.getChartToolbarConfig(this.model),
-            configuration = $.extend(true, {}, ToolbarModel, configurationFromFenixTool),
-            result = $.extend(true, {}, Utils.mergeConfigurations(configuration, this.syncState.toolbar || {}));
-        
+        var initialConfig = this.initial.config || {},
+            toolbarConfig = initialConfig.toolbar || {},
+            result;
+
+        switch(typeof toolbarConfig.config) {
+            case "function" :
+                result = toolbarConfig.config(this.model);
+                break;
+            case "object" :
+                result = toolbarConfig.config;
+                break;
+            default :
+                var configurationFromFenixTool = BoxUtils.getChartToolbarConfig(this.model),
+                    configuration = $.extend(true, {}, ToolbarModel, configurationFromFenixTool);
+
+                result = $.extend(true, {}, Utils.mergeConfigurations(configuration, this.syncState.toolbar || {}));
+        }
+
         return result;
 
     };

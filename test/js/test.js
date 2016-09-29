@@ -34,7 +34,8 @@ define([
         boxes = [],
         environment = "develop"; //"develop" || "production"
 
-    function Test() { }
+    function Test() {
+    }
 
     Test.prototype.start = function () {
 
@@ -106,7 +107,92 @@ define([
             environment: environment,
             el: s.LARGE,
             //model: valid_model,
-            uid: "UNECA_Education",
+            //uid: "UNECA_Education",
+            tab: "chart",
+            tabConfig: {
+                chart: {
+                    toolbar: {
+                        template: "<div data-selector='compare'></div>",
+                        config: {
+                            compare: {
+                                selector: {
+                                    id: "dropdown",
+                                    source: [
+                                        {value: "donorcode", label: "Resource Partner"},
+                                        {value: "parentsector_code", label: "Sector"},
+                                    ],
+                                    default: ["donorcode"],
+                                    config: {
+                                        maxItems: 1
+                                    }
+                                },
+                                template: {
+                                    title: "Compare by"
+                                }
+                            }
+                        }
+                    },
+                    config: function (model, values) {
+
+                        var order = ["donorcode", "parentsector_code"];
+
+                        var config = {
+                            aggregationFn: {"value": "sum", "Value": "sum", "VALUE": "sum"},
+                            formatter: "value",
+                            decimals: 2,
+                            hidden: [],
+                            series: order,
+                            useDimensionLabelsIfExist: true,
+                            x: ["year"],
+                            aggregations: [],
+                            y: ["value"],
+                            type: "line",
+                            createConfiguration: function (model, config) {
+
+                                var compare = values.values.compare[0],
+                                    index = order.indexOf(compare),
+                                    colors = ["blue", "red", "green"],
+                                    used = {};
+
+                                for (var ii in model.cols) {
+
+                                    if (model.cols.hasOwnProperty(ii)) {
+                                        i = model.cols[ii];
+                                        config.xAxis.categories.push(i.title[this.lang]);
+                                    }
+                                }
+
+                                for (var i in model.rows) {
+
+                                    var name = model.rows[i],
+                                        compareByValue = name[index];
+
+                                    var s = {
+                                        name: name.join(" / "),
+                                        data: model.data[i]
+                                    };
+
+                                    var color = used[compareByValue];
+
+                                    if (!color) {
+                                        used[compareByValue] = colors.shift();
+                                        color = used[compareByValue]
+                                    }
+
+                                    s.color = color;
+
+                                    config.series.push(s);
+
+                                }
+
+                                return config;
+                            }
+                        };
+
+                        return config;
+                    }
+                }
+            },
             //uid: "UNECA_Health",
             //face : "back",
             //uid: "D3S_46514940821210598466444477499038849884",
@@ -146,52 +232,36 @@ define([
              ],*/
 
             //ADAM
-           /* uid: "adam_usd_commitment",
-            process: [
-                {
-                    "name": "filter",
-                    "parameters": {
-                        "rows": {
-                            "year": {
-                                "time": [
-                                    {
-                                        "from": 2000,
-                                        "to": 2014
-                                    }
-                                ]
-                            }
-                        }
-                    }
-                },
-                {
-                    "name": "pggroup",
-                    "parameters": {
-                        "by": [
-                            "year"
-                        ],
-                        "aggregations": [
-                            {
-                                "columns": ["value"],
-                                "rule": "SUM"
-                            },
-                            {
-                                "columns": ["unitcode"],
-                                "rule": "pgfirst"
-                            },
-                            {
-                                "columns": ["flowcategory"],
-                                "rule": "pgfirst"
-                            }
-                        ]
-                    }
-                },
-                {
-                    "name": "order",
-                    "parameters": {
-                        "year": "ASC"
-                    }
+            uid: "adam_usd_commitment",
+            process: [{
+                "name": "filter",
+                "parameters": {
+                    "rows": {
+                        "donorcode": {
+                            "codes": [{
+                                "uid": "crs_donors",
+                                "version": "2016",
+                                "codes": ["2", "7"]
+                            }]
+                        },
+                        "parentsector_code": {
+                            "codes": [{
+                                "uid": "crs_dac",
+                                "version": "2016",
+                                "codes": ["311", "600"]
+                            }]
+                        },
+                        "year": {"time": [{"from": "2000", "to": "2014"}]}
+                    }, "columns": ["donorcode", "parentsector_code", "year", "value", "unitcode"]
                 }
-            ]*/
+            }, {
+                "name": "group",
+                "parameters": {
+                    "by": ["year", "donorcode", "parentsector_code"],
+                    "aggregations": [{"columns": ["value"], "rule": "SUM"}, {"columns": ["unitcode"], "rule": "MAX"}]
+                }
+            }]
+
         });
 
         log.trace("Rendering large box: end");

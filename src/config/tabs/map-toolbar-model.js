@@ -1,13 +1,7 @@
-if (typeof define !== 'function') {
-    var define = require('amdefine')(module);
-}
-
-
 define([
-    'jquery',
      "fx-box/config/tabs/shared-toolbar-model"
 ],
-    function ($, Shared) {
+    function (Shared) {
 
     'use strict';
 

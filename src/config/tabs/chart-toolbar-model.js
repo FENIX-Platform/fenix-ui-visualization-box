@@ -1,8 +1,3 @@
-if (typeof define !== 'function') {
-    var define = require('amdefine')(module);
-}
-
-
 define([
         'jquery',
         "fx-box/config/tabs/shared-toolbar-model"
@@ -17,7 +12,6 @@ define([
                 id : "input",
                 type : "checkbox",
                 source : [
-                   
                     { value : "code", label : "Code"}
                 ]
             },

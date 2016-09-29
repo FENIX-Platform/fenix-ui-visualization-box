@@ -283,6 +283,7 @@ define([
         this._setObjState("tabStates", this.initial.tabStates || {});
         this._setObjState("tabOptions", this.initial.tabOptions || {});
         this._setObjState("tab", this.initial.tab);
+        this._setObjState("tabConfig", this.initial.tabConfig || C.tabConfig);
 
         //flip side
         this._setObjState("face", this.initial.face || C.face);
@@ -1175,7 +1176,8 @@ define([
                 model: model,
                 id: tab + "_" + this.id,
                 environment: this._getObjState("environment"),
-                cache: this._getObjState("cache")
+                cache: this._getObjState("cache"),
+                config : this._getObjState("tabConfig")[tab]
             }),
             instance;
 
