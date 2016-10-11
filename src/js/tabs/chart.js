@@ -30,6 +30,8 @@ define([
         this.channels = {};
         this.state = {};
 
+        this.nls = $.extend(true, {}, i18nLabels, this.initial.nls);
+
         this.cache = this.initial.cache;
 
         return this;
@@ -226,7 +228,7 @@ define([
     ChartTab.prototype._attach = function () {
 
         var template = Handlebars.compile(tabTemplate),
-            html = template($.extend(true, {}, this, i18nLabels));
+            html = template($.extend(true, {}, this, this.nls));
 
         this.$el.html(html);
 
@@ -320,7 +322,7 @@ define([
             configuration;
 
         if (typeof initialConfig.config === "function") {
-            configuration = initialConfig.config(this.model, toolbarValues)
+            configuration = initialConfig.config.call(this, this.model, toolbarValues)
         } else {
             configuration = BoxUtils.getChartCreatorConfiguration(toolbarValues)
         }
@@ -465,6 +467,31 @@ define([
 
         this._trigger("state", $.extend(true, {}, this.state));
 
+    };
+
+    ChartTab.prototype._trigger = function (channel) {
+        if (!this.channels[channel]) {
+            return false;
+        }
+        var args = Array.prototype.slice.call(arguments, 1);
+        for (var i = 0, l = this.channels[channel].length; i < l; i++) {
+            var subscription = this.channels[channel][i];
+            subscription.callback.apply(subscription.context, args);
+        }
+        return this;
+    };
+
+    /**
+     * pub/sub
+     * @return {Object} component instance
+     */
+    ChartTab.prototype.on = function (channel, fn, context) {
+        var _context = context || this;
+        if (!this.channels[channel]) {
+            this.channels[channel] = [];
+        }
+        this.channels[channel].push({context: _context, callback: fn});
+        return this;
     };
 
     return ChartTab;

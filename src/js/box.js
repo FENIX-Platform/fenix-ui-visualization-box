@@ -1,6 +1,3 @@
-if (typeof define !== 'function') {
-    var define = require('amdefine')(module);
-}
 define([
     "loglevel",
     "require",
@@ -23,10 +20,8 @@ define([
     "swiper",
     "amplify",
     "bootstrap"
-], function (log, require, $, _, _str, Handlebars, C, ERR, EVT,
-             Utils, MetadataViewer, Template, JsonMenu, menuModel,
-             mapEarthstatLayers,
-             i18nLabels, Bridge, Report, Swiper) {
+], function (log, require, $, _, _str, Handlebars, C, ERR, EVT, Utils, MetadataViewer, Template, JsonMenu, menuModel,
+             mapEarthstatLayers, i18nLabels, Bridge, Report, Swiper) {
 
     'use strict';
 
@@ -195,6 +190,13 @@ define([
         return this.state;
     };
 
+    Box.prototype.setTitle = function (title) {
+        log.info("Set box title: " + title);
+
+        this._updateBoxTitle(title);
+
+    };
+
     /* Internal fns*/
 
     Box.prototype._validateInput = function () {
@@ -246,7 +248,7 @@ define([
 
         //Inject box blank template
         var template = Handlebars.compile($(Template).find(s.BOX)[0].outerHTML),
-            $html = $(template($.extend(true, {}, this.getState(), i18nLabels)));
+            $html = $(template($.extend(true, {}, this.getState(), this._getObjState("nls"))));
 
         this.$el.html($html);
 
@@ -320,6 +322,8 @@ define([
         this._setObjState("title", this.initial.title || this._getModelTitle);
 
         this._setObjState("showFilter", typeof this.initial.showFilter === "boolean" ? this.initial.showFilter : false);
+
+        this._setObjState("nls", $.extend(true, {}, i18nLabels, this.initial.nls));
 
     };
 
@@ -726,12 +730,12 @@ define([
 
     };
 
-    Box.prototype._updateBoxTitle = function () {
+    Box.prototype._updateBoxTitle = function (tl) {
 
         var extractTitleFn = this._getObjState("title"),
             title = typeof extractTitleFn === 'function' ? extractTitleFn.call(this, this._getObjState("model")) : extractTitleFn;
 
-        this.$boxTitle.html(title);
+        this.$boxTitle.html(tl || title);
 
     };
 
@@ -1179,7 +1183,8 @@ define([
                 id: tab + "_" + this.id,
                 environment: this._getObjState("environment"),
                 cache: this._getObjState("cache"),
-                config : this._getObjState("tabConfig")[tab]
+                config: this._getObjState("tabConfig")[tab],
+                nls : this._getObjState("nls")
             }),
             instance;
 
@@ -1190,11 +1195,18 @@ define([
 
         instance.on('state', _.bind(this._onTabStateChangeEvent, this, tab));
 
+        instance.on('title.change', _.bind(this._onTitleChangeEvent, this, tab));
+
         //cache the plugin instance
         this.front_tab_instances[tab] = instance;
 
         return instance;
 
+    };
+
+    Box.prototype._onTitleChangeEvent = function (tab, title) {
+
+        this._updateBoxTitle(title);
     };
 
     Box.prototype._getTabInstance = function (tab, face) {
@@ -1382,7 +1394,7 @@ define([
                 template: filterConfiguration.template,
                 onReady: filterConfiguration.onReady,
                 labels: {
-                    title: i18nLabels["step_filter"]
+                    title: this._getObjState("nls")["step_filter"]
                 }
             });
         }
@@ -1395,7 +1407,7 @@ define([
                 config: aggregationConfiguration.filter,
                 template: aggregationConfiguration.template,
                 labels: {
-                    title: i18nLabels["step_aggregations"]
+                    title: this._getObjState("nls")["step_aggregations"]
                 }
             });
         }
@@ -1409,7 +1421,7 @@ define([
                 template: mapConfiguration.template,
                 onReady: mapConfiguration.onReady,
                 labels: {
-                    title: i18nLabels["step_map"]
+                    title: this._getObjState("nls")["step_map"]
                 }
             });
         }
@@ -1587,19 +1599,19 @@ define([
                         source: source, // Static data
                         config: {
                             groups: {
-                                dimensions: i18nLabels['aggregations_dimensions'],
-                                group: i18nLabels['aggregations_group'],
-                                sum: i18nLabels['aggregations_sum'],
-                                avg: i18nLabels['aggregations_avg'],
-                                first: i18nLabels['aggregations_first'],
-                                last: i18nLabels['aggregations_last']
+                                dimensions: this._getObjState("nls")['aggregations_dimensions'],
+                                group: this._getObjState("nls")['aggregations_group'],
+                                sum: this._getObjState("nls")['aggregations_sum'],
+                                avg: this._getObjState("nls")['aggregations_avg'],
+                                first: this._getObjState("nls")['aggregations_first'],
+                                last: this._getObjState("nls")['aggregations_last']
                             }
                         }
                     }
                 }
             },
 
-            template: Handlebars.compile($(Template).find(s.FILTER_AGGREGATION_TEMPLATE)[0].outerHTML)(i18nLabels)
+            template: Handlebars.compile($(Template).find(s.FILTER_AGGREGATION_TEMPLATE)[0].outerHTML)(this._getObjState("nls"))
         };
     };
 
@@ -1646,7 +1658,7 @@ define([
         _.each(list, _.bind(function (step, index) {
 
             var template = Handlebars.compile($(Template).find("[data-role='step-" + step.tab + "']")[0].outerHTML),
-                $html = $(template($.extend(true, {}, step, i18nLabels, this._getObjState("model"))));
+                $html = $(template($.extend(true, {}, step, this._getObjState("nls"), this._getObjState("model"))));
 
             this._bindStepLabelEventListeners($html, step);
 
@@ -1914,7 +1926,7 @@ define([
         log.info("Listen to event: " + this._getEventTopic("remove"));
         log.info(payload);
 
-        var r = confirm(i18nLabels.confirm_remove),
+        var r = confirm(this._getObjState("nls").confirm_remove),
             state = $.extend(true, {}, this.getState());
 
         if (r == true) {
@@ -2247,7 +2259,7 @@ define([
 
         _.each(err, function (values, e) {
 
-            var template = Handlebars.compile(i18nLabels[e]),
+            var template = Handlebars.compile(this._getObjState("nls")[e]),
                 text = template($.extend(true, {dimensions: values.join()}));
 
             $message.append($('<li>' + text + '</li>'))
@@ -2368,7 +2380,7 @@ define([
 
                 var error = this._getObjState("error");
 
-                this.$el.find(s.ERROR_TEXT).html(i18nLabels[error.code] ? i18nLabels[error.code] : error.code);
+                this.$el.find(s.ERROR_TEXT).html(this._getObjState("nls")[error.code] ? this._getObjState("nls")[error.code] : error.code);
 
                 //hide/show filter button
                 if (error.filter === true) {

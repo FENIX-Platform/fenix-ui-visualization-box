@@ -36,6 +36,7 @@ define([
         this.state = {};
 
         this.cache = this.initial.cache;
+        this.nls = $.extend(true, {}, i18nLabels, this.initial.nls);
 
         return this;
     }
@@ -215,7 +216,7 @@ define([
     TableTab.prototype._attach = function () {
 
         var template = Handlebars.compile(tabTemplate),
-            html = template($.extend(true, {}, this, i18nLabels));
+            html = template($.extend(true, {}, this, this.nls));
         this.$el.html(html);
     };
 
