@@ -40,7 +40,7 @@ define([
 
         console.clear();
 
-        log.setLevel('silent');
+        log.setLevel('trace');
         this.start();
     }
 
@@ -367,6 +367,8 @@ define([
 
         //tree selector
         require("../../../node_modules/jstree/dist/themes/default/style.min.css");
+        //dropdown selector
+        require("../../../node_modules/selectize/dist/css/selectize.bootstrap3.css");
         // fenix-ui-filter
         require("../../../node_modules/fenix-ui-filter/dist/fenix-ui-filter.min.css");
 
