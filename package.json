@@ -32,7 +32,7 @@
     "amplify-pubsub": "^0.0.1",
     "fenix-ui-bridge": "^1.0.0-beta.6",
     "fenix-ui-chart-creator": "^3.0.0-beta.3",
-    "fenix-ui-dropdown": "^1.0.0-beta-0",
+    "fenix-ui-dropdown": "^1.0.0-beta.2",
     "fenix-ui-filter": "^3.0.0-beta.14",
     "fenix-ui-filter-utils": "^1.0.0-beta.3",
     "fenix-ui-map-creator": "^v2.5.0-beta.3",
@@ -47,8 +47,7 @@
     "underscore.string": "^3.3.4"
   },
   "devDependencies": {
-    "bootstrap": "^3.3.7",
-    "bootstrap-loader": "^2.0.0-beta.12",
+    "bootstrap-loader": "^2.0.0-exports.1",
     "bootstrap-sass": "^3.3.7",
     "chai": "^3.5.0",
     "clean-webpack-plugin": "^0.1.13",

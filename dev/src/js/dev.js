@@ -41,7 +41,7 @@ define([
         console.clear();
 
         //trace silent
-        log.setLevel('silent');
+        log.setLevel('trace');
 
         this.start();
     }
@@ -49,8 +49,6 @@ define([
     Dev.prototype.start = function () {
 
         log.trace("Test started");
-
-        require('../../../node_modules/fenix-ui-dropdown/dist/fenix-ui-dropdown.min.css');
 
         this._render();
 
@@ -376,7 +374,7 @@ define([
         require("../../../node_modules/fenix-ui-filter/dist/fenix-ui-filter.min.css");
 
         // fenix-ui-dropdown
-        require("../../../node_modules/fenix-ui-dropdown/dist/fenix-ui-dropdown.min.css");
+        require('../../../node_modules/fenix-ui-dropdown/dist/fenix-ui-dropdown.min.css');
 
         // fenix-ui-table-creator
         require("../../../node_modules/fenix-ui-table-creator/dist/fenix-ui-table-creator.min.css");

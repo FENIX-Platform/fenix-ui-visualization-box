@@ -23,8 +23,7 @@ define([
     "fenix-ui-bridge",
     "fenix-ui-reports",
     "swiper",
-    "amplify-pubsub",
-    "bootstrap"
+    "amplify-pubsub"
 ], function (log, $, _, _str, C, ERR, EVT, BoxUtils, Utils, MetadataViewer, Template, FilterFilterTemplate, FilterMapTemplate,
              FilterAggregationTemplate, StepFilterTemplate, StepMapTemplate, StepMetadataTemplate, JsonMenu, menuModel,
              mapEarthstatLayers, i18nLabels, Bridge, Report, Swiper, amplify) {
@@ -1245,8 +1244,8 @@ define([
             } else {
                 log.error('Impossible to find path configuration for "' + tab + ' tab".');
             }
-
         }, this));
+
         this._syncFrontTabs();
 
     };
