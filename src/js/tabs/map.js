@@ -442,7 +442,7 @@ define([
         var self = this;
 
         this.toolbar = new Filter({
-            items: this._createFilterConfiguration(),
+            selectors: this._createFilterConfiguration(),
             el: this.$el.find(s.TOOLBAR),
             cache : this.cache,
             environment : this.initial.environment

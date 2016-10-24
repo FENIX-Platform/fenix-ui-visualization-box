@@ -21,6 +21,7 @@ define([
 
         this.cache = this.initial.cache;
         this.lang = this.initial.lang;
+        this.environment = this.initial.environment;
 
         return this;
     }

@@ -324,7 +324,7 @@ define([
         log.info("render filter");
 
         this.filter = new Filter({
-            items: this._createFilterConfiguration(),
+            selectors: this._createFilterConfiguration(),
             el: this.$el.find(s.CONTAINER),
             cache : this.cache,
             template: this.template,

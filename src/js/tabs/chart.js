@@ -345,7 +345,7 @@ define([
         log.info("Chart tab render toolbar");
 
         this.toolbar = new Filter({
-            items: this._createFilterConfiguration(),
+            selectors: this._createFilterConfiguration(),
             cache : this.cache,
             el: this.$el.find(s.TOOLBAR),
             environment: this.initial.environment

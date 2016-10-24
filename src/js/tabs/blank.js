@@ -295,7 +295,7 @@ define([
         log.info("Blank tab render toolbar");
 
         this.toolbar = new Filter({
-            items: this._createFilterConfiguration(ToolbarModel),
+            selectors: this._createFilterConfiguration(ToolbarModel),
             el: this.$el.find(s.TOOLBAR)
         });
 
