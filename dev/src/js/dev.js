@@ -32,7 +32,7 @@ define([
         error_model = {},
         valid_model = Model,
         boxes = [],
-        environment = "develop"; //"develop" || "production"
+        environment = "production"; //"develop" || "production"
 
     function Dev() {
 
@@ -40,7 +40,9 @@ define([
 
         console.clear();
 
-        log.setLevel('trace');
+        //trace silent
+        log.setLevel('silent');
+
         this.start();
     }
 
@@ -109,7 +111,8 @@ define([
             environment: environment,
             el: s.LARGE,
             //model: valid_model,
-            uid: "UNECA_Education",
+            //uid: "UNECA_Education",
+            uid: "D3S_14778195442595102157551899783961806566",
             //uid: "UNECA_Health",
             //face : "back",
             //uid: "D3S_46514940821210598466444477499038849884",
