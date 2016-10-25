@@ -5850,7 +5850,7 @@ input[type="radio"]:disabled + label {
   background-color: white;
   padding-top: 60px;
   top: 0;
-  left: -570px;
+  left: -650px;
   -webkit-transition: all 0.3s ease 0s;
   -moz-transition: all 0.3s ease 0s;
   -ms-transition: all 0.3s ease 0s;

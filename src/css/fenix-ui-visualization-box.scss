@@ -1,5 +1,17 @@
 // IMPORTED FROM OTHER FILES
 
+//@media (min-width: 768px) and (max-width: 991px) {
+//
+//}
+//
+//@media (min-width: 992px) and (max-width: 1199px) {
+//
+//}
+//
+//@media (min-width: 1200px) {
+//
+//}
+
 @import 'utils/fx-functions';
 @import 'utils/fx-mixins';
 @import 'utils/fx-utils';
@@ -733,12 +745,16 @@ $cmd-right-width: 192px;
   background-color: white;
   padding-top: 60px; // to keep the button visible
   top: 0;
-  left: -570px;
+  left: -650px;
   @include animate();
+
+
 
   &.in {
     left: 0;
   }
+
+
 
 }
 
