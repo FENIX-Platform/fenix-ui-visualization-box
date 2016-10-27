@@ -20,11 +20,15 @@ define([
 
     Utils.prototype._getToolbarConfig = function (Model, opts) {
 
+        //log.info("Calling ... to Filter")
+        // console.log(JSON.stringify(Model).toString())
+        // log.info(opts)
         return this.fenixTool.toFilter(Model, opts);
     };
 
     Utils.prototype.getTableToolbarConfig = function (Model, opts) {
 
+        //log.info("Calling _getToolbarConfig");
         return this._getToolbarConfig(Model, opts);
     };
 
