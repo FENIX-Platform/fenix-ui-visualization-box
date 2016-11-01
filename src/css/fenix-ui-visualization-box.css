@@ -5429,6 +5429,22 @@ input[type="radio"]:disabled + label {
 .fx-text-primary-color {
   color: #0076ff; }
 
+.fx-button-primary-color {
+  color: white;
+  border-color: #005ecc;
+  background-color: #0076ff; }
+  .fx-button-primary-color:hover {
+    color: white;
+    border-color: #005ecc;
+    background-color: #006ae6; }
+  .fx-button-primary-color:focus {
+    color: white;
+    border-color: #004799;
+    background-color: #0053b3; }
+
+.fx-background-color-primary-color {
+  background-color: #0076ff; }
+
 .fx-box {
   height: 450px;
   /* Hovered */ }
@@ -5771,7 +5787,6 @@ input[type="radio"]:disabled + label {
     position: absolute;
     height: 100%;
     width: 29px;
-    background-color: #0076ff;
     top: 0;
     left: 0;
     color: white; }
@@ -5833,7 +5848,6 @@ input[type="radio"]:disabled + label {
   height: 37px;
   line-height: 37px;
   padding: 0;
-  background-color: #0076ff;
   -webkit-border-radius: 50%;
   -moz-border-radius: 50%;
   -ms-border-radius: 50%;

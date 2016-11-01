@@ -29,11 +29,36 @@ $cmd-left-width: 85px;
 $cmd-right-width: 192px;
 
 
+// Standard Fenix Theme
+
+$fx-secondary-color: desaturate( $fx-cool-blue, 50% );
 
 .fx-text-primary-color{
   color: $fx-cool-blue;
 }
 
+.fx-button-primary-color {
+  color: white;
+  border-color: darken($fx-cool-blue, 10%);
+  background-color: $fx-cool-blue;
+
+  &:hover {
+    color: white;
+    border-color: darken($fx-cool-blue, 10%);
+    background-color: darken($fx-cool-blue, 5%);
+  }
+
+  &:focus {
+    color: white;
+    border-color: darken($fx-cool-blue, 20%);
+    background-color: darken($fx-cool-blue, 15%);
+  }
+
+}
+
+.fx-background-color-primary-color{
+  background-color: $fx-cool-blue;
+}
 
 
 .fx-box {
@@ -615,7 +640,6 @@ $cmd-right-width: 192px;
     position: absolute;
     height: 100%;
     width: 29px;
-    background-color: $fx-cool-blue;
     top: 0;
     left: 0;
     color: white;
@@ -727,7 +751,6 @@ $cmd-right-width: 192px;
   height: 37px;
   line-height: 37px;
   padding: 0;
-  background-color: $fx-cool-blue;
   @include fx-border-radius(50%);
   transition: .3s;
   cursor: pointer;
