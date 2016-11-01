@@ -5426,6 +5426,9 @@ input[type="radio"]:disabled + label {
   text-overflow: ellipsis; }
 
 /* Visualization Box Style */
+.fx-text-primary-color {
+  color: #0076ff; }
+
 .fx-box {
   height: 450px;
   /* Hovered */ }
@@ -5557,7 +5560,6 @@ input[type="radio"]:disabled + label {
       background-color: #e0e0e0;
       color: #0076ff; }
   .vb-toolbar .box-title {
-    color: #0076ff;
     margin-top: 5px;
     margin-bottom: 5px; }
 
@@ -5859,12 +5861,10 @@ input[type="radio"]:disabled + label {
   [data-role="toolbar"].in {
     left: 0; }
 
-n
 .btn-fx-toolbar, .btn-fx-toolbar-confirm {
   position: absolute;
   top: 0;
   left: 0; }
-  n
   .btn-fx-toolbar span[class^="icojam_"], .btn-fx-toolbar-confirm span[class^="icojam_"] {
     color: white;
     font-size: 20px;

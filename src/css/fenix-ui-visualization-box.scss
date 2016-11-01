@@ -17,6 +17,7 @@
 
 $box-height: 450px;
 // 430px content + 23px toolbar height + 1px border between vb-toolbar and content (the border affects the dimensions because of the nature of the h6 title inside)
+//$back-and-border-color: #e0e0e0;
 $back-and-border-color: #e0e0e0;
 // $fenix-light-gray
 $box-content-height: 424px;
@@ -26,6 +27,14 @@ $sidebar-process-container-height: 360px;
 $toolbar-font-size: 11px;
 $cmd-left-width: 85px;
 $cmd-right-width: 192px;
+
+
+
+.fx-text-primary-color{
+  color: $fx-cool-blue;
+}
+
+
 
 .fx-box {
   height: $box-height;
@@ -228,7 +237,7 @@ $cmd-right-width: 192px;
   }
 
   .box-title {
-    color: $fx-cool-blue;
+
     margin-top: 5px;
     margin-bottom: 5px;
 
@@ -672,6 +681,8 @@ $cmd-right-width: 192px;
 /*********************
   Shadows
 **********************/
+
+
 
 .z-depth-0 {
   box-shadow: none !important;
