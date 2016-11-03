@@ -41,7 +41,7 @@ define([
         console.clear();
 
         //trace silent
-        log.setLevel('trace');
+        log.setLevel('silent');
 
         this.start();
     }

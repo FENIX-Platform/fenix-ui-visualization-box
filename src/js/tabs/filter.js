@@ -323,7 +323,7 @@ define([
     FilterTab.prototype._renderComponents = function () {
         log.info("render filter");
 
-        this.filter = new Filter({
+        var model = {
             selectors: this._createFilterConfiguration(),
             el: this.$el.find(s.CONTAINER),
             cache : this.cache,
@@ -331,7 +331,10 @@ define([
             common :  this.common,
             values : this.values,
             environment : this.initial.environment
-        });
+        };
+
+
+        this.filter = new Filter(model);
         
     };
 

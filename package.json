@@ -1,6 +1,6 @@
 {
   "name": "fenix-ui-visualization-box",
-  "version": "2.0.0-beta.15",
+  "version": "2.0.0-beta.17",
   "description": "FENIX resource visualization box",
   "main": "dist/fenix-ui-visualization-box.min.js",
   "scripts": {
@@ -32,8 +32,8 @@
     "amplify-pubsub": "^0.0.1",
     "fenix-ui-bridge": "^1.0.0-beta.6",
     "fenix-ui-chart-creator": "^3.0.0-beta.3",
-    "fenix-ui-dropdown": "^1.0.0-beta-1",
-    "fenix-ui-filter": "^3.0.0-beta.20",
+    "fenix-ui-dropdown": "^1.0.0-beta.3",
+    "fenix-ui-filter": "^3.0.0-beta.23",
     "fenix-ui-filter-utils": "^1.0.0-beta.3",
     "fenix-ui-map-creator": "^v2.5.0-beta.3",
     "fenix-ui-metadata-viewer": "^3.0.0-beta.8",
@@ -43,13 +43,13 @@
     "html-webpack-plugin": "^2.24.1",
     "jquery": "^3.1.1",
     "loglevel": "^1.4.1",
-    "node-sass": "^3.11.1",
     "swiper": "^3.4.0",
     "underscore": "^1.8.3",
-    "underscore.string": "^3.3.4"
+    "underscore.string": "^3.3.4",
+    "bootstrap": "^3.3.7"
+
   },
   "devDependencies": {
-    "bootstrap": "^3.3.7",
     "chai": "^3.5.0",
     "clean-webpack-plugin": "^0.1.13",
     "css-loader": "^0.25.0",
@@ -69,12 +69,10 @@
     "karma-mocha": "^1.2.0",
     "karma-webpack": "^1.8.0",
     "mocha": "^3.1.2",
-    "node-sass": "^3.10.1",
     "resolve-url-loader": "^1.6.0",
-    "sass-loader": "^4.0.2",
     "style-loader": "^0.13.1",
     "url-loader": "^0.5.7",
-    "webpack": "^1.13.2",
+    "webpack": "^1.13.3",
     "webpack-dev-server": "^1.16.2"
   }
 }
