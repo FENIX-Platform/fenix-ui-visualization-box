@@ -719,11 +719,11 @@ define([
 
         log.info("Render box faces");
 
+        this._updateBoxTitle();
+
         this._renderFrontFace();
 
         this._renderBackFace();
-
-        this._updateBoxTitle();
 
     };
 

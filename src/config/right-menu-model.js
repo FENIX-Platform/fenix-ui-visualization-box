@@ -104,7 +104,7 @@ define(function () {
                 "data-type": "area"
             }
         },
-        {
+/*        {
             label: "Pie",
             url: "",
             parent_id: "visualize_as_chart",
@@ -115,7 +115,7 @@ define(function () {
                 "data-id": "chart",
                 "data-type": "pie"
             }
-        },
+        },*/
         //Map
         {
             label: "Map",
