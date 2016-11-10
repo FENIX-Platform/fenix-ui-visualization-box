@@ -1,6 +1,6 @@
 {
   "name": "fenix-ui-visualization-box",
-  "version": "2.0.0-beta.19",
+  "version": "2.0.0-beta.21",
   "description": "FENIX resource visualization box",
   "main": "dist/fenix-ui-visualization-box.min.js",
   "scripts": {
@@ -34,7 +34,7 @@
     "fenix-ui-chart-creator": "^3.0.0-beta.3",
     "fenix-ui-dropdown": "^1.0.0-beta.3",
     "fenix-ui-filter": "^3.0.0-beta.26",
-    "fenix-ui-filter-utils": "^1.0.0-beta.3",
+    "fenix-ui-filter-utils": "^1.0.0-beta.7",
     "fenix-ui-map-creator": "^v2.5.0-beta.3",
     "fenix-ui-metadata-viewer": "^3.0.0-beta.8",
     "fenix-ui-pivotator-utils": "^1.0.0-beta.3",

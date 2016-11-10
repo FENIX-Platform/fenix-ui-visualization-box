@@ -2254,9 +2254,7 @@ define([
         });
 
         _.each(err, function (values, e) {
-
-            $message.append($('<li>' + i18nLabels[self.lang][e] + '</li>'))
-
+            $message.append($('<li>' + i18nLabels[self.lang.toLowerCase()][e] + '</li>'))
         });
 
         this._showFilterError($message);
