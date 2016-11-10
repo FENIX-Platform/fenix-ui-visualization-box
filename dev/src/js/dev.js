@@ -366,6 +366,9 @@ define([
         //Bootstrap
         require('bootstrap/dist/css/bootstrap.css');
 
+        //map
+        require("../../../node_modules/leaflet/dist/leaflet.css");
+
         //tree selector
         require("../../../node_modules/jstree/dist/themes/default/style.min.css");
         //dropdown selector
