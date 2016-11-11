@@ -61,7 +61,7 @@ define(function () {
         menu_download : "Download",
         menu_download_data : "Resource",
         menu_download_metadata : "Metadata",
-        menu_ : "Visualize as",
+        menu_visualize_as : "Visualize as",
         menu_visualize_as_chart : "Chart",
         menu_chart_line : "Line",
         menu_chart_column : "Column",
