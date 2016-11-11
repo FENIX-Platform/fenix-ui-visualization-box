@@ -308,12 +308,26 @@ define([
     TableTab.prototype._renderToolbar = function () {
         log.info("Table tab render toolbar");
 
-        var model = {
+        var self = this,
+            model = {
             selectors: this._createFilterConfiguration(ToolbarModel),
             cache: this.cache,
             el: this.$el.find(s.TOOLBAR),
             environment: this.initial.environment
         };
+
+        //force labels
+
+        var labeled = {};
+
+        if (model.selectors.hasOwnProperty("dimensionsSort")) {
+
+            _.each(model.selectors.dimensionsSort.selector.config.groups,function(value, key) {
+                labeled[key] = i18nLabels[self.lang.toLowerCase()]["tab_table_toolbar_" + key];
+            });
+
+            model.selectors.dimensionsSort.selector.config.groups =labeled;
+        }
 
         this.toolbar = new Filter(model);
 
@@ -327,7 +341,8 @@ define([
 
         var configurationFromFenixTool,
             configuration,
-            result;
+            result,
+            self = this;
         //this.model = this._getModelEx();
 
         configurationFromFenixTool = BoxUtils.getTableToolbarConfig(this.model);
@@ -339,6 +354,10 @@ define([
         log.info(configuration);
 
         result = $.extend(true, {}, Utils.mergeConfigurations(configuration, this.syncState.toolbar || {}));
+
+        _.each(result, _.bind(function (value, key) {
+            value.template.title = i18nLabels[self.lang.toLowerCase()]["tab_table_toolbar_" + key];
+        }, this));
 
         log.info(result);
 
@@ -369,8 +388,6 @@ define([
         var position = this.initial.toolbarPosition || C.toolbarPosition;
         if (position === 'up') {
             this.toolbarPosition = 'up';
-            //this.$toolbar.hide();
-            //this.$toolbar.hide();
         } else {
             this.toolbarPosition = 'down';
         }

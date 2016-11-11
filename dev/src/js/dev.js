@@ -108,6 +108,7 @@ define([
         var box = this.createBox({
             environment: environment,
             el: s.LARGE,
+            lang : "FR",
             //model: valid_model,
             //uid: "UNECA_Education",
             uid: "D3S_14778195442595102157551899783961806566",

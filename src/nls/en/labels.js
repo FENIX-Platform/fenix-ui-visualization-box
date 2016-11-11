@@ -57,5 +57,34 @@ define(function () {
         huge_content_title : "The result is too big for the visualization",
         huge_content_text : "You can redo the filtering, please use the button below",
 
+        //menu
+        menu_download : "Download",
+        menu_download_data : "Resource",
+        menu_download_metadata : "Metadata",
+        menu_ : "Visualize as",
+        menu_visualize_as_chart : "Chart",
+        menu_chart_line : "Line",
+        menu_chart_column : "Column",
+        menu_chart_column_stacked : "Column stacked",
+        menu_chart_area : "Area",
+        menu_visualize_as_map : "Map",
+        menu_visualize_as_table : "Table",
+        menu_size : "Size",
+        menu_full : "Full",
+        menu_half : "Half",
+
+        //table toolbar
+        tab_table_toolbar_format : "Format",
+        tab_table_toolbar_decimals : "Decimals",
+        tab_table_toolbar_show : "Show",
+        tab_table_toolbar_dimensionsSort : "Sort dimension",
+        tab_table_toolbar_aggregationValue : "Aggregator for Value",
+        tab_table_toolbar_rows : "Rows",
+        tab_table_toolbar_columns : "Columns",
+        tab_table_toolbar_hidden : "Hidden",
+        tab_table_toolbar_values : "Values",
+        tab_table_toolbar_aggregations : "Aggregations",
+
+
     }
 });

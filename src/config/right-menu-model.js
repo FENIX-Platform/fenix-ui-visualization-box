@@ -18,7 +18,7 @@ define(function () {
             label: "Resource",
             url: "",
             parent_id: "download",
-            id: "download-data",
+            id: "download_data",
             a_attrs: {
                 "data-action": "download",
                 "data-id": "download",
@@ -29,7 +29,7 @@ define(function () {
             label: "Metadata",
             url: "",
             parent_id: "download",
-            id: "download-metadata",
+            id: "download_metadata",
             a_attrs: {
                 "data-action": "download",
                 "data-id": "download",
@@ -168,6 +168,6 @@ define(function () {
                 "data-action": "resize",
                 "data-size": "half"
             }
-        },
+        }
     ];
 });

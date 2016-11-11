@@ -254,7 +254,7 @@ define([
     Box.prototype._initObj = function () {
 
         //Inject box blank template
-        var $html = $(Template($.extend(true, {}, this.getState(), i18nLabels[this.lang.toLowerCase()])));
+        var $html = $(Template($.extend(true, {}, this.getState(), i18nLabels[this._getObjState("lang").toLowerCase()])));
 
         this.$el.html($html);
 
@@ -755,7 +755,7 @@ define([
         var languages = this.langFallbackOrder.slice(0),
             label = "Missing label";
 
-        languages.unshift(this.lang);
+        languages.unshift(this._getObjState("lang"));
         languages = _.uniq(languages);
 
         for (var i = 0; i < languages.length; i++) {
@@ -880,7 +880,7 @@ define([
         if (columnsKey.length > 0 && excludedColumns.length > 0) {
 
             var labels = _.map(excludedColumns, _.bind(function (dim) {
-                return _.findWhere(resourceColumns, {id: dim}).title[this.lang]
+                return _.findWhere(resourceColumns, {id: dim}).title[this._getObjState("lang")]
             }, this));
 
             errors.push({
@@ -1169,7 +1169,7 @@ define([
         var state = this._getObjState("tabStates." + tab) || {},
             model = $.extend(true, {}, this._getObjState("model")),
             registry = this.pluginRegistry,
-            language = this.lang || C.lang,
+            language = this._getObjState("lang") || C.lang,
             //Note that for sync call the argument of require() is not an array but a string
             Tab = require(this._getPluginPath(registry[tab]) + ".js"),
             config = $.extend(true, {}, state, {
@@ -1364,7 +1364,7 @@ define([
 
             var title = BoxUtils.getNestedProperty("metadata.title", model) || {},
                 uid = BoxUtils.getNestedProperty("metadata.uid", model),
-                label = title[this.lang] ? title[this.lang] : uid;
+                label = title[this._getObjState("lang")] ? title[this._getObjState("lang")] : uid;
 
             this.processSteps.push({
                 tab: "metadata",
@@ -1614,7 +1614,7 @@ define([
         //TODO integrate fenixTool
 
         var source = [],
-            lang = this.lang,
+            lang = this._getObjState("lang"),
             columns = BoxUtils.getNestedProperty("metadata.dsd.columns", this._getObjState("model"));
 
         _.each(columns, function (c) {
@@ -1679,7 +1679,7 @@ define([
                 cache: this._getObjState("cache"),
                 model: $.extend(true, {}, this._getObjState("model")),
                 config: step.config,
-                lang: this.lang,
+                lang: this._getObjState("lang"),
                 values: step.values || {},
                 id: step.tab + "_" + step.id,
                 labels: step.labels,
@@ -1921,7 +1921,7 @@ define([
         log.info("Listen to event: " + this._getEventTopic("remove"));
         log.info(payload);
 
-        var r = confirm(i18nLabels.confirm_remove),
+        var r = confirm(i18nLabels[this._getObjState("lang").toLowerCase()].confirm_remove),
             state = $.extend(true, {}, this.getState());
 
         if (r == true) {
@@ -2149,7 +2149,7 @@ define([
             },
             output: {
                 config: {
-                    lang: this.lang.toUpperCase()
+                    lang: this._getObjState("lang").toUpperCase()
                 }
             }
         };
@@ -2168,7 +2168,7 @@ define([
 
         var model = this._getObjState("model"),
             title = BoxUtils.getNestedProperty("metadata.title", model) || {},
-            fileName = title[this.lang] ? title[this.lang] : "fenix_export",
+            fileName = title[this._getObjState("lang")] ? title[this._getObjState("lang")] : "fenix_export",
             contextSystem = BoxUtils.getNestedProperty("metadata.dsd.contextSystem", model),
             template = contextSystem === 'uneca' ? contextSystem : 'fao';
 
@@ -2185,7 +2185,7 @@ define([
             output: {
                 config: {
                     template: template,
-                    lang: this.lang.toUpperCase(),
+                    lang: this._getObjState("lang").toUpperCase(),
                     fileName: fileName.replace(/[^a-z0-9]/gi, '_') + '.pdf'
                 }
             }
@@ -2304,11 +2304,15 @@ define([
 
     Box.prototype._renderMenu = function () {
 
+        var self = this;
+
         if (this.hasMenu === true) {
 
             this.rightMenu = new JsonMenu({
                 el: this.$el.find(s.RIGHT_MENU),
-                model: this._getObjState("menuModel")
+                model: this._getObjState("menuModel").map(function (i) {
+                    return $.extend(i, {label: i18nLabels[self._getObjState("lang")]["menu_" + i.id]})
+                })
             });
 
         } else {

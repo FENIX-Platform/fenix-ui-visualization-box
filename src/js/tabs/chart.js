@@ -344,12 +344,28 @@ define([
     ChartTab.prototype._renderToolbar = function () {
         log.info("Chart tab render toolbar");
 
-        this.toolbar = new Filter({
-            selectors: this._createFilterConfiguration(),
-            cache : this.cache,
-            el: this.$el.find(s.TOOLBAR),
-            environment: this.initial.environment
-        });
+        var self = this,
+            model = {
+                selectors: this._createFilterConfiguration(),
+                cache: this.cache,
+                el: this.$el.find(s.TOOLBAR),
+                environment: this.initial.environment
+            };
+
+        //force labels
+
+        var labeled = {};
+
+        if (model.selectors.hasOwnProperty("dimensionsSort")) {
+
+            _.each(model.selectors.dimensionsSort.selector.config.groups,function(value, key) {
+                labeled[key] = i18nLabels[self.lang.toLowerCase()]["tab_table_toolbar_" + key];
+            });
+
+            model.selectors.dimensionsSort.selector.config.groups =labeled;
+        }
+
+        this.toolbar = new Filter(model);
 
         this.toolbar.on("ready", _.bind(this._renderChart, this))
 
@@ -359,8 +375,13 @@ define([
 
         var configurationFromFenixTool = BoxUtils.getChartToolbarConfig(this.model),
             configuration = $.extend(true, {}, ToolbarModel, configurationFromFenixTool),
-            result = $.extend(true, {}, Utils.mergeConfigurations(configuration, this.syncState.toolbar || {}));
-        
+            result = $.extend(true, {}, Utils.mergeConfigurations(configuration, this.syncState.toolbar || {})),
+            self = this;
+
+        _.each(result, _.bind(function (value, key) {
+            value.template.title = i18nLabels[self.lang.toLowerCase()]["tab_table_toolbar_" + key];
+        }, this));
+
         return result;
 
     };
