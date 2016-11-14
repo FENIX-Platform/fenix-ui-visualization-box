@@ -299,7 +299,8 @@ define([
 
         var config = $.extend(true, {}, {
             model: this.model,
-            el: "#table_" + this.id
+            el: "#table_" + this.id,
+            lang : this.lang.toUpperCase()
         }, configuration);
 
         this.table = new Table(config);

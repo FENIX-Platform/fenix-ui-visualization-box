@@ -322,7 +322,7 @@ define([
         this._setObjState("backMap", this.initial.backMap);
 
         var loadResourceServiceQueryParams = $.extend(true, this.initial.loadResourceServiceQueryParams || C.loadResourceServiceQueryParams, {
-            language: this._getObjState("lang")
+            language: this._getObjState("lang").toUpperCase() !== "EN" ? "EN," +this._getObjState("lang").toUpperCase() : "EN"
         });
 
         this._setObjState("loadResourceServiceQueryParams", loadResourceServiceQueryParams);
