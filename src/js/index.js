@@ -322,7 +322,7 @@ define([
         this._setObjState("backMap", this.initial.backMap);
 
         var loadResourceServiceQueryParams = $.extend(true, this.initial.loadResourceServiceQueryParams || C.loadResourceServiceQueryParams, {
-            language: this._getObjState("lang").toUpperCase() !== "EN" ? "EN," +this._getObjState("lang").toUpperCase() : "EN"
+            language: this._getObjState("lang").toUpperCase() !== "EN" ? "EN," + this._getObjState("lang").toUpperCase() : "EN"
         });
 
         this._setObjState("loadResourceServiceQueryParams", loadResourceServiceQueryParams);
@@ -927,7 +927,7 @@ define([
                 resourceColumns = BoxUtils.getNestedProperty("metadata.dsd.columns", self._getObjState("model")) || [],
                 columnsSet = resourceColumns
                     .filter(function (c) {
-                        return !c.id.endsWith("_" + self.lang.toUpperCase());
+                        return !c.id.endsWith("_" + self._getObjState("lang").toUpperCase());
                     })
                     .map(function (c) {
                         return c.id;
@@ -1312,7 +1312,9 @@ define([
         this._hideFilterError();
 
         this._createProcessSteps();
+
         this._renderProcessSteps();
+
         this._bindBackFaceEventListeners();
 
     };
@@ -1324,7 +1326,6 @@ define([
         this.$el.find(s.BTN_SIDEBAR).on("click", _.bind(function () {
             this.$el.find(s.SIDEBAR).toggleClass('hidden-xs hidden-sm');
         }, this));
-
 
         this.$el.find(s.BACK_FACE).find("[data-action]").each(function () {
 
@@ -1352,6 +1353,7 @@ define([
             model;
 
         filterConfiguration = this._createBackTabConfiguration("filter");
+
         aggregationConfiguration = this._createBackTabConfiguration("aggregations");
 
         mapConfiguration = this._createBackTabConfiguration("map");
@@ -1475,7 +1477,7 @@ define([
                     return !_.contains(forbiddenIds, col.id.toLowerCase());
                 })
                 .filter(function (col) {
-                    return !col.id.endsWith("_" + self.lang.toUpperCase());
+                    return !col.id.endsWith("_" + self._getObjState("lang").toUpperCase());
                 }),
             config;
 
@@ -1543,14 +1545,6 @@ define([
 
                             var title = layer.Title.replace('area', '').replace('3857', '');
 
-                            /*value: {
-                             urlWMS: "http://fenix.fao.org/demo/fenix/geoserver/earthstat/wms",
-                             layers: 'earthstat:'+layer.Name,
-                             layertitle: layer.Title,
-                             opacity: '0.8',
-                             lang: 'EN'
-                             }*/
-
                             return {
                                 label: _str.humanize(title),
                                 value: 'earthstat:' + layer.Name
@@ -1614,7 +1608,7 @@ define([
         //TODO integrate fenixTool
 
         var source = [],
-            lang = this._getObjState("lang"),
+            lang = this._getObjState("lang").toUpperCase(),
             columns = BoxUtils.getNestedProperty("metadata.dsd.columns", this._getObjState("model"));
 
         _.each(columns, function (c) {
@@ -1629,7 +1623,7 @@ define([
                 label = "Missing dimension title [" + c.id + "]";
             }
 
-            if (!c.id.endsWith("_" + lang.toUpperCase())) {
+            if (!c.id.endsWith("_" + lang)) {
 
                 source.push({
                     value: c.id,
@@ -1782,7 +1776,7 @@ define([
             columns = BoxUtils.getNestedProperty("metadata.dsd.columns", self._getObjState("model")) || [],
             columnsSet = columns
                 .filter(function (c) {
-                    return !c.id.endsWith("_" + self.lang.toUpperCase());
+                    return !c.id.endsWith("_" + self._getObjState("lang").toUpperCase());
                 })
                 .map(function (c) {
                     return c.id;
@@ -1845,7 +1839,7 @@ define([
                 source.push({
                     value: id,
                     parent: "dimensions",
-                    label: _.findWhere(resourceColumns, {id: id}).title[self.lang]
+                    label: _.findWhere(resourceColumns, {id: id}).title[self._getObjState("lang").toUpperCase()]
                 })
             } else {
                 source.push(item);
@@ -1857,6 +1851,7 @@ define([
 
         var aggregationInstance = this.back_tab_instances["aggregations"],
             sync = this._getBackSyncModel();
+
 
         if (aggregationInstance) {
             aggregationInstance.setValues(sync);
@@ -2254,7 +2249,7 @@ define([
         });
 
         _.each(err, function (values, e) {
-            $message.append($('<li>' + i18nLabels[self.lang.toLowerCase()][e] + '</li>'))
+            $message.append($('<li>' + i18nLabels[self._getObjState("lang").toLowerCase()][e] + '</li>'))
         });
 
         this._showFilterError($message);
