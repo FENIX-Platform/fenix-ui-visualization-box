@@ -92,9 +92,8 @@ define([
         var box = this.createBox({
             el: s.CLONE,
             environment: environment,
-            //uid: "UNECA_Education",
-            uid: "D3S_46514940821210598466444477499038849884",
-
+            lang :"FR",
+            uid: "D3S_3282308509609665355720826198320839709"
         });
 
         log.trace("Rendering clone box: end");
@@ -111,7 +110,7 @@ define([
             lang : "FR",
             //model: valid_model,
             //uid: "UNECA_Education",
-            uid: "D3S_5315035535138301325754330619664337637",
+            uid: "D3S_3282308509609665355720826198320839709",
             //uid: "UNECA_Health",
             //face : "back",
             //uid: "D3S_46514940821210598466444477499038849884",

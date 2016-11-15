@@ -791,6 +791,7 @@ define([
             valueDimension = _.findWhere(resourceColumns, {subject: "value"}) || {},
             valueId = valueDimension.id;
 
+
         var sum = _.where(aggregations, {parent: 'sum'}).map(function (item) {
                 return item.value;
             }),
@@ -1614,23 +1615,23 @@ define([
         _.each(columns, function (c) {
 
             var title = BoxUtils.getNestedProperty("title", c),
-                label;
+                label,
+                isI18n = typeof title === 'object' ? title : {},
+                t = isI18n[lang] || isI18n["EN"];
 
-            if (typeof title === 'object' && title[lang]) {
-                label = title[lang];
+            if (t) {
+                label = t;
             } else {
                 window.fx_vis_box_missing_title >= 0 ? window.fx_vis_box_missing_title++ : window.fx_vis_box_missing_title = 0;
                 label = "Missing dimension title [" + c.id + "]";
             }
 
-            if (!c.id.endsWith("_" + lang)) {
-
+            if (!c.id.endsWith("_" + lang) && !c.id.endsWith("_EN")) {
                 source.push({
                     value: c.id,
                     parent: "dimensions",
                     label: label
                 });
-
             }
         });
 
@@ -1816,11 +1817,18 @@ define([
             source = this._getSourceForAggregationTabConfiguration();
         }
 
+
         //add value dimension
         addToSource(valueDimension.id);
 
+        //TODO clear the code above because it is a workaround
+
         if (source.length > 0) {
-            BoxUtils.assign(sync, "values.aggregations", source);
+            BoxUtils.assign(sync, "values.aggregations", _.uniq(source, function(item, key, a) {
+                return item.value;
+            }).filter(function(item) {
+                return !item.value.endsWith("_"+self._getObjState("lang").toUpperCase()) && !item.value.endsWith("_EN");
+            }));
         }
 
         return sync;
