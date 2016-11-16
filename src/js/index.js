@@ -1494,11 +1494,20 @@ define([
             }
         });
 
+
+        //TODO remove workaround with default lang in createConfiguration()
+        var x = {};
+        _.each(config, function (value, key) {
+            if (!key.endsWith("_" + self._getObjState("lang").toUpperCase()) && !key.endsWith("_EN")) {
+                x[key] = value;
+            }
+        });
+
         return {
 
             values: values,
 
-            config: config,
+            config: x,
 
             template: FilterFilterTemplate({columns: columns}),
 
@@ -1614,24 +1623,28 @@ define([
 
         _.each(columns, function (c) {
 
-            var title = BoxUtils.getNestedProperty("title", c),
+            var title,
                 label,
-                isI18n = typeof title === 'object' ? title : {},
-                t = isI18n[lang] || isI18n["EN"];
-
-            if (t) {
-                label = t;
-            } else {
-                window.fx_vis_box_missing_title >= 0 ? window.fx_vis_box_missing_title++ : window.fx_vis_box_missing_title = 0;
-                label = "Missing dimension title [" + c.id + "]";
-            }
+                isI18n,
+                t;
 
             if (!c.id.endsWith("_" + lang) && !c.id.endsWith("_EN")) {
-                source.push({
+
+                title = BoxUtils.getNestedProperty("title", c);
+                isI18n = typeof title === 'object' ? title : {};
+                t = isI18n[lang] || isI18n["EN"];
+
+                if (t) {
+                    label = t;
+                } else {
+                    window.fx_vis_box_missing_title >= 0 ? window.fx_vis_box_missing_title++ : window.fx_vis_box_missing_title = 0;
+                    label = "Missing dimension title [" + c.id + "]";
+                }
+                source.push($.extend(true, {}, {
                     value: c.id,
                     parent: "dimensions",
                     label: label
-                });
+                }));
             }
         });
 
@@ -1824,11 +1837,14 @@ define([
         //TODO clear the code above because it is a workaround
 
         if (source.length > 0) {
-            BoxUtils.assign(sync, "values.aggregations", _.uniq(source, function(item, key, a) {
+            var agg = _.uniq(source, function (item, key, a) {
                 return item.value;
-            }).filter(function(item) {
-                return !item.value.endsWith("_"+self._getObjState("lang").toUpperCase()) && !item.value.endsWith("_EN");
-            }));
+            }).filter(function (item) {
+                return !item.value.endsWith("_" + self._getObjState("lang").toUpperCase()) && !item.value.endsWith("_EN");
+            });
+
+            BoxUtils.assign(sync, "values.aggregations", agg);
+
         }
 
         return sync;
@@ -1847,7 +1863,7 @@ define([
                 source.push({
                     value: id,
                     parent: "dimensions",
-                    label: _.findWhere(resourceColumns, {id: id}).title[self._getObjState("lang").toUpperCase()]
+                    label: _.findWhere(resourceColumns, {id: id}).title[self._getObjState("lang").toUpperCase()] || _.findWhere(resourceColumns, {id: id}).title["EN"]
                 })
             } else {
                 source.push(item);
@@ -2113,6 +2129,7 @@ define([
         this._syncFrontTabs();
 
         var currentTab = this._getObjState('tab');
+
         this._showFrontTab(currentTab);
 
     };

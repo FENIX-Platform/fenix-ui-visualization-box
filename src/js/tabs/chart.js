@@ -318,7 +318,8 @@ define([
         this.chart = new ChartCreator($.extend(true, {}, configuration, {
             model: this.model,
             el: "#chart_" + this.id,
-            type: this.type
+            type: this.type,
+            lang : this.lang
         }));
 
     };
