@@ -330,7 +330,8 @@ define([
             template: this.template,
             common :  this.common,
             values : this.values,
-            environment : this.initial.environment
+            environment : this.initial.environment,
+            lang : this.lang
         };
 
 

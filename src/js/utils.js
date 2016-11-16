@@ -28,7 +28,9 @@ define([
 
     Utils.prototype.getTableToolbarConfig = function (Model, opts) {
 
-        //log.info("Calling _getToolbarConfig");
+        log.info("Calling _getToolbarConfig");
+        log.info(Model)
+        log.info(opts)
         return this._getToolbarConfig(Model, opts);
     };
 
