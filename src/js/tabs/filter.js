@@ -334,7 +334,6 @@ define([
             lang : this.lang
         };
 
-
         this.filter = new Filter(model);
         
     };
