@@ -31,6 +31,7 @@ define([
 
         this.cache = this.initial.cache;
         this.lang = this.initial.lang;
+        this.environment = this.initial.environment;
 
         return this;
     }
@@ -315,13 +316,13 @@ define([
             return;
         }
 
-        this.chart = new ChartCreator($.extend(true, {}, configuration, {
+        var model = $.extend(true, {}, configuration, {
             model: this.model,
             el: "#chart_" + this.id,
-            type: this.type,
-            lang : this.lang
-        }));
+            type: this.type
+        });
 
+        this.chart = new ChartCreator(model);
     };
 
     ChartTab.prototype._updateChart = function () {
@@ -350,7 +351,8 @@ define([
                 selectors: this._createFilterConfiguration(),
                 cache: this.cache,
                 el: this.$el.find(s.TOOLBAR),
-                environment: this.initial.environment
+                environment: this.initial.environment,
+                lang : this.lang
             };
 
         //force labels
@@ -374,7 +376,7 @@ define([
 
     ChartTab.prototype._createFilterConfiguration = function () {
 
-        var configurationFromFenixTool = BoxUtils.getChartToolbarConfig(this.model),
+        var configurationFromFenixTool = BoxUtils.getChartToolbarConfig(this.model, {lang : this.lang.toUpperCase()}),
             configuration = $.extend(true, {}, ToolbarModel, configurationFromFenixTool),
             result = $.extend(true, {}, Utils.mergeConfigurations(configuration, this.syncState.toolbar || {})),
             self = this;

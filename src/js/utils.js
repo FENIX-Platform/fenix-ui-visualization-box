@@ -20,26 +20,20 @@ define([
 
     Utils.prototype._getToolbarConfig = function (Model, opts) {
 
-        //log.info("Calling ... to Filter")
-        // console.log(JSON.stringify(Model).toString())
-        // log.info(opts)
         return this.fenixTool.toFilter(Model, opts);
     };
 
     Utils.prototype.getTableToolbarConfig = function (Model, opts) {
 
-        log.info("Calling _getToolbarConfig");
-        log.info(Model)
-        log.info(opts)
         return this._getToolbarConfig(Model, opts);
     };
 
-    Utils.prototype.getChartToolbarConfig = function (Model) {
-        return this._getToolbarConfig(Model,  {
+    Utils.prototype.getChartToolbarConfig = function (Model, opts) {
+        return this._getToolbarConfig(Model, $.extend(opts, {
             rowLabel: i18nLabels.series,
             columnsLabel: i18nLabels.xAxis,
             valuesLabel: i18nLabels.yAxis
-        });
+        }));
     };
 
     Utils.prototype.getMapToolbarConfig = function (Model, opts) {

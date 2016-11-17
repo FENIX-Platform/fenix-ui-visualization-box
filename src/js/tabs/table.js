@@ -345,7 +345,7 @@ define([
             result,
             self = this;
 
-        configurationFromFenixTool = BoxUtils.getTableToolbarConfig(this.model);
+        configurationFromFenixTool = BoxUtils.getTableToolbarConfig(this.model, {lang : this.lang.toUpperCase()});
 
         log.info(configurationFromFenixTool);
 
