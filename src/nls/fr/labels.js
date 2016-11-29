@@ -11,6 +11,9 @@ define(function () {
         add_button : "Ajouter",
         remove_button : "Supprimer",
         cancel_button : "Annuler",
+
+        computed_resource : " (calculé)",
+
         back_current_resource : "Ressources",
         no_number_datatype : "Impossible agréger par [{{ dimensions }}] parce que le type de données n’est pas un nombre",
         value_in_group_by : "La dimension 'Valeur' ne peut pas être dans le groupe par",

@@ -525,6 +525,22 @@ define([
             BoxUtils.assign(model, "size", newSize);
         }
 
+      /*  //TODOn force value label
+        if (this.computed) {
+
+            var columns = model.metadata.dsd.columns;
+
+            _.each(columns, function (c) {
+                if (c.subject === "value") {
+                    _.each(c.title, function (value, key) {
+                        c.title[key] = "CIAO MARIO!";
+                    });
+                    console.log(c)
+                }
+            });
+
+        }*/
+
         this._setObjState("model", model);
     };
 
@@ -732,6 +748,9 @@ define([
         var extractTitleFn = this._getObjState("title"),
             title = typeof extractTitleFn === 'function' ? extractTitleFn.call(this, this._getObjState("model")) : extractTitleFn;
 
+        if (this.computed) {
+            title = title + i18nLabels[this._getObjState("lang")]["computed_resource"];
+        }
         this.$boxTitle.html(title);
 
     };
@@ -740,7 +759,6 @@ define([
 
         var title = BoxUtils.getNestedProperty("metadata.title", model),
             uid = BoxUtils.getNestedProperty("metadata.uid", model);
-
 
         return this._getI18nLabel(title) || uid;
 
@@ -892,7 +910,6 @@ define([
         }
 
         return errors.length > 0 ? errors : valid;
-
     };
 
     Box.prototype._createQuery = function (payload) {
@@ -900,19 +917,24 @@ define([
         var self = this,
             filter = [],
             filterStep,
-            groupStep;
+            groupStep,
+            computed = false;
 
         filterStep = createFilterStep(payload);
 
         groupStep = createGroupStep(payload);
 
         if (filterStep) {
+            computed = true;
             filter.push(filterStep);
         }
 
         if (groupStep) {
+            computed = true;
             filter.push(groupStep);
         }
+
+        this.computed = computed;
 
         return filter;
 
@@ -1340,10 +1362,8 @@ define([
                 log.info("Raise box event: " + e.data.event);
 
                 amplify.publish(event, {target: this, box: e.data.box, state: self.getState()});
-
             });
         });
-
     };
 
     Box.prototype._createProcessSteps = function () {
@@ -1379,7 +1399,6 @@ define([
             });
         }
 
-
         if (this._stepControlAccess("filter")) {
             this.processSteps.push({
                 id: "filter",
@@ -1395,6 +1414,7 @@ define([
         }
 
         if (this._stepControlAccess("aggregations")) {
+
             this.processSteps.push({
                 id: "aggregations",
                 tab: "filter",
@@ -1489,11 +1509,11 @@ define([
                     hideSummary: true
                 },
                 template: {
-                    hideSwitch: true
+                    hideSwitch: true,
+                    hideHeader: false
                 }
             }
         });
-
 
         //TODO remove workaround with default lang in createConfiguration()
         var x = {};
@@ -1543,7 +1563,7 @@ define([
 
     Box.prototype._createBackMapTabConfiguration = function (values) {
 
-        return {
+        return $.extend(true, {}, {
 
             values: values,
 
@@ -1562,7 +1582,7 @@ define([
                         }),
                         config: {core: {multiple: true}}
                     },
-                    "dependencies": {
+                    dependencies: {
                         "layergroups": {id: "focus", event: "select"}
                     },
                     template: {
@@ -1579,14 +1599,14 @@ define([
 
             }, this)
 
-        };
+        });
     };
 
     Box.prototype._createBackAggregationTabConfiguration = function (values) {
 
         var source = this._getSourceForAggregationTabConfiguration();
 
-        return {
+        return $.extend(true, {}, {
 
             values: values,
 
@@ -1605,12 +1625,15 @@ define([
                                 last: i18nLabels[this._getObjState("lang")]['aggregations_last']
                             }
                         }
+                    },
+                    template: {
+                        hideHeader: true
                     }
                 }
             },
 
             template: FilterAggregationTemplate(i18nLabels)
-        };
+        });
     };
 
     Box.prototype._getSourceForAggregationTabConfiguration = function () {
@@ -2298,9 +2321,9 @@ define([
             rowValues = this.back_tab_instances["filter"] ? this.back_tab_instances["filter"].getValues('fenix') : null;
 
         var payload = {
-            filter: !_.isEmpty(filterValues) ? filterValues : prevValues.filter,
-            aggregations: !_.isEmpty(aggregationValues) ? aggregationValues : prevValues.aggregations,
-            rows: !_.isEmpty(rowValues) ? rowValues : prevValues.rows
+            filter: !_.isEqual(filterValues, prevValues.filter) ? filterValues : prevValues.filter,
+            aggregations: !_.isEqual(aggregationValues, prevValues.aggregations) ? aggregationValues : prevValues.aggregations,
+            rows: !_.isEqual(rowValues, prevValues.rows) ? rowValues : prevValues.rows
         };
 
         return $.extend(true, {}, payload);
