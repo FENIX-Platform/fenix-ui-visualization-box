@@ -62,7 +62,7 @@ define(function () {
 
         renderVisualizationComponents : true,
 
-        maxDataSize : 7200,
+        maxDataSize : 3500,
 
         minDataSize : 0,
 
