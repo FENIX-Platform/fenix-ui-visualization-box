@@ -330,6 +330,15 @@ define([
             model.selectors.dimensionsSort.selector.config.groups =labeled;
         }
 
+        //i18n
+        var source = BoxUtils.getNestedProperty("selectors.show.selector.source", model);
+        _.map(source, function(i) {
+            i.label =  i18nLabels[self.lang.toLowerCase()]["tab_table_toolbar_" + i.value] || i.label;
+            return i;
+        });
+        BoxUtils.assign(model, "selectors.show.selector.source", source);
+
+
         this.toolbar = new Filter(model);
 
         this.toolbar.on("ready", _.bind(this._renderTable, this))

@@ -4,7 +4,7 @@ define([
     'underscore',
     '../../../src/js/index',
     '../../../src/config/events',
-    '../json/uneca_population.json'
+    '../models/model'
 ], function (log, $, _, Box, EVT, Model) {
 
     'use strict';
@@ -41,7 +41,7 @@ define([
         console.clear();
 
         //trace silent
-        log.setLevel('silent');
+        log.setLevel('trace');
 
         this.start();
     }
@@ -102,6 +102,8 @@ define([
 
     Dev.prototype._renderLargeBox = function () {
 
+        console.log(Model)
+
         log.trace("Rendering large box: start");
 
         var box = this.createBox({
@@ -109,8 +111,8 @@ define([
             el: s.LARGE,
             lang : "FR",
             //model: valid_model,
-            //uid: "UNECA_Education",
-            uid: "D3S_3282308509609665355720826198320839709",
+            uid: "159CTR025",
+            //uid: "D3S_68144514928248275487464565488035481621",
             //uid: "UNECA_Health",
             //face : "back",
             //uid: "D3S_46514940821210598466444477499038849884",

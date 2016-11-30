@@ -86,7 +86,8 @@ define(function () {
         tab_table_toolbar_hidden : "Hidden",
         tab_table_toolbar_values : "Values",
         tab_table_toolbar_aggregations : "Aggregations",
-
-
+        tab_table_toolbar_unit : "Unit",
+        tab_table_toolbar_flag : "Flag",
+        tab_table_toolbar_code : "Code"
     }
 });

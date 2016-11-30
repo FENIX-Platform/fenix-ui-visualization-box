@@ -81,7 +81,10 @@ define(function () {
         tab_table_toolbar_columns : "Colonnes",
         tab_table_toolbar_hidden : "Caché",
         tab_table_toolbar_values : "Valeurs",
-        tab_table_toolbar_aggregations : "Agrégations"
+        tab_table_toolbar_aggregations : "Agrégations",
+        tab_table_toolbar_unit : "Unité",
+        tab_table_toolbar_flag : "Flag",
+        tab_table_toolbar_code : "Code"
 
     }
 });
