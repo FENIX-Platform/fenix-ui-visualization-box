@@ -13,6 +13,7 @@ define(function () {
         cancel_button : "Cancel",
 
         computed_resource : " (computed)",
+        computed_export : "This is a computed resource.",
 
         back_current_resource : "Resources",
         no_number_datatype : "Impossible to aggregate for [{{ dimensions }}] because the data type is not number",

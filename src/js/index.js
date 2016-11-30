@@ -2199,6 +2199,10 @@ define([
 
         log.info("Configure FENIX export: table");
 
+        this._getObjState("lang").toUpperCase()
+
+        if(this.computed) payload.output.config.notes = i18nLabels[this._getObjState("lang").toLowerCase()]['computed_export'];
+
         log.info(payload);
 
         this.report.export({

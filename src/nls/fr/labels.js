@@ -13,6 +13,7 @@ define(function () {
         cancel_button : "Annuler",
 
         computed_resource : " (calculé)",
+        computed_export : "Il s'agit d'une ressource calculée.",
 
         back_current_resource : "Ressources",
         no_number_datatype : "Impossible agréger par [{{ dimensions }}] parce que le type de données n’est pas un nombre",
