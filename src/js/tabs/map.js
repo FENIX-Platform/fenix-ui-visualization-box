@@ -11,6 +11,7 @@ define([
     "../../html/tabs/map.hbs",
     "fenix-ui-filter",
     "../../config/tabs/map-toolbar-model",
+    "../../config/tabs/map-base-config",
     "../../nls/labels",
     "fenix-ui-map-creator",
     "amplify-pubsub"
@@ -19,6 +20,7 @@ define([
     BoxUtils, Utils,
     mapTemplate, Filter,
     ToolbarModel,
+    mapBaseConfig,
     i18nLabels,
     MapCreator, amplify) {
 
@@ -326,40 +328,12 @@ define([
             var MapCreatorOPTS = {
                 el: $elMap,
                 lang: lang,
-                fenix_ui_map: {
-                    lang: lang,
-                    plugins: {
-                        fullscreen: true,
-                        scalecontrol:'bottomleft'
-                    },
+                fenix_ui_map: _.extend(mapBaseConfig, {
                     guiController: {
                         container: this.$el.find(s.TOOLBAR),
-                        wmsLoader: false                 
-                    },
-                    baselayers: {
-                        cartodb: {
-                            title_en: "CartoDB light",
-                            url: 'http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png',
-                            subdomains: 'abcd',
-                            maxZoom: 19
-                        },
-                        osm: {
-                            //url: "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                            url: "http://{s}.tiles.wmflabs.org/osm-no-labels/{z}/{x}/{y}.png",
-                            title_en: "Openstreetmap",
-                            maxZoom: 16
-                        },
-                        world_imagery: {
-                            url: "http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-                            title_en: "World Imagery"
-                        }
-                    },
-                    legendOptions: {
-                        fontColor: '0x000000',
-                        fontSize: '12',
-                        bgColor: '0xFFFFFF'
+                        wmsLoader: false
                     }
-                }
+                })
             };
 
         var resType = BoxUtils.getNestedProperty("metadata.meContent.resourceRepresentationType", self.model);

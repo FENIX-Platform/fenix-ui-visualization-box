@@ -371,13 +371,6 @@ define([
         
         //NOT WORK require("bootstrap-loader");
 
-        //map        
-        require("../../../node_modules/leaflet/dist/leaflet.css");
-        require("../../../node_modules/ion-rangeslider/css/ion.rangeSlider.css");
-        require("../../../node_modules/ion-rangeslider/css/ion.rangeSlider.skinNice.css");
-        require("../../../node_modules/fenix-ui-map-creator/src/css/fenix-ui-leaflet.css");
-        require("../../../node_modules/fenix-ui-map-creator/src/css/fenix-ui-map-creator.css");
-
         //tree selector
         require("../../../node_modules/jstree/dist/themes/default/style.min.css");
         //dropdown selector
@@ -396,6 +389,14 @@ define([
 
         // iDangerous swiper
         require("../../../node_modules/swiper/dist/css/swiper.min.css");
+
+
+        //map        
+        require("../../../node_modules/leaflet/dist/leaflet.css");
+        require("../../../node_modules/ion-rangeslider/css/ion.rangeSlider.css");
+        require("../../../node_modules/ion-rangeslider/css/ion.rangeSlider.skinNice.css");
+        require("../../../node_modules/fenix-ui-map-creator/src/css/fenix-ui-leaflet.css");
+        require("../../../node_modules/fenix-ui-map-creator/src/css/fenix-ui-map-creator.css");
 
     };
 

@@ -24,7 +24,7 @@ module.exports = {
         alias: {
             handlebars: Path.join(__dirname, 'node_modules/handlebars/dist/handlebars.js'),
             jquery: Path.join(__dirname, 'node_modules/jquery/dist/jquery'),
-//            'fenix-ui-map-creator': Path.join(__dirname, '../fenix-ui-map-creator/dist/fenix-ui-map-creator.min')
+            //'fenix-ui-map-creator': Path.join(__dirname, '../fenix-ui-map-creator/dist/fenix-ui-map-creator.min.js')
         }
     },
 

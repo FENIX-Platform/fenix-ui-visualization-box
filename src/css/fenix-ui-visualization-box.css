@@ -5976,19 +5976,19 @@ input[type="radio"]:disabled + label {
 .fm-icon-close {
   display: none; }
 
+.fm-controller-external .fm-icon-box-background {
+  background:none;
+}
+
 .fm-controller-box-content {
   min-height: 50px;
   padding: 6px 12px;
-  -webkit-box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.075);
-  -moz-box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.075);
-  box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.075);
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
   -ms-border-radius: 4px;
   border-radius: 4px;
-  background-color: white;
   background-image: none;
-  border: 1px solid #d8d8d8; }
+  }
   .fm-controller-box-content[id*="controller-baselayer-content"] {
     -webkit-box-shadow: none;
     -moz-box-shadow: none;
@@ -6050,3 +6050,4 @@ input[type="radio"]:disabled + label {
     background-image: url(".//img/mascot-huge-gray.svg"); }
 
 /*# sourceMappingURL=fenix-ui-visualization-box.css.map */
+
