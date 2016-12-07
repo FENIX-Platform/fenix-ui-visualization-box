@@ -1427,7 +1427,7 @@ define([
             });
         }
 
-        if (this._stepControlAccess("map")) {
+        /*if (this._stepControlAccess("map")) {
             this.processSteps.push({
                 id: "map",
                 tab: "filter",
@@ -1439,7 +1439,7 @@ define([
                     title: i18nLabels[this._getObjState("lang")]["step_map"]
                 }
             });
-        }
+        }*/
     };
 
     Box.prototype._stepControlAccess = function (tab) {

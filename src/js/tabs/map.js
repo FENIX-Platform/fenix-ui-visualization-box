@@ -2,6 +2,7 @@ define([
     "jquery",
     "loglevel",
     "underscore",
+    "bootstrap",
     "../../config/config",
     "../../config/errors",
     "../../config/events",
@@ -13,7 +14,7 @@ define([
     "../../nls/labels",
     "fenix-ui-map-creator",
     "amplify-pubsub"
-], function ($, log, _,
+], function ($, log, _, Bootstrap,
     C, ERR, EVT,
     BoxUtils, Utils,
     mapTemplate, Filter,
@@ -407,8 +408,6 @@ define([
             var layerName = filter.values.layers[i];
                 layerTitle = filter.labels.layers[layerName];
 
-            //console.log('addLayersByFilter', layerName, layerTitle);
-
             if(this._filterLayers && !this._filterLayers.hasOwnProperty(layerName) )
             {
                 this._filterLayers[layerName] = new FM.layer({
@@ -418,8 +417,6 @@ define([
                     opacity: '0.8',
                     layertype: 'WMS'
                 });
-                
-                //console.log(this._filterLayers[layerName]);
 
                 this.map.fenixMap.addLayer( this._filterLayers[layerName] );
             }
