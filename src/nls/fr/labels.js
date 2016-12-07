@@ -28,7 +28,12 @@ define(function () {
         aggregations_avg : "Moyenne",
         aggregations_first : "Premier",
         aggregations_last : "Dernier",
+
         map_select_overlay : "Sélectionner la Surcouche",
+        map_baselayers: "Couches de base",
+        map_selected_layers: "Couches sélectionnés",
+        map_show_bounds: "Voir la carte des limites",
+        map_show_labels: "Voir la carte des étiquettes",
 
         //back steps
         step_metadata : "Métadonnées",

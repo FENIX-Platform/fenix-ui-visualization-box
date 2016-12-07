@@ -107,9 +107,10 @@ define([
         log.trace("Rendering large box: start");
 
         var box = this.createBox({
+            tab : "map",
             environment: environment,
             el: s.LARGE,
-            lang : "FR",
+            lang: "FR",
             //model: valid_model,
             uid: "159CTR025",
             //uid: "D3S_68144514928248275487464565488035481621",

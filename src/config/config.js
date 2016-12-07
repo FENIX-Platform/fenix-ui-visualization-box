@@ -46,7 +46,7 @@ define(function () {
 
         state : {},
 
-        lang : "EN",
+        lang : "FR",
 
         langFallbackOrder : ["EN", "FR", "ES", "AR", "PR"],
 

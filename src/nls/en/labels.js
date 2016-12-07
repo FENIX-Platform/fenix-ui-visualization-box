@@ -31,6 +31,10 @@ define(function () {
         aggregations_last : "Last",
 
         map_select_overlay : "Select Overlayer",
+        map_baselayers: "Base Layers",
+        map_selected_layers: "Selected Layers",
+        map_show_bounds: "Show Map Boundaries",
+        map_show_labels: "Show Map Labels",
 
         //back steps
         step_metadata : "Metadata",
