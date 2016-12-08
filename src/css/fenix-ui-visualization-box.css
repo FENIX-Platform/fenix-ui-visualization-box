@@ -5976,19 +5976,19 @@ input[type="radio"]:disabled + label {
 .fm-icon-close {
   display: none; }
 
-.fm-controller-external .fm-icon-box-background {
-  background:none;
-}
-
 .fm-controller-box-content {
   min-height: 50px;
   padding: 6px 12px;
+  -webkit-box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.075);
+  -moz-box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.075);
+  box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.075);
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
   -ms-border-radius: 4px;
   border-radius: 4px;
+  background-color: white;
   background-image: none;
-  }
+  border: 1px solid #d8d8d8; }
   .fm-controller-box-content[id*="controller-baselayer-content"] {
     -webkit-box-shadow: none;
     -moz-box-shadow: none;
@@ -6004,12 +6004,7 @@ input[type="radio"]:disabled + label {
   cursor: pointer;
   margin: 3px;
   padding: 1px 3px;
-  height: 93px !important;
-  background-color: #efefef;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  -ms-border-radius: 3px;
-  border-radius: 3px; }
+  background-color: #efefef; }
   .fm-controller-box-item .ui-state-default, .fm-controller-box-item .ui-widget-content .ui-state-default, .fm-controller-box-item .ui-widget-header .ui-state-default {
     top: 25px;
     width: 27px;
@@ -6049,5 +6044,80 @@ input[type="radio"]:disabled + label {
   .content-message-img.huge-img {
     background-image: url(".//img/mascot-huge-gray.svg"); }
 
-/*# sourceMappingURL=fenix-ui-visualization-box.css.map */
+/* Map Fix */
+[data-section="map"] [data-role="toolbar"] .fm-controller-box-item-baselayer-content {
+  margin-bottom: 15px !important;
+  height: 25px !important; }
+  [data-section="map"] [data-role="toolbar"] .fm-controller-box-item-baselayer-content .fm-controller-box-item-baselayer-text.fm-controller-item-title label {
+    display: none; }
+[data-section="map"] [data-role="toolbar"] .fm-controller-box-item-baselayer-content-selected {
+  background-color: #ccc !important; }
+[data-section="map"] [data-role="toolbar"] .irs-bar, [data-section="map"] [data-role="toolbar"] .irs-bar-edge {
+  border: none; }
+[data-section="map"] [data-role="toolbar"] .fm-controller-box-item {
+  border: none; }
+[data-section="map"] [data-role="toolbar"] .fm-controller-box-icons {
+  padding-left: 40px; }
+[data-section="map"] [data-role="toolbar"] .fm-icon-enable, [data-section="map"] [data-role="toolbar"] .fm-icon-disable {
+  position: absolute;
+  left: 0;
+  top: 37px;
+  background-image: none;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  border-radius: 50%;
+  background-color: #0076ff; }
+[data-section="map"] [data-role="toolbar"] .fm-icon-disable {
+  background-color: #ccc; }
+[data-section="map"] [data-role="toolbar"] .fm-controller-box-icons-container {
+  margin-right: 0;
+  padding: 0; }
+[data-section="map"] [data-role="toolbar"] .fm-icon-box-background {
+  background-color: transparent; }
+[data-section="map"] [data-role="toolbar"] .fm-controller-box-title {
+  font: inherit;
+  color: inherit;
+  width: auto; }
+[data-section="map"] [data-role="toolbar"] .fm-standard-hr {
+  display: none; }
+[data-section="map"] [data-role="toolbar"] .fm-controller-item-title {
+  font: inherit;
+  width: auto;
+  color: inherit; }
+[data-section="map"] [data-role="toolbar"] .fm-controller-box-content {
+  min-height: 0;
+  padding: 0;
+  overflow-y: visible;
+  overflow-x: visible;
+  border: none;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none; }
+[data-section="map"] [data-role="toolbar"] .fm-controller-external .fx-toolbar-map-holder {
+  float: none;
+  width: auto;
+  padding: 0;
+  margin: 0;
+  margin-bottom: 25px;
+  background-color: transparent;
+  -moz-border-radius-topleft: 0;
+  -webkit-border-top-left-radius: 0;
+  border-top-left-radius: 0;
+  -moz-border-radius-topright: 0;
+  -webkit-border-top-right-radius: 0;
+  border-top-right-radius: 0;
+  -moz-border-radius-bottomright: 0;
+  -webkit-border-bottom-right-radius: 0;
+  border-bottom-right-radius: 0;
+  -moz-border-radius-bottomleft: 0;
+  -webkit-border-bottom-left-radius: 0;
+  border-bottom-left-radius: 0;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  -ms-border-radius: 0;
+  border-radius: 0; }
+[data-section="map"] [data-role="toolbar"] .fm-icon-layer-panel-sprite {
+  display: none; }
 
+/*# sourceMappingURL=fenix-ui-visualization-box.css.map */

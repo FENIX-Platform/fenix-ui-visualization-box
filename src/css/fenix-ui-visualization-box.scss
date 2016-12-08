@@ -993,9 +993,8 @@ $olap-drag: #bbbbbb;
   cursor: pointer;
   margin: 3px;
   padding: 1px 3px;
-  height: 93px !important;
   background-color: $summary-bg;
-  @include fx-border-radius(3px);
+
 
   .ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default{
     top: 25px;
@@ -1066,7 +1065,112 @@ $olap-drag: #bbbbbb;
 
 
 
+/* Map Fix */
 
+[data-section="map"]{
+
+  [data-role="toolbar"]{
+
+
+    .fm-controller-box-item-baselayer-content{
+      margin-bottom: 15px !important;
+      height: 25px !important;
+
+      .fm-controller-box-item-baselayer-text.fm-controller-item-title{
+        label{
+          display: none;
+        }
+      }
+
+
+    }
+
+    .fm-controller-box-item-baselayer-content-selected{
+      background-color: #ccc !important;
+    }
+
+    .irs-bar, .irs-bar-edge{
+      border: none;
+    }
+
+    .fm-controller-box-item{
+      border: none;
+    }
+
+    .fm-controller-box-icons{
+      padding-left: 40px;
+    }
+
+    .fm-icon-enable, .fm-icon-disable{
+      position: absolute;
+      left: 0;
+      top: 37px;
+      background-image: none;
+      @include fx-border-radius(50%);
+      background-color: $fx-cool-blue;
+    }
+
+    .fm-icon-disable{
+      background-color: #ccc;
+    }
+
+    .fm-controller-box-icons-container{
+      margin-right: 0;
+      padding: 0;
+    }
+
+    .fm-icon-box-background{
+      background-color: transparent;
+    }
+
+    .fm-controller-box-title{
+      font: inherit;
+      color: inherit;
+      width: auto;
+    }
+
+    .fm-standard-hr{
+      display: none;
+    }
+
+    .fm-controller-item-title{
+      font: inherit;
+      width: auto;
+      color: inherit;
+    }
+
+    .fm-controller-box-content{
+      min-height: 0;
+      padding: 0;
+      overflow-y: visible;
+      overflow-x: visible;
+      border: none;
+      @include fx-noshadow;
+    }
+
+    .fm-controller-external .fx-toolbar-map-holder{
+      float: none;
+      width: auto;
+
+      padding: 0;
+      margin: 0;
+      margin-bottom: 25px;
+      background-color: transparent;
+      @include fx-no-border-radius;
+
+    }
+
+    .fm-icon-layer-panel-sprite{
+      display: none;
+    }
+
+
+
+  }
+
+
+
+}
 
 
 
