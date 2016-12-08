@@ -420,8 +420,13 @@ define([
         });
 
         this.toolbar.on('ready', _.bind(this._renderMap, this));
+
         this.toolbar.on('change', function(e) {
+            
+            console.log('toolbar change',e)
+
             var o = self.toolbar.getValues();
+
             if(o.values)
             {
                 if(o.values['map_boundaries'][0])

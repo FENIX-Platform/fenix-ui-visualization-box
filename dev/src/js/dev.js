@@ -38,10 +38,10 @@ define([
 
         this._importThirdPartyCss();
 
-        console.clear();
+        //console.clear();
 
         //trace silent
-        log.setLevel('trace');
+        //log.setLevel('trace');
 
         this.start();
     }
