@@ -421,7 +421,7 @@ define([
 
         this.toolbar.on('ready', _.bind(this._renderMap, this));
 
-        this.toolbar.on('change', function(e) {
+        this.toolbar.on('select', function(e) {
             
             console.log('toolbar change',e)
 
