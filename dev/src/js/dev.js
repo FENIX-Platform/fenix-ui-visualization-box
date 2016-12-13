@@ -41,7 +41,7 @@ define([
         //console.clear();
 
         //trace silent
-        //log.setLevel('trace');
+        log.setLevel('silent');
 
         this.start();
     }
@@ -71,34 +71,6 @@ define([
 
     };
 
-    Dev.prototype._renderClone = function () {
-
-        log.trace("Rendering clone box: start");
-
-        //add 'Clone' event listeners
-        amplify.subscribe(EVT.clone, _.bind(function (state) {
-
-            log.info("Start cloning");
-            log.info(state);
-
-            var $el = $('<li>Clone item</li>');
-
-            $(s.CLONE_LIST).prepend($el);
-
-            var clone = this.createBox($.extend(true, state, {el: $el}));
-
-        }, this));
-
-        var box = this.createBox({
-            el: s.CLONE,
-            environment: environment,
-            //lang :"FR",
-            uid: "D3S_3282308509609665355720826198320839709"
-        });
-
-        log.trace("Rendering clone box: end");
-
-    };
 
     Dev.prototype._renderLargeBox = function () {
 
@@ -204,6 +176,35 @@ define([
         log.trace("Rendering large box: end");
 
     };
+    Dev.prototype._renderClone = function () {
+
+        log.trace("Rendering clone box: start");
+
+        //add 'Clone' event listeners
+        amplify.subscribe(EVT.clone, _.bind(function (state) {
+
+            log.info("Start cloning");
+            log.info(state);
+
+            var $el = $('<li>Clone item</li>');
+
+            $(s.CLONE_LIST).prepend($el);
+
+            var clone = this.createBox($.extend(true, state, {el: $el}));
+
+        }, this));
+
+        var box = this.createBox({
+            el: s.CLONE,
+            environment: environment,
+            //lang :"FR",
+            uid: "D3S_3282308509609665355720826198320839709"
+        });
+
+        log.trace("Rendering clone box: end");
+
+    };
+
 
     Dev.prototype._renderMediumBoxes = function () {
 
