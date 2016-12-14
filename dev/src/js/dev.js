@@ -79,7 +79,7 @@ define([
         log.trace("Rendering large box: start");
 
         var box = this.createBox({
-            tab : "map",
+            tab : "chart",
             environment: environment,
             el: s.LARGE,
             lang: "FR",

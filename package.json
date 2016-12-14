@@ -1,17 +1,13 @@
 {
   "name": "fenix-ui-visualization-box",
-  "version": "2.0.0-beta.56",
+  "version": "2.0.0-beta.57",
   "description": "FENIX resource visualization box",
   "main": "dist/fenix-ui-visualization-box.min.js",
   "scripts": {
-    "test": "NODE_ENV=test karma start ./karma.config.js",
-    "build": "NODE_ENV=production webpack --display-error-details",
-    "build:demo": "NODE_ENV=demo webpack --display-error-details",
-    "dev": "NODE_ENV=develop webpack-dev-server --display-error-details --progress --color --content-base dev  --inline --hot",
-    "w-test": "SET NODE_ENV=test&& karma start ./karma.config.js",
-    "w-build": "SET NODE_ENV=production&& webpack --display-error-details",
-    "w-build:demo": "SET NODE_ENV=demo&& webpack --display-error-details",
-    "w-dev": "SET NODE_ENV=develop&& webpack-dev-server --display-error-details --progress --color --content-base dev  --inline --hot"
+    "test": "cross-env NODE_ENV=test karma start ./karma.config.js",
+    "build": "cross-env NODE_ENV=production webpack --display-error-details",
+    "build:demo": "cross-env NODE_ENV=demo webpack --display-error-details",
+    "dev": "cross-env NODE_ENV=develop webpack-dev-server --display-error-details --progress --color --content-base dev  --inline --hot"
   },
   "repository": {
     "type": "git",
@@ -49,11 +45,12 @@
     "underscore.string": "^3.3.4"
   },
   "devDependencies": {
-    "chai": "^3.5.0",
     "bootstrap": "^3.3.7",
     "bootstrap-loader": "^2.0.0-beta.11",
     "bootstrap-sass": "^3.3.7",
+    "chai": "^3.5.0",
     "clean-webpack-plugin": "^0.1.13",
+    "cross-env": "^3.1.3",
     "css-loader": "^0.25.0",
     "extract-text-webpack-plugin": "^1.0.1",
     "file-loader": "^0.9.0",
