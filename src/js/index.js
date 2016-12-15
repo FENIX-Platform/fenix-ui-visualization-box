@@ -75,6 +75,7 @@ define([
 
         //import css
         require("../css/fenix-ui-visualization-box.css");
+        require("../css/sandboxed-fenix-ui-visualization-box.css");
 
         //Extend instance with obj and $el
         $.extend(true, this, C, {initial: obj || {}, $el: $(obj.el)});
