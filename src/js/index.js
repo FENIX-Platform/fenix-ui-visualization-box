@@ -753,7 +753,6 @@ define([
             title = title + i18nLabels[this._getObjState("lang")]["computed_resource"];
         }
         this.$boxTitle.html(title);
-
     };
 
     Box.prototype._getModelTitle = function (model) {

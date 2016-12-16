@@ -316,10 +316,22 @@ define([
             return;
         }
 
+        var boxTitle = this.box.$boxTitle.html();
+        
         var model = $.extend(true, {}, configuration, {
             model: this.model,
             el: "#chart_" + this.id,
-            type: this.type
+            type: this.type,
+            config: {
+                exporting: {
+                    enabled: true,
+                    chartOptions: {
+                        title: {
+                            text: boxTitle
+                        }
+                    }
+                }
+            }
         });
 
         this.chart = new ChartCreator(model);
