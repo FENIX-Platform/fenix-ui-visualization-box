@@ -849,13 +849,20 @@ $olap-drag: #bbbbbb;
 
 /* Freezed Rows */
 
-.gt-freeze-div[id*="bodyDiv"] {
+.fx-box {
+  .gt-freeze-div[id*="bodyDiv"] {
 
-  td {
-    background-color: $olap-headers-color !important;
+    td {
+      background-color: $olap-headers-color !important;
+    }
+
   }
 
 }
+
+
+
+
 
 /* Freezed Header */
 

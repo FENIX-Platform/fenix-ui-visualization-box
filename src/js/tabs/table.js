@@ -31,6 +31,7 @@ define([
 
         this.cache = this.initial.cache;
         this.lang = this.initial.lang;
+        this.nls = $.extend(true, {}, i18nLabels[this.lang.toLowerCase()], this.initial.nls);
 
         return this;
     }
@@ -207,7 +208,7 @@ define([
     };
 
     TableTab.prototype._attach = function () {
-        var html = tabTemplate($.extend(true, {}, this, i18nLabels[this.lang.toLowerCase()]));
+        var html = tabTemplate($.extend(true, {}, this, this.nls);
 
         this.$el.html(html);
     };
