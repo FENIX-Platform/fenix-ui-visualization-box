@@ -33,13 +33,17 @@ define(function () {
             }
         },
         tabs: {
-            //'blank': {options : {}},
-            'table': {options : {}},
-            'metadata': {options : {}},
-            'filter': {options : {}},
-            'map': {options : {}},
-            'chart': {options : {type : "line"}},
-            'download': { options : {}}
+            //blank: {options : {}},
+            table: {options : {}},
+            metadata: {options : {}},
+            filter: {options : {}},
+            map: {options : {}},
+            chart: {options : {type : "line"}},
+            download: { options : {}}
+        },
+
+        tabConfig : {
+            //:id : { /*...*/}
         },
 
         flippedClassName : "flipped",

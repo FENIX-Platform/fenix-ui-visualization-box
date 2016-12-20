@@ -205,6 +205,13 @@ define([
         return this.state;
     };
 
+    Box.prototype.setTitle = function (title) {
+        log.info("Set box title: " + title);
+
+        this._updateBoxTitle(title);
+
+    };
+
     /* Internal fns*/
 
     Box.prototype._validateInput = function () {
@@ -255,7 +262,7 @@ define([
     Box.prototype._initObj = function () {
 
         //Inject box blank template
-        var $html = $(Template($.extend(true, {}, this.getState(), i18nLabels[this._getObjState("lang").toLowerCase()])));
+        var $html = $(Template($.extend(true, {}, this.getState(), this._getObjState("nls"))));
 
         this.$el.html($html);
 
@@ -297,6 +304,7 @@ define([
         this._setObjState("tabStates", this.initial.tabStates || {});
         this._setObjState("tabOptions", this.initial.tabOptions || {});
         this._setObjState("tab", this.initial.tab);
+        this._setObjState("tabConfig", this.initial.tabConfig || C.tabConfig);
 
         //flip side
         this._setObjState("face", this.initial.face || C.face);
@@ -333,6 +341,8 @@ define([
         this._setObjState("title", this.initial.title || this._getModelTitle);
 
         this._setObjState("showFilter", typeof this.initial.showFilter === "boolean" ? this.initial.showFilter : false);
+
+        this._setObjState("nls", $.extend(true, {}, i18nLabels[this._getObjState("lang")], this.initial.nls));
 
     };
 
@@ -742,9 +752,11 @@ define([
 
         this._renderBackFace();
 
+        this._updateBoxTitle();
+
     };
 
-    Box.prototype._updateBoxTitle = function () {
+    Box.prototype._updateBoxTitle = function (tl) {
 
         var extractTitleFn = this._getObjState("title"),
             title = typeof extractTitleFn === 'function' ? extractTitleFn.call(this, this._getObjState("model")) : extractTitleFn;
@@ -752,7 +764,8 @@ define([
         if (this.computed) {
             title = title + i18nLabels[this._getObjState("lang")]["computed_resource"];
         }
-        this.$boxTitle.html(title);
+        this.$boxTitle.html(tl || title);
+
     };
 
     Box.prototype._getModelTitle = function (model) {
@@ -1202,7 +1215,9 @@ define([
                 model: model,
                 id: tab + "_" + this.id,
                 environment: this._getObjState("environment"),
-                cache: this._getObjState("cache")
+                cache: this._getObjState("cache"),
+                config: this._getObjState("tabConfig")[tab],
+                nls : this._getObjState("nls")
             }),
             instance;
 
@@ -1212,11 +1227,18 @@ define([
 
         instance.on('state', _.bind(this._onTabStateChangeEvent, this, tab));
 
+        instance.on('title.change', _.bind(this._onTitleChangeEvent, this, tab));
+
         //cache the plugin instance
         this.front_tab_instances[tab] = instance;
 
         return instance;
 
+    };
+
+    Box.prototype._onTitleChangeEvent = function (tab, title) {
+
+        this._updateBoxTitle(title);
     };
 
     Box.prototype._getTabInstance = function (tab, face) {
@@ -1408,7 +1430,7 @@ define([
                 template: filterConfiguration.template,
                 onReady: filterConfiguration.onReady,
                 labels: {
-                    title: i18nLabels[this._getObjState("lang")]["step_filter"]
+                    title: this._getObjState("nls")["step_filter"]
                 }
             });
         }
@@ -1422,7 +1444,7 @@ define([
                 config: aggregationConfiguration.filter,
                 template: aggregationConfiguration.template,
                 labels: {
-                    title: i18nLabels[this._getObjState("lang")]["step_aggregations"]
+                    title: this._getObjState("nls")["step_aggregations"]
                 }
             });
         }
@@ -1436,7 +1458,7 @@ define([
                 template: mapConfiguration.template,
                 onReady: mapConfiguration.onReady,
                 labels: {
-                    title: i18nLabels[this._getObjState("lang")]["step_map"]
+                    title: this._getObjState("nls")["step_map"]
                 }
             });
         }*/
@@ -1617,12 +1639,9 @@ define([
                         source: source, // Static data
                         config: {
                             groups: {
-                                dimensions: i18nLabels[this._getObjState("lang")]['aggregations_dimensions'],
-                                group: i18nLabels[this._getObjState("lang")]['aggregations_group'],
-                                sum: i18nLabels[this._getObjState("lang")]['aggregations_sum'],
-                                avg: i18nLabels[this._getObjState("lang")]['aggregations_avg'],
-                                first: i18nLabels[this._getObjState("lang")]['aggregations_first'],
-                                last: i18nLabels[this._getObjState("lang")]['aggregations_last']
+                                dimensions: this._getObjState("nls")['aggregations_dimensions'],
+                                group: this._getObjState("nls")['aggregations_group'],
+                                sum: this._getObjState("nls")['aggregations_sum'],
                             }
                         }
                     },
@@ -1632,7 +1651,7 @@ define([
                 }
             },
 
-            template: FilterAggregationTemplate(i18nLabels)
+            template: FilterAggregationTemplate(this._getObjState("nls"))
         });
     };
 
@@ -1682,8 +1701,7 @@ define([
 
         _.each(list, _.bind(function (step, index) {
 
-
-            var $html = $(steps[step.tab]($.extend(true, {}, step, i18nLabels, this._getObjState("model"))));
+            var $html = $(steps[step.tab]($.extend(true, {}, step, this._getObjState("nls"), this._getObjState("model"), this._getObjState("model"))));
 
             this._bindStepLabelEventListeners($html, step);
 
@@ -1963,7 +1981,7 @@ define([
         log.info("Listen to event: " + this._getEventTopic("remove"));
         log.info(payload);
 
-        var r = confirm(i18nLabels[this._getObjState("lang").toLowerCase()].confirm_remove),
+        var r = confirm(this._getObjState("nls").confirm_remove),
             state = $.extend(true, {}, this.getState());
 
         if (r == true) {
@@ -2301,7 +2319,7 @@ define([
         });
 
         _.each(err, function (values, e) {
-            $message.append($('<li>' + i18nLabels[self._getObjState("lang").toLowerCase()][e] + '</li>'))
+            $message.append($('<li>' + this._getObjState("nls")[e] + '</li>'))
         });
 
         this._showFilterError($message);
@@ -2422,7 +2440,7 @@ define([
 
                 var error = this._getObjState("error");
 
-                this.$el.find(s.ERROR_TEXT).html(i18nLabels[this._getObjState("lang")][error.code] ? i18nLabels[this._getObjState("lang")][error.code] : error.code);
+                this.$el.find(s.ERROR_TEXT).html(this._getObjState("nls")[error.code] ? this._getObjState("nls")[error.code] : error.code);
 
                 //hide/show filter button
                 if (error.filter === true) {

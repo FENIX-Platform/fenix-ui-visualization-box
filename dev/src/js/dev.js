@@ -74,103 +74,46 @@ define([
 
     Dev.prototype._renderLargeBox = function () {
 
-        console.log(Model)
-
         log.trace("Rendering large box: start");
 
         var box = this.createBox({
-            tab : "chart",
             environment: environment,
             el: s.LARGE,
-            lang: "FR",
+            //lang: "FR",
             //model: valid_model,
             uid: "159CTR025",
-            //uid: "D3S_68144514928248275487464565488035481621",
-            //uid: "UNECA_Health",
-            //face : "back",
-            //uid: "D3S_46514940821210598466444477499038849884",
-            //uid: "D3S_13768551171199950126430833328416976651",
-            //uid: "FAOSTAT_FO",
-            //uid: "uneca_rivers_3857",
-            //version: null,
-            //values: {"rows":{"valid":true,"labels":{"countryname":{"Fabrizio":""},"countrycode":{"913":"African Development Bank [AfDB]","1012":"Adaptation Fund"},"indicatorname":{"Daniele":""},"indicatorcode":{"AGRI.LAND.PERC":"% of Agricultural land","NY.GNP.ATLS.CD":"GNI, Atlas method (current US$ Million)","INCOME.LEVEL.H":"High-income"},"itemname":{"Francesca cuoricina":""},"itemcode":{},"period":{"":""},"unitcode":{},"unitname":{"":""},"source":{"":""},"note":{"":""},"link":{"":""}},"values":{"countryname":["Fabrizio"],"countrycode":["1012","913"],"indicatorname":["Daniele"],"indicatorcode":["AGRI.LAND.PERC","NY.GNP.ATLS.CD","INCOME.LEVEL.H"],"itemname":["Francesca cuoricina"],"itemcode":[],"period":[""],"unitcode":[],"unitname":[""],"source":[""],"note":[""],"link":[""]}},"aggregations":{"valid":true,"labels":{"aggregations":{"countryname":"Country name","countrycode":"Country code","indicatorname":"Indicator name","indicatorcode":"Indicator code","value":"Value","unitcode":"Measurement unit","source":"Source","note":"Note","link":"Link","period":"Period","itemcode":"Item code","unitname":"Measurement unit name","itemname":"Item name"}},"values":{"aggregations":[{"value":"countryname","parent":"dimensions","label":"Country name"},{"value":"countrycode","parent":"dimensions","label":"Country code"},{"value":"indicatorname","parent":"dimensions","label":"Indicator name"},{"value":"indicatorcode","parent":"dimensions","label":"Indicator code"},{"value":"value","parent":"dimensions","label":"Value"},{"value":"unitcode","parent":"dimensions","label":"Measurement unit"},{"value":"source","parent":"dimensions","label":"Source"},{"value":"note","parent":"dimensions","label":"Note"},{"value":"link","parent":"group","label":"Link"},{"value":"period","parent":"group","label":"Period"},{"value":"itemcode","parent":"group","label":"Item code"},{"value":"unitname","parent":"group","label":"Measurement unit name"},{"value":"itemname","parent":"group","label":"Item name"}]}},"columns":{"valid":true,"labels":{"itemname":{"ASC":"Ascending"},"itemcode":{"ASC":"Ascending"},"period":{"ASC":"Ascending"},"unitname":{"ASC":"Ascending"},"link":{"ASC":"Ascending"}},"values":{"itemname":["ASC"],"itemcode":["ASC"],"period":["ASC"],"unitname":["ASC"],"link":["ASC"]}}},
-            //hideToolbar: true,
-            //hideMenu: true,
-            //hideMetadataButton: true,
-            //hideRemoveButton: true,
-            //hideDownloadButton: true,
-            //hideCloneButton: true,
-            //hideFlipButton: true,
-            //hideMinimizeButton: true,
-            //face: "back",
-
-            /*            process: [
-             {
-             "name": "filter",
-             "parameters": {
-             "rows": {
-             "year": {"time": [{"from": 2015, "to": 2015}]},
-             "indicator": {"codes": [{"uid": "FLUDE_INDICATORS", "codes": ["Forest"]}]}
-             }
-             }
-             },
-             {
-             "name": "group",
-             "parameters": {
-             "by": ["incomes", "indicator"],
-             "aggregations": [{"columns": ["value"], "rule": "AVG"}]
-             }
-             },
-             {"name": "order", "parameters": {"incomes": "ASC"}}
-             ],*/
-
-            //ADAM
-           /* uid: "adam_usd_commitment",
-            process: [
-                {
-                    "name": "filter",
-                    "parameters": {
-                        "rows": {
-                            "year": {
-                                "time": [
-                                    {
-                                        "from": 2000,
-                                        "to": 2014
+            tab: "chart",
+            tabConfig: {
+                chart: {
+                    toolbar: {
+                        template: '<div data-selector="compare"></div>',
+                        config: {
+                            "compare": {
+                                selector: {
+                                    id: "dropdown",
+                                    source: [
+                                        {
+                                            value: "donorcode", label: "Resource Partner"
+                                        },
+                                        {
+                                            value: "parentsector_code", label: "Parent sector"
+                                        }
+                                    ],
+                                    default: [
+                                        "donorcode"
+                                    ],
+                                    config: {
+                                        maxItems: 1
                                     }
-                                ]
+                                },
+                                template: {
+                                    title: "Compare by"
+                                }
                             }
                         }
                     }
-                },
-                {
-                    "name": "pggroup",
-                    "parameters": {
-                        "by": [
-                            "year"
-                        ],
-                        "aggregations": [
-                            {
-                                "columns": ["value"],
-                                "rule": "SUM"
-                            },
-                            {
-                                "columns": ["unitcode"],
-                                "rule": "pgfirst"
-                            },
-                            {
-                                "columns": ["flowcategory"],
-                                "rule": "pgfirst"
-                            }
-                        ]
-                    }
-                },
-                {
-                    "name": "order",
-                    "parameters": {
-                        "year": "ASC"
-                    }
                 }
-            ]*/
+            }
         });
 
         log.trace("Rendering large box: end");

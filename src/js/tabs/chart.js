@@ -29,6 +29,8 @@ define([
         this.channels = {};
         this.state = {};
 
+        this.nls = $.extend(true, {}, i18nLabels, this.initial.nls);
+
         this.cache = this.initial.cache;
         this.lang = this.initial.lang;
         this.environment = this.initial.environment;
@@ -226,9 +228,16 @@ define([
 
     ChartTab.prototype._attach = function () {
 
-        var html = tabTemplate($.extend(true, {}, this, i18nLabels));
+        var html = tabTemplate($.extend(true, {}, this, this.nls));
 
         this.$el.html(html);
+
+        var initialConfig = this.initial.config || {};
+
+        if (initialConfig.toolbar && initialConfig.toolbar.template) {
+            this.$el.find(s.TOOLBAR).html(initialConfig.toolbar.template);
+        }
+
     };
 
     ChartTab.prototype._initVariables = function () {
@@ -309,7 +318,16 @@ define([
     ChartTab.prototype._renderChart = function () {
 
         var toolbarValues = this.toolbar.getValues(),
-            configuration = BoxUtils.getChartCreatorConfiguration(toolbarValues);
+            initialConfig = this.initial.config || {},
+            configuration;
+
+        console.log('Tabchart _renderChart', toolbarValues);
+
+        if (typeof initialConfig.config === "function") {
+            configuration = initialConfig.config.call(this, this.model, toolbarValues)
+        } else {
+            configuration = BoxUtils.getChartCreatorConfiguration(toolbarValues)
+        }
 
         if (C.renderVisualizationComponents === false ) {
             log.warn("Render Visualization component blocked by configuration");
@@ -378,12 +396,15 @@ define([
         }
 
         //i18n
-        var source = BoxUtils.getNestedProperty("selectors.show.selector.source", model);
-        _.map(source, function(i) {
-            i.label =  i18nLabels[self.lang.toLowerCase()]["tab_table_toolbar_" + i.value] || i.label;
-            return i;
-        });
-        BoxUtils.assign(model, "selectors.show.selector.source", source);
+        if (BoxUtils.getNestedProperty("selectors.show")){
+            var source = BoxUtils.getNestedProperty("selectors.show.selector.source", model);
+            _.map(source, function(i) {
+                i.label =  i18nLabels[self.lang.toLowerCase()]["tab_table_toolbar_" + i.value] || i.label;
+                return i;
+            });
+
+            BoxUtils.assign(model, "selectors.show.selector.source", source);
+        }
 
         this.toolbar = new Filter(model);
 
@@ -393,13 +414,26 @@ define([
 
     ChartTab.prototype._createFilterConfiguration = function () {
 
-        var configurationFromFenixTool = BoxUtils.getChartToolbarConfig(this.model, {lang : this.lang.toUpperCase()}),
-            configuration = $.extend(true, {}, ToolbarModel, configurationFromFenixTool),
-            result = $.extend(true, {}, Utils.mergeConfigurations(configuration, this.syncState.toolbar || {})),
-            self = this;
+        var initialConfig = this.initial.config || {},
+            toolbarConfig = initialConfig.toolbar || {},
+            result;
+
+        switch(typeof toolbarConfig.config) {
+            case "function" :
+                result = toolbarConfig.config(this.model);
+                break;
+            case "object" :
+                result = toolbarConfig.config;
+                break;
+            default :
+                var configurationFromFenixTool = BoxUtils.getChartToolbarConfig(this.model),
+                    configuration = $.extend(true, {}, ToolbarModel, configurationFromFenixTool);
+
+                result = $.extend(true, {}, Utils.mergeConfigurations(configuration, this.syncState.toolbar || {}));
+        }
 
         _.each(result, _.bind(function (value, key) {
-            value.template.title = i18nLabels[self.lang.toLowerCase()]["tab_table_toolbar_" + key];
+            value.template.title = this.nls["tab_table_toolbar_" + key];
         }, this));
 
         return result;
@@ -479,6 +513,7 @@ define([
 
     };
 
+
     ChartTab.prototype._getNestedProperty = function (path, obj) {
 
         var obj = $.extend(true, {}, obj),
@@ -490,6 +525,31 @@ define([
 
     };
 
+
+    ChartTab.prototype._trigger = function (channel) {
+        if (!this.channels[channel]) {
+            return false;
+        }
+        var args = Array.prototype.slice.call(arguments, 1);
+        for (var i = 0, l = this.channels[channel].length; i < l; i++) {
+            var subscription = this.channels[channel][i];
+            subscription.callback.apply(subscription.context, args);
+        }
+        return this;
+    };
+
+    /**
+     * pub/sub
+     * @return {Object} component instance
+     */
+    ChartTab.prototype.on = function (channel, fn, context) {
+        var _context = context || this;
+        if (!this.channels[channel]) {
+            this.channels[channel] = [];
+        }
+        this.channels[channel].push({context: _context, callback: fn});
+        return this;
+    };
 
     return ChartTab;
 

@@ -12,7 +12,6 @@ define([
                 id : "input",
                 type : "checkbox",
                 source : [
-                   
                     { value : "code", label : "Code"}
                 ]
             },
