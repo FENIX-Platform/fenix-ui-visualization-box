@@ -321,6 +321,8 @@ define([
             initialConfig = this.initial.config || {},
             configuration;
 
+        console.log(toolbarValues)
+
         if (typeof initialConfig.config === "function") {
             configuration = initialConfig.config.call(this, this.model, toolbarValues)
         } else {
@@ -394,12 +396,15 @@ define([
         }
 
         //i18n
-        var source = BoxUtils.getNestedProperty("selectors.show.selector.source", model);
-        _.map(source, function(i) {
-            i.label =  i18nLabels[self.lang.toLowerCase()]["tab_table_toolbar_" + i.value] || i.label;
-            return i;
-        });
-        BoxUtils.assign(model, "selectors.show.selector.source", source);
+        if (BoxUtils.getNestedProperty("selectors.show")){
+            var source = BoxUtils.getNestedProperty("selectors.show.selector.source", model);
+            _.map(source, function(i) {
+                i.label =  i18nLabels[self.lang.toLowerCase()]["tab_table_toolbar_" + i.value] || i.label;
+                return i;
+            });
+
+            BoxUtils.assign(model, "selectors.show.selector.source", source);
+        }
 
         this.toolbar = new Filter(model);
 
@@ -428,7 +433,7 @@ define([
         }
 
         _.each(result, _.bind(function (value, key) {
-            value.template.title = i18nLabels[self.lang.toLowerCase()]["tab_table_toolbar_" + key];
+            value.template.title = this.nls["tab_table_toolbar_" + key];
         }, this));
 
         return result;

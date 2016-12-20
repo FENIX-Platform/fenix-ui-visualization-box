@@ -208,7 +208,7 @@ define([
     };
 
     TableTab.prototype._attach = function () {
-        var html = tabTemplate($.extend(true, {}, this, this.nls);
+        var html = tabTemplate($.extend(true, {}, this, this.nls));
 
         this.$el.html(html);
     };

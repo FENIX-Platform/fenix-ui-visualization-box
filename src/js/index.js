@@ -262,7 +262,7 @@ define([
     Box.prototype._initObj = function () {
 
         //Inject box blank template
-        var $html = $(Template($.extend(true, {}, this.getState(), this.getState(), this._getObjState("nls"))));
+        var $html = $(Template($.extend(true, {}, this.getState(), this._getObjState("nls"))));
 
         this.$el.html($html);
 
@@ -342,7 +342,7 @@ define([
 
         this._setObjState("showFilter", typeof this.initial.showFilter === "boolean" ? this.initial.showFilter : false);
 
-        this._setObjState("nls", $.extend(true, {}, i18nLabels, this.initial.nls));
+        this._setObjState("nls", $.extend(true, {}, i18nLabels[this._getObjState("lang")], this.initial.nls));
 
     };
 
