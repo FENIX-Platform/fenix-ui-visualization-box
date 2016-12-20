@@ -321,7 +321,7 @@ define([
             initialConfig = this.initial.config || {},
             configuration;
 
-        console.log(toolbarValues)
+        console.log('Tabchart _renderChart', toolbarValues);
 
         if (typeof initialConfig.config === "function") {
             configuration = initialConfig.config.call(this, this.model, toolbarValues)
