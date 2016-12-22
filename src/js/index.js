@@ -963,7 +963,8 @@ define([
                 resourceColumns = BoxUtils.getNestedProperty("metadata.dsd.columns", self._getObjState("model")) || [],
                 columnsSet = resourceColumns
                     .filter(function (c) {
-                        return !c.id.endsWith("_" + self._getObjState("lang").toUpperCase()) && !c.id.endsWith("_EN");
+                        //return !c.id.endsWith("_" + self._getObjState("lang").toUpperCase()) && !c.id.endsWith("_EN");
+                        return !Utils._endsWith(c.id, "_" + self._getObjState("lang").toUpperCase()) && !Utils._endsWith(c.id,"_EN");
                     })
                     .map(function (c) {
                         return c.id;
