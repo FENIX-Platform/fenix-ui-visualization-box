@@ -963,7 +963,6 @@ define([
                 resourceColumns = BoxUtils.getNestedProperty("metadata.dsd.columns", self._getObjState("model")) || [],
                 columnsSet = resourceColumns
                     .filter(function (c) {
-                        //return !c.id.endsWith("_" + self._getObjState("lang").toUpperCase()) && !c.id.endsWith("_EN");
                         return !Utils._endsWith(c.id, "_" + self._getObjState("lang").toUpperCase()) && !Utils._endsWith(c.id,"_EN");
                     })
                     .map(function (c) {
@@ -1520,8 +1519,8 @@ define([
                 .filter(function (col) {
                     return !_.contains(forbiddenIds, col.id.toLowerCase());
                 })
-                .filter(function (col) {
-                    return !col.id.endsWith("_" + self._getObjState("lang").toUpperCase()) && !col.id.endsWith("_EN");
+                .filter(function (c) {                    
+                    return !Utils._endsWith(c.id, "_" + self._getObjState("lang").toUpperCase()) && !Utils._endsWith(c.id,"_EN");
                 }),
             config;
 
@@ -1541,7 +1540,7 @@ define([
         //TODO remove workaround with default lang in createConfiguration()
         var x = {};
         _.each(config, function (value, key) {
-            if (!key.endsWith("_" + self._getObjState("lang").toUpperCase()) && !key.endsWith("_EN")) {
+            if ( !Utils._endsWith(key, "_" + self._getObjState("lang").toUpperCase()) && !Utils._endsWith(key,"_EN") ) {
                 x[key] = value;
             }
         });
@@ -1671,7 +1670,7 @@ define([
                 isI18n,
                 t;
 
-            if (!c.id.endsWith("_" + lang) && !c.id.endsWith("_EN")) {
+            if (!Utils._endsWith(c.id, "_" + lang) && !Utils._endsWith(c.id, "_EN")) {
 
                 title = BoxUtils.getNestedProperty("title", c);
                 isI18n = typeof title === 'object' ? title : {};
@@ -1832,7 +1831,7 @@ define([
             columns = BoxUtils.getNestedProperty("metadata.dsd.columns", self._getObjState("model")) || [],
             columnsSet = columns
                 .filter(function (c) {
-                    return !c.id.endsWith("_" + self._getObjState("lang").toUpperCase());
+                    return !Utils._endsWith(c.id, "_" + self._getObjState("lang").toUpperCase());
                 })
                 .map(function (c) {
                     return c.id;
@@ -1882,7 +1881,7 @@ define([
             var agg = _.uniq(source, function (item, key, a) {
                 return item.value;
             }).filter(function (item) {
-                return !item.value.endsWith("_" + self._getObjState("lang").toUpperCase()) && !item.value.endsWith("_EN");
+                return !Utils._endsWith(item.value, "_" + self._getObjState("lang").toUpperCase()) && !Utils._endsWith(item.value, "_EN");
             });
 
             BoxUtils.assign(sync, "values.aggregations", agg);
