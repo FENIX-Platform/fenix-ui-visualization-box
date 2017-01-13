@@ -81,9 +81,11 @@ define([
             el: s.LARGE,
             //lang: "FR",
             //model: valid_model,
-            uid: "159CTR025",
-            tab: "chart",
-            tabConfig: {
+            uid: "D3S_3282308509609665355720826198320839709",
+            //uid: "D3S_28098494212796759517137570446651314719",
+            //uid: "114CFE015",
+            //tab: "chart",
+            /*tabConfig: {
                 chart: {
                     toolbar: {
                         template: '<div data-selector="compare"></div>',
@@ -113,7 +115,7 @@ define([
                         }
                     }
                 }
-            }
+            }*/
         });
 
         log.trace("Rendering large box: end");
