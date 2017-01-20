@@ -1,28 +1,28 @@
-/*global define, Promise, amplify */
-
 define([
     "jquery",
     "loglevel",
     "underscore",
-    "handlebars",
-    "fx-box/config/config",
-    "fx-box/config/errors",
-    "fx-box/config/events",
-    "fx-box/js/utils",
-    'fx-common/utils',
-    "text!fx-box/html/tabs/map.hbs",
-    "fx-filter/start",
-    "fx-box/config/tabs/map-toolbar-model",
-    "i18n!fx-box/nls/box",
-    "fx-m-c/start",
-    "amplify"
-], function ($, log, _, Handlebars,
+    "bootstrap",
+    "../../config/config",
+    "../../config/errors",
+    "../../config/events",
+    "../utils",
+    'fenix-ui-filter-utils',
+    "../../html/tabs/map.hbs",
+    "fenix-ui-filter",
+    "../../config/tabs/map-toolbar-model",
+    "../../config/tabs/map-base-config",
+    "../../nls/labels",
+    "fenix-ui-map-creator",
+    "amplify-pubsub"
+], function ($, log, _, Bootstrap,
     C, ERR, EVT,
     BoxUtils, Utils,
     mapTemplate, Filter,
     ToolbarModel,
+    mapBaseConfig,
     i18nLabels,
-    MapCreator) {
+    MapCreator, amplify) {
 
     var s = {
         TOOLBAR: "[data-role='toolbar']",
@@ -43,6 +43,7 @@ define([
         this.state = {};
 
         this.cache = this.initial.cache;
+        this.lang = this.initial.lang;
 
         return this;
     }
@@ -228,8 +229,7 @@ define([
 
     MapTab.prototype._attach = function () {
 
-        var template = Handlebars.compile(mapTemplate),
-            html = template($.extend(true, {}, this, i18nLabels));
+        var html = mapTemplate($.extend(true, {}, this, i18nLabels));
 
         this.$el.html(html);
     };
@@ -328,51 +328,23 @@ define([
             var MapCreatorOPTS = {
                 el: $elMap,
                 lang: lang,
-                fenix_ui_map: {
-                    lang: lang,
-                    plugins: {
-                        fullscreen: true,
-                        scalecontrol:'bottomleft'
-                    },
+                fenix_ui_map: _.extend(mapBaseConfig, {
                     guiController: {
                         container: this.$el.find(s.TOOLBAR),
-                        wmsLoader: false                 
-                    },
-                    baselayers: {
-                        cartodb: {
-                            title_en: "CartoDB light",
-                            url: 'http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png',
-                            subdomains: 'abcd',
-                            maxZoom: 19
-                        },
-                        osm: {
-                            //url: "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                            url: "http://{s}.tiles.wmflabs.org/osm-no-labels/{z}/{x}/{y}.png",
-                            title_en: "Openstreetmap",
-                            maxZoom: 16
-                        },
-                        world_imagery: {
-                            url: "http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-                            title_en: "World Imagery"
-                        }
-                    },
-                    legendOptions: {
-                        fontColor: '0x000000',
-                        fontSize: '12',
-                        bgColor: '0xFFFFFF'
+                        wmsLoader: false
                     }
-                }
+                })
             };
 
-        var resType = Utils.getNestedProperty("metadata.meContent.resourceRepresentationType", self.model);
+        var resType = BoxUtils.getNestedProperty("metadata.meContent.resourceRepresentationType", self.model);
 
         if(resType==='dataset') {
             MapCreatorOPTS.model = self.model;
         }
         else if(resType==='geographic') {
 
-            var layerName = Utils.getNestedProperty("metadata.dsd.layerName", self.model),
-                workspace = Utils.getNestedProperty("metadata.dsd.workspace", self.model);
+            var layerName = BoxUtils.getNestedProperty("metadata.dsd.layerName", self.model),
+                workspace = BoxUtils.getNestedProperty("metadata.dsd.workspace", self.model);
             
             MapCreatorOPTS.uid = workspace+':'+layerName;
         }
@@ -382,7 +354,7 @@ define([
         
         //this.map.fenixMap.addLayer( this._getTestLayer() );
 
-        window.MapCreator = this;
+        window.MMM = this;
         this._filterLayers= {};
     };
 
@@ -410,8 +382,6 @@ define([
             var layerName = filter.values.layers[i];
                 layerTitle = filter.labels.layers[layerName];
 
-            //console.log('addLayersByFilter', layerName, layerTitle);
-
             if(this._filterLayers && !this._filterLayers.hasOwnProperty(layerName) )
             {
                 this._filterLayers[layerName] = new FM.layer({
@@ -421,8 +391,6 @@ define([
                     opacity: '0.8',
                     layertype: 'WMS'
                 });
-                
-                //console.log(this._filterLayers[layerName]);
 
                 this.map.fenixMap.addLayer( this._filterLayers[layerName] );
             }
@@ -445,15 +413,20 @@ define([
         var self = this;
 
         this.toolbar = new Filter({
-            items: this._createFilterConfiguration(),
+            selectors: this._createFilterConfiguration(),
             el: this.$el.find(s.TOOLBAR),
             cache : this.cache,
             environment : this.initial.environment
         });
 
         this.toolbar.on('ready', _.bind(this._renderMap, this));
-        this.toolbar.on('change', function(e) {
+
+        this.toolbar.on('select', function(e) {
+            
+            console.log('toolbar change',e)
+
             var o = self.toolbar.getValues();
+
             if(o.values)
             {
                 if(o.values['map_boundaries'][0])
@@ -499,12 +472,19 @@ define([
         var valid = true,
             errors = [];
 
-        var resourceType = Utils.getNestedProperty("metadata.meContent.resourceRepresentationType", this.model);
+        var resourceType = BoxUtils.getNestedProperty("metadata.meContent.resourceRepresentationType", this.model);
 
 //console.log('MAP _isSuitable', resourceType);
 
         if (resourceType !== "dataset" && resourceType !== "geographic") {
             errors.push({code: ERR.INCOMPATIBLE_RESOURCE_TYPE});
+        }
+
+        var columns = BoxUtils.getNestedProperty("metadata.dsd.columns", this.model),
+            geoColumn = _.findWhere(columns, {subject: "geo"});
+
+        if (!geoColumn) {
+            errors.push({code: ERR.MISSING_GEO_COLUMN});
         }
 
         return errors.length > 0 ? errors : valid;
@@ -523,7 +503,7 @@ define([
 
     MapTab.prototype._setState = function (key, val) {
 
-        Utils.assign(this.state, key, val);
+        BoxUtils.assign(this.state, key, val);
 
         this._trigger("state", $.extend(true, {}, this.state));
     };

@@ -1,18 +1,14 @@
-/*global define, Promise, amplify */
-
 define([
     "jquery",
     "loglevel",
     "underscore",
-    "fx-box/config/config",
-    "fx-box/config/errors",
-    "fx-box/config/events",
-    'fx-common/utils',
-    "text!fx-box/html/tabs/metadata.hbs",
-    'fx-md-v/start',
-    "handlebars",
-    "amplify"
-], function ($, log, _, C, ERR, EVT, Utils, tabTemplate, MetadataViewer, Handlebars) {
+    "../../config/config",
+    "../../config/errors",
+    "../../config/events",
+    "../utils",
+    "../../html/tabs/metadata.hbs",
+    'fenix-ui-metadata-viewer'
+], function ($, log, _, C, ERR, EVT, BoxUtils, tabTemplate, MetadataViewer) {
 
     'use strict';
 
@@ -24,6 +20,8 @@ define([
         this.state = {};
 
         this.cache = this.initial.cache;
+        this.lang = this.initial.lang;
+        this.environment = this.initial.environment;
 
         return this;
     }
@@ -195,8 +193,7 @@ define([
 
     MetadataTab.prototype._attach = function () {
 
-        var template = Handlebars.compile(tabTemplate),
-            html = template(this);
+        var html = tabTemplate(this);
 
         this.$el.html(html);
     };
@@ -253,7 +250,7 @@ define([
 
     MetadataTab.prototype._setState = function (key, val) {
 
-        Utils.assign(this.state, key, val);
+        BoxUtils.assign(this.state, key, val);
 
         this._trigger("state", $.extend(true, {}, this.state));
 

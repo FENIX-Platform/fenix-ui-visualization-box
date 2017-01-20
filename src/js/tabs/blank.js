@@ -1,19 +1,16 @@
-/*global define, Promise, amplify */
-
 define([
     "jquery",
     "loglevel",
     "underscore",
-    "fx-box/config/config",
-    "fx-box/config/errors",
-    "fx-box/config/events",
-    'fx-common/utils',
-    "text!fx-box/html/tabs/blank.hbs",
-    'fx-filter/start',
-    "fx-box/config/tabs/blank-toolbar-model",
-    "handlebars",
-    "amplify"
-], function ($, log, _, C, ERR, EVT, Utils, tabTemplate, Filter, ToolbarModel, Handlebars) {
+    "../../config/config",
+    "../../config/errors",
+    "../../config/events",
+    'fenix-ui-filter-utils',
+    "../../html/tabs/blank.hbs",
+    'fenix-ui-filter',
+    "../../config/tabs/blank-toolbar-model",
+    "amplify-pubsub"
+], function ($, log, _, C, ERR, EVT, Utils, tabTemplate, Filter, ToolbarModel, amplify) {
 
     'use strict';
 
@@ -28,6 +25,7 @@ define([
 
         this.channels = {};
         this.state = {};
+        this.lang = this.initial.lang;
 
         return this;
     }
@@ -195,8 +193,7 @@ define([
 
     BlankTab.prototype._attach = function () {
 
-        var template = Handlebars.compile(tabTemplate),
-            html = template(this);
+        var html = tabTemplate(this);
 
         this.$el.html(html);
     };
@@ -298,7 +295,7 @@ define([
         log.info("Blank tab render toolbar");
 
         this.toolbar = new Filter({
-            items: this._createFilterConfiguration(ToolbarModel),
+            selectors: this._createFilterConfiguration(ToolbarModel),
             el: this.$el.find(s.TOOLBAR)
         });
 
@@ -347,7 +344,7 @@ define([
 
     BlankTab.prototype._setState = function (key, val) {
 
-        Utils.assign(this.state, key, val);
+        this._assign(this.state, key, val);
 
         this._trigger("state", $.extend(true, {}, this.state));
     };

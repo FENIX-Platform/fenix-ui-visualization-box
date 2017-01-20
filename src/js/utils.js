@@ -1,14 +1,12 @@
-/*global define, Promise, amplify */
-
 define([
     "jquery",
     "loglevel",
     "underscore",
-    "fx-box/config/config",
-    "fx-box/config/errors",
-    "fx-box/config/events",
-    "fx-common/pivotator/fenixtool",
-    "i18n!fx-box/nls/box"
+    "../config/config",
+    "../config/errors",
+    "../config/events",
+    "fenix-ui-pivotator-utils",
+    "../nls/labels"
 ], function ($, log, _, C, ERR, EVT, FenixTool, i18nLabels) {
 
     'use strict';
@@ -30,12 +28,12 @@ define([
         return this._getToolbarConfig(Model, opts);
     };
 
-    Utils.prototype.getChartToolbarConfig = function (Model) {
-        return this._getToolbarConfig(Model,  {
+    Utils.prototype.getChartToolbarConfig = function (Model, opts) {
+        return this._getToolbarConfig(Model, $.extend(opts, {
             rowLabel: i18nLabels.series,
             columnsLabel: i18nLabels.xAxis,
             valuesLabel: i18nLabels.yAxis
-        });
+        }));
     };
 
     Utils.prototype.getMapToolbarConfig = function (Model, opts) {
@@ -51,12 +49,53 @@ define([
     };
 
     Utils.prototype.getTableCreatorConfiguration = function (values) {
+
         return this.fenixTool.toTableConfig(values);
     };
 
     Utils.prototype.getMapCreatorConfiguration = function (values) {
 
         return this.fenixTool.toTableConfig(values);
+    };
+
+    /* COMMONS */
+
+    Utils.prototype.assign = function (obj, prop, value) {
+        if (typeof prop === "string")
+            prop = prop.split(".");
+
+        if (prop.length > 1) {
+            var e = prop.shift();
+            this.assign(obj[e] =
+                    Object.prototype.toString.call(obj[e]) === "[object Object]"
+                        ? obj[e]
+                        : {},
+                prop,
+                value);
+        } else {
+            obj[prop[0]] = value;
+        }
+    };
+
+    Utils.prototype.getNestedProperty = function (path, obj) {
+
+        var obj = $.extend(true, {}, obj),
+            arr = path.split(".");
+
+        while (arr.length && (obj = obj[arr.shift()]));
+
+        return obj;
+
+    };
+
+    Utils.prototype.cleanArray = function (actual) {
+        var newArray = [];
+        for (var i = 0; i < actual.length; i++) {
+            if (actual[i]) {
+                newArray.push(actual[i]);
+            }
+        }
+        return newArray;
     };
 
     return new Utils();

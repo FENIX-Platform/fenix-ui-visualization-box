@@ -1,14 +1,17 @@
 {
-  "name": "fenix-visualization-box",
-  "version": "1.0.0-beta.0",
+  "name": "fenix-ui-visualization-box",
+  "version": "2.0.0-beta.69",
   "description": "FENIX resource visualization box",
-  "main": "src/js/start.js",
+  "main": "dist/fenix-ui-visualization-box.min.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "cross-env NODE_ENV=test karma start ./karma.config.js",
+    "build": "cross-env NODE_ENV=production webpack --display-error-details",
+    "build:demo": "cross-env NODE_ENV=demo webpack --display-error-details",
+    "dev": "cross-env NODE_ENV=develop webpack-dev-server --display-error-details --progress --color --content-base dev  --inline --hot"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/FENIX-Platform/fenix-visualization-box.git"
+    "url": "git+https://github.com/FENIX-Platform/fenix-ui-visualization-box.git"
   },
   "keywords": [
     "visualization",
@@ -18,17 +21,54 @@
   "author": "FENIX team (http://fenix.fao.org/)",
   "license": "GPL-2.0",
   "bugs": {
-    "url": "https://github.com/FENIX-Platform/fenix-visualization-box/issues"
+    "url": "https://github.com/FENIX-Platform/fenix-ui-visualization-box/issues"
   },
-  "homepage": "https://github.com/FENIX-Platform/fenix-visualization-box#readme",
+  "homepage": "https://github.com/FENIX-Platform/fenix-ui-visualization-box#readme",
   "dependencies": {
-    "amplify": "0.0.11",
-    "bootstrap": "3.3.6",
-    "handlebars": "4.0.5",
-    "jquery": "3.1.0",
-    "loglevel": "1.4.1",
-    "swiper": "3.3.1",
-    "underscore": "1.8.3",
-    "underscore.string": "3.3.4"
+    "amplify-pubsub": "^0.0.1",
+    "bootstrap": "^3.3.7",
+    "fenix-ui-bridge": "^1.0.0-beta.13",
+    "fenix-ui-chart-creator": "^3.0.0-beta.6",
+    "fenix-ui-dropdown": "^1.0.0-beta.3",
+    "fenix-ui-filter": "^3.0.0-beta.77",
+    "fenix-ui-filter-utils": "^1.0.0-beta.18",
+    "fenix-ui-map-creator": "^2.7.9-beta.24",
+    "fenix-ui-metadata-viewer": "^3.0.0-beta.9",
+    "fenix-ui-pivotator-utils": "^1.0.0-beta.4",
+    "fenix-ui-reports": "^2.0.0-beta.1",
+    "fenix-ui-table-creator": "^3.0.0-beta.7",
+    "handlebars-loader": "^1.4.0",
+    "jquery": "^3.1.1",
+    "loglevel": "^1.4.1",
+    "swiper": "^3.4.0",
+    "underscore": "^1.8.3",
+    "underscore.string": "^3.3.4"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "clean-webpack-plugin": "^0.1.13",
+    "cross-env": "^3.1.3",
+    "css-loader": "^0.25.0",
+    "extract-text-webpack-plugin": "^1.0.1",
+    "file-loader": "^0.9.0",
+    "html-webpack-plugin": "^2.24.0",
+    "image-webpack-loader": "^3.0.0",
+    "imports-loader": "^0.6.5",
+    "jshint": "^2.9.4",
+    "jshint-loader": "^0.8.3",
+    "json-loader": "^0.5.4",
+    "karma": "^1.2.0",
+    "karma-chai": "^0.1.0",
+    "karma-chrome-launcher": "^2.0.0",
+    "karma-coverage": "^1.1.1",
+    "karma-firefox-launcher": "^1.0.0",
+    "karma-mocha": "^1.2.0",
+    "karma-webpack": "^1.8.0",
+    "mocha": "^3.1.2",
+    "resolve-url-loader": "^1.6.0",
+    "style-loader": "^0.13.1",
+    "url-loader": "^0.5.7",
+    "webpack": "^1.13.3",
+    "webpack-dev-server": "^1.16.0"
   }
 }

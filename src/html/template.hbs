@@ -1,0 +1,257 @@
+    <div data-role="box" class="fx-box" data-status="{{ status }}" data-size="{{ size }}">
+
+        <div data-content="ready" data-tab="{{ default_tab }}">
+
+            <div data-role="flip-container" class="flip-container">
+
+                <div class="flipper">
+
+                    <!-- Front -->
+                    <div class="front" data-face="front">
+                        <!-- front content -->
+
+                        {{#unless hideToolbar}}
+
+                            <div data-role="front-toolbar" class="vb-toolbar front-toolbar clearfix">
+
+                                {{#unless hideMenu}}
+
+                                    <div class="toolbar-cmd-left">
+                                        <div data-role="right-menu" class="dropdown pull-left"
+                                             title="{{tooltip_right_menu}}">
+
+                                            <button class="btn btn-default" type="button" data-toggle="dropdown">
+                                                <span class="icojam_preview_list"></span>
+                                            </button>
+                                        </div>
+
+                                        {{#unless hideMetadataButton}}
+                                            <button data-action="metadata" class="btn btn-default meta-btn pull-left"
+                                                    type="button" title="{{tooltip_metadata_button}}">META
+                                            </button>
+                                        {{/unless}}
+                                    </div>
+
+                                {{/unless}}
+
+                                <h6 data-role="box-title" class="box-title fx-text-primary-color truncate"
+                                    data-grid="fx-grid-item-handle"></h6>
+
+                                <div class="btn-group toolbar-cmd-right">
+                                    {{#unless hideFlipButton}}
+                                        <button data-action="flip" class="btn btn-default" type="button"
+                                                title="{{tooltip_flip_button}}">
+                                            <span class="icojam_options_1"></span>
+                                        </button>
+                                    {{/unless}}
+                                    {{#unless hideDownloadButton}}
+                                        <button data-action="download" data-target="data" class="btn btn-default"
+                                                title="{{tooltip_download_button}}"
+                                                type="button">
+                                            <span class="icojam_download_1"></span>
+                                        </button>
+                                    {{/unless}}
+                                    {{#unless hideCloneButton}}
+                                        <button data-action="clone" class="btn btn-default" type="button"
+                                                title="{{tooltip_clone_button}}">
+                                            <span class="icojam_wedding_jewel"></span>
+                                        </button>
+                                    {{/unless}}
+                                    {{#unless hideMinimizeButton}}
+                                        <button data-action="minimize" class="btn btn-default" type="button"
+                                                title="{{tooltip_minimize_button}}">
+                                            <span class="icojam_view_roll-up_1"></span>
+                                        </button>
+                                    {{/unless}}
+                                    {{#unless hideRemoveButton}}
+                                        <button data-action="remove" class="btn btn-default" type="button"
+                                                title="{{tooltip_remove_button}}">
+                                            <span class="icojam_button_delete_1"></span>
+                                        </button>
+                                    {{/unless}}
+
+                                </div>
+                            </div>
+
+                        {{/unless}}
+
+                        <div data-role="front-content" class="front-content">
+
+                            <div data-section="chart"></div>
+                            <div data-section="map"></div>
+                            <div data-section="table"></div>
+                            <div data-section="blank"></div>
+                            <div data-section="metadata"></div>
+                            <div data-section="filter"></div>
+                            <div data-section="download"></div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- back -->
+                    <div class="back" data-face="back">
+
+                        {{#unless hideToolbar}}
+
+                            <div data-role="back-toolbar" class="vb-toolbar back-toolbar clearfix">
+
+                                {{#unless hideMenu}}
+
+                                    <div class="toolbar-cmd-left">
+                                        <div data-role="right-menu" class="dropdown pull-left">
+
+                                            <button class="btn btn-default" type="button" data-toggle="dropdown">
+                                                <span class="icojam_preview_list"></span>
+                                            </button>
+                                        </div>
+                                        {{#unless hideMetadataButton}}
+                                            <button data-action="metadata" class="btn btn-default meta-btn pull-left"
+                                                    type="button">META
+                                            </button>
+                                        {{/unless}}
+                                    </div>
+
+                                {{/unless}}
+
+                                <h6 data-role="box-title" class="box-title fx-text-primary-color truncate"></h6>
+
+                                <div class="btn-group toolbar-cmd-right">
+                                    {{#unless hideFlipButton}}
+                                        <button data-action="flip" class="btn btn-default" type="button">
+                                            <span class="icojam_options_1"></span>
+                                        </button>
+                                    {{/unless}}
+                                    {{#unless hideDownloadButton}}
+                                        <button data-action="download" data-target="data" class="btn btn-default"
+                                                type="button">
+                                            <span class="icojam_download_1"></span>
+                                        </button>
+                                    {{/unless}}
+                                    {{#unless hideCloneButton}}
+                                        <button data-action="clone" class="btn btn-default" type="button">
+                                            <span class="icojam_wedding_jewel"></span>
+                                        </button>
+                                    {{/unless}}
+                                    {{#unless hideMinimizeButton}}
+                                        <button data-action="minimize" class="btn btn-default" type="button">
+                                            <span class="icojam_view_roll-up_1"></span>
+                                        </button>
+                                    {{/unless}}
+                                    {{#unless hideRemoveButton}}
+                                        <button data-action="remove" class="btn btn-default" type="button">
+                                            <span class="icojam_button_delete_1"></span>
+                                        </button>
+                                    {{/unless}}
+
+                                </div>
+                            </div>
+
+                        {{/unless}}
+
+                        <div data-role="back-content" class="container-fluid back-content">
+                            <div class="alert alert-danger" role="alert" data-role="filter-error">...</div>
+                            <div class="row back-row">
+                                <div data-role='back-sidebar' class="col-xs-12 col-sm-8 col-md-4 hidden-xs hidden-sm">
+                                    <div class="sidebar-content">
+                                        <h6 class="sidebar-title">{{ back_current_resource }}</h6>
+                                        <div class="process-steps-container">
+                                            <ul data-role='process-steps' class="list-unstyled list-group"></ul>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <button data-action="show-back-sidebar"
+                                        class="btn btn-floating fx-background-color-primary-color btn-fx-toolbar visible-sm visible-xs show-back-sidebar"
+                                        type="button"><span class="icojam_grid_32"></span></button>
+
+                                <div class="col-md-8 col-xs-12 back-right-content">
+
+                                    <ul data-role="process-details"
+                                        class="list-unstyled list-group process-details"></ul>
+
+                                    <div class="row">
+                                        <div class="col-xs-12">
+                                            <div class="btn-group pull-right back-btns">
+
+                                                <button type="button" data-action="flip"
+                                                        class="btn btn-default">{{cancel_button}}
+                                                </button>
+                                                <button type="button" data-action="query" class="btn btn-primary fx-button-primary-color"
+                                                        disabled>{{submit_button}}</button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div data-content="error" class="text-center">
+
+            <div class="content-message text-center">
+                <div class="content-message-img error-img"></div>
+
+                <h2>{{error_content_title}}</h2>
+                <p>{{error_content_text}}</p>
+
+                {{#unless hideRemoveButton}}
+                    <button data-action="remove" class="btn btn-floating fx-background-color-primary-color btn-fx-status-btn" type="button">
+                        <span class="icojam_minus"></span>
+                    </button>
+                {{/unless}}
+
+            </div>
+
+        </div>
+
+        <div data-content="loading" class="text-center">
+            <span class="loading loading-48"></span>
+        </div>
+
+        <div data-content="empty" class="text-center">
+
+            <div class="content-message text-center">
+                <div class="content-message-img empty-img"></div>
+                <h2>{{empty_content_title}}</h2>
+                <p>{{empty_content_text}}</p>
+
+                <button data-action="filter" class="btn btn-floating fx-background-color-primary-color btn-fx-status-btn" type="button">
+                    <span class="icojam_filter"></span>
+                </button>
+                {{#unless hideRemoveButton}}
+
+                    <button data-action="remove" class="btn btn-floating fx-background-color-primary-color btn-fx-status-btn" type="button">
+                        <span class="icojam_minus"></span>
+                    </button>
+
+                {{/unless}}
+
+            </div>
+
+        </div>
+
+        <div data-content="huge" class="text-center">
+
+            <div class="content-message text-center">
+                <div class="content-message-img huge-img"></div>
+                <h2>{{huge_content_title}}</h2>
+                <p>{{huge_content_text}}</p>
+
+                <button data-action="filter" class="btn btn-floating fx-background-color-primary-color btn-fx-status-btn" type="button">
+                    <span class="icojam_filter"></span>
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>

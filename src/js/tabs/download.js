@@ -1,18 +1,14 @@
-/*global define, Promise, amplify */
-
 define([
     "jquery",
     "loglevel",
     "underscore",
-    "fx-box/config/config",
-    "fx-box/config/errors",
-    "fx-box/config/events",
-    'fx-common/utils',
-    "text!fx-box/html/tabs/download.hbs",
-    "fx-reports/start",
-    "handlebars",
-    "amplify"
-], function ($, log, _, C, ERR, EVT, Utils, tabTemplate, Report, Handlebars) {
+    "../../config/config",
+    "../../config/errors",
+    "../../config/events",
+    "../utils",
+    "../../html/tabs/download.hbs",
+    "fenix-ui-reports"
+], function ($, log, _, C, ERR, EVT, BoxUtils, tabTemplate, Report) {
 
     'use strict';
 
@@ -31,6 +27,7 @@ define([
         this.report = new Report({
             cache : this.initial.cache
         });
+        this.lang = this.initial.lang;
 
         return this;
     }
@@ -201,8 +198,7 @@ define([
 
     DownloadTab.prototype._attach = function () {
 
-        var template = Handlebars.compile(tabTemplate),
-            html = template(this);
+        var html = tabTemplate(this);
 
         this.$el.html(html);
     };
@@ -304,7 +300,7 @@ define([
         var valid = true,
             errors = [];
 
-        var resourceType = Utils.getNestedProperty("metadata.meContent.resourceRepresentationType", this.model);
+        var resourceType = BoxUtils.getNestedProperty("metadata.meContent.resourceRepresentationType", this.model);
 
         if (resourceType !== "dataset") {
             errors.push({code: ERR.INCOMPATIBLE_RESOURCE_TYPE});

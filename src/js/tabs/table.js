@@ -1,22 +1,19 @@
-/*global define, Promise, amplify */
-
 define([
     "jquery",
     "loglevel",
     "underscore",
-    "fx-box/config/config",
-    "fx-box/config/errors",
-    "fx-box/config/events",
-    "fx-box/js/utils",
-    'fx-common/utils',
-    "text!fx-box/html/tabs/table.hbs",
-    'fx-filter/start',
-    "fx-box/config/tabs/table-toolbar-model",
-    "i18n!fx-box/nls/box",
-    "handlebars",
-    'fx-table/start',
-    "amplify"
-], function ($, log, _, C, ERR, EVT, BoxUtils, Utils, tabTemplate, Filter, ToolbarModel, i18nLabels, Handlebars, Olap) {
+    "../../config/config",
+    "../../config/errors",
+    "../../config/events",
+    "../../js/utils",
+    'fenix-ui-filter-utils',
+    "../../html/tabs/table.hbs",
+    'fenix-ui-filter',
+    "../../config/tabs/table-toolbar-model",
+    "../../nls/labels",
+    'fenix-ui-table-creator',
+    "amplify-pubsub"
+], function ($, log, _, C, ERR, EVT, BoxUtils, Utils, tabTemplate, Filter, ToolbarModel, i18nLabels, Table, amplify) {
 
     'use strict';
 
@@ -33,6 +30,8 @@ define([
         this.state = {};
 
         this.cache = this.initial.cache;
+        this.lang = this.initial.lang;
+        this.nls = $.extend(true, {}, i18nLabels[this.lang.toLowerCase()], this.initial.nls);
 
         return this;
     }
@@ -74,7 +73,6 @@ define([
      * Mandatory method
      */
     TableTab.prototype.isSuitable = function () {
-
         var isSuitable = this._isSuitable();
 
         log.info("Table tab: is tab suitable?", isSuitable);
@@ -210,9 +208,8 @@ define([
     };
 
     TableTab.prototype._attach = function () {
+        var html = tabTemplate($.extend(true, {}, this, this.nls));
 
-        var template = Handlebars.compile(tabTemplate),
-            html = template($.extend(true, {}, this, i18nLabels));
         this.$el.html(html);
     };
 
@@ -303,21 +300,47 @@ define([
 
         var config = $.extend(true, {}, {
             model: this.model,
-            el: "#table_" + this.id
+            el: "#table_" + this.id,
+            lang : this.lang.toUpperCase()
         }, configuration);
 
-        this.table = new Olap(config);
+        this.table = new Table(config);
     };
 
     TableTab.prototype._renderToolbar = function () {
         log.info("Table tab render toolbar");
 
-        this.toolbar = new Filter({
-            items: this._createFilterConfiguration(ToolbarModel),
+        var self = this,
+            model = {
+            selectors: this._createFilterConfiguration(ToolbarModel),
             cache: this.cache,
             el: this.$el.find(s.TOOLBAR),
             environment: this.initial.environment
+        };
+
+        //force labels
+
+        var labeled = {};
+
+        if (model.selectors.hasOwnProperty("dimensionsSort")) {
+
+            _.each(model.selectors.dimensionsSort.selector.config.groups,function(value, key) {
+                labeled[key] = i18nLabels[self.lang.toLowerCase()]["tab_table_toolbar_" + key];
+            });
+
+            model.selectors.dimensionsSort.selector.config.groups =labeled;
+        }
+
+        //i18n
+        var source = BoxUtils.getNestedProperty("selectors.show.selector.source", model);
+        _.map(source, function(i) {
+            i.label =  i18nLabels[self.lang.toLowerCase()]["tab_table_toolbar_" + i.value] || i.label;
+            return i;
         });
+        BoxUtils.assign(model, "selectors.show.selector.source", source);
+
+
+        this.toolbar = new Filter(model);
 
         this.toolbar.on("ready", _.bind(this._renderTable, this))
 
@@ -329,9 +352,10 @@ define([
 
         var configurationFromFenixTool,
             configuration,
-            result;
+            result,
+            self = this;
 
-        configurationFromFenixTool = BoxUtils.getTableToolbarConfig(this.model);
+        configurationFromFenixTool = BoxUtils.getTableToolbarConfig(this.model, {lang : this.lang.toUpperCase()});
 
         log.info(configurationFromFenixTool);
 
@@ -340,6 +364,10 @@ define([
         log.info(configuration);
 
         result = $.extend(true, {}, Utils.mergeConfigurations(configuration, this.syncState.toolbar || {}));
+
+        _.each(result, _.bind(function (value, key) {
+            value.template.title = i18nLabels[self.lang.toLowerCase()]["tab_table_toolbar_" + key];
+        }, this));
 
         log.info(result);
 
@@ -370,8 +398,6 @@ define([
         var position = this.initial.toolbarPosition || C.toolbarPosition;
         if (position === 'up') {
             this.toolbarPosition = 'up';
-            //this.$toolbar.hide();
-            //this.$toolbar.hide();
         } else {
             this.toolbarPosition = 'down';
         }
@@ -392,7 +418,7 @@ define([
         var valid = true,
             errors = [];
 
-        var resourceType = Utils.getNestedProperty("metadata.meContent.resourceRepresentationType", this.model);
+        var resourceType = BoxUtils.getNestedProperty("metadata.meContent.resourceRepresentationType", this.model);
 
         if (resourceType !== "dataset") {
             errors.push({code: ERR.INCOMPATIBLE_RESOURCE_TYPE});
@@ -415,11 +441,10 @@ define([
 
     TableTab.prototype._setState = function (key, val) {
 
-        Utils.assign(this.state, key, val);
+        BoxUtils.assign(this.state, key, val);
 
         this._trigger("state", $.extend(true, {}, this.state));
     };
-
 
     return TableTab;
 

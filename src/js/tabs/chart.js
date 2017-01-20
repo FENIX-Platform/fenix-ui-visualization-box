@@ -1,22 +1,19 @@
-/*global define, Promise, amplify */
-
 define([
     "jquery",
     "loglevel",
     "underscore",
-    "fx-box/config/config",
-    "fx-box/config/errors",
-    "fx-box/config/events",
-    "fx-box/js/utils",
-    'fx-common/utils',
-    "text!fx-box/html/tabs/chart.hbs",
-    'fx-filter/start',
-    "fx-box/config/tabs/chart-toolbar-model",
-    "i18n!fx-box/nls/box",
-    "handlebars",
-    'fx-chart/start',
-    "amplify"
-], function ($, log, _, C, ERR, EVT, BoxUtils, Utils, tabTemplate, Filter, ToolbarModel, i18nLabels, Handlebars, ChartCreator) {
+    "../../config/config",
+    "../../config/errors",
+    "../../config/events",
+    "../utils",
+    'fenix-ui-filter-utils',
+    "../../html/tabs/chart.hbs",
+    'fenix-ui-filter',
+    "../../config/tabs/chart-toolbar-model",
+    "../../nls/labels",
+    'fenix-ui-chart-creator',
+    "amplify-pubsub"
+], function ($, log, _, C, ERR, EVT, BoxUtils, Utils, tabTemplate, Filter, ToolbarModel, i18nLabels, ChartCreator, amplify) {
 
     'use strict';
 
@@ -32,7 +29,11 @@ define([
         this.channels = {};
         this.state = {};
 
+        this.nls = $.extend(true, {}, i18nLabels, this.initial.nls);
+
         this.cache = this.initial.cache;
+        this.lang = this.initial.lang;
+        this.environment = this.initial.environment;
 
         return this;
     }
@@ -227,10 +228,16 @@ define([
 
     ChartTab.prototype._attach = function () {
 
-        var template = Handlebars.compile(tabTemplate),
-            html = template($.extend(true, {}, this, i18nLabels));
+        var html = tabTemplate($.extend(true, {}, this, this.nls));
 
         this.$el.html(html);
+
+        var initialConfig = this.initial.config || {};
+
+        if (initialConfig.toolbar && initialConfig.toolbar.template) {
+            this.$el.find(s.TOOLBAR).html(initialConfig.toolbar.template);
+        }
+
     };
 
     ChartTab.prototype._initVariables = function () {
@@ -311,19 +318,41 @@ define([
     ChartTab.prototype._renderChart = function () {
 
         var toolbarValues = this.toolbar.getValues(),
-            configuration = BoxUtils.getChartCreatorConfiguration(toolbarValues);
+            initialConfig = this.initial.config || {},
+            configuration;
+
+        console.log('Tabchart _renderChart', toolbarValues);
+
+        if (typeof initialConfig.config === "function") {
+            configuration = initialConfig.config.call(this, this.model, toolbarValues)
+        } else {
+            configuration = BoxUtils.getChartCreatorConfiguration(toolbarValues)
+        }
 
         if (C.renderVisualizationComponents === false ) {
             log.warn("Render Visualization component blocked by configuration");
             return;
         }
 
-        this.chart = new ChartCreator($.extend(true, {}, configuration, {
+        var boxTitle = this.box.$boxTitle.html();
+        
+        var model = $.extend(true, {}, configuration, {
             model: this.model,
             el: "#chart_" + this.id,
-            type: this.type
-        }));
+            type: this.type,
+            config: {
+                exporting: {
+                    enabled: true,
+                    chartOptions: {
+                        title: {
+                            text: boxTitle
+                        }
+                    }
+                }
+            }
+        });
 
+        this.chart = new ChartCreator(model);
     };
 
     ChartTab.prototype._updateChart = function () {
@@ -347,12 +376,37 @@ define([
     ChartTab.prototype._renderToolbar = function () {
         log.info("Chart tab render toolbar");
 
-        this.toolbar = new Filter({
-            items: this._createFilterConfiguration(),
-            cache : this.cache,
-            el: this.$el.find(s.TOOLBAR),
-            environment: this.initial.environment
-        });
+        var self = this,
+            model = {
+                selectors: this._createFilterConfiguration(),
+                cache: this.cache,
+                el: this.$el.find(s.TOOLBAR),
+                environment: this.initial.environment,
+                lang : this.lang
+            };
+
+        //force labels
+
+        var labeled = {};
+        if (model.selectors.hasOwnProperty("dimensionsSort")) {
+            _.each(model.selectors.dimensionsSort.selector.config.groups,function(value, key) {
+                labeled[key] = i18nLabels[self.lang.toLowerCase()]["tab_table_toolbar_" + key];
+            });
+            model.selectors.dimensionsSort.selector.config.groups =labeled;
+        }
+
+        //i18n
+        if (BoxUtils.getNestedProperty("selectors.show")){
+            var source = BoxUtils.getNestedProperty("selectors.show.selector.source", model);
+            _.map(source, function(i) {
+                i.label =  i18nLabels[self.lang.toLowerCase()]["tab_table_toolbar_" + i.value] || i.label;
+                return i;
+            });
+
+            BoxUtils.assign(model, "selectors.show.selector.source", source);
+        }
+
+        this.toolbar = new Filter(model);
 
         this.toolbar.on("ready", _.bind(this._renderChart, this))
 
@@ -360,10 +414,28 @@ define([
 
     ChartTab.prototype._createFilterConfiguration = function () {
 
-        var configurationFromFenixTool = BoxUtils.getChartToolbarConfig(this.model),
-            configuration = $.extend(true, {}, ToolbarModel, configurationFromFenixTool),
-            result = $.extend(true, {}, Utils.mergeConfigurations(configuration, this.syncState.toolbar || {}));
-        
+        var initialConfig = this.initial.config || {},
+            toolbarConfig = initialConfig.toolbar || {},
+            result;
+
+        switch(typeof toolbarConfig.config) {
+            case "function" :
+                result = toolbarConfig.config(this.model);
+                break;
+            case "object" :
+                result = toolbarConfig.config;
+                break;
+            default :
+                var configurationFromFenixTool = BoxUtils.getChartToolbarConfig(this.model),
+                    configuration = $.extend(true, {}, ToolbarModel, configurationFromFenixTool);
+
+                result = $.extend(true, {}, Utils.mergeConfigurations(configuration, this.syncState.toolbar || {}));
+        }
+
+        _.each(result, _.bind(function (value, key) {
+            value.template.title = this.nls["tab_table_toolbar_" + key];
+        }, this));
+
         return result;
 
     };
@@ -412,7 +484,7 @@ define([
         var valid = true,
             errors = [];
 
-        var resourceType = Utils.getNestedProperty("metadata.meContent.resourceRepresentationType", this.model);
+        var resourceType = BoxUtils.getNestedProperty("metadata.meContent.resourceRepresentationType", this.model);
 
         if (resourceType !== "dataset") {
             errors.push({code: ERR.INCOMPATIBLE_RESOURCE_TYPE});
@@ -439,6 +511,44 @@ define([
 
         this._trigger("state", $.extend(true, {}, this.state));
 
+    };
+
+
+    ChartTab.prototype._getNestedProperty = function (path, obj) {
+
+        var obj = $.extend(true, {}, obj),
+            arr = path.split(".");
+
+        while (arr.length && (obj = obj[arr.shift()]));
+
+        return obj;
+
+    };
+
+
+    ChartTab.prototype._trigger = function (channel) {
+        if (!this.channels[channel]) {
+            return false;
+        }
+        var args = Array.prototype.slice.call(arguments, 1);
+        for (var i = 0, l = this.channels[channel].length; i < l; i++) {
+            var subscription = this.channels[channel][i];
+            subscription.callback.apply(subscription.context, args);
+        }
+        return this;
+    };
+
+    /**
+     * pub/sub
+     * @return {Object} component instance
+     */
+    ChartTab.prototype.on = function (channel, fn, context) {
+        var _context = context || this;
+        if (!this.channels[channel]) {
+            this.channels[channel] = [];
+        }
+        this.channels[channel].push({context: _context, callback: fn});
+        return this;
     };
 
     return ChartTab;

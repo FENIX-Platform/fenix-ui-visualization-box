@@ -1,19 +1,16 @@
-/*global define, Promise, amplify */
-
 define([
     "jquery",
     "loglevel",
     "underscore",
-    "fx-box/config/config",
-    "fx-box/config/errors",
-    "fx-box/config/events",
-    'fx-common/utils',
-    "text!fx-box/html/tabs/filter.hbs",
-    'fx-filter/start',
-    "i18n!fx-box/nls/box",
-    "handlebars",
-    "amplify"
-], function ($, log, _, C, ERR, EVT, Utils, tabTemplate, Filter, i18nLabels, Handlebars) {
+    "../../config/config",
+    "../../config/errors",
+    "../../config/events",
+    "../utils",
+    'fenix-ui-filter-utils',
+    "../../html/tabs/filter.hbs",
+    'fenix-ui-filter',
+    "../../nls/labels"
+], function ($, log, _, C, ERR, EVT, BoxUtils, Utils, tabTemplate, Filter, i18nLabels) {
 
     'use strict';
 
@@ -44,6 +41,7 @@ define([
         this.state = {};
 
         this.cache = this.initial.cache;
+        this.lang = this.initial.lang;
 
         return this;
     }
@@ -253,9 +251,8 @@ define([
 
     FilterTab.prototype._attach = function () {
 
-        var template = Handlebars.compile(tabTemplate),
-            m = $.extend(true, {}, defaultOptions.template, this.template, i18nLabels, this.labels),
-            html = template(m);
+        var m = $.extend(true, {}, defaultOptions.template, this.template, i18nLabels[this.lang.toLowerCase()], this.labels),
+            html = tabTemplate(m);
 
         this.$el.html(html);
     };
@@ -326,15 +323,18 @@ define([
     FilterTab.prototype._renderComponents = function () {
         log.info("render filter");
 
-        this.filter = new Filter({
-            items: this._createFilterConfiguration(),
+        var model = {
+            selectors: this._createFilterConfiguration(),
             el: this.$el.find(s.CONTAINER),
             cache : this.cache,
             template: this.template,
             common :  this.common,
             values : this.values,
-            environment : this.initial.environment
-        });
+            environment : this.initial.environment,
+            lang : this.lang
+        };
+
+        this.filter = new Filter(model);
         
     };
 
@@ -362,7 +362,7 @@ define([
         var valid = true,
             errors = [];
 
-        var resourceType = Utils.getNestedProperty("metadata.meContent.resourceRepresentationType", this.model);
+        var resourceType = BoxUtils.getNestedProperty("metadata.meContent.resourceRepresentationType", this.model);
 
         if (resourceType !== "dataset") {
             errors.push({code: ERR.INCOMPATIBLE_RESOURCE_TYPE});
@@ -390,11 +390,10 @@ define([
 
     FilterTab.prototype._setState = function (key, val) {
 
-        Utils.assign(this.state, key, val);
+        BoxUtils.assign(this.state, key, val);
 
         this._trigger("state", $.extend(true, {}, this.state));
     };
-
 
     return FilterTab;
 
