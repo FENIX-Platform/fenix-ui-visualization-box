@@ -31,6 +31,7 @@ define([
         empty_model = {data: []},
         error_model = {},
         valid_model = Model,
+        lang = "EN",
         boxes = [],
         environment = "production"; //"develop" || "production"
 
@@ -38,7 +39,7 @@ define([
 
         this._importThirdPartyCss();
 
-        //console.clear();
+        console.clear();
 
         //trace silent
         log.setLevel('silent');
@@ -79,9 +80,10 @@ define([
         var box = this.createBox({
             environment: environment,
             el: s.LARGE,
-            //lang: "FR",
+            lang: lang,
             //model: valid_model,
-            uid: "D3S_3282308509609665355720826198320839709",
+            uid: "D3S_64323403588591749304889734404410682082",
+            //uid: "D3S_3282308509609665355720826198320839709",
             //uid: "D3S_28098494212796759517137570446651314719",
             //uid: "114CFE015",
             //tab: "chart",

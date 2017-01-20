@@ -536,22 +536,6 @@ define([
             BoxUtils.assign(model, "size", newSize);
         }
 
-      /*  //TODOn force value label
-        if (this.computed) {
-
-            var columns = model.metadata.dsd.columns;
-
-            _.each(columns, function (c) {
-                if (c.subject === "value") {
-                    _.each(c.title, function (value, key) {
-                        c.title[key] = "CIAO MARIO!";
-                    });
-                    console.log(c)
-                }
-            });
-
-        }*/
-
         this._setObjState("model", model);
     };
 
@@ -1674,7 +1658,7 @@ define([
 
                 title = BoxUtils.getNestedProperty("title", c);
                 isI18n = typeof title === 'object' ? title : {};
-                t = isI18n[lang] || isI18n["EN"];
+                t = isI18n[lang] || isI18n[Object.keys(title)[0]];
 
                 if (t) {
                     label = t;
@@ -1901,10 +1885,14 @@ define([
             }
 
             if (!item) {
+
+                var col = _.findWhere(resourceColumns, {id: id}),
+                    label = col.title[self._getObjState("lang").toUpperCase()] || col.title[Object.keys(col.title)[0]];
+
                 source.push({
                     value: id,
                     parent: "dimensions",
-                    label: _.findWhere(resourceColumns, {id: id}).title[self._getObjState("lang").toUpperCase()] || _.findWhere(resourceColumns, {id: id}).title["EN"]
+                    label: label
                 })
             } else {
                 source.push(item);
@@ -2319,7 +2307,7 @@ define([
         });
 
         _.each(err, function (values, e) {
-            $message.append($('<li>' + this._getObjState("nls")[e] + '</li>'))
+            $message.append($('<li>' + self._getObjState("nls")[e] + '</li>'))
         });
 
         this._showFilterError($message);
