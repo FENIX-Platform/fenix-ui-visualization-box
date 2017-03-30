@@ -1,6 +1,6 @@
 {
   "name": "fenix-ui-visualization-box",
-  "version": "2.0.0-beta.72",
+  "version": "2.0.0-beta.73",
   "description": "FENIX resource visualization box",
   "main": "dist/fenix-ui-visualization-box.min.js",
   "scripts": {
