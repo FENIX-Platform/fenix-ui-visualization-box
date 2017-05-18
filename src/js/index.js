@@ -438,7 +438,8 @@ define([
                     return 'empty';
                 }
 
-                if (model.size > this._getObjState("maxDataSize")) {
+                // This line changes due to changes on d3p
+                if (model.data.length > this._getObjState("maxDataSize")) {
                     return 'huge';
                 }
 
