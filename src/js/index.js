@@ -1435,18 +1435,18 @@ define([
         }
 
         /*if (this._stepControlAccess("map")) {
-            this.processSteps.push({
-                id: "map",
-                tab: "filter",
-                values: mapConfiguration.values,
-                config: mapConfiguration.filter,
-                template: mapConfiguration.template,
-                onReady: mapConfiguration.onReady,
-                labels: {
-                    title: this._getObjState("nls")["step_map"]
-                }
-            });
-        }*/
+         this.processSteps.push({
+         id: "map",
+         tab: "filter",
+         values: mapConfiguration.values,
+         config: mapConfiguration.filter,
+         template: mapConfiguration.template,
+         onReady: mapConfiguration.onReady,
+         labels: {
+         title: this._getObjState("nls")["step_map"]
+         }
+         });
+         }*/
     };
 
     Box.prototype._stepControlAccess = function (tab) {
@@ -1504,7 +1504,7 @@ define([
                 .filter(function (col) {
                     return !_.contains(forbiddenIds, col.id.toLowerCase());
                 })
-                .filter(function (c) {                    
+                .filter(function (c) {
                     return !Utils._endsWith(c.id, "_" + self._getObjState("lang").toUpperCase()) && !Utils._endsWith(c.id,"_EN");
                 }),
             config;
@@ -1938,6 +1938,8 @@ define([
 
         amplify.subscribe(this._getEventTopic("download"), this, this._onDownloadEvent);
 
+        amplify.subscribe(this._getEventTopic("noelem"), this, this._onNoElemEvent);
+
         this.$el.find(s.RIGHT_MENU).on('click', "a", function (e) {
             e.preventDefault();
         });
@@ -2162,6 +2164,13 @@ define([
 
         this._showFrontTab(currentTab);
 
+    };
+
+    Box.prototype._onNoElemEvent = function (param) {
+        // this._setStatus("noelem");
+        // this._trigger("noelem");
+
+        this._trigger("noelem", param)
     };
 
     Box.prototype._onDownloadEvent = function (payload) {
@@ -2587,6 +2596,8 @@ define([
         amplify.unsubscribe(this._getEventTopic("filter"), this._onFilterEvent);
 
         amplify.unsubscribe(this._getEventTopic("download"), this._onDownloadEvent);
+
+        amplify.unsubscribe(this._getEventTopic("noelem"), this._onNoElemEvent);
 
         this.$el.find("[data-action]").off();
 

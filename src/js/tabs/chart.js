@@ -335,7 +335,7 @@ define([
         }
 
         var boxTitle = this.box.$boxTitle.html();
-        
+
         var model = $.extend(true, {}, configuration, {
             model: this.model,
             el: "#chart_" + this.id,
@@ -407,6 +407,15 @@ define([
         }
 
         this.toolbar = new Filter(model);
+        console.log(model)
+        console.log(this.toolbar)
+
+        if((model!=null)&&(typeof model!='undefined')&&(model.selectors!=null)&&(typeof model.selectors!='undefined')&&(model.selectors.compare!=null)&&(typeof model.selectors.compare!='undefined')&&(model.selectors.compare.selector!=null)&&(typeof model.selectors.compare.selector!='undefined')&&(model.selectors.compare.selector.source!=null)&&(typeof model.selectors.compare.selector.source!='undefined')){
+            if(model.selectors.compare.selector.source.length<=0)
+            {
+                amplify.publish(this._getEventTopicNoElem("noelem"), this);
+            }
+        }
 
         this.toolbar.on("ready", _.bind(this._renderChart, this))
 
@@ -503,6 +512,12 @@ define([
     ChartTab.prototype._getEventTopic = function (evt) {
 
         return EVT[evt] ? EVT[evt] + this.id : evt + this.id;
+    };
+
+    ChartTab.prototype._getEventTopicNoElem = function (evt) {
+
+        //Removing the reference to the object type(chart)
+        return EVT[evt] ? EVT[evt] +"."+ this.id.substring(this.id.indexOf("_")+1) : evt +"."+ this.id.substring(this.id.indexOf("_")+1);
     };
 
     ChartTab.prototype._setState = function (key, val) {
