@@ -352,6 +352,8 @@ define([
             }
         });
 
+        if(this.chart)
+            this.chart.dispose();
         this.chart = new ChartCreator(model);
     };
 
