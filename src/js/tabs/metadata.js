@@ -187,6 +187,8 @@ define([
             this._bindEventListeners();
 
             this.initialized = true;
+
+            this._trigger('initialized');
         }
 
     };

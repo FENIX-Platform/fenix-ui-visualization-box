@@ -1212,6 +1212,8 @@ define([
 
         instance.on('state', _.bind(this._onTabStateChangeEvent, this, tab));
 
+        instance.on('initialized', _.bind(this._onInitializatedEvent, this));
+
         instance.on('title.change', _.bind(this._onTitleChangeEvent, this, tab));
 
         //cache the plugin instance
@@ -1968,6 +1970,11 @@ define([
 
     };
 
+    Box.prototype._onLoadedEvent = function (payload) {
+        log.info("Listen to event: " + this._getEventTopic("loaded"));
+        console.log('IT IS LOADED!');
+    }
+
     Box.prototype._onRemoveEvent = function (payload) {
         log.info("Listen to event: " + this._getEventTopic("remove"));
         log.info(payload);
@@ -2074,6 +2081,11 @@ define([
     Box.prototype._onTabStateChangeEvent = function (tab, state) {
 
         this._setObjState("tabStates." + tab, state);
+    };
+
+    Box.prototype._onInitializatedEvent = function (payload) {
+
+        this._trigger("initializated", payload);
     };
 
     Box.prototype._onQueryEvent = function (payload) {

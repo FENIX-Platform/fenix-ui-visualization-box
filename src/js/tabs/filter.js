@@ -245,6 +245,8 @@ define([
 
             this.initialized = true;
 
+            this._trigger('initialized');
+
         }
 
     };

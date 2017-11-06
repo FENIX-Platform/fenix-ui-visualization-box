@@ -205,6 +205,8 @@ define([
 
             this.initialized = true;
 
+            this._trigger('initialized');
+
         } else {
             log.info("Tab chart shown again");
 

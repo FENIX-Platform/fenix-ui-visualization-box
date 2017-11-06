@@ -189,6 +189,8 @@ define([
 
             this.initialized = true;
 
+            this._trigger('initialized');
+
         } else {
             log.info("Tab table shown again");
         }

@@ -316,7 +316,8 @@ define([
 
         //Bootstrap
         require('bootstrap/dist/css/bootstrap.css');
-//Bootstrap
+
+        //Bootstrap
         
         //NOT WORK require("bootstrap-loader");
 
