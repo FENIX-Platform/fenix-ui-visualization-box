@@ -2241,13 +2241,26 @@ define([
         });
     };
 
+    Box.prototype._getMetadataTemplate = function (context) {
+
+        // performance wise
+        console.log(context);
+        if (context == "undefined") return 'fao';
+        if (context === 'uneca') return context;
+        if (String(context).includes("cstat")) return 'cstat';
+
+        return 'fao';
+
+    };
+
+
     Box.prototype._downloadMetadata = function () {
 
         var model = this._getObjState("model"),
             title = BoxUtils.getNestedProperty("metadata.title", model) || {},
             fileName = title[this._getObjState("lang")] ? title[this._getObjState("lang")] : "fenix_export",
             contextSystem = BoxUtils.getNestedProperty("metadata.dsd.contextSystem", model),
-            template = contextSystem === 'uneca' ? contextSystem : 'fao';
+            template = this._getMetadataTemplate(contextSystem);
 
         var payload = {
             resource: {
