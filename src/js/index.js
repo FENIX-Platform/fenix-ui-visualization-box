@@ -247,10 +247,14 @@ define([
 
         this.front_tab_instances = {};
         this.back_tab_instances = {};
+        this.serviceProvider = this.initial.serviceProvider;
+
+        console.log(this.serviceProvider);
 
         this.bridge = new Bridge({
             environment: this._getObjState("environment"),
-            cache: this._getObjState("cache")
+            cache: this._getObjState("cache"),
+            serviceProvider: this.serviceProvider
         });
 
         this.report = new Report({
