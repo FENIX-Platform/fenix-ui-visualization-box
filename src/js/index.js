@@ -59,7 +59,7 @@ define([
         SIDEBAR: "[data-role='back-sidebar']",
         FRONT_FACE: "[data-face='front']",
         BACK_FACE: "[data-face='back']",
-        OTHER_CONTENT: "[data-content='empty'], [data-content='error'], [data-content='huge']"
+        OTHER_CONTENT: "[data-content='empty'], [data-content='error'], [data-content='huge'], [data-content='toomany']"
     }, pluginFolder = "./tabs/";
 
     /* API */
@@ -249,7 +249,7 @@ define([
         this.back_tab_instances = {};
         this.serviceProvider = this.initial.serviceProvider;
 
-        console.log(this.serviceProvider);
+        //console.log(this.serviceProvider);
 
         this.bridge = new Bridge({
             environment: this._getObjState("environment"),
@@ -385,6 +385,9 @@ define([
             case 'huge' :
                 this.setStatus("huge");
                 break;
+            case 'toomany' :
+                this.setStatus("toomany");
+                break;
             case 'no_model' :
                 this.setStatus("loading");
                 break;
@@ -495,6 +498,12 @@ define([
         log.error("Impossible to load resource");
 
         log.error(e);
+
+        if (e.responseText == '\"Result limit exceeded exception\"') {
+          this._setObjState("toomany", {code: ERR.LOAD_RESOURCE, filter: true});
+          this._setStatus("toomany");
+          return;
+        }
 
         log.error({code: ERR.LOAD_RESOURCE});
 

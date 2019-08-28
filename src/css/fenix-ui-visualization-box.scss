@@ -84,7 +84,7 @@ $fx-secondary-color: desaturate( $fx-cool-blue, 50% );
     overflow: hidden;
   }
 
-  [data-content="error"], [data-content="loading"], [data-content="empty"], [data-content="huge"] {
+  [data-content="error"], [data-content="loading"], [data-content="empty"], [data-content="huge"], [data-content="toomany"] {
     border: 1px solid $back-and-border-color;
   }
 
@@ -150,7 +150,7 @@ $fx-secondary-color: desaturate( $fx-cool-blue, 50% );
   }
 
   //show only the status only correspondent tab content
-  $statuses: "ready" "error" "loading" "empty" "huge";
+  $statuses: "ready" "error" "loading" "empty" "huge" "toomany";
 
   @each $status in $statuses {
 
@@ -1179,6 +1179,3 @@ $olap-drag: #bbbbbb;
 
 
 }
-
-
-
