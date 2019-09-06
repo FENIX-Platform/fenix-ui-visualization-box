@@ -259,7 +259,8 @@ define([
 
         this.report = new Report({
             environment: this._getObjState("environment"),
-            cache: this._getObjState("cache")
+            cache: this._getObjState("cache"),
+            serviceProvider: this.serviceProvider
         });
     };
 
