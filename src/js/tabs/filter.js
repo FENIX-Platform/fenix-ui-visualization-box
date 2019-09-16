@@ -40,6 +40,7 @@ define([
 
         this.state = {};
 
+        this.serviceProvider = obj.serviceProvider;
         this.cache = this.initial.cache;
         this.lang = this.initial.lang;
 
@@ -149,7 +150,7 @@ define([
         log.info("Set values. values:" + JSON.stringify(values));
 
         return this.filter ? this.filter.setValues(values, silent) : {};
-        
+
     };
 
     /**
@@ -332,12 +333,13 @@ define([
             template: this.template,
             common :  this.common,
             values : this.values,
+            serviceProvider: this.serviceProvider,
             environment : this.initial.environment,
             lang : this.lang
         };
 
         this.filter = new Filter(model);
-        
+
     };
 
     FilterTab.prototype._createFilterConfiguration = function () {
