@@ -1215,7 +1215,7 @@ define([
                 id: tab + "_" + this.id,
                 environment: this._getObjState("environment"),
                 cache: this._getObjState("cache"),
-                serviceProvider: this._getObjState("serviceProvider"),
+                serviceProvider: this.serviceProvider,
                 config: this._getObjState("tabConfig")[tab],
                 nls : this._getObjState("nls")
             }),
@@ -1728,7 +1728,7 @@ define([
                 el: $el,
                 box: this,
                 cache: this._getObjState("cache"),
-                serviceProvider: this._getObjState("serviceProvider"),
+                serviceProvider: this.serviceProvider,
                 model: $.extend(true, {}, this._getObjState("model")),
                 config: step.config,
                 lang: this._getObjState("lang"),
